@@ -10,8 +10,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
         <div className="h-full w-full flex-grow px-6 py-6 lg:px-10">
           <Header />
-          <div></div>
-          {children}
+          <div className="py-8">{children}</div>
         </div>
       </div>
     </>
