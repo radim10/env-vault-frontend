@@ -1,8 +1,12 @@
+'use client'
+
 import React from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Icons } from './icons'
 import { Separator } from './ui/separator'
 import WorkspaceSelect from './WorkspaceSelect'
+import clsx from 'clsx'
 
 const navItems = [
   { label: 'Projects', href: '/projects', icon: Icons.folder },
@@ -19,6 +23,8 @@ const helpNavItems = [
 ]
 
 const Sidebar = () => {
+  const pathname = usePathname()
+
   return (
     <div className="h-full border-r-[1.2px] dark:border-gray-800">
       <div className="pt-10 px-9">LOGO</div>
@@ -33,8 +39,16 @@ const Sidebar = () => {
             {navItems.map((item) => (
               <Link
                 href={item.href}
-                className="flex gap-4 items-center dark:hover:text-primary dark:text-gray-300 ease duration-150"
+                className={clsx(
+                  [
+                    'flex gap-4 items-center dark:hover:text-primary dark:text-gray-300 ease duration-150',
+                  ],
+                  {
+                    'text-primary dark:text-primary': pathname === item.href,
+                  }
+                )}
               >
+                {pathname === item.href}
                 <item.icon className=" h-5 w-5 opacity-70" />
                 <div className="text-[1.14rem]">{item.label}</div>
               </Link>
