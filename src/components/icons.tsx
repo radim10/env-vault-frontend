@@ -9,6 +9,7 @@ import {
   Code,
   LogOut,
   ChevronDown,
+  Plus,
 } from 'lucide-react'
 
 export const Icons = {
@@ -22,4 +23,5 @@ export const Icons = {
   code: Code,
   logOut: LogOut,
   chevronDown: ChevronDown,
+  plus: Plus,
 }
