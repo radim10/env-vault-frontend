@@ -1,6 +1,7 @@
-import { Users, Folder, KeyRound, Settings, Book, Mic2, Code } from 'lucide-react'
+import { Users,User, Folder, KeyRound, Settings, Book, Mic2, Code, LogOut } from 'lucide-react'
 
 export const Icons = {
+  user: User,
   users: Users,
   folder: Folder,
   keyRound: KeyRound,
@@ -8,4 +9,5 @@ export const Icons = {
   book: Book,
   mic2: Mic2,
   code: Code,
+  logOut: LogOut
 }
