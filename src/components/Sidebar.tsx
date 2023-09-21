@@ -2,6 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import { Icons } from './icons'
 import { Separator } from './ui/separator'
+import WorkspaceSelect from './WorkspaceSelect'
 
 const navItems = [
   { label: 'Projects', href: '/projects', icon: Icons.folder },
@@ -19,31 +20,38 @@ const helpNavItems = [
 
 const Sidebar = () => {
   return (
-    <div className="h-full border-r-[1.2px] 0 dark:border-gray-800">
+    <div className="h-full border-r-[1.2px] dark:border-gray-800">
       <div className="pt-10 px-9">LOGO</div>
-      <div className="py-5 pl-9 pr-6 pt-36">
-        <div className="bg-red-40 flex flex-col gap-3">
-          {navItems.map((item) => (
-            <Link
-              href={item.href}
-              className="flex gap-4 items-center dark:hover:text-primary dark:text-gray-300 ease duration-150"
-            >
-              <item.icon className=" h-5 w-5 opacity-70" />
-              <div className="text-[1.14rem]">{item.label}</div>
-            </Link>
-          ))}
+      <div className=" pt-16">
+        <div className="-ml-1 pr-4">
+          <div className="pl-6 pr-1">
+            <WorkspaceSelect />
+          </div>
         </div>
-        <Separator className="my-6" />
-        <div className="bg-red-40 flex flex-col gap-3">
-          {helpNavItems.map((item) => (
-            <a
-              href={item.href}
-              className="flex gap-4 items-center dark:hover:text-primary dark:text-gray-300 ease duration-150"
-            >
-              <item.icon className=" h-5 w-5 opacity-70" />
-              <div className="text-[1.14rem]">{item.label}</div>
-            </a>
-          ))}
+        <div className="mt-5 py-5 pl-9 pr-6">
+          <div className="bg-red-40 flex flex-col gap-3">
+            {navItems.map((item) => (
+              <Link
+                href={item.href}
+                className="flex gap-4 items-center dark:hover:text-primary dark:text-gray-300 ease duration-150"
+              >
+                <item.icon className=" h-5 w-5 opacity-70" />
+                <div className="text-[1.14rem]">{item.label}</div>
+              </Link>
+            ))}
+          </div>
+          <Separator className="my-6" />
+          <div className="bg-red-40 flex flex-col gap-3">
+            {helpNavItems.map((item) => (
+              <a
+                href={item.href}
+                className="flex gap-4 items-center dark:hover:text-primary dark:text-gray-300 ease duration-150"
+              >
+                <item.icon className=" h-5 w-5 opacity-70" />
+                <div className="text-[1.14rem]">{item.label}</div>
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </div>
