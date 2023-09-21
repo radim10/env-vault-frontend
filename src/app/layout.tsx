@@ -17,7 +17,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark">
           <GlobalQueryClientProvider>
-            <main>{children}</main>
+            <main className="flex w-full items-center justify-center">
+              <div className="max-w-[1800px] w-full">{children}</div>
+            </main>
           </GlobalQueryClientProvider>
         </ThemeProvider>
       </body>
