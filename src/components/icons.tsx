@@ -13,6 +13,8 @@ import {
   Plus,
   Layers,
   XCircle,
+  Menu,
+  X,
 } from 'lucide-react'
 
 export const Icons = {
@@ -30,4 +32,6 @@ export const Icons = {
   plus: Plus,
   layer: Layers,
   xCircle: XCircle,
+  menu: Menu,
+  x: X,
 }
