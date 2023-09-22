@@ -23,7 +23,7 @@ const WorkspaceSelect = (props: {}) => {
         <DropdownMenuTrigger className="h-fit w-full px-3 lg:px-4 py-2 rounded-md border-[1.2px] dark:border-gray-800 dark:text-gray-300 hover:dark:bg-gray-900">
           <div className="flex justify-between items-center">
             <div className=" flex flex-col justify-start">
-              <div className="text-[1.1rem] -ml-2">Radim's</div>
+              <div className="text-[1.1rem] -ml-2">{`Radim's`}</div>
               <div className="text-[0.95rem] opacity-80">Enterprise</div>
             </div>
             <div>
