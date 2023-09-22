@@ -46,11 +46,13 @@ const Sidebar = () => {
                     'flex gap-4 items-center dark:hover:text-primary dark:text-gray-300 ease duration-150',
                   ],
                   {
-                    'text-primary dark:text-primary': pathname === item.href,
+                    // 'text-primary dark:text-primary': pathname === item.href,
+                    'text-primary dark:text-primary': pathname?.split('/')?.[3] === item.href,
                   }
                 )}
               >
-                {pathname === item.href}
+                {/* {pathname === item.href} */}
+                {/* {pathname.split("/")?.[3]} */}
                 <item.icon className=" h-5 w-5 opacity-70" />
                 <div className="text-[1.14rem]">{item.label}</div>
               </Link>
