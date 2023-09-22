@@ -4,11 +4,14 @@ export type GetProjectsError = APIError<'Collection not found'>
 export type GetProjectsData = Awaited<ReturnType<typeof getProjects>>
 
 export async function getProjects(args: { workspaceId: string }) {
-  const response = sendRequest<Array<{
-    id: string,
-    name: string
-    description: string | null
-  }>>({
+  const response = sendRequest<
+    Array<{
+      id: string
+      name: string
+      description: string | null
+      environmentCount: number
+    }>
+  >({
     method: 'GET',
     basePath: 'projects',
     path: args.workspaceId,
