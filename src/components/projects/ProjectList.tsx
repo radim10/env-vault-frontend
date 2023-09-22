@@ -17,26 +17,26 @@ const ProjectList: React.FC<Props> = ({ workspace }) => {
 
   if (isLoading) {
     return (
-      <div className="grid  grid-cols-3 gap-4">
+      <div className="lg:grid lg:grid-cols-3 gap-4 flex flex-col">
         {Array.from({ length: 3 }).map(() => (
-          <div className="h-32 rounded-md border-2 dark:border-gray-800 animate-pulse dark:bg-gray-900" />
+          <div className="h-[8.2rem]  rounded-md border-2 dark:border-gray-800 animate-pulse dark:bg-gray-900" />
         ))}
       </div>
     )
   }
   return (
     <div>
-      <div className="grid  grid-cols-3 gap-4">
+      <div className="lg:grid lg:grid-cols-3 gap-4 flex flex-col">
         {data?.map(({ description, name, environmentCount }) => (
           <Link
             href={`/workspace/${workspace}/projects/${name}`}
-            className="cursor-pointer h-32 border-2 dark:border-gray-800 transition hover:dark:shadow-xl hover:dark:shadow-primary/20 rounded-md hover:dark:border-primary hover:border-primary hover:scale-[103%] ease duration-200"
+            className="cursor-pointer h-[8.2rem] border-2 dark:border-gray-800 transition hover:dark:shadow-xl hover:dark:shadow-primary/20 rounded-md hover:dark:border-primary hover:border-primary hover:scale-[103%] ease duration-200"
           >
             <div className="px-4 py-3 h-full">
               <div className="flex flex-col justify-between h-full">
                 <div className="flex flex-col gap-1">
-                  <div className="font-medium dark:text-gray-300">{name}</div>
-                  <div className="opacity-60 italic text-[0.93rem]">
+                  <div className="font-medium dark:text-gray-300 line-clamp-2">{name}</div>
+                  <div className="opacity-60 italic text-[0.93rem] line-clamp-2 leading-5">
                     {description && description}
                   </div>
                 </div>
