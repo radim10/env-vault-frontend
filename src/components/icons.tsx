@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Plus,
   Layers,
+  XCircle,
 } from 'lucide-react'
 
 export const Icons = {
@@ -28,4 +29,5 @@ export const Icons = {
   chevronRight: ChevronRight,
   plus: Plus,
   layer: Layers,
+  xCircle: XCircle,
 }
