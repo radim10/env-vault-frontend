@@ -23,14 +23,33 @@ const helpNavItems = [
 ]
 
 const Sidebar = () => {
+  const [opened, setOpened] = React.useState(false)
   const pathname = usePathname()
   const params = useParams()
   console.log(params)
 
+  const toggle = () => setOpened(!opened)
+
   return (
-    <div className="h-full border-r-[1.2px] dark:border-gray-800">
-      <div className="pt-10 px-9">LOGO</div>
-      <div className=" pt-16">
+    <div className="h-full md:border-r-[1.2px]  border-b-[1.2px] dark:border-gray-800 bg-background z-50">
+      <div className="md:pt-10 pt-4 pb-4 md:pb-0 md:px-9 px-6">
+        <div className="hidden md:block">LOGO</div>
+        <button className="block md:hidden" onClick={toggle}>
+          {opened ? <Icons.x /> : <Icons.menu />}
+        </button>
+      </div>
+      <div
+        className={clsx(
+          [
+            'shadow-lg dark:shadow-gray-900 md:shadow-none w-screen md:w-auto fixed md:relative pt-6 md:pt-16 bg-background z-[1000] border-b-[1.2px] dark:border-gray-800 md:border-0 rounded-b-lg md:rounded-b-none',
+          ],
+          {
+            hidden: !opened,
+            block: opened,
+            'md:block': true,
+          }
+        )}
+      >
         <div className="-ml-1 pr-4">
           <div className="pl-6 pr-1">
             <WorkspaceSelect />
