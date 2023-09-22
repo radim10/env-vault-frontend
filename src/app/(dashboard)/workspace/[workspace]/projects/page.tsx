@@ -1,6 +1,5 @@
 import { Icons } from '@/components/icons'
 import TypographyH2 from '@/components/typography/TypographyH2'
-import TypographyH3 from '@/components/typography/TypographyH3'
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -9,10 +8,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { PageProps } from '../../../../../../.next/types/app/layout'
 import ProjectList from '@/components/projects/ProjectList'
 
-export default function Home({ params }: PageProps) {
+export default function Home({ params }: { params: { workspace: string } }) {
   return (
     <div>
       {/* {Object.entries(params).map(([key, value]: any) => ( */}
