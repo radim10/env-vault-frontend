@@ -2,28 +2,30 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useParams } from 'next/navigation'
 import { Icons } from './icons'
 import { Separator } from './ui/separator'
 import WorkspaceSelect from './WorkspaceSelect'
 import clsx from 'clsx'
 
 const navItems = [
-  { label: 'Projects', href: '/projects', icon: Icons.folder },
-  { label: 'Team', href: '/team', icon: Icons.users },
-  { label: 'Activity', href: '/activity', icon: Icons.users },
-  { label: 'Tokens', href: '/tokens', icon: Icons.keyRound },
-  { label: 'Settings', href: '/settings', icon: Icons.settings },
+  { label: 'Projects', href: 'projects', icon: Icons.folder },
+  { label: 'Team', href: 'team', icon: Icons.users },
+  { label: 'Activity', href: 'activity', icon: Icons.users },
+  { label: 'Tokens', href: 'tokens', icon: Icons.keyRound },
+  { label: 'Settings', href: 'settings', icon: Icons.settings },
 ]
 
 const helpNavItems = [
-  { label: 'Docs', href: '/docs', icon: Icons.book },
-  { label: 'SDKs', href: '/docs', icon: Icons.code },
-  { label: 'Community', href: '/Community', icon: Icons.mic2 },
+  { label: 'Docs', href: 'docs', icon: Icons.book },
+  { label: 'SDKs', href: 'docs', icon: Icons.code },
+  { label: 'Community', href: 'Community', icon: Icons.mic2 },
 ]
 
 const Sidebar = () => {
   const pathname = usePathname()
+  const params = useParams()
+  console.log(params)
 
   return (
     <div className="h-full border-r-[1.2px] dark:border-gray-800">
@@ -38,7 +40,7 @@ const Sidebar = () => {
           <div className="bg-red-40 flex flex-col gap-3">
             {navItems.map((item) => (
               <Link
-                href={item.href}
+                href={`/workspace/${params.workspace}/${item.href}`}
                 className={clsx(
                   [
                     'flex gap-4 items-center dark:hover:text-primary dark:text-gray-300 ease duration-150',
