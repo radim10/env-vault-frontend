@@ -27,9 +27,8 @@ const ProjectList: React.FC<Props> = ({ workspace }) => {
   return (
     <div>
       <div className="grid  grid-cols-3 gap-4">
-        {data?.map(({ id, description, name, environmentCount }) => (
+        {data?.map(({ description, name, environmentCount }) => (
           <Link
-            key={id}
             href={`/workspace/${workspace}/projects/${name}`}
             className="cursor-pointer h-32 border-2 dark:border-gray-800 transition hover:dark:shadow-xl hover:dark:shadow-primary/20 rounded-md hover:dark:border-primary hover:border-primary hover:scale-[103%] ease duration-200"
           >
