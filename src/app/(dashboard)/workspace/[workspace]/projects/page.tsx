@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import ProjectList from '@/components/projects/ProjectList'
+import CreateProject from '@/components/projects/CreateProjectDialog'
 
 export default function Home({ params }: { params: { workspace: string } }) {
   return (
@@ -21,9 +22,8 @@ export default function Home({ params }: { params: { workspace: string } }) {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
           <TypographyH2>Projects</TypographyH2>
-          <Button size={'icon'}>
-            <Icons.plus />
-          </Button>
+
+          <CreateProject workspaceId={params?.workspace} />
         </div>
 
         <Select>
