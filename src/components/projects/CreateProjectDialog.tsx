@@ -117,11 +117,11 @@ const CreateProject: React.FC<Props> = ({ workspaceId }) => {
             </div>
 
             <div className="flex flex-col gap-1.5 items-start justify-center">
-              <Label htmlFor="name" className="text-right pl-1">
-                Name
+              <Label htmlFor="description" className="text-right pl-1">
+                Description
               </Label>
               <Textarea
-                id="name"
+                id="description"
                 value={description}
                 disabled={isLoading}
                 onChange={(e) => setDescription(e.target.value)}
