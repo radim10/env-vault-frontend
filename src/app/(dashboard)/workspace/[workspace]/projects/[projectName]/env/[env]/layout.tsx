@@ -1,7 +1,5 @@
 'use client'
 
-import Header from '@/components/Header'
-import Sidebar from '@/components/Sidebar'
 import EnvTabs from '@/components/environments/EnvTabs'
 import { Icons } from '@/components/icons'
 import Link from 'next/link'
@@ -16,10 +14,10 @@ export default function EnvLayout({
 }) {
   return (
     <>
-      <div className="flex justify-between items-center mt-1">
+      <div className="flex justify-between items-center -mt-1 sticky top-0 bg-background py-2 w-full z-[500]">
         <div className="flex gap-2 items-center">
           <Link
-            href={`/workspace/s/projects`}
+            href={`/workspace/${params?.workspace}/projects/${params?.projectName}`}
             className="text-primary hover:text-primary hover:underline underline-offset-4"
           >
             <div className="font-semibold text-2xl">{params?.projectName}</div>
@@ -32,13 +30,13 @@ export default function EnvLayout({
         </div>
       </div>
       {/**/}
-      <div className="mt-8">
+      <div className="mt-6">
         <EnvTabs
           envName={params.env}
           workspaceId={params?.workspace}
           projectName={params?.projectName}
         />
-        <div className="mt-12">{children}</div>
+        <div className="mt-4">{children}</div>
       </div>
     </>
   )
