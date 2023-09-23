@@ -13,3 +13,8 @@ export interface NewProject {
   name: string
   description?: string
 }
+
+export interface UpdatedProjectData {
+  name?: string
+  description?: string | null
+}
