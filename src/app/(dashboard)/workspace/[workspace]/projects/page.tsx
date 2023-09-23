@@ -10,6 +10,11 @@ import {
 } from '@/components/ui/select'
 import ProjectList from '@/components/projects/ProjectList'
 import CreateProject from '@/components/projects/CreateProjectDialog'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Projects',
+}
 
 export default function Home({ params }: { params: { workspace: string } }) {
   return (
