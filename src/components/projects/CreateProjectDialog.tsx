@@ -18,7 +18,6 @@ import { Textarea } from '../ui/textarea'
 import { useCreateProject } from '@/api/mutations/projects'
 import { ListProject, NewProject } from '@/types/projects'
 import { useQueryClient } from '@tanstack/react-query'
-import { CreateProjectError } from '@/api/requests/projects'
 
 interface Props {
   workspaceId: string

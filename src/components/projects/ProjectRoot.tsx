@@ -13,11 +13,12 @@ import {
 } from '@/components/ui/dropdown-menu'
 import clsx from 'clsx'
 import { Icons } from '../icons'
-import { useGetProject } from '@/api/queries/projects'
+import { useGetProject } from '@/api/queries/projects/root'
 import Link from 'next/link'
 import { useQueryClient } from '@tanstack/react-query'
 import { ListProject, UpdatedProjectData } from '@/types/projects'
 import UpdateProjectDialog from './UpdateProjectDialog'
+import { EnvironmentList } from '../environments/EnvironmentList'
 
 const dropdownItems = [
   { label: 'Rename', icon: Icons.pencil },
@@ -188,6 +189,14 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
             </div>
           </div>
         </div>
+      </div>
+      {/* Content */}
+      <div className="mt-16">
+        <EnvironmentList
+          workspaceId={workspaceId}
+          projectName={project?.name}
+          values={project?.environments}
+        />
       </div>
     </div>
   )

@@ -1,6 +1,6 @@
 'use client'
 
-import { useGetProjects } from '@/api/queries/projects'
+import { useGetProjects } from '@/api/queries/projects/root'
 import Link from 'next/link'
 import React from 'react'
 import { Icons } from '../icons'
