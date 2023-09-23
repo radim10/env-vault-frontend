@@ -14,7 +14,7 @@ export const useGetSecrets = (
   opt?: UseQueryOptions<GetSecretsData, GetSecretsError>
 ) =>
   useQuery<GetSecretsData, GetSecretsError>(
-    ['secrets', args.workspaceId, args.projectName, args.envName],
+    [args.workspaceId, args.projectName, args.envName, 'secrets'],
     () => {
       return getSecrets(args)
     },
