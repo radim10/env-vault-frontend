@@ -1,4 +1,4 @@
-import { NewProject, UpdateProjectData } from '@/types/projects'
+import { NewProject, UpdatedProjectData } from '@/types/projects'
 import {
   CreateProjectError,
   CreateProjectResData,
@@ -26,7 +26,7 @@ export const useCreateProject = (opt?: MutOpt<CreateProjectResData>) =>
 type UpdateProjectVariables = {
   workspaceId: string
   name: string
-  data: UpdateProjectData
+  data: UpdatedProjectData
 }
 
 export const useUpdateProject = (opt?: MutOpt<UpdateProjectResData>) =>

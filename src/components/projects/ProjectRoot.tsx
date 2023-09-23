@@ -16,7 +16,7 @@ import { Icons } from '../icons'
 import { useGetProject } from '@/api/queries/projects'
 import Link from 'next/link'
 import { useQueryClient } from '@tanstack/react-query'
-import { ListProject, UpdateProjectData } from '@/types/projects'
+import { ListProject, UpdatedProjectData } from '@/types/projects'
 import UpdateProjectDialog from './UpdateProjectDialog'
 
 const dropdownItems = [
@@ -89,7 +89,7 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
     router.push(`/workspace/${workspaceId}/projects`)
   }
 
-  const handleUpdatedProject = (updated: UpdateProjectData) => {
+  const handleUpdatedProject = (updated: UpdatedProjectData) => {
     setUpdateDialogOpened(false)
 
     queryClient.setQueryData(['project', workspaceId, projectName], {
