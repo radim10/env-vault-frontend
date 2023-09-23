@@ -1,4 +1,4 @@
-import { ListProject, NewProject, Project, UpdateProjectData } from '@/types/projects'
+import { ListProject, NewProject, Project, UpdatedProjectData } from '@/types/projects'
 import sendRequest, { APIError } from '../instance'
 
 // list
@@ -56,7 +56,7 @@ export type UpdateProjectResData = Awaited<ReturnType<typeof updateProject>>
 export async function updateProject(args: {
   workspaceId: string
   name: string
-  data: UpdateProjectData
+  data: UpdatedProjectData
 }) {
   const { workspaceId, name, data } = args
 
