@@ -19,6 +19,7 @@ import {
   Trash,
   Webhook,
   Pencil,
+  AlertCircle,
 } from 'lucide-react'
 
 export const Icons = {
@@ -42,4 +43,5 @@ export const Icons = {
   trash: Trash,
   webhook: Webhook,
   pencil: Pencil,
+  alertCircle: AlertCircle,
 }
