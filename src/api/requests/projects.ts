@@ -1,4 +1,4 @@
-import { ListProject, NewProject, Project } from '@/types/projects'
+import { ListProject, NewProject, Project, UpdateProjectData } from '@/types/projects'
 import sendRequest, { APIError } from '../instance'
 
 // list
@@ -43,6 +43,28 @@ export async function createProject(args: { workspaceId: string; data: NewProjec
     basePath: 'workspaces',
     path: `${workspaceId}/projects`,
     body: args.data,
+  })
+  return await response
+}
+
+// update
+export type UpdateProjectError = APIError<
+  'Workspace not found' | 'Project already exists' | 'Project not found'
+>
+export type UpdateProjectResData = Awaited<ReturnType<typeof updateProject>>
+
+export async function updateProject(args: {
+  workspaceId: string
+  name: string
+  data: UpdateProjectData
+}) {
+  const { workspaceId, name, data } = args
+
+  const response = sendRequest<undefined>({
+    method: 'PATCH',
+    basePath: 'workspaces',
+    path: `${workspaceId}/projects/${name}`,
+    body: data,
   })
   return await response
 }

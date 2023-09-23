@@ -1,11 +1,14 @@
-import { NewProject } from '@/types/projects'
+import { NewProject, UpdateProjectData } from '@/types/projects'
 import {
   CreateProjectError,
   CreateProjectResData,
   DeleteProjectError,
   DeleteProjectResData,
+  UpdateProjectError,
+  UpdateProjectResData,
   createProject,
   deleteProject,
+  updateProject,
 } from '../requests/projects'
 import { MutOpt } from './mutOpt'
 import { useMutation } from '@tanstack/react-query'
@@ -18,6 +21,16 @@ type CreateProjectVariables = {
 
 export const useCreateProject = (opt?: MutOpt<CreateProjectResData>) =>
   useMutation<CreateProjectResData, CreateProjectError, CreateProjectVariables>(createProject, opt)
+
+// update
+type UpdateProjectVariables = {
+  workspaceId: string
+  name: string
+  data: UpdateProjectData
+}
+
+export const useUpdateProject = (opt?: MutOpt<UpdateProjectResData>) =>
+  useMutation<UpdateProjectResData, UpdateProjectError, UpdateProjectVariables>(updateProject, opt)
 
 // delete
 type DeleteProjectVariables = {
