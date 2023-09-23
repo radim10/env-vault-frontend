@@ -18,7 +18,7 @@ const ProjectList: React.FC<Props> = ({ workspace }) => {
   if (isLoading) {
     return (
       <div className="lg:grid lg:grid-cols-3 gap-4 flex flex-col">
-        {Array.from({ length: 3 }).map(() => (
+        {Array.from({ length: 6 }).map(() => (
           <div className="h-[8.2rem]  rounded-md border-2 dark:border-gray-800 animate-pulse dark:bg-gray-900" />
         ))}
       </div>
