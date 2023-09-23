@@ -16,7 +16,8 @@ import { Icons } from '../icons'
 import { useGetProject } from '@/api/queries/projects'
 import Link from 'next/link'
 import { useQueryClient } from '@tanstack/react-query'
-import { ListProject } from '@/types/projects'
+import { ListProject, UpdateProjectData } from '@/types/projects'
+import UpdateProjectDialog from './UpdateProjectDialog'
 
 const dropdownItems = [
   { label: 'Rename', icon: Icons.pencil },
@@ -36,6 +37,7 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
   const queryClient = useQueryClient()
 
   const [deleteDialogOpened, setDeleteDialogOpened] = useState(false)
+  const [updateDialogOpened, setUpdateDialogOpened] = useState(false)
 
   const {
     data: project,
@@ -81,21 +83,62 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
 
     toast({
       title: 'Project has been deleted',
+      variant: 'success',
     })
 
     router.push(`/workspace/${workspaceId}/projects`)
   }
 
+  const handleUpdatedProject = (updated: UpdateProjectData) => {
+    setUpdateDialogOpened(false)
+
+    queryClient.setQueryData(['project', workspaceId, projectName], {
+      ...project,
+      ...updated,
+    })
+
+    // list
+    const listProjects = queryClient.getQueryData<ListProject[]>(['projects', workspaceId])
+
+    if (listProjects) {
+      const index = listProjects.findIndex((item) => item.name === projectName)
+
+      if (index) {
+        const updated = listProjects?.[index]
+        queryClient.setQueryData(['projects', workspaceId], updated)
+      }
+    }
+
+    toast({
+      title: 'Project has been updated',
+      variant: 'success',
+    })
+
+    if (updated?.name) {
+      router.push(`/workspace/${workspaceId}/projects/${updated.name}`)
+    }
+  }
+
   return (
     <div>
       {project && (
-        <DeleteProjectDialog
-          workspaceId={workspaceId}
-          projectName={project?.name}
-          opened={deleteDialogOpened}
-          onClose={() => setDeleteDialogOpened(false)}
-          onSuccess={() => handleRemovedProject()}
-        />
+        <>
+          <DeleteProjectDialog
+            workspaceId={workspaceId}
+            projectName={project?.name}
+            opened={deleteDialogOpened}
+            onClose={() => setDeleteDialogOpened(false)}
+            onSuccess={() => handleRemovedProject()}
+          />
+          <UpdateProjectDialog
+            opened={updateDialogOpened}
+            prevDesciption={project?.description ?? ''}
+            prevName={project?.name}
+            workspaceId={workspaceId}
+            onClose={() => setUpdateDialogOpened(false)}
+            onSuccess={handleUpdatedProject}
+          />
+        </>
       )}
       <div>
         <div className="flex justify-between items-center">
@@ -127,6 +170,8 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
                       onClick={() => {
                         if (item.label === 'Delete') {
                           setDeleteDialogOpened(true)
+                        } else if (item.label === 'Rename') {
+                          setUpdateDialogOpened(true)
                         }
                       }}
                       className={clsx(['flex items-center gap-3 px-3.5 py-2'], {
