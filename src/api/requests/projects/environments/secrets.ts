@@ -53,7 +53,7 @@ export async function getSecrets(args: {
   const response = sendRequest<Array<Secret>>({
     method: 'GET',
     basePath: 'workspaces',
-    path: `${workspaceId}/projects/${projectName}/env/${envName}/secrets`,
+    path: `${workspaceId}/projects/${projectName}/environments/${envName}/secrets`,
   })
   return await response
 }
