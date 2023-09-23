@@ -9,7 +9,7 @@ import {
   createProject,
   deleteProject,
   updateProject,
-} from '../requests/projects'
+} from '@/api/requests/projects/root'
 import { MutOpt } from './mutOpt'
 import { useMutation } from '@tanstack/react-query'
 

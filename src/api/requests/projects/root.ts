@@ -1,5 +1,5 @@
+import sendRequest, { APIError } from '@/api/instance'
 import { ListProject, NewProject, Project, UpdatedProjectData } from '@/types/projects'
-import sendRequest, { APIError } from '../instance'
 
 // list
 export type GetProjectsError = APIError<'Workspace not found'>
