@@ -46,3 +46,17 @@ export async function createProject(args: { workspaceId: string; data: NewProjec
   })
   return await response
 }
+
+export type DeleteProjectError = APIError<'Workspace not found' | 'Project note found'>
+export type DeleteProjectResData = Awaited<ReturnType<typeof deleteProject>>
+
+export async function deleteProject(args: { workspaceId: string; name: string }) {
+  const { workspaceId, name } = args
+
+  const response = sendRequest<undefined>({
+    method: 'DELETE',
+    basePath: 'workspaces',
+    path: `${workspaceId}/projects/${name}`,
+  })
+  return await response
+}
