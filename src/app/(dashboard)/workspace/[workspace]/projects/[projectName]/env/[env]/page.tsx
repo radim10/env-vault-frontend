@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import SecretsRoot from '@/components/secrects/SecretsRoot'
 import { Metadata, ResolvingMetadata } from 'next'
 
 export function generateMetadata(
@@ -14,10 +14,19 @@ export function generateMetadata(
   }
 }
 
+// secrets page
 export default function EnvPage({
   params,
 }: {
   params: { workspace: string; projectName: string; env: string }
 }) {
-  return <div>PAGE</div>
+  return (
+    <>
+      <SecretsRoot
+        workspaceId={params.workspace}
+        projectName={params.projectName}
+        envName={params.env}
+      />
+    </>
+  )
 }
