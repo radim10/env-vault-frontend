@@ -93,7 +93,7 @@ const CreateProject: React.FC<Props> = ({ workspaceId }) => {
         }}
       >
         <DialogTrigger asChild onClick={() => setOpened(true)}>
-          <Button size={'icon'}>
+          <Button size={'sm'}>
             <Icons.plus />
           </Button>
         </DialogTrigger>
