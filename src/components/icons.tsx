@@ -16,10 +16,17 @@ import {
   Menu,
   X,
   MoreHorizontal,
+  MoreVertical,
   Trash,
   Webhook,
   Pencil,
   AlertCircle,
+  EyeOff,
+  Eye,
+  Copy,
+  Archive,
+  Search,
+  Undo
 } from 'lucide-react'
 
 export const Icons = {
@@ -44,4 +51,11 @@ export const Icons = {
   webhook: Webhook,
   pencil: Pencil,
   alertCircle: AlertCircle,
+  moreVertical: MoreVertical,
+  eye: Eye,
+  eyeOff: EyeOff,
+  copy: Copy,
+  archive: Archive,
+  search: Search,
+  undo: Undo,
 }
