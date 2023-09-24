@@ -2,7 +2,10 @@
 
 import EnvTabs from '@/components/environments/EnvTabs'
 import { Icons } from '@/components/icons'
+import SaveSecretsToolbar from '@/components/secrects/SaveToolbar'
+import clsx from 'clsx'
 import Link from 'next/link'
+import { useWindowScroll } from 'react-use'
 
 // TODO: check if env exists
 export default function EnvLayout({
@@ -12,9 +15,20 @@ export default function EnvLayout({
   children: React.ReactNode
   params: { workspace: string; projectName: string; env: string }
 }) {
+  const { y } = useWindowScroll()
+
   return (
     <>
-      <div className="flex justify-between items-center -mt-1 sticky top-0 bg-background py-2 w-full z-[500]">
+      <div
+        className={clsx(
+          [
+            'flex justify-between items-center -mt-1 sticky top-0 bg-background py-2 w-full z-[500]',
+          ],
+          {
+            'border-b-2': y > 120,
+          }
+        )}
+      >
         <div className="flex gap-2 items-center">
           <Link
             href={`/workspace/${params?.workspace}/projects/${params?.projectName}`}
@@ -27,6 +41,9 @@ export default function EnvLayout({
             <Icons.chevronRight className="mt-1" />
           </div>
           <div className="font-semibold text-2xl ">{params?.env}</div>
+        </div>
+        <div>
+          <SaveSecretsToolbar />
         </div>
       </div>
       {/**/}
