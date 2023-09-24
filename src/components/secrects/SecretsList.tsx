@@ -134,8 +134,8 @@ const SecretsList: React.FC<Props> = ({ data }) => {
             <div className="flex-grow flex items-center gap-3">
               <div className="w-full flex justify-end items-center relative">
                 <Input
-                  type={hidden ? 'password' : 'text'}
-                  value={value}
+                  type="text"
+                  value={hidden ? '•••••••••••' : value}
                   placeholder="Empty value"
                   disabled={isSaving}
                   readOnly={
