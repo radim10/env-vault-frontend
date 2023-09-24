@@ -2,14 +2,14 @@ import { Secret } from '@/types/secrets'
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 
-type StateSecret = Secret & {
+export type StateSecret = Secret & {
   hidden: boolean
-  action: Action | null
+  action: SecretAction | null
   updatedKey?: boolean
   updatedValue?: boolean
 }
 
-enum Action {
+export enum SecretAction {
   Created,
   Updated,
   Archived,
@@ -51,7 +51,7 @@ export const useEditedSecretsStore = create(
           key: '',
           value: '',
           hidden: false,
-          action: Action.Created,
+          action: SecretAction.Created,
         })
       })
     },
@@ -74,13 +74,13 @@ export const useEditedSecretsStore = create(
       set((state) => {
         const item = state.secrets?.[index]
 
-        if (item.action === Action.Created) {
+        if (item.action === SecretAction.Created) {
           state.secrets.splice(index, 1)
         } else {
-          if (item.action === Action.Deleted) {
+          if (item.action === SecretAction.Deleted) {
             item.action = null
           } else {
-            item.action = Action.Deleted
+            item.action = SecretAction.Deleted
           }
         }
       }),
@@ -89,13 +89,13 @@ export const useEditedSecretsStore = create(
       set((state) => {
         const item = state?.secrets?.[index]
 
-        if (item.action === Action.Created) {
+        if (item.action === SecretAction.Created) {
           // no action
         } else {
-          if (item.action === Action.Archived) {
+          if (item.action === SecretAction.Archived) {
             item.action = null
           } else {
-            item.action = Action.Archived
+            item.action = SecretAction.Archived
           }
         }
       }),
@@ -105,11 +105,11 @@ export const useEditedSecretsStore = create(
         const item = state?.secrets?.[index]
         item.value = newValue
 
-        if (item?.action !== Action.Created) {
+        if (item?.action !== SecretAction.Created) {
           if (origValue !== newValue) {
-            item.action = Action.Updated
+            item.action = SecretAction.Updated
             item.updatedValue = true
-          } else if (item?.value === origValue && item.action === Action.Updated) {
+          } else if (item?.value === origValue && item.action === SecretAction.Updated) {
             item.action = null
             item.updatedValue = false
           }
@@ -122,11 +122,11 @@ export const useEditedSecretsStore = create(
         const item = state?.secrets?.[index]
         item.key = newKey.replace(/ /g, '_')
 
-        if (item?.action !== Action.Created) {
+        if (item?.action !== SecretAction.Created) {
           if (item?.key !== origKey) {
-            item.action = Action.Updated
+            item.action = SecretAction.Updated
             item.updatedKey = true
-          } else if (item?.key === origKey && item.action === Action.Updated) {
+          } else if (item?.key === origKey && item.action === SecretAction.Updated) {
             item.action = null
             item.updatedKey = false
           }
