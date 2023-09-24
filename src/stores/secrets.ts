@@ -17,6 +17,7 @@ export enum SecretAction {
 }
 
 export interface EditedSecretsState {
+  loaded: boolean
   secrets: StateSecret[]
 }
 
@@ -34,15 +35,18 @@ export interface EditSecretsActions {
 
 export const useEditedSecretsStore = create(
   immer<EditedSecretsState & EditSecretsActions>((set) => ({
+    loaded: false,
     secrets: [],
     reset: () => {
       set((state) => {
         state.secrets = []
+        state.loaded = false
       })
     },
     set: (secrets) => {
       set((state) => {
         state.secrets = secrets
+        state.loaded = true
       })
     },
     add: () => {
