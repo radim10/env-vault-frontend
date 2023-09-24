@@ -98,12 +98,12 @@ const SecretsList: React.FC<Props> = ({ data }) => {
       <SecretsToolbar secretsCount={secrets.length} />
       {/* // */}
       <div className="mt-4 w-full flex flex-col gap-7 md:gap-3 justify-center items-start">
-        {secrets.map(({ key, value, hidden, action, updatedValue, updatedKey }, index) => (
-          <div className="flex flex-col md:flex-row gap-2 lg:gap-3.5 w-full">
+        {secrets.map(({ key, value, hidden, action, newKey, newValue }, index) => (
+          <div key={index} className="flex flex-col md:flex-row gap-2 lg:gap-3.5 w-full">
             <div className="md:w-[35%] flex items-center gap-2 md:block ">
               <Input
                 type="text"
-                value={key}
+                value={newKey !== undefined ? newKey : key}
                 placeholder="Key"
                 readOnly={action === SecretAction.Archived || action === SecretAction.Deleted}
                 disabled={isSaving}
@@ -115,9 +115,11 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                   'border-indigo-500/70 focus-visible:ring-indigo-500/70 dark:border-indigo-600/70 dark:focus-visible:ring-indigo-600/70':
                     action === SecretAction.Archived,
                   'border-orange-500/70 focus-visible:ring-orange-500/70 dark:border-orange-600/70 dark:focus-visible:ring-orange-600/70':
-                    updatedKey === true,
+                    newKey !== undefined && action === SecretAction.Updated,
                   'border-green-500/70 focus-visible:ring-green-500/70 dark:border-green-600/70 dark:focus-visible:ring-green-600/70':
-                    action === SecretAction.Created && key?.trim().length !== 0,
+                    action === SecretAction.Created &&
+                    newKey?.trim().length !== 0 &&
+                    newKey !== undefined,
                 })}
               />
 
@@ -135,7 +137,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
               <div className="w-full flex justify-end items-center relative">
                 <Input
                   type="text"
-                  value={hidden ? '•••••••••••' : value}
+                  value={hidden ? '•••••••••••' : newValue !== undefined ? newValue : value}
                   placeholder="Empty value"
                   disabled={isSaving}
                   readOnly={
@@ -149,9 +151,11 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                       action === SecretAction.Archived,
                     'border-orange-500/70 focus-visible:ring-orange-500/70 dark:border-orange-600/70 dark:focus-visible:ring-orange-600/70':
                       // action === Action.Updated,
-                      updatedValue === true,
+                      newValue !== undefined && action === SecretAction.Updated,
                     'border-green-500/70 focus-visible:ring-green-500/70 dark:border-green-600/70 dark:focus-visible:ring-green-600/70':
-                      action === SecretAction.Created && value?.trim().length !== 0,
+                      action === SecretAction.Created &&
+                      newValue?.trim().length !== 0 &&
+                      newValue !== undefined,
                   })}
                 />
                 <div className="absolute mr-1.5 w-10 flex justify-center items-center">

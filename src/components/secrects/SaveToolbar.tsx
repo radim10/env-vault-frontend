@@ -67,10 +67,10 @@ const SaveSecretsToolbar = () => {
   const updateCache = () => {
     const updatedSecrets = secrets
       ?.filter((val) => val?.action !== SecretAction.Deleted)
-      ?.map(({ value, key }) => {
+      ?.map(({ value, key, newKey, newValue }) => {
         return {
-          key,
-          value,
+          key: newKey !== undefined ? newKey : key,
+          value: newValue !== undefined ? newValue : value,
         }
       })
 
@@ -81,7 +81,9 @@ const SaveSecretsToolbar = () => {
   }
 
   const handleOpenDialog = () => {
-    const secretWithNoKey = secrets?.findIndex((s) => s.key?.trim()?.length === 0)
+    const secretWithNoKey = secrets?.findIndex(
+      (s) => s.key?.trim()?.length === 0 && s.newKey?.trim()?.length === 0
+    )
 
     if (secretWithNoKey !== -1) {
       toast({
@@ -92,7 +94,18 @@ const SaveSecretsToolbar = () => {
       return
     }
 
-    if (hasDuplicates(secrets, 'key')) {
+    const allKeys = secrets?.map((s) => {
+      if (s.newKey !== undefined) {
+        return s.newKey
+      } else {
+        return s.key
+      }
+    })
+
+    const set = new Set(allKeys)
+
+    // if (hasDuplicates(secrets, 'key')) {
+    if (allKeys?.length !== set.size) {
       toast({
         title: 'All secrets must have a unique key',
         variant: 'destructive',

@@ -5,8 +5,10 @@ import { immer } from 'zustand/middleware/immer'
 export type StateSecret = Secret & {
   hidden: boolean
   action: SecretAction | null
-  updatedKey?: boolean
-  updatedValue?: boolean
+  // updatedKey?: boolean
+  // updatedValue?: boolean
+  newKey?: string
+  newValue?: string
 }
 
 export enum SecretAction {
@@ -107,15 +109,16 @@ export const useEditedSecretsStore = create(
     updateValue: ({ index, origValue, newValue }) => {
       set((state) => {
         const item = state?.secrets?.[index]
-        item.value = newValue
 
-        if (item?.action !== SecretAction.Created) {
+        if (item.action === SecretAction.Created) {
+          item.newValue = newValue
+        } else {
           if (origValue !== newValue) {
             item.action = SecretAction.Updated
-            item.updatedValue = true
+            item.newValue = newValue
           } else if (item?.value === origValue && item.action === SecretAction.Updated) {
             item.action = null
-            item.updatedValue = false
+            item.newValue = undefined
           }
         }
       })
@@ -124,18 +127,20 @@ export const useEditedSecretsStore = create(
     updateKey: ({ index, origKey, newKey }) => {
       set((state) => {
         const item = state?.secrets?.[index]
-        item.key = newKey
+        const k = newKey
           .replace(/[^a-zA-Z0-9 ]/g, '_')
           .replace(/ /g, '_')
           .toUpperCase()
 
-        if (item?.action !== SecretAction.Created) {
-          if (item?.key !== origKey) {
+        if (item.action === SecretAction.Created) {
+          item.newKey = k
+        } else {
+          if (newKey !== origKey) {
             item.action = SecretAction.Updated
-            item.updatedKey = true
+            item.newKey = k
           } else if (item?.key === origKey && item.action === SecretAction.Updated) {
             item.action = null
-            item.updatedKey = false
+            item.newKey = undefined
           }
         }
       })

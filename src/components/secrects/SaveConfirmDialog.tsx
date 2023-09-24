@@ -51,21 +51,14 @@ const SaveConfirmDialog: React.FC<Props> = ({
     let data: UpdatedSecretsBody = []
 
     // fix new key: state???
-    for (const { key, value, action, updatedKey, updatedValue } of changes) {
+    for (const { key, value, action, newKey, newValue } of changes) {
       const updated: UpdatedSecret = {
         // orig key
-        key: action !== SecretAction.Created ? key : undefined,
-        newKey:
-          action === SecretAction.Created || (updatedKey && action === SecretAction.Updated)
-            ? key
-            : undefined,
-        newValue:
-          action === SecretAction.Created || (updatedValue && action === SecretAction.Updated)
-            ? value
-            : undefined,
-        deleted: action === SecretAction.Deleted,
+        key: action === SecretAction.Created ? undefined : key,
+        newKey,
+        newValue,
+        deleted: action === SecretAction.Deleted ? true : undefined,
       }
-
       data.push(updated)
     }
 
