@@ -12,7 +12,12 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Button } from '../ui/button'
 import { Icons } from '../icons'
-import { useEditedSecretsStore } from '@/stores/secrets'
+import { SecretAction, useEditedSecretsStore } from '@/stores/secrets'
+import { useUpdateSecrets } from '@/api/mutations/secrets'
+import { UpdatedSecret, UpdatedSecretsBody } from '@/types/secrets'
+import { useParams } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
+import { useToast } from '../ui/use-toast'
 
 const dropdownActionItems = [
   { label: 'Rename', icon: Icons.pencil },
@@ -26,6 +31,11 @@ const dropdownActionSecretsItems = [
 ]
 
 const SaveSecretsToolbar = () => {
+  const { toast } = useToast()
+  const queryClient = useQueryClient()
+  // TODO: save current opened secret params to store???
+  const params = useParams() as { workspace: string; projectName: string; env: string }
+
   const { loaded, secrets } = useEditedSecretsStore((state) => {
     return {
       loaded: state.loaded,
@@ -33,9 +43,20 @@ const SaveSecretsToolbar = () => {
     }
   })
 
-  if (!loaded) {
-    return <></>
-  }
+  const {
+    mutate: updateSecret,
+    isLoading,
+    error,
+  } = useUpdateSecrets({
+    onSuccess: () => {
+      updateCache()
+
+      toast({
+        title: 'Secrets have been updated',
+        variant: 'success',
+      })
+    },
+  })
 
   const getChangesText = (): string => {
     const changes = secrets?.filter((s) => s.action !== null)
@@ -44,8 +65,61 @@ const SaveSecretsToolbar = () => {
     return `${changes?.length} ${text}`
   }
 
+  const handleUpdateSecrets = () => {
+    const changes = secrets?.filter((s) => s.action !== null)
+
+    let data: UpdatedSecretsBody = []
+
+    for (const { key, action, updatedKey, updatedValue } of changes) {
+      const updated: UpdatedSecret = {
+        // orig key
+        key: action !== SecretAction.Created ? key : undefined,
+        newKey:
+          action === SecretAction.Created || (updatedKey && action === SecretAction.Updated)
+            ? key
+            : undefined,
+        newValue:
+          action === SecretAction.Created || (updatedValue && action === SecretAction.Updated)
+            ? key
+            : undefined,
+        deleted: action === SecretAction.Deleted,
+      }
+
+      data.push(updated)
+    }
+
+    updateSecret({
+      workspaceId: params.workspace,
+      projectName: params.projectName,
+      envName: params.env,
+      data,
+    })
+
+    console.log(data)
+  }
+
+  const updateCache = () => {
+    const updatedSecrets = secrets
+      ?.filter((val) => val?.action !== SecretAction.Deleted)
+      ?.map(({ value, key }) => {
+        return {
+          key,
+          value,
+        }
+      })
+
+    queryClient.setQueryData(
+      [params.workspace, params.projectName, params.env, 'secrets'],
+      updatedSecrets
+    )
+  }
+
+  if (!loaded) {
+    return <></>
+  }
+
   return (
-    <div className="flex items-center gap-3 lg:gap-5">
+    <div className="flex items-center gap-3 lg:gap-5 -mt-1">
       {secrets?.filter((s) => s.action !== null).length > 0 && (
         <div className="text-[0.92rem] text-yellow-500 dark:text-yellow-600 font-medium">
           {getChangesText()}
@@ -57,6 +131,7 @@ const SaveSecretsToolbar = () => {
           className="gap-2"
           size="sm"
           disabled={!secrets?.filter((s) => s.action !== null)?.length}
+          onClick={handleUpdateSecrets}
         >
           <Icons.save className="w-4 h-4" />
           Save{' '}
