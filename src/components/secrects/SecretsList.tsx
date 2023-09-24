@@ -14,24 +14,10 @@ import { Icons } from '../icons'
 import { useMount, useUnmount } from 'react-use'
 import clsx from 'clsx'
 import SecretsToolbar from './SecretsToolbar'
-import { useEditedSecretsStore } from '@/stores/secrets'
+import { SecretAction, StateSecret, useEditedSecretsStore } from '@/stores/secrets'
 
 interface Props {
   data: Secret[]
-}
-
-type StateSecret = Secret & {
-  hidden: boolean
-  action: Action | null
-  updatedKey?: boolean
-  updatedValue?: boolean
-}
-
-enum Action {
-  Created,
-  Updated,
-  Archived,
-  Deleted,
 }
 
 const SecretsList: React.FC<Props> = ({ data }) => {
@@ -77,109 +63,18 @@ const SecretsList: React.FC<Props> = ({ data }) => {
 
   useUnmount(() => resetSecrets())
 
-  // const addSecret = () => {
-  //   setSecrets((draft) => {
-  //     draft.push({
-  //       key: '',
-  //       value: '',
-  //       hidden: false,
-  //       action: Action.Created,
-  //     })
-  //   })
-  // }
-  //
-  // const toggleVisibility = (index: number) => {
-  //   setSecrets((draft) => {
-  //     draft[index].hidden = !draft[index].hidden
-  //   })
-  // }
-
-  // const toggleDeleted = (index: number) => {
-  //   setSecrets((draft) => {
-  //     const item = draft[index]
-  //
-  //     if (item.action === Action.Created) {
-  //       draft.splice(index, 1)
-  //     } else {
-  //       if (item.action === Action.Deleted) {
-  //         item.action = null
-  //       } else {
-  //         item.action = Action.Deleted
-  //       }
-  //     }
-  //   })
-  // }
-
-  // const toggleArchived = (index: number) => {
-  //   setSecrets((draft) => {
-  //     const item = draft[index]
-  //
-  //     if (item.action === Action.Created) {
-  //       // no action
-  //     } else {
-  //       if (item.action === Action.Archived) {
-  //         item.action = null
-  //       } else {
-  //         item.action = Action.Archived
-  //       }
-  //     }
-  //   })
-  // }
-  //
-  // const updateValue = (index: number, value: string) => {
-  //   const origItem = data?.[index]
-  //
-  //   setSecrets((draft) => {
-  //     const item = draft[index]
-  //     item.value = value
-  //
-  //     if (item?.action !== Action.Created) {
-  //       if (origItem?.value !== value) {
-  //         item.action = Action.Updated
-  //         item.updatedValue = true
-  //       } else if (item?.value === origItem?.value && item.action === Action.Updated) {
-  //         item.action = null
-  //         item.updatedValue = false
-  //       }
-  //     }
-  //   })
-  // }
-
   const handleUpdateValue = (index: number, value: string) => {
     const origItem = data?.[index]
-
     updateValue({ index, origValue: origItem?.value, newValue: value })
   }
 
-  // const updateKey = (index: number, key: string) => {
-  //   const origItem = data?.[index]
-  //
-  //   setSecrets((draft) => {
-  //     const item = draft[index]
-  //     item.key = key.replace(/ /g, '_')
-  //
-  //     if (item?.action !== Action.Created) {
-  //       if (item?.key !== origItem?.key) {
-  //         item.action = Action.Updated
-  //         item.updatedKey = true
-  //       } else if (item?.key === origItem?.key && item.action === Action.Updated) {
-  //         item.action = null
-  //         item.updatedKey = false
-  //       }
-  //     }
-  //   })
-  // }
-  //
-
   const handleUpdateKey = (index: number, value: string) => {
     const origItem = data?.[index]
-
     updateKey({ index, origKey: origItem?.key, newKey: value })
   }
 
   const handleUndoChanges = (index: number) => {
     const dataItem = data?.[index]
-
     if (!dataItem) return
 
     undoChanges({ index, origItem: dataItem })
@@ -197,18 +92,18 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                 type="text"
                 value={key}
                 placeholder="Key"
-                readOnly={action === Action.Archived || action === Action.Deleted}
+                readOnly={action === SecretAction.Archived || action === SecretAction.Deleted}
                 onChange={(e) => handleUpdateKey(index, e.target.value)}
                 className={clsx({
                   'font-semibold': key.length > 0,
                   'border-red-500/70 focus-visible:ring-red-500/70 dark:border-red-600/70 dark:focus-visible:ring-red-600/70':
-                    action === Action.Deleted,
+                    action === SecretAction.Deleted,
                   'border-indigo-500/70 focus-visible:ring-indigo-500/70 dark:border-indigo-600/70 dark:focus-visible:ring-indigo-600/70':
-                    action === Action.Archived,
+                    action === SecretAction.Archived,
                   'border-orange-500/70 focus-visible:ring-orange-500/70 dark:border-orange-600/70 dark:focus-visible:ring-orange-600/70':
                     updatedKey === true,
                   'border-green-500/70 focus-visible:ring-green-500/70 dark:border-green-600/70 dark:focus-visible:ring-green-600/70':
-                    action === Action.Created && key?.trim().length !== 0,
+                    action === SecretAction.Created && key?.trim().length !== 0,
                 })}
               />
 
@@ -227,18 +122,20 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                   type={hidden ? 'password' : 'text'}
                   value={value}
                   placeholder="Empty value"
-                  readOnly={hidden || action === Action.Archived || action === Action.Deleted}
+                  readOnly={
+                    hidden || action === SecretAction.Archived || action === SecretAction.Deleted
+                  }
                   onChange={(e) => handleUpdateValue(index, e.target.value)}
                   className={clsx(['pr-12'], {
                     'border-red-500/70 focus-visible:ring-red-500/70 dark:border-red-600/70 dark:focus-visible:ring-red-600/70':
-                      action === Action.Deleted,
+                      action === SecretAction.Deleted,
                     'border-indigo-500/70 focus-visible:ring-indigo-500/70 dark:border-indigo-600/70 dark:focus-visible:ring-indigo-600/70':
-                      action === Action.Archived,
+                      action === SecretAction.Archived,
                     'border-orange-500/70 focus-visible:ring-orange-500/70 dark:border-orange-600/70 dark:focus-visible:ring-orange-600/70':
                       // action === Action.Updated,
                       updatedValue === true,
                     'border-green-500/70 focus-visible:ring-green-500/70 dark:border-green-600/70 dark:focus-visible:ring-green-600/70':
-                      action === Action.Created && value?.trim().length !== 0,
+                      action === SecretAction.Created && value?.trim().length !== 0,
                   })}
                 />
                 <div className="absolute mr-1.5 w-10 flex justify-center items-center">
