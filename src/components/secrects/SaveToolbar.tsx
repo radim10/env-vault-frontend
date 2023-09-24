@@ -82,7 +82,7 @@ const SaveSecretsToolbar = () => {
 
   const handleOpenDialog = () => {
     const secretWithNoKey = secrets?.findIndex(
-      (s) => s.key?.trim()?.length === 0 && s.newKey?.trim()?.length === 0
+      (s) => s.key?.trim()?.length === 0 && (s.newKey?.trim()?.length === 0 || !s?.newKey)
     )
 
     if (secretWithNoKey !== -1) {
