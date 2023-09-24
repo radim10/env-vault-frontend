@@ -11,7 +11,8 @@ import {
 } from '../ui/dropdown-menu'
 import { Button } from '../ui/button'
 import { Icons } from '../icons'
-import { useMount, useUnmount } from 'react-use'
+import { useMount, useUnmount, useUpdateEffect } from 'react-use'
+import { QueryClient, useIsMutating } from '@tanstack/react-query'
 import clsx from 'clsx'
 import SecretsToolbar from './SecretsToolbar'
 import { SecretAction, StateSecret, useEditedSecretsStore } from '@/stores/secrets'
@@ -21,6 +22,9 @@ interface Props {
 }
 
 const SecretsList: React.FC<Props> = ({ data }) => {
+  // const isSaving = queryClient.isMutating({mutationKey:['secrets-update']});
+  const isSaving = useIsMutating({ mutationKey: ['secrets-update'] }) === 1 ? true : false
+
   const {
     secrets,
     setSecrets,
@@ -47,7 +51,17 @@ const SecretsList: React.FC<Props> = ({ data }) => {
     }
   })
 
+  useUpdateEffect(() => {
+    setInititalState(data)
+  }, [data])
+
   useMount(() => {
+    setInititalState(data)
+  })
+
+  useUnmount(() => resetSecrets())
+
+  const setInititalState = (data: Secret[]) => {
     const values = data.map((secret) => {
       const value: StateSecret = {
         ...secret,
@@ -59,9 +73,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
     })
 
     setSecrets(values)
-  })
-
-  useUnmount(() => resetSecrets())
+  }
 
   const handleUpdateValue = (index: number, value: string) => {
     const origItem = data?.[index]
@@ -82,6 +94,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
 
   return (
     <>
+      {isSaving}
       <SecretsToolbar secretsCount={secrets.length} />
       {/* // */}
       <div className="mt-4 w-full flex flex-col gap-7 md:gap-3 justify-center items-start">
@@ -93,6 +106,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                 value={key}
                 placeholder="Key"
                 readOnly={action === SecretAction.Archived || action === SecretAction.Deleted}
+                disabled={isSaving}
                 onChange={(e) => handleUpdateKey(index, e.target.value)}
                 className={clsx({
                   'font-semibold': key.length > 0,
@@ -109,6 +123,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
 
               <div className="md:hidden">
                 <Dropdown
+                  disabled={isSaving}
                   onUndo={() => handleUndoChanges(index)}
                   onDelete={() => toggleDeleted(index)}
                   onArchive={() => toggleArchived(index)}
@@ -122,6 +137,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                   type={hidden ? 'password' : 'text'}
                   value={value}
                   placeholder="Empty value"
+                  disabled={isSaving}
                   readOnly={
                     hidden || action === SecretAction.Archived || action === SecretAction.Deleted
                   }
@@ -151,6 +167,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
 
               <div className="hidden md:block">
                 <Dropdown
+                  disabled={isSaving}
                   onUndo={() => handleUndoChanges(index)}
                   onDelete={() => toggleDeleted(index)}
                   onArchive={() => toggleArchived(index)}
@@ -163,7 +180,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
 
       {/* FOOTER  */}
       <div className="mt-5">
-        <Button className="gap-2" onClick={addSecret} variant="outline">
+        <Button className="gap-2" onClick={addSecret} variant="outline" disabled={isSaving}>
           <Icons.plus className="h-5 w-5" />
           Add new
         </Button>
@@ -173,13 +190,14 @@ const SecretsList: React.FC<Props> = ({ data }) => {
 }
 
 interface DropdowProps {
+  disabled: boolean
   onUndo: () => void
   onDelete: () => void
   onArchive: () => void
   onCopy?: () => void
 }
 
-const Dropdown: React.FC<DropdowProps> = ({ onUndo, onDelete, onArchive, onCopy }) => {
+const Dropdown: React.FC<DropdowProps> = ({ disabled, onUndo, onDelete, onArchive, onCopy }) => {
   const [opened, setOpen] = useState(false)
   const items = [
     {
@@ -202,7 +220,7 @@ const Dropdown: React.FC<DropdowProps> = ({ onUndo, onDelete, onArchive, onCopy 
 
   return (
     <DropdownMenu onOpenChange={(e) => setOpen(e)}>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger disabled={disabled}>
         <Button variant={!opened ? 'outline' : 'secondary'} size={'icon'}>
           {!opened ? <Icons.moreHorizontal className="h-5 w-5" /> : <Icons.x className="h-5 w-5" />}
         </Button>
