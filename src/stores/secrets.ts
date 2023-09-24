@@ -124,7 +124,10 @@ export const useEditedSecretsStore = create(
     updateKey: ({ index, origKey, newKey }) => {
       set((state) => {
         const item = state?.secrets?.[index]
-        item.key = newKey.replace(/ /g, '_')
+        item.key = newKey
+          .replace(/[^a-zA-Z0-9 ]/g, '_')
+          .replace(/ /g, '_')
+          .toUpperCase()
 
         if (item?.action !== SecretAction.Created) {
           if (item?.key !== origKey) {
