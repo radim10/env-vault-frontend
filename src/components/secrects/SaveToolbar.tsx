@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import clsx from 'clsx'
 import {
   DropdownMenu,
@@ -18,6 +18,8 @@ import { UpdatedSecret, UpdatedSecretsBody } from '@/types/secrets'
 import { useParams } from 'next/navigation'
 import { useQueryClient } from '@tanstack/react-query'
 import { useToast } from '../ui/use-toast'
+import SaveConfirmDialog from './SaveConfirmDialog'
+import hasDuplicates from '@/utils/hasDuplicates'
 
 const dropdownActionItems = [
   { label: 'Rename', icon: Icons.pencil },
@@ -36,26 +38,13 @@ const SaveSecretsToolbar = () => {
   // TODO: save current opened secret params to store???
   const params = useParams() as { workspace: string; projectName: string; env: string }
 
+  const [saveDialogOpened, setSaveDialogOpened] = useState(false)
+
   const { loaded, secrets } = useEditedSecretsStore((state) => {
     return {
       loaded: state.loaded,
       secrets: state.secrets,
     }
-  })
-
-  const {
-    mutate: updateSecret,
-    isLoading,
-    error,
-  } = useUpdateSecrets({
-    onSuccess: () => {
-      updateCache()
-
-      toast({
-        title: 'Secrets have been updated',
-        variant: 'success',
-      })
-    },
   })
 
   const getChangesText = (): string => {
@@ -65,37 +54,14 @@ const SaveSecretsToolbar = () => {
     return `${changes?.length} ${text}`
   }
 
-  const handleUpdateSecrets = () => {
-    const changes = secrets?.filter((s) => s.action !== null)
+  const handleUpdatedSecrets = () => {
+    setSaveDialogOpened(false)
 
-    let data: UpdatedSecretsBody = []
-
-    for (const { key, action, updatedKey, updatedValue } of changes) {
-      const updated: UpdatedSecret = {
-        // orig key
-        key: action !== SecretAction.Created ? key : undefined,
-        newKey:
-          action === SecretAction.Created || (updatedKey && action === SecretAction.Updated)
-            ? key
-            : undefined,
-        newValue:
-          action === SecretAction.Created || (updatedValue && action === SecretAction.Updated)
-            ? key
-            : undefined,
-        deleted: action === SecretAction.Deleted,
-      }
-
-      data.push(updated)
-    }
-
-    updateSecret({
-      workspaceId: params.workspace,
-      projectName: params.projectName,
-      envName: params.env,
-      data,
+    updateCache()
+    toast({
+      title: 'Secrets have been updated',
+      variant: 'success',
     })
-
-    console.log(data)
   }
 
   const updateCache = () => {
@@ -114,64 +80,103 @@ const SaveSecretsToolbar = () => {
     )
   }
 
+  const handleOpenDialog = () => {
+    const secretWithNoKey = secrets?.findIndex((s) => s.key?.trim()?.length === 0)
+
+    if (secretWithNoKey !== -1) {
+      toast({
+        title: 'All secrets must have a key',
+        variant: 'destructive',
+      })
+
+      return
+    }
+
+    if (hasDuplicates(secrets, 'key')) {
+      toast({
+        title: 'All secrets must have a unique key',
+        variant: 'destructive',
+      })
+
+      return
+    }
+
+    setSaveDialogOpened(true)
+  }
+
   if (!loaded) {
     return <></>
   }
 
   return (
-    <div className="flex items-center gap-3 lg:gap-5 -mt-1">
-      {secrets?.filter((s) => s.action !== null).length > 0 && (
-        <div className="text-[0.92rem] text-yellow-500 dark:text-yellow-600 font-medium">
-          {getChangesText()}
-        </div>
+    <>
+      {secrets?.filter((s) => s.action !== null)?.length !== 0 && (
+        <SaveConfirmDialog
+          opened={saveDialogOpened}
+          workspaceId={params.workspace}
+          projectName={params.projectName}
+          envName={params.env}
+          secrets={secrets}
+          onSuccess={handleUpdatedSecrets}
+          onClose={() => setSaveDialogOpened(false)}
+          changesCount={secrets?.filter((s) => s.action !== null)?.length}
+        />
       )}
 
-      <div className="flex items-center gap-2">
-        <Button
-          className="gap-2"
-          size="sm"
-          disabled={!secrets?.filter((s) => s.action !== null)?.length}
-          onClick={handleUpdateSecrets}
-        >
-          <Icons.save className="w-4 h-4" />
-          Save{' '}
-        </Button>
+      <div className="flex items-center gap-3 lg:gap-5 -mt-1">
+        {secrets?.filter((s) => s.action !== null).length > 0 && (
+          <div className="text-[0.92rem] text-yellow-500 dark:text-yellow-600 font-medium">
+            {getChangesText()}
+          </div>
+        )}
 
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <Button variant={'outline'} size={'sm'}>
-              <Icons.moreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="mr-10 w-[200px] mt-1">
-            {dropdownActionSecretsItems.map((item) => (
-              <DropdownMenuItem
-                onClick={() => {}}
-                className={clsx(['flex items-center gap-3 px-3.5 py-2'], {})}
-              >
-                <item.icon className={clsx(['h-4 w-4 opacity-70'])} />
-                <div className="">{item.label}</div>
-              </DropdownMenuItem>
-            ))}
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              {dropdownActionItems.map((item) => (
+        <div className="flex items-center gap-2">
+          <Button
+            className="gap-2"
+            size="sm"
+            disabled={!secrets?.filter((s) => s.action !== null)?.length}
+            onClick={handleOpenDialog}
+          >
+            <Icons.save className="w-4 h-4" />
+            Save{' '}
+          </Button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button variant={'outline'} size={'sm'}>
+                <Icons.moreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="mr-10 w-[200px] mt-1">
+              {dropdownActionSecretsItems.map((item) => (
                 <DropdownMenuItem
                   onClick={() => {}}
-                  className={clsx(['flex items-center gap-3 px-3.5 py-2'], {
-                    'text-red-500 dark:hover:text-red-500 hover:text-red-500':
-                      item.label === 'Delete',
-                  })}
+                  className={clsx(['flex items-center gap-3 px-3.5 py-2'], {})}
                 >
                   <item.icon className={clsx(['h-4 w-4 opacity-70'])} />
                   <div className="">{item.label}</div>
                 </DropdownMenuItem>
               ))}
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                {dropdownActionItems.map((item) => (
+                  <DropdownMenuItem
+                    onClick={() => {}}
+                    className={clsx(['flex items-center gap-3 px-3.5 py-2'], {
+                      'text-red-500 dark:hover:text-red-500 hover:text-red-500':
+                        item.label === 'Delete',
+                    })}
+                  >
+                    <item.icon className={clsx(['h-4 w-4 opacity-70'])} />
+                    <div className="">{item.label}</div>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
