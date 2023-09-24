@@ -21,9 +21,7 @@ export default function EnvLayout({
     <>
       <div
         className={clsx(
-          [
-            'flex justify-between items-center -mt-1 sticky top-0 bg-background py-2 w-full z-[500]',
-          ],
+          ['flex justify-between items-center -mt-1 sticky top-0 bg-background py-2 w-full z-10'],
           {
             'border-b-2': y > 120,
           }
