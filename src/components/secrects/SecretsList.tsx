@@ -129,6 +129,10 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                   onUndo={() => handleUndoChanges(index)}
                   onDelete={() => toggleDeleted(index)}
                   onArchive={() => toggleArchived(index)}
+                  canDelete={action === null}
+                  canUndo={action !== SecretAction.Created && action !== null}
+                  // canArchive={(action !== SecretAction.Created && action !== SecretAction.Deleted) || action === null}
+                  canArchive={action === null}
                 />
               </div>
             </div>
@@ -174,7 +178,10 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                   disabled={isSaving}
                   onUndo={() => handleUndoChanges(index)}
                   onDelete={() => toggleDeleted(index)}
+                  canDelete={action === null}
                   onArchive={() => toggleArchived(index)}
+                  canUndo={action !== SecretAction.Created && action !== null}
+                  canArchive={action === null}
                 />
               </div>
             </div>
@@ -195,22 +202,34 @@ const SecretsList: React.FC<Props> = ({ data }) => {
 
 interface DropdowProps {
   disabled: boolean
+  canUndo: boolean
+  canArchive: boolean
+  canDelete: boolean
   onUndo: () => void
   onDelete: () => void
   onArchive: () => void
   onCopy?: () => void
 }
 
-const Dropdown: React.FC<DropdowProps> = ({ disabled, onUndo, onDelete, onArchive, onCopy }) => {
+const Dropdown: React.FC<DropdowProps> = ({
+  disabled,
+  canArchive,
+  canUndo,
+  canDelete,
+  onUndo,
+  onDelete,
+  onArchive,
+  onCopy,
+}) => {
   const [opened, setOpen] = useState(false)
   const items = [
     {
-      icon: Icons.undo,
-      text: 'Undo',
-    },
-    {
       icon: Icons.copy,
       text: 'Copy',
+    },
+    {
+      icon: Icons.undo,
+      text: 'Undo',
     },
     {
       icon: Icons.archive,
@@ -233,6 +252,11 @@ const Dropdown: React.FC<DropdowProps> = ({ disabled, onUndo, onDelete, onArchiv
         {items?.map((item, index) => (
           <>
             <DropdownMenuItem
+              disabled={
+                (item.text === 'Undo' && !canUndo) ||
+                (item.text === 'Archive' && !canArchive) ||
+                (item.text === 'Delete' && !canDelete)
+              }
               onClick={() => {
                 if (item.text === 'Delete') {
                   onDelete()
@@ -243,7 +267,7 @@ const Dropdown: React.FC<DropdowProps> = ({ disabled, onUndo, onDelete, onArchiv
                   onUndo()
                 }
               }}
-              className={clsx(['flex gap-3 items-center'], {
+              className={clsx(['flex gap-4 items-center px-3.5'], {
                 'hover:text-red-500 text-red-500': index === items.length - 1,
               })}
             >
