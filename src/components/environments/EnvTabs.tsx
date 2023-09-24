@@ -27,7 +27,7 @@ const EnvTabs: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
           href={`/workspace/${workspaceId}/projects/${projectName}/env/${envName}/${href}`}
           className={clsx(
             [
-              'border-b-[3px] flex items-center gap-2 h-full hover:dark:text-gray-200 ease duration-150 px-2 lg:px-6 pb-3',
+              'border-b-[3px] flex items-center gap-2 h-full hover:dark:text-gray-200 ease duration-150 px-2 lg:px-3 pb-3',
             ],
             {
               'border-primary dark:text-gray-200 font-medium':
