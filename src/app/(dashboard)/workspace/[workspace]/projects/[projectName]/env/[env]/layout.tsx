@@ -3,9 +3,10 @@
 import EnvTabs from '@/components/environments/EnvTabs'
 import { Icons } from '@/components/icons'
 import SaveSecretsToolbar from '@/components/secrects/SaveToolbar'
+import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
 import clsx from 'clsx'
 import Link from 'next/link'
-import { useWindowScroll } from 'react-use'
+import { useMount, useUnmount, useWindowScroll } from 'react-use'
 
 // TODO: check if env exists
 export default function EnvLayout({
@@ -16,6 +17,17 @@ export default function EnvLayout({
   params: { workspace: string; projectName: string; env: string }
 }) {
   const { y } = useWindowScroll()
+  const selectedEnvironment = useSelectedEnvironmentStore()
+
+  useMount(() => {
+    selectedEnvironment.set({
+      workspaceId: params?.workspace,
+      projectName: params?.projectName,
+      envName: params?.env,
+    })
+  })
+
+  useUnmount(() => selectedEnvironment.reset())
 
   return (
     <>
