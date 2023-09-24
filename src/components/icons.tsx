@@ -26,7 +26,10 @@ import {
   Copy,
   Archive,
   Search,
-  Undo
+  Undo,
+  Save,
+  FileText,
+  FileJson,
 } from 'lucide-react'
 
 export const Icons = {
@@ -58,4 +61,7 @@ export const Icons = {
   archive: Archive,
   search: Search,
   undo: Undo,
+  save: Save,
+  fileText: FileText,
+  fileJson: FileJson,
 }
