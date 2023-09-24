@@ -56,7 +56,7 @@ const SaveConfirmDialog: React.FC<Props> = ({
         // orig key
         key: action === SecretAction.Created ? undefined : key,
         newKey,
-        newValue,
+        newValue: !newValue && action === SecretAction.Created ? "" : newValue,
         deleted: action === SecretAction.Deleted ? true : undefined,
       }
       data.push(updated)
