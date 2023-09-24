@@ -19,6 +19,7 @@ const dropdownActionItems = [
   { label: 'Delete', icon: Icons.trash },
 ]
 
+// TODO:
 const dropdownActionSecretsItems = [
   { label: 'Copy secrets (.env)', icon: Icons.fileText },
   { label: 'Copy secrets (json)', icon: Icons.fileJson },
