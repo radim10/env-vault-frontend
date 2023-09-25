@@ -19,6 +19,7 @@ import { useToast } from '../ui/use-toast'
 import SaveConfirmDialog from './SaveConfirmDialog'
 import RenameEnvironmentDialog from '../environments/RenameEnvironmentDialog'
 import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
+import DeleteEnvironmentDialog from '../environments/DeleteEnvironmentDialog'
 
 const dropdownActionItems = [
   { label: 'Rename', icon: Icons.pencil },
@@ -40,6 +41,7 @@ const SaveSecretsToolbar = () => {
 
   const [saveDialogOpened, setSaveDialogOpened] = useState(false)
   const [renameEnvDialogOpened, setEnvRenameDialogOpened] = useState(false)
+  const [deleteEnvDialogOpened, setDeleteEnvDialogOpened] = useState(false)
 
   const { loaded, secrets } = useEditedSecretsStore((state) => {
     return {
@@ -125,6 +127,11 @@ const SaveSecretsToolbar = () => {
     )
   }
 
+  const handleDeletedEnv = () => {
+    setDeleteEnvDialogOpened(false)
+    router.push(`/workspace/${selectedEnv?.workspaceId}/projects/${selectedEnv?.projectName}`)
+  }
+
   if (!loaded || !selectedEnv) {
     return <></>
   }
@@ -151,6 +158,15 @@ const SaveSecretsToolbar = () => {
         envName={selectedEnv.envName}
         onClose={() => setEnvRenameDialogOpened(false)}
         onSuccess={handleRenamedEnv}
+      />
+
+      <DeleteEnvironmentDialog
+        opened={deleteEnvDialogOpened}
+        workspaceId={selectedEnv.workspaceId}
+        projectName={selectedEnv.projectName}
+        envName={selectedEnv.envName}
+        onClose={() => setDeleteEnvDialogOpened(false)}
+        onSuccess={handleDeletedEnv}
       />
 
       <div className="flex items-center gap-3 lg:gap-5 -mt-1">
@@ -194,6 +210,8 @@ const SaveSecretsToolbar = () => {
                     onClick={() => {
                       if (item.label === 'Rename') {
                         setEnvRenameDialogOpened(true)
+                      } else if (item.label === 'Delete') {
+                        setDeleteEnvDialogOpened(true)
                       }
                     }}
                     className={clsx(['flex items-center gap-3 px-3.5 py-2'], {
