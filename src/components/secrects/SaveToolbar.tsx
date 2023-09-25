@@ -122,6 +122,34 @@ const SaveSecretsToolbar = () => {
     setSaveDialogOpened(true)
   }
 
+  const copyEnv = (type: 'env' | 'json') => {
+    const secretsData = queryClient.getQueryData<Secret[]>([
+      selectedEnv?.workspaceId,
+      selectedEnv?.projectName,
+      selectedEnv?.envName,
+      'secrets',
+    ])
+
+    if (!secretsData) return
+
+    if (type === 'env') {
+      const dotenvString = secretsData.map((obj) => `${obj.key}=${obj.value}`).join('\n')
+      navigator.clipboard.writeText(dotenvString)
+    } else {
+      const resultObject: { [key: string]: string } = secretsData.reduce((acc: any, obj: any) => {
+        acc[obj.key] = obj.value
+        return acc
+      }, {})
+
+      navigator.clipboard.writeText(JSON.stringify(resultObject, null, 2))
+    }
+
+    toast({
+      title: 'Environment secrets copied to clipboard!',
+      variant: 'success',
+    })
+  }
+
   const handleRenamedEnv = (newName: string) => {
     setEnvRenameDialogOpened(false)
 
@@ -264,9 +292,15 @@ const SaveSecretsToolbar = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="mr-10 w-[200px] mt-1">
-              {dropdownActionSecretsItems.map((item) => (
+              {dropdownActionSecretsItems.map((item, index) => (
                 <DropdownMenuItem
-                  onClick={() => {}}
+                  onClick={() => {
+                    if (index === 0 ){
+                      copyEnv('env')
+                    } else{
+                      copyEnv('json')
+                    }
+                  }}
                   className={clsx(['flex items-center gap-3 px-3.5 py-2'], {})}
                 >
                   <item.icon className={clsx(['h-4 w-4 opacity-70'])} />
