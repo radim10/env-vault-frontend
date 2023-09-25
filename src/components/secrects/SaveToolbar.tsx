@@ -13,13 +13,10 @@ import {
 import { Button } from '../ui/button'
 import { Icons } from '../icons'
 import { SecretAction, useEditedSecretsStore } from '@/stores/secrets'
-import { useUpdateSecrets } from '@/api/mutations/secrets'
-import { UpdatedSecret, UpdatedSecretsBody } from '@/types/secrets'
 import { useParams } from 'next/navigation'
 import { useQueryClient } from '@tanstack/react-query'
 import { useToast } from '../ui/use-toast'
 import SaveConfirmDialog from './SaveConfirmDialog'
-import hasDuplicates from '@/utils/hasDuplicates'
 
 const dropdownActionItems = [
   { label: 'Rename', icon: Icons.pencil },
