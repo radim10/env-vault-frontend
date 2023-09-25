@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import clsx from 'clsx'
 import {
   DropdownMenu,
@@ -17,6 +18,7 @@ import { useParams } from 'next/navigation'
 import { useQueryClient } from '@tanstack/react-query'
 import { useToast } from '../ui/use-toast'
 import SaveConfirmDialog from './SaveConfirmDialog'
+import RenameEnvironmentDialog from '../environments/RenameEnvironmentDialog'
 
 const dropdownActionItems = [
   { label: 'Rename', icon: Icons.pencil },
@@ -30,12 +32,14 @@ const dropdownActionSecretsItems = [
 ]
 
 const SaveSecretsToolbar = () => {
+  const router = useRouter()
   const { toast } = useToast()
   const queryClient = useQueryClient()
   // TODO: save current opened secret params to store???
   const params = useParams() as { workspace: string; projectName: string; env: string }
 
   const [saveDialogOpened, setSaveDialogOpened] = useState(false)
+  const [renameEnvDialogOpened, setEnvRenameDialogOpened] = useState(false)
 
   const { loaded, secrets } = useEditedSecretsStore((state) => {
     return {
@@ -114,6 +118,11 @@ const SaveSecretsToolbar = () => {
     setSaveDialogOpened(true)
   }
 
+  const handleRenamedEnv = (newName: string) => {
+    setEnvRenameDialogOpened(false)
+    router.push(`/workspace/${params.workspace}/projects/${params.projectName}/env/${newName}`)
+  }
+
   if (!loaded) {
     return <></>
   }
@@ -132,6 +141,15 @@ const SaveSecretsToolbar = () => {
           changesCount={secrets?.filter((s) => s.action !== null)?.length}
         />
       )}
+
+      <RenameEnvironmentDialog
+        opened={renameEnvDialogOpened}
+        workspaceId={params.workspace}
+        projectName={params.projectName}
+        envName={params.env}
+        onClose={() => setEnvRenameDialogOpened(false)}
+        onSuccess={handleRenamedEnv}
+      />
 
       <div className="flex items-center gap-3 lg:gap-5 -mt-1">
         {secrets?.filter((s) => s.action !== null).length > 0 && (
@@ -171,7 +189,11 @@ const SaveSecretsToolbar = () => {
               <DropdownMenuGroup>
                 {dropdownActionItems.map((item) => (
                   <DropdownMenuItem
-                    onClick={() => {}}
+                    onClick={() => {
+                      if (item.label === 'Rename') {
+                        setEnvRenameDialogOpened(true)
+                      }
+                    }}
                     className={clsx(['flex items-center gap-3 px-3.5 py-2'], {
                       'text-red-500 dark:hover:text-red-500 hover:text-red-500':
                         item.label === 'Delete',
