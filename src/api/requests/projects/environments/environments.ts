@@ -27,3 +27,23 @@ export async function renameEnvironment(args: {
   })
   return await response
 }
+
+export type DeleteEnvironmentError = APIError<
+  'Workspace not found' | 'Project not found' | 'Environment not found'
+>
+export type DeleteEnvironmentResData = undefined
+
+export async function deleteEnvironment(args: {
+  workspaceId: string
+  projectName: string
+  envName: string
+}) {
+  const { workspaceId, projectName, envName } = args
+
+  const response = sendRequest<DeleteEnvironmentResData>({
+    method: 'DELETE',
+    basePath: 'workspaces',
+    path: `${workspaceId}/projects/${projectName}/environments/${envName}`,
+  })
+  return await response
+}
