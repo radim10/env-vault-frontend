@@ -3,14 +3,6 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import clsx from 'clsx'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { Button } from '../ui/button'
 import { Icons } from '../icons'
 import { SecretAction, useEditedSecretsStore } from '@/stores/secrets'
@@ -22,6 +14,7 @@ import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
 import DeleteEnvironmentDialog from '../environments/DeleteEnvironmentDialog'
 import { Project } from '@/types/projects'
 import { Secret } from '@/types/secrets'
+import EnvActionsDropdown from './EnvActionsDropdown'
 
 const dropdownActionItems = [
   { label: 'Rename', icon: Icons.pencil },
@@ -285,51 +278,11 @@ const SaveSecretsToolbar = () => {
             Save{' '}
           </Button>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <Button variant={'outline'} size={'sm'}>
-                <Icons.moreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="mr-10 w-[200px] mt-1">
-              {dropdownActionSecretsItems.map((item, index) => (
-                <DropdownMenuItem
-                  onClick={() => {
-                    if (index === 0 ){
-                      copyEnv('env')
-                    } else{
-                      copyEnv('json')
-                    }
-                  }}
-                  className={clsx(['flex items-center gap-3 px-3.5 py-2'], {})}
-                >
-                  <item.icon className={clsx(['h-4 w-4 opacity-70'])} />
-                  <div className="">{item.label}</div>
-                </DropdownMenuItem>
-              ))}
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                {dropdownActionItems.map((item) => (
-                  <DropdownMenuItem
-                    onClick={() => {
-                      if (item.label === 'Rename') {
-                        setEnvRenameDialogOpened(true)
-                      } else if (item.label === 'Delete') {
-                        setDeleteEnvDialogOpened(true)
-                      }
-                    }}
-                    className={clsx(['flex items-center gap-3 px-3.5 py-2'], {
-                      'text-red-500 dark:hover:text-red-500 hover:text-red-500':
-                        item.label === 'Delete',
-                    })}
-                  >
-                    <item.icon className={clsx(['h-4 w-4 opacity-70'])} />
-                    <div className="">{item.label}</div>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <EnvActionsDropdown
+            onCopy={copyEnv}
+            onDelete={() => setDeleteEnvDialogOpened(true)}
+            onRename={() => setEnvRenameDialogOpened(true)}
+          />
         </div>
       </div>
     </>
