@@ -14,11 +14,11 @@ import {
 import { Button } from '../ui/button'
 import { Icons } from '../icons'
 import { SecretAction, useEditedSecretsStore } from '@/stores/secrets'
-import { useParams } from 'next/navigation'
 import { useQueryClient } from '@tanstack/react-query'
 import { useToast } from '../ui/use-toast'
 import SaveConfirmDialog from './SaveConfirmDialog'
 import RenameEnvironmentDialog from '../environments/RenameEnvironmentDialog'
+import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
 
 const dropdownActionItems = [
   { label: 'Rename', icon: Icons.pencil },
@@ -35,8 +35,8 @@ const SaveSecretsToolbar = () => {
   const router = useRouter()
   const { toast } = useToast()
   const queryClient = useQueryClient()
-  // TODO: save current opened secret params to store???
-  const params = useParams() as { workspace: string; projectName: string; env: string }
+
+  const selectedEnv = useSelectedEnvironmentStore((state) => state?.data)
 
   const [saveDialogOpened, setSaveDialogOpened] = useState(false)
   const [renameEnvDialogOpened, setEnvRenameDialogOpened] = useState(false)
@@ -76,7 +76,7 @@ const SaveSecretsToolbar = () => {
       })
 
     queryClient.setQueryData(
-      [params.workspace, params.projectName, params.env, 'secrets'],
+      [selectedEnv?.workspaceId, selectedEnv?.projectName, selectedEnv?.envName, 'secrets'],
       updatedSecrets
     )
   }
@@ -120,10 +120,12 @@ const SaveSecretsToolbar = () => {
 
   const handleRenamedEnv = (newName: string) => {
     setEnvRenameDialogOpened(false)
-    router.push(`/workspace/${params.workspace}/projects/${params.projectName}/env/${newName}`)
+    router.push(
+      `/workspace/${selectedEnv?.workspaceId}/projects/${selectedEnv?.projectName}/env/${newName}`
+    )
   }
 
-  if (!loaded) {
+  if (!loaded || !selectedEnv) {
     return <></>
   }
 
@@ -132,9 +134,9 @@ const SaveSecretsToolbar = () => {
       {secrets?.filter((s) => s.action !== null)?.length !== 0 && (
         <SaveConfirmDialog
           opened={saveDialogOpened}
-          workspaceId={params.workspace}
-          projectName={params.projectName}
-          envName={params.env}
+          workspaceId={selectedEnv.workspaceId}
+          projectName={selectedEnv.projectName}
+          envName={selectedEnv.envName}
           secrets={secrets}
           onSuccess={handleUpdatedSecrets}
           onClose={() => setSaveDialogOpened(false)}
@@ -144,9 +146,9 @@ const SaveSecretsToolbar = () => {
 
       <RenameEnvironmentDialog
         opened={renameEnvDialogOpened}
-        workspaceId={params.workspace}
-        projectName={params.projectName}
-        envName={params.env}
+        workspaceId={selectedEnv.workspaceId}
+        projectName={selectedEnv.projectName}
+        envName={selectedEnv.envName}
         onClose={() => setEnvRenameDialogOpened(false)}
         onSuccess={handleRenamedEnv}
       />
