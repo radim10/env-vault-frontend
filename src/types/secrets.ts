@@ -10,6 +10,7 @@ export interface UpdatedSecret {
   newKey?: string
   newValue?: string
   deleted?: boolean
+  archived?: boolean
 }
 
 export type UpdatedSecretsBody = Array<UpdatedSecret>

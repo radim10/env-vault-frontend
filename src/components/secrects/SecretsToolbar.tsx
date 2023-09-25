@@ -16,7 +16,19 @@ const SecretsToolbar: React.FC<Props> = ({ secretsCount }) => {
         </div>
         {/* */}
 
-        <div>
+        <div className="flex gap-2 items-center">
+          {/* <div className="flex items-center gap-2"> */}
+          {/*   <div> */}
+          {/*     <Button size={'sm'} variant="ghost"> */}
+          {/*       Active */}
+          {/*     </Button> */}
+          {/*   </div> */}
+          {/*   <div> */}
+          {/*     <Button size={'sm'} variant={'secondary'}> */}
+          {/*       Archived */}
+          {/*     </Button> */}
+          {/*   </div> */}
+          {/* </div> */}
           <div className="relative">
             <Icons.search className="h-4 w-4 pointer-events-none absolute top-1/2 transform -translate-y-1/2 left-3" />
 
