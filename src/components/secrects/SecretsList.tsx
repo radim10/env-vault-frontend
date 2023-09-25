@@ -102,6 +102,28 @@ const SecretsList: React.FC<Props> = ({ data }) => {
     })
   }
 
+  if (!data?.length && secrets?.length === 0) {
+    return (
+      <div className="flex items-center justify-center mt-16">
+        <div className="flex flex-col items-center gap-2">
+          <div>
+            <Icons.inbox className="h-20 w-20 opacity-30" />
+          </div>
+          <div className="text-center">
+            <span className="text-lg font-bold opacity-85">No secrets here...</span>
+            <div className="my-1">Add secrets to this environment</div>
+            <div className="mt-5">
+              <Button className="gap-2" onClick={addSecret} variant="default" disabled={isSaving}>
+                <Icons.plus className="h-5 w-5" />
+                Add secret
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <>
       {isSaving}
