@@ -146,7 +146,7 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
           <div className="flex gap-2 items-center">
             <Link
               href={`/workspace/${workspaceId}/projects`}
-              className="text-primary hover:text-primary hover:underline underline-offset-4"
+              className="text-primary hover:text-primary hover:underline underline-offset-4 underline-offset-[6px] hover:decoration-2"
             >
               <div className="font-semibold text-2xl">Projects</div>
             </Link>
