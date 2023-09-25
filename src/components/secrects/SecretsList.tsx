@@ -17,6 +17,7 @@ import clsx from 'clsx'
 import SecretsToolbar from './SecretsToolbar'
 import { SecretAction, StateSecret, useEditedSecretsStore } from '@/stores/secrets'
 import { useToast } from '../ui/use-toast'
+import GenerateSecretDialog from './GenerateSecretDialog'
 
 interface Props {
   data: Secret[]
@@ -25,6 +26,7 @@ interface Props {
 const SecretsList: React.FC<Props> = ({ data }) => {
   const { toast } = useToast()
   const isSaving = useIsMutating({ mutationKey: ['secrets-update'] }) === 1 ? true : false
+  const [genereteDialogIndex, setGenerateDialogIndex] = useState<number | null>(null)
 
   const {
     search,
@@ -104,6 +106,11 @@ const SecretsList: React.FC<Props> = ({ data }) => {
     })
   }
 
+  const handleConfirmGeneratedSecret = (index: number, value: string) => {
+    handleUpdateValue(index, value)
+    setGenerateDialogIndex(null)
+  }
+
   if (!data?.length && secrets?.length === 0) {
     return (
       <div className="flex items-center justify-center mt-16">
@@ -128,7 +135,14 @@ const SecretsList: React.FC<Props> = ({ data }) => {
 
   return (
     <>
-      {isSaving}
+      <GenerateSecretDialog
+        index={genereteDialogIndex ?? 0}
+        opened={genereteDialogIndex !== null}
+        onClose={() => setGenerateDialogIndex(null)}
+        onConfirm={(value) => handleConfirmGeneratedSecret(genereteDialogIndex ?? 0, value)}
+      />
+      {/*  */}
+
       <SecretsToolbar secretsCount={secrets.length} />
       {/* // */}
       <div className="mt-4 w-full flex flex-col gap-7 md:gap-3 justify-center items-start">
@@ -182,12 +196,14 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                 <div className="md:hidden">
                   <Dropdown
                     disabled={isSaving}
+                    isCreated={action === SecretAction.Created}
                     onUndo={() => handleUndoChanges(index)}
                     onDelete={() => toggleDeleted(index)}
                     onArchive={() => toggleArchived(index)}
                     canDelete={action === null || action === SecretAction.Created}
                     canUndo={action !== SecretAction.Created && action !== null}
                     onCopy={() => copyValueToClipboard(value)}
+                    onGenerate={() => setGenerateDialogIndex(index)}
                     // canArchive={(action !== SecretAction.Created && action !== SecretAction.Deleted) || action === null}
                     canArchive={action === null}
                   />
@@ -233,12 +249,14 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                 <div className="hidden md:block">
                   <Dropdown
                     disabled={isSaving}
+                    isCreated={action === SecretAction.Created}
                     onUndo={() => handleUndoChanges(index)}
                     onDelete={() => toggleDeleted(index)}
                     canDelete={action === null || action === SecretAction.Created}
                     onArchive={() => toggleArchived(index)}
                     onCopy={() => copyValueToClipboard(value)}
                     canUndo={action !== SecretAction.Created && action !== null}
+                    onGenerate={() => setGenerateDialogIndex(index)}
                     canArchive={action === null}
                   />
                 </div>
@@ -262,6 +280,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
 
 interface DropdowProps {
   disabled: boolean
+  isCreated: boolean
   canUndo: boolean
   canArchive: boolean
   canDelete: boolean
@@ -269,10 +288,12 @@ interface DropdowProps {
   onDelete: () => void
   onArchive: () => void
   onCopy: () => void
+  onGenerate: () => void
 }
 
 const Dropdown: React.FC<DropdowProps> = ({
   disabled,
+  isCreated,
   canArchive,
   canUndo,
   canDelete,
@@ -280,9 +301,14 @@ const Dropdown: React.FC<DropdowProps> = ({
   onDelete,
   onArchive,
   onCopy,
+  onGenerate,
 }) => {
   const [opened, setOpen] = useState(false)
   const items = [
+    {
+      icon: Icons.refresh,
+      text: 'Generate',
+    },
     {
       icon: Icons.copy,
       text: 'Copy',
@@ -309,34 +335,40 @@ const Dropdown: React.FC<DropdowProps> = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mr-10 w-[150px] py-1 shadow-lg shadow-primary-foreground">
-        {items?.map((item, index) => (
-          <>
-            <DropdownMenuItem
-              disabled={
-                (item.text === 'Undo' && !canUndo) ||
-                (item.text === 'Archive' && !canArchive) ||
-                (item.text === 'Delete' && !canDelete)
-              }
-              onClick={() => {
-                if (item.text === 'Delete') {
-                  onDelete()
-                } else if (item.text === 'Archive') {
-                  onArchive()
-                } else if (item.text === 'Copy') {
-                  onCopy()
-                } else if (item.text === 'Undo') {
-                  onUndo()
+        {items
+          ?.filter((val) =>
+            isCreated ? val.text !== 'Archive' && val?.text !== 'Undo' : val?.text !== 'Generate'
+          )
+          ?.map((item) => (
+            <>
+              <DropdownMenuItem
+                disabled={
+                  (item.text === 'Undo' && !canUndo) ||
+                  (item.text === 'Archive' && !canArchive) ||
+                  (item.text === 'Delete' && !canDelete)
                 }
-              }}
-              className={clsx(['flex gap-4 items-center px-3.5'], {
-                'hover:text-red-500 text-red-500': index === items.length - 1,
-              })}
-            >
-              <item.icon className=" h-4 w-4 opacity-70" />
-              <>{item.text}</>
-            </DropdownMenuItem>
-          </>
-        ))}
+                onClick={() => {
+                  if (item.text === 'Delete') {
+                    onDelete()
+                  } else if (item.text === 'Archive') {
+                    onArchive()
+                  } else if (item.text === 'Copy') {
+                    onCopy()
+                  } else if (item.text === 'Undo') {
+                    onUndo()
+                  } else if (item.text === 'Generate') {
+                    onGenerate()
+                  }
+                }}
+                className={clsx(['flex gap-4 items-center px-3.5'], {
+                  'hover:text-red-500 text-red-500': item.text === 'Delete',
+                })}
+              >
+                <item.icon className=" h-4 w-4 opacity-70" />
+                <>{item.text}</>
+              </DropdownMenuItem>
+            </>
+          ))}
       </DropdownMenuContent>
     </DropdownMenu>
   )
