@@ -31,6 +31,7 @@ import {
   FileText,
   FileJson,
   Inbox,
+  SearchX
 } from 'lucide-react'
 
 export const Icons = {
@@ -66,4 +67,5 @@ export const Icons = {
   fileText: FileText,
   fileJson: FileJson,
   inbox: Inbox,
+  searchX: SearchX
 }

@@ -19,11 +19,13 @@ export enum SecretAction {
 }
 
 export interface EditedSecretsState {
+  search: string 
   loaded: boolean
   secrets: StateSecret[]
 }
 
 export interface EditSecretsActions {
+  setSearch: (search: string) => void
   reset: () => void
   set: (secrets: StateSecret[]) => void
   add: () => void
@@ -37,12 +39,19 @@ export interface EditSecretsActions {
 
 export const useEditedSecretsStore = create(
   immer<EditedSecretsState & EditSecretsActions>((set) => ({
+    search: "",
     loaded: false,
     secrets: [],
+    setSearch: (search) => {
+      set((state) => {
+        state.search = search
+      })
+    },
     reset: () => {
       set((state) => {
         state.secrets = []
         state.loaded = false
+        state.search = ""
       })
     },
     set: (secrets) => {
