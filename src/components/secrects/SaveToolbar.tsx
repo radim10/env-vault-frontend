@@ -20,6 +20,8 @@ import SaveConfirmDialog from './SaveConfirmDialog'
 import RenameEnvironmentDialog from '../environments/RenameEnvironmentDialog'
 import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
 import DeleteEnvironmentDialog from '../environments/DeleteEnvironmentDialog'
+import { Project } from '@/types/projects'
+import { Secret } from '@/types/secrets'
 
 const dropdownActionItems = [
   { label: 'Rename', icon: Icons.pencil },
@@ -122,6 +124,55 @@ const SaveSecretsToolbar = () => {
 
   const handleRenamedEnv = (newName: string) => {
     setEnvRenameDialogOpened(false)
+
+    // update cache cache
+    // TODO: update single item (check if env exists)
+
+    // update list
+    const projectData = queryClient.getQueryData<Project>([
+      'project',
+      selectedEnv?.workspaceId,
+      selectedEnv?.projectName,
+    ])
+
+    if (projectData) {
+      const environments = projectData?.environments
+      const prevName = selectedEnv?.envName
+
+      const updatedEnvIndex = environments?.findIndex((e) => e.name === prevName)
+
+      if (updatedEnvIndex !== -1) {
+        const updated = environments?.[updatedEnvIndex]
+        updated.name = newName
+
+        queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
+          ...projectData,
+          environments,
+        })
+      }
+    }
+
+    // updated secrets under new name
+    const secretsData = queryClient.getQueryData<Secret[]>([
+      selectedEnv?.workspaceId,
+      selectedEnv?.projectName,
+      selectedEnv?.envName,
+      'secrets',
+    ])
+
+    if (secretsData) {
+      queryClient.setQueryData(
+        [selectedEnv?.workspaceId, selectedEnv?.projectName, newName, 'secrets'],
+        secretsData
+      )
+      // queryClient.invalidateQueries([
+      //   selectedEnv?.workspaceId,
+      //   selectedEnv?.projectName,
+      //   selectedEnv?.envName,
+      //   'secrets',
+      // ])
+    }
+
     router.push(
       `/workspace/${selectedEnv?.workspaceId}/projects/${selectedEnv?.projectName}/env/${newName}`
     )
@@ -129,6 +180,25 @@ const SaveSecretsToolbar = () => {
 
   const handleDeletedEnv = () => {
     setDeleteEnvDialogOpened(false)
+
+    // update cache
+    // TODO: update single item (check if env exists)
+    const projectData = queryClient.getQueryData<Project>([
+      'project',
+      selectedEnv?.workspaceId,
+      selectedEnv?.projectName,
+    ])
+
+    if (projectData) {
+      const environments = projectData?.environments
+      const updatedEnvironments = environments?.filter((val) => val?.name !== selectedEnv?.envName)
+
+      queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
+        ...projectData,
+        environments: updatedEnvironments,
+      })
+    }
+
     router.push(`/workspace/${selectedEnv?.workspaceId}/projects/${selectedEnv?.projectName}`)
   }
 
