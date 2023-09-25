@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import clsx from 'clsx'
 import { Button } from '../ui/button'
 import { Icons } from '../icons'
 import { SecretAction, useEditedSecretsStore } from '@/stores/secrets'
