@@ -16,13 +16,14 @@ import { QueryClient, useIsMutating } from '@tanstack/react-query'
 import clsx from 'clsx'
 import SecretsToolbar from './SecretsToolbar'
 import { SecretAction, StateSecret, useEditedSecretsStore } from '@/stores/secrets'
+import { useToast } from '../ui/use-toast'
 
 interface Props {
   data: Secret[]
 }
 
 const SecretsList: React.FC<Props> = ({ data }) => {
-  // const isSaving = queryClient.isMutating({mutationKey:['secrets-update']});
+  const { toast } = useToast()
   const isSaving = useIsMutating({ mutationKey: ['secrets-update'] }) === 1 ? true : false
 
   const {
@@ -92,6 +93,15 @@ const SecretsList: React.FC<Props> = ({ data }) => {
     undoChanges({ index, origItem: dataItem })
   }
 
+  const copyValueToClipboard = (value: string) => {
+    navigator.clipboard.writeText(value ?? '')
+
+    toast({
+      title: 'Value copied to clipboard!',
+      variant: 'success',
+    })
+  }
+
   return (
     <>
       {isSaving}
@@ -129,8 +139,9 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                   onUndo={() => handleUndoChanges(index)}
                   onDelete={() => toggleDeleted(index)}
                   onArchive={() => toggleArchived(index)}
-                  canDelete={action === null}
+                  canDelete={action === null || action  === SecretAction.Created}
                   canUndo={action !== SecretAction.Created && action !== null}
+                  onCopy={() => copyValueToClipboard(value)}
                   // canArchive={(action !== SecretAction.Created && action !== SecretAction.Deleted) || action === null}
                   canArchive={action === null}
                 />
@@ -178,8 +189,9 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                   disabled={isSaving}
                   onUndo={() => handleUndoChanges(index)}
                   onDelete={() => toggleDeleted(index)}
-                  canDelete={action === null}
+                  canDelete={action === null || action  === SecretAction.Created}
                   onArchive={() => toggleArchived(index)}
+                  onCopy={() => copyValueToClipboard(value)}
                   canUndo={action !== SecretAction.Created && action !== null}
                   canArchive={action === null}
                 />
@@ -208,7 +220,7 @@ interface DropdowProps {
   onUndo: () => void
   onDelete: () => void
   onArchive: () => void
-  onCopy?: () => void
+  onCopy: () => void
 }
 
 const Dropdown: React.FC<DropdowProps> = ({
@@ -263,6 +275,7 @@ const Dropdown: React.FC<DropdowProps> = ({
                 } else if (item.text === 'Archive') {
                   onArchive()
                 } else if (item.text === 'Copy') {
+                  onCopy()
                 } else if (item.text === 'Undo') {
                   onUndo()
                 }
