@@ -119,7 +119,9 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                 disabled={isSaving}
                 onChange={(e) => handleUpdateKey(index, e.target.value)}
                 className={clsx({
-                  'font-semibold': key.length > 0,
+                  'font-semibold':
+                    key.length > 0 ||
+                    (newKey && newKey?.length > 0 && action === SecretAction.Created),
                   'border-red-500/70 focus-visible:ring-red-500/70 dark:border-red-600/70 dark:focus-visible:ring-red-600/70':
                     action === SecretAction.Deleted,
                   'border-indigo-500/70 focus-visible:ring-indigo-500/70 dark:border-indigo-600/70 dark:focus-visible:ring-indigo-600/70':
@@ -139,7 +141,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                   onUndo={() => handleUndoChanges(index)}
                   onDelete={() => toggleDeleted(index)}
                   onArchive={() => toggleArchived(index)}
-                  canDelete={action === null || action  === SecretAction.Created}
+                  canDelete={action === null || action === SecretAction.Created}
                   canUndo={action !== SecretAction.Created && action !== null}
                   onCopy={() => copyValueToClipboard(value)}
                   // canArchive={(action !== SecretAction.Created && action !== SecretAction.Deleted) || action === null}
@@ -189,7 +191,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                   disabled={isSaving}
                   onUndo={() => handleUndoChanges(index)}
                   onDelete={() => toggleDeleted(index)}
-                  canDelete={action === null || action  === SecretAction.Created}
+                  canDelete={action === null || action === SecretAction.Created}
                   onArchive={() => toggleArchived(index)}
                   onCopy={() => copyValueToClipboard(value)}
                   canUndo={action !== SecretAction.Created && action !== null}
