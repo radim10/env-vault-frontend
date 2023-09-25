@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import {
-  RenameEnvironmentErrorData,
+  RenameEnvironmentError,
   RenameEnvironmentResData,
   renameEnvironment,
 } from '../requests/projects/environments/environments'
@@ -17,7 +17,7 @@ type RenameEnvironmentVariables = {
 }
 
 export const useRenameEnvironment = (opt?: MutOpt<RenameEnvironmentResData>) =>
-  useMutation<RenameEnvironmentResData, RenameEnvironmentErrorData, RenameEnvironmentVariables>(
+  useMutation<RenameEnvironmentResData, RenameEnvironmentError, RenameEnvironmentVariables>(
     renameEnvironment,
     opt
   )

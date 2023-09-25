@@ -1,7 +1,7 @@
 import sendRequest, { APIError } from '@/api/instance'
 
 // TODO: error
-export type RenameEnvironmentErrorData = APIError<
+export type RenameEnvironmentError = APIError<
   | 'Workspace not found'
   | 'Project not found'
   | 'Environment not found'
