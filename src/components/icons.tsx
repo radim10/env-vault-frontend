@@ -30,6 +30,7 @@ import {
   Save,
   FileText,
   FileJson,
+  Inbox,
 } from 'lucide-react'
 
 export const Icons = {
@@ -64,4 +65,5 @@ export const Icons = {
   save: Save,
   fileText: FileText,
   fileJson: FileJson,
+  inbox: Inbox,
 }
