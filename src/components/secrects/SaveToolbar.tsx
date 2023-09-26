@@ -138,7 +138,15 @@ const SaveSecretsToolbar = () => {
     if (!secretsData) return
 
     if (type === 'env') {
-      const dotenvString = secretsData.map((obj) => `${obj.key}=${obj.value}`).join('\n')
+      const dotenvString = secretsData
+        .map((obj) => {
+          if (obj.description) {
+            return `# ${obj.description}\n${obj.key}=${obj.value}`
+          } else {
+            return `${obj.key}=${obj.value}`
+          }
+        })
+        .join('\n')
       navigator.clipboard.writeText(dotenvString)
     } else {
       const resultObject: { [key: string]: string } = secretsData.reduce((acc: any, obj: any) => {
