@@ -45,7 +45,14 @@ const SaveSecretsToolbar = () => {
   })
 
   const getChangesText = (): string => {
-    const changes = secrets?.filter((s) => s.action !== null)
+    const changes = secrets?.filter(
+      (s) =>
+        s.action !== null ||
+        (!s.description && s.newDescription) ||
+        (s.description && s.newDescription !== s.description && s.newDescription) ||
+        (s.newDescription && s.newDescription?.length === 0 && s.description) ||
+        (s.newDescription?.length === 0 && s.description)
+    )
     let text = changes?.length > 1 ? 'changes' : 'change'
 
     return `${changes?.length} ${text}`
@@ -64,10 +71,16 @@ const SaveSecretsToolbar = () => {
   const updateCache = () => {
     const updatedSecrets = secrets
       ?.filter((val) => val?.action !== SecretAction.Deleted)
-      ?.map(({ value, key, newKey, newValue }) => {
+      ?.map(({ value, key, newKey, newValue, newDescription, description }) => {
         return {
           key: newKey !== undefined ? newKey : key,
           value: newValue !== undefined ? newValue : value,
+          description:
+            newDescription !== undefined
+              ? newDescription?.length === 0
+                ? undefined
+                : newDescription
+              : description,
         }
       })
 
@@ -228,7 +241,7 @@ const SaveSecretsToolbar = () => {
 
   return (
     <>
-      {secrets?.filter((s) => s.action !== null)?.length !== 0 && (
+      {true && (
         <SaveConfirmDialog
           opened={saveDialogOpened}
           workspaceId={selectedEnv.workspaceId}
@@ -237,7 +250,14 @@ const SaveSecretsToolbar = () => {
           secrets={secrets}
           onSuccess={handleUpdatedSecrets}
           onClose={() => setSaveDialogOpened(false)}
-          changesCount={secrets?.filter((s) => s.action !== null)?.length}
+          changes={secrets?.filter(
+            (s) =>
+              s.action !== null ||
+              (s.newDescription && !s.description) ||
+              (s.description && s.newDescription !== s.description && s.newDescription) ||
+              (s.newDescription && s.newDescription?.length === 0 && s.description) ||
+              (s.newDescription?.length === 0 && s.description)
+          )}
         />
       )}
 
@@ -260,7 +280,13 @@ const SaveSecretsToolbar = () => {
       />
 
       <div className="flex items-center gap-3 lg:gap-5 -mt-1">
-        {secrets?.filter((s) => s.action !== null).length > 0 && (
+        {secrets?.filter(
+          (s) =>
+            s.action !== null ||
+            (!s.description && s.newDescription) ||
+            (s.description && s.newDescription !== s.description && s.newDescription) ||
+            (s.newDescription?.length === 0 && s.description)
+        ).length > 0 && (
           <div className="text-[0.92rem] text-yellow-500 dark:text-yellow-600 font-medium">
             {getChangesText()}
           </div>
@@ -270,7 +296,15 @@ const SaveSecretsToolbar = () => {
           <Button
             className="gap-2"
             size="sm"
-            disabled={!secrets?.filter((s) => s.action !== null)?.length}
+            disabled={
+              !secrets?.filter(
+                (s) =>
+                  s.action !== null ||
+                  (!s.description && s.newDescription) ||
+                  (s.description && s.newDescription !== s.description && s.newDescription) ||
+                  (s.newDescription?.length === 0 && s.description)
+              )?.length
+            }
             onClick={handleOpenDialog}
           >
             <Icons.save className="w-4 h-4" />
