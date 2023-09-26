@@ -337,7 +337,11 @@ const Dropdown: React.FC<DropdowProps> = ({
       <DropdownMenuContent className="mr-10 w-[150px] py-1 shadow-lg shadow-primary-foreground">
         {items
           ?.filter((val) =>
-            isCreated ? val.text !== 'Archive' && val?.text !== 'Undo' : val?.text !== 'Generate'
+            isCreated
+              ? val.text !== 'Archive' && val?.text !== 'Undo'
+              : !canDelete
+              ? val?.text !== 'Generate'
+              : val
           )
           ?.map((item) => (
             <>
