@@ -4,11 +4,13 @@ import { immer } from 'zustand/middleware/immer'
 
 export type StateSecret = Secret & {
   hidden: boolean
+  showDescription?: boolean
   action: SecretAction | null
   // updatedKey?: boolean
   // updatedValue?: boolean
   newKey?: string
   newValue?: string
+  newDescription?: string
 }
 
 export enum SecretAction {
@@ -19,7 +21,7 @@ export enum SecretAction {
 }
 
 export interface EditedSecretsState {
-  search: string 
+  search: string
   loaded: boolean
   secrets: StateSecret[]
 }
@@ -31,15 +33,21 @@ export interface EditSecretsActions {
   add: () => void
   undoChanges: (args: { index: number; origItem: Secret }) => void
   toggleVisibility: (index: number) => void
+  toggleDescription: (index: number) => void
   toggleDeleted: (index: number) => void
   toggleArchived: (index: number) => void
   updateValue: (args: { index: number; origValue: string; newValue: string }) => void
   updateKey: (args: { index: number; origKey: string; newKey: string }) => void
+  updateDescription: (args: {
+    index: number
+    origDescription?: string
+    newDescription: string
+  }) => void
 }
 
 export const useEditedSecretsStore = create(
   immer<EditedSecretsState & EditSecretsActions>((set) => ({
-    search: "",
+    search: '',
     loaded: false,
     secrets: [],
     setSearch: (search) => {
@@ -51,7 +59,7 @@ export const useEditedSecretsStore = create(
       set((state) => {
         state.secrets = []
         state.loaded = false
-        state.search = ""
+        state.search = ''
       })
     },
     set: (secrets) => {
@@ -76,12 +84,19 @@ export const useEditedSecretsStore = create(
           ...origItem,
           action: null,
           hidden: state?.secrets?.[index]?.hidden,
+          showDescription: state?.secrets?.[index]?.showDescription,
         }
       })
     },
     toggleVisibility: (index) => {
       set((state) => {
         state.secrets[index].hidden = !state.secrets[index].hidden
+      })
+    },
+
+    toggleDescription: (index) => {
+      set((state) => {
+        state.secrets[index].showDescription = !state.secrets[index].showDescription
       })
     },
 
@@ -150,6 +165,22 @@ export const useEditedSecretsStore = create(
           } else if (item?.key === origKey && item.action === SecretAction.Updated) {
             item.action = null
             item.newKey = undefined
+          }
+        }
+      })
+    },
+
+    updateDescription: ({ index, origDescription, newDescription }) => {
+      set((state) => {
+        const item = state?.secrets?.[index]
+
+        if (item.action === SecretAction.Created) {
+          item.newDescription = newDescription
+        } else {
+          if (newDescription !== origDescription) {
+            item.newDescription = newDescription
+          } else if (item?.description === newDescription) {
+            item.newDescription = undefined
           }
         }
       })
