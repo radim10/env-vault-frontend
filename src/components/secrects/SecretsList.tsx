@@ -85,26 +85,124 @@ const SecretsList: React.FC<Props> = ({ data }) => {
     setSecrets(values)
   }
 
-  const handleUpdateValue = (index: number, value: string) => {
-    const origItem = data?.[index]
-    updateValue({ index, origValue: origItem?.value, newValue: value })
+  const handleToggleVisibility = (args: { index: number; key: string }) => {
+    const { key, index } = args
+    if (search?.length === 0) {
+      toggleVisibility(index)
+    } else {
+      const origIndex = data?.findIndex((item) => item.key === key)
+
+      if (origIndex !== -1) {
+        toggleVisibility(origIndex)
+      }
+    }
   }
 
-  const handleUpdateKey = (index: number, value: string) => {
-    const origItem = data?.[index]
-    updateKey({ index, origKey: origItem?.key, newKey: value })
+  // key as an id
+  const handleUpdateValue = (args: { index: number; key: string; value: string }) => {
+    const { index, key, value } = args
+
+    if (search?.length === 0) {
+      const origItem = data?.[index]
+
+      updateValue({ index, origValue: origItem?.value, newValue: value })
+    } else {
+      const origIndex = data?.findIndex((item) => item.key === key)
+
+      if (origIndex !== -1) {
+        const origItem = data?.[origIndex]
+        updateValue({ index: origIndex, origValue: origItem?.value, newValue: value })
+      }
+    }
   }
 
-  const handleUndoChanges = (index: number) => {
-    const dataItem = data?.[index]
-    if (!dataItem) return
+  const handleUpdateKey = (args: { index: number; key: string; value: string }) => {
+    const { index, key, value } = args
 
-    undoChanges({ index, origItem: dataItem })
+    if (search?.length === 0) {
+      const origItem = data?.[index]
+      updateKey({ index, origKey: origItem?.key, newKey: value })
+    } else {
+      const origIndex = data?.findIndex((item) => item.key === key)
+
+      if (origIndex !== -1) {
+        const origItem = data?.[origIndex]
+        updateKey({ index: origIndex, origKey: origItem?.key, newKey: value })
+      }
+    }
   }
 
-  const handleUpdateDescription = (index: number, value: string) => {
-    const origItem = data?.[index]
-    updateDescription({ index, origDescription: origItem?.description, newDescription: value })
+  const handleUndoChanges = (args: { index: number; key: string }) => {
+    const { index, key } = args
+
+    if (search?.length === 0) {
+      const dataItem = data?.[index]
+      if (!dataItem) return
+      undoChanges({ index, origItem: dataItem })
+    } else {
+      const origIndex = data?.findIndex((item) => item.key === key)
+
+      if (origIndex !== -1) {
+        const dataItem = data?.[origIndex]
+        undoChanges({ index: origIndex, origItem: dataItem })
+      }
+    }
+  }
+
+  const handleToggleDeleted = (args: { index: number; key: string }) => {
+    const { index, key } = args
+
+    if (search?.length === 0) {
+      toggleDeleted(index)
+    } else {
+      const origIndex = data?.findIndex((item) => item.key === key)
+
+      if (origIndex !== -1) toggleDeleted(origIndex)
+    }
+  }
+
+  const handleToggleArchived = (args: { index: number; key: string }) => {
+    const { index, key } = args
+
+    if (search?.length === 0) {
+      toggleArchived(index)
+    } else {
+      const origIndex = data?.findIndex((item) => item.key === key)
+
+      if (origIndex !== -1) toggleArchived(origIndex)
+    }
+  }
+
+  const handleToggleDescription = (args: { index: number; key: string }) => {
+    const { index, key } = args
+
+    if (search?.length === 0) {
+      toggleDescription(index)
+    } else {
+      const origIndex = data?.findIndex((item) => item.key === key)
+
+      if (origIndex !== -1) toggleDescription(origIndex)
+    }
+  }
+
+  const handleUpdateDescription = (args: { index: number; key: string; value: string }) => {
+    const { index, key, value } = args
+
+    if (search?.length === 0) {
+      const origItem = data?.[index]
+      updateDescription({ index, origDescription: origItem?.description, newDescription: value })
+    } else {
+      const origIndex = data?.findIndex((item) => item.key === key)
+
+      if (origIndex !== -1) {
+        const origItem = data?.[origIndex]
+        updateDescription({
+          index: origIndex,
+          origDescription: origItem?.description,
+          newDescription: value,
+        })
+      }
+    }
   }
 
   const copyValueToClipboard = (value: string) => {
@@ -116,8 +214,23 @@ const SecretsList: React.FC<Props> = ({ data }) => {
     })
   }
 
+  const handleGenerateDialogOpen = (args: { key: string; index: number }) => {
+    if (search?.length === 0) {
+      setGenerateDialogIndex(args.index)
+    } else {
+      const origIndex = data?.findIndex((item) => item.key === args.key)
+
+      if (origIndex !== -1) {
+        setGenerateDialogIndex(origIndex)
+      }
+    }
+  }
+
+  // TODO:
   const handleConfirmGeneratedSecret = (index: number, value: string) => {
-    handleUpdateValue(index, value)
+    const origItem = data?.[index]
+    updateValue({ index, origValue: origItem?.value, newValue: value })
+
     setGenerateDialogIndex(null)
   }
 
@@ -149,7 +262,9 @@ const SecretsList: React.FC<Props> = ({ data }) => {
         index={genereteDialogIndex ?? 0}
         opened={genereteDialogIndex !== null}
         onClose={() => setGenerateDialogIndex(null)}
-        onConfirm={(value) => handleConfirmGeneratedSecret(genereteDialogIndex ?? 0, value)}
+        onConfirm={(value) => {
+          handleConfirmGeneratedSecret(genereteDialogIndex ?? 0, value)
+        }}
       />
       {/*  */}
 
@@ -199,7 +314,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                     placeholder="Key"
                     readOnly={action === SecretAction.Archived || action === SecretAction.Deleted}
                     disabled={isSaving}
-                    onChange={(e) => handleUpdateKey(index, e.target.value)}
+                    onChange={(e) => handleUpdateKey({ index, key, value: e.target.value })}
                     className={clsx({
                       'font-semibold':
                         key.length > 0 ||
@@ -221,9 +336,9 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                     <Dropdown
                       disabled={isSaving}
                       isCreated={action === SecretAction.Created}
-                      onUndo={() => handleUndoChanges(index)}
-                      onDelete={() => toggleDeleted(index)}
-                      onArchive={() => toggleArchived(index)}
+                      onUndo={() => handleUndoChanges({ index, key })}
+                      onDelete={() => handleToggleDeleted({ index, key })}
+                      onArchive={() => handleToggleArchived({ index, key })}
                       canDelete={action === null || action === SecretAction.Created}
                       canUndo={
                         (action !== SecretAction.Created && action !== null) ||
@@ -233,7 +348,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                           : false
                       }
                       onCopy={() => copyValueToClipboard(value)}
-                      onGenerate={() => setGenerateDialogIndex(index)}
+                      onGenerate={() => handleGenerateDialogOpen({ key, index })}
                       // canArchive={(action !== SecretAction.Created && action !== SecretAction.Deleted) || action === null}
                       canArchive={action === null}
                     />
@@ -253,7 +368,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                           action === SecretAction.Archived ||
                           action === SecretAction.Deleted
                         }
-                        onChange={(e) => handleUpdateValue(index, e.target.value)}
+                        onChange={(e) => handleUpdateValue({ index, key, value: e.target.value })}
                         className={clsx(['pr-[5.5em]'], {
                           'border-red-500/70 focus-visible:ring-red-500/70 dark:border-red-600/70 dark:focus-visible:ring-red-600/70':
                             action === SecretAction.Deleted,
@@ -269,23 +384,23 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                         })}
                       />
                       <div className="absolute mr-5 w-10 flex justify-center items-center gap-2 md:gap-3.5">
-                        <button onClick={() => toggleVisibility(index)}>
+                        <button onClick={() => handleToggleVisibility({ key, index })}>
                           {hidden ? (
                             <Icons.eye className="opacity-50 h-[1.1rem] w-[1.1rem] hover:text-primary hover:opacity-100" />
                           ) : (
                             <Icons.eyeOff className="opacity-50 h-[1.1rem] w-[1.1rem] hover:text-primary hover:opacity-100" />
                           )}
                         </button>
-                        <button onClick={() => toggleDescription(index)}>
+                        <button onClick={() => handleToggleDescription({ key, index })}>
                           <Icons.fileText
                             className={clsx(
-                              [
-                                'opacity-50 h-[1.1rem] w-[1.1rem] hover:text-primary hover:opacity-100',
-                              ],
+                              ['opacity-50 h-[1.1rem] w-[1.1rem]  hover:opacity-100'],
                               {
                                 'opacity-80': showDescription === true,
-                                'opacity-60': !showDescription,
-                                'text-primary':
+                                'opacity-[65%]': !showDescription,
+                                'hover:text-primary':
+                                  !description && (!newDescription || newDescription?.length === 0),
+                                'text-primary hover:text-primary':
                                   (description !== undefined && !newDescription) ||
                                   (showDescription && !newDescription && !description),
                                 'text-green-500/80 opacity-70':
@@ -312,10 +427,10 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                       <Dropdown
                         disabled={isSaving}
                         isCreated={action === SecretAction.Created}
-                        onUndo={() => handleUndoChanges(index)}
-                        onDelete={() => toggleDeleted(index)}
+                        onUndo={() => handleUndoChanges({ index, key })}
+                        onDelete={() => handleToggleDeleted({ index, key })}
                         canDelete={action === null || action === SecretAction.Created}
-                        onArchive={() => toggleArchived(index)}
+                        onArchive={() => handleToggleArchived({ index, key })}
                         onCopy={() => copyValueToClipboard(value)}
                         canUndo={
                           (action !== SecretAction.Created && action !== null) ||
@@ -324,7 +439,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                             ? true
                             : false
                         }
-                        onGenerate={() => setGenerateDialogIndex(index)}
+                        onGenerate={() => handleGenerateDialogOpen({ key, index })}
                         canArchive={action === null}
                       />
                     </div>
@@ -351,7 +466,9 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                           action !== SecretAction.Deleted,
                       })}
                       value={newDescription !== undefined ? newDescription : description}
-                      onChange={(e) => handleUpdateDescription(index, e.target.value)}
+                      onChange={(e) =>
+                        handleUpdateDescription({ index, key, value: e.target.value })
+                      }
                       readOnly={action === SecretAction.Archived || action === SecretAction.Deleted}
                     />
                   )}
