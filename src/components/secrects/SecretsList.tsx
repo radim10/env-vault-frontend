@@ -36,10 +36,12 @@ const SecretsList: React.FC<Props> = ({ data }) => {
     resetSecrets,
     undoChanges,
     toggleVisibility,
+    toggleDescription,
     toggleDeleted,
     toggleArchived,
     updateValue,
     updateKey,
+    updateDescription,
   } = useEditedSecretsStore((state) => {
     return {
       search: state.search,
@@ -48,11 +50,13 @@ const SecretsList: React.FC<Props> = ({ data }) => {
       addSecret: state.add,
       resetSecrets: state.reset,
       toggleVisibility: state.toggleVisibility,
+      toggleDescription: state.toggleDescription,
       undoChanges: state.undoChanges,
       toggleDeleted: state.toggleDeleted,
       toggleArchived: state.toggleArchived,
       updateValue: state.updateValue,
       updateKey: state.updateKey,
+      updateDescription: state.updateDescription,
     }
   })
 
@@ -72,6 +76,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
         ...secret,
         hidden: true,
         action: null,
+        showDescription: secret?.description ? true : undefined,
       }
 
       return value
@@ -95,6 +100,11 @@ const SecretsList: React.FC<Props> = ({ data }) => {
     if (!dataItem) return
 
     undoChanges({ index, origItem: dataItem })
+  }
+
+  const handleUpdateDescription = (index: number, value: string) => {
+    const origItem = data?.[index]
+    updateDescription({ index, origDescription: origItem?.description, newDescription: value })
   }
 
   const copyValueToClipboard = (value: string) => {
@@ -166,103 +176,177 @@ const SecretsList: React.FC<Props> = ({ data }) => {
           .filter(
             (val) => search?.length === 0 || val?.key.toLowerCase().includes(search.toLowerCase())
           )
-          ?.map(({ key, value, hidden, action, newKey, newValue }, index) => (
-            <div key={index} className="flex flex-col md:flex-row gap-2 lg:gap-3.5 w-full">
-              <div className="md:w-[35%] flex items-center gap-2 md:block ">
-                <Input
-                  type="text"
-                  value={newKey !== undefined ? newKey : key}
-                  placeholder="Key"
-                  readOnly={action === SecretAction.Archived || action === SecretAction.Deleted}
-                  disabled={isSaving}
-                  onChange={(e) => handleUpdateKey(index, e.target.value)}
-                  className={clsx({
-                    'font-semibold':
-                      key.length > 0 ||
-                      (newKey && newKey?.length > 0 && action === SecretAction.Created),
-                    'border-red-500/70 focus-visible:ring-red-500/70 dark:border-red-600/70 dark:focus-visible:ring-red-600/70':
-                      action === SecretAction.Deleted,
-                    'border-indigo-500/70 focus-visible:ring-indigo-500/70 dark:border-indigo-600/70 dark:focus-visible:ring-indigo-600/70':
-                      action === SecretAction.Archived,
-                    'border-orange-500/70 focus-visible:ring-orange-500/70 dark:border-orange-600/70 dark:focus-visible:ring-orange-600/70':
-                      newKey !== undefined && action === SecretAction.Updated,
-                    'border-green-500/70 focus-visible:ring-green-500/70 dark:border-green-600/70 dark:focus-visible:ring-green-600/70':
-                      action === SecretAction.Created &&
-                      newKey?.trim().length !== 0 &&
-                      newKey !== undefined,
-                  })}
-                />
-
-                <div className="md:hidden">
-                  <Dropdown
-                    disabled={isSaving}
-                    isCreated={action === SecretAction.Created}
-                    onUndo={() => handleUndoChanges(index)}
-                    onDelete={() => toggleDeleted(index)}
-                    onArchive={() => toggleArchived(index)}
-                    canDelete={action === null || action === SecretAction.Created}
-                    canUndo={action !== SecretAction.Created && action !== null}
-                    onCopy={() => copyValueToClipboard(value)}
-                    onGenerate={() => setGenerateDialogIndex(index)}
-                    // canArchive={(action !== SecretAction.Created && action !== SecretAction.Deleted) || action === null}
-                    canArchive={action === null}
-                  />
-                </div>
-              </div>
-
-              <div className="flex-grow flex items-center gap-3">
-                <div className="w-full flex justify-end items-center relative">
+          ?.map(
+            (
+              {
+                key,
+                value,
+                hidden,
+                action,
+                newKey,
+                newValue,
+                description,
+                newDescription,
+                showDescription,
+              },
+              index
+            ) => (
+              <div key={index} className="flex flex-col md:flex-row gap-2 lg:gap-3.5 w-full">
+                <div className="md:w-[35%] flex items-center gap-2 md:block ">
                   <Input
                     type="text"
-                    value={hidden ? '•••••••••••' : newValue !== undefined ? newValue : value}
-                    placeholder="Empty value"
+                    value={newKey !== undefined ? newKey : key}
+                    placeholder="Key"
+                    readOnly={action === SecretAction.Archived || action === SecretAction.Deleted}
                     disabled={isSaving}
-                    readOnly={
-                      hidden || action === SecretAction.Archived || action === SecretAction.Deleted
-                    }
-                    onChange={(e) => handleUpdateValue(index, e.target.value)}
-                    className={clsx(['pr-12'], {
+                    onChange={(e) => handleUpdateKey(index, e.target.value)}
+                    className={clsx({
+                      'font-semibold':
+                        key.length > 0 ||
+                        (newKey && newKey?.length > 0 && action === SecretAction.Created),
                       'border-red-500/70 focus-visible:ring-red-500/70 dark:border-red-600/70 dark:focus-visible:ring-red-600/70':
                         action === SecretAction.Deleted,
                       'border-indigo-500/70 focus-visible:ring-indigo-500/70 dark:border-indigo-600/70 dark:focus-visible:ring-indigo-600/70':
                         action === SecretAction.Archived,
                       'border-orange-500/70 focus-visible:ring-orange-500/70 dark:border-orange-600/70 dark:focus-visible:ring-orange-600/70':
-                        // action === Action.Updated,
-                        newValue !== undefined && action === SecretAction.Updated,
+                        newKey !== undefined && action === SecretAction.Updated,
                       'border-green-500/70 focus-visible:ring-green-500/70 dark:border-green-600/70 dark:focus-visible:ring-green-600/70':
                         action === SecretAction.Created &&
-                        newValue?.trim().length !== 0 &&
-                        newValue !== undefined,
+                        newKey?.trim().length !== 0 &&
+                        newKey !== undefined,
                     })}
                   />
-                  <div className="absolute mr-1.5 w-10 flex justify-center items-center">
-                    <button onClick={() => toggleVisibility(index)}>
-                      {hidden ? (
-                        <Icons.eye className="opacity-60 h-[1.1rem] w-[1.1rem] hover:text-primary hover:opacity-100" />
-                      ) : (
-                        <Icons.eyeOff className="opacity-60 h-[1.1rem] w-[1.1rem] hover:text-primary hover:opacity-100" />
-                      )}
-                    </button>
+
+                  <div className="md:hidden">
+                    <Dropdown
+                      disabled={isSaving}
+                      isCreated={action === SecretAction.Created}
+                      onUndo={() => handleUndoChanges(index)}
+                      onDelete={() => toggleDeleted(index)}
+                      onArchive={() => toggleArchived(index)}
+                      canDelete={action === null || action === SecretAction.Created}
+                      canUndo={action !== SecretAction.Created && action !== null}
+                      onCopy={() => copyValueToClipboard(value)}
+                      onGenerate={() => setGenerateDialogIndex(index)}
+                      // canArchive={(action !== SecretAction.Created && action !== SecretAction.Deleted) || action === null}
+                      canArchive={action === null}
+                    />
                   </div>
                 </div>
 
-                <div className="hidden md:block">
-                  <Dropdown
-                    disabled={isSaving}
-                    isCreated={action === SecretAction.Created}
-                    onUndo={() => handleUndoChanges(index)}
-                    onDelete={() => toggleDeleted(index)}
-                    canDelete={action === null || action === SecretAction.Created}
-                    onArchive={() => toggleArchived(index)}
-                    onCopy={() => copyValueToClipboard(value)}
-                    canUndo={action !== SecretAction.Created && action !== null}
-                    onGenerate={() => setGenerateDialogIndex(index)}
-                    canArchive={action === null}
-                  />
+                <div className="flex flex-grow flex-col gap-2.5">
+                  <div className="flex-grow flex items-center gap-3">
+                    <div className="w-full flex justify-end items-center relative">
+                      <Input
+                        type="text"
+                        value={hidden ? '•••••••••••' : newValue !== undefined ? newValue : value}
+                        placeholder="Empty value"
+                        disabled={isSaving}
+                        readOnly={
+                          hidden ||
+                          action === SecretAction.Archived ||
+                          action === SecretAction.Deleted
+                        }
+                        onChange={(e) => handleUpdateValue(index, e.target.value)}
+                        className={clsx(['pr-[5.3em]'], {
+                          'border-red-500/70 focus-visible:ring-red-500/70 dark:border-red-600/70 dark:focus-visible:ring-red-600/70':
+                            action === SecretAction.Deleted,
+                          'border-indigo-500/70 focus-visible:ring-indigo-500/70 dark:border-indigo-600/70 dark:focus-visible:ring-indigo-600/70':
+                            action === SecretAction.Archived,
+                          'border-orange-500/70 focus-visible:ring-orange-500/70 dark:border-orange-600/70 dark:focus-visible:ring-orange-600/70':
+                            // action === Action.Updated,
+                            newValue !== undefined && action === SecretAction.Updated,
+                          'border-green-500/70 focus-visible:ring-green-500/70 dark:border-green-600/70 dark:focus-visible:ring-green-600/70':
+                            action === SecretAction.Created &&
+                            newValue?.trim().length !== 0 &&
+                            newValue !== undefined,
+                        })}
+                      />
+                      <div className="absolute mr-4 w-10 flex justify-center items-center gap-2 md:gap-3">
+                        <button onClick={() => toggleVisibility(index)}>
+                          {hidden ? (
+                            <Icons.eye className="opacity-50 h-[1.1rem] w-[1.1rem] hover:text-primary hover:opacity-100" />
+                          ) : (
+                            <Icons.eyeOff className="opacity-50 h-[1.1rem] w-[1.1rem] hover:text-primary hover:opacity-100" />
+                          )}
+                        </button>
+                        <button onClick={() => toggleDescription(index)}>
+                          <Icons.fileText
+                            className={clsx(
+                              [
+                                'opacity-50 h-[1.1rem] w-[1.1rem] hover:text-primary hover:opacity-100',
+                              ],
+                              {
+                                'opacity-80': showDescription === true,
+                                'opacity-60': !showDescription,
+                                'text-primary':
+                                  (description !== undefined && !newDescription) ||
+                                  (showDescription && !newDescription && !description),
+                                'text-green-500/80 opacity-70':
+                                  description === undefined &&
+                                  newDescription &&
+                                  newDescription?.length > 0 &&
+                                  action !== SecretAction.Deleted,
+                                'text-orange-500/80 dark:text-orange-500/80 opacity-70':
+                                  description &&
+                                  newDescription &&
+                                  newDescription?.length > 0 &&
+                                  action === SecretAction.Deleted,
+                                'text-red-500/80 dark:text-red-500/80 opacity-70':
+                                  (newDescription?.length === 0 && description) ||
+                                  action === SecretAction.Deleted,
+                              }
+                            )}
+                          />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="hidden md:block">
+                      <Dropdown
+                        disabled={isSaving}
+                        isCreated={action === SecretAction.Created}
+                        onUndo={() => handleUndoChanges(index)}
+                        onDelete={() => toggleDeleted(index)}
+                        canDelete={action === null || action === SecretAction.Created}
+                        onArchive={() => toggleArchived(index)}
+                        onCopy={() => copyValueToClipboard(value)}
+                        canUndo={action !== SecretAction.Created && action !== null}
+                        onGenerate={() => setGenerateDialogIndex(index)}
+                        canArchive={action === null}
+                      />
+                    </div>
+                  </div>
+
+                  {/* // */}
+
+                  {showDescription && (
+                    <Input
+                      placeholder={'Description...'}
+                      className={clsx({
+                        'border-red-500/70 focus-visible:ring-red-500/70 dark:border-red-600/70 dark:focus-visible:ring-red-600/70':
+                          (newDescription?.length === 0 && description) ||
+                          action === SecretAction.Deleted,
+                        'border-green-500/70 focus-visible:ring-green-500/70 dark:border-green-600/70 dark:focus-visible:ring-green-600/70':
+                          description === undefined &&
+                          newDescription &&
+                          newDescription?.length > 0 &&
+                          action !== SecretAction.Deleted,
+                        'border-orange-500/70 focus-visible:ring-orange-500/70 dark:border-orange-600/70 dark:focus-visible:ring-orange-600/70':
+                          description &&
+                          newDescription &&
+                          newDescription?.length > 0 &&
+                          action !== SecretAction.Deleted,
+                      })}
+                      value={newDescription !== undefined ? newDescription : description}
+                      onChange={(e) => handleUpdateDescription(index, e.target.value)}
+                      readOnly={action === SecretAction.Archived || action === SecretAction.Deleted}
+                    />
+                  )}
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          )}
       </div>
 
       {/* FOOTER  */}
