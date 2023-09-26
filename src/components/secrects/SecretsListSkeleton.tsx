@@ -18,7 +18,7 @@ const SecretsListSkeleton = () => {
               ))}
             </div>
             <div className="relative">
-              <Skeleton className="w-[13.3rem] h-10" />
+              <Skeleton className="w-[13.3rem] md:w-[20rem] h-10" />
             </div>
           </div>
         </div>
