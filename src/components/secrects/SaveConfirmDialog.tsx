@@ -21,7 +21,7 @@ interface Props {
   workspaceId: string
   projectName: string
   envName: string
-  changesCount: number
+  changes: StateSecret[]
   secrets: StateSecret[]
   onClose: () => void
   onSuccess: () => void
@@ -30,7 +30,7 @@ interface Props {
 const SaveConfirmDialog: React.FC<Props> = ({
   workspaceId,
   envName,
-  changesCount,
+  changes,
   projectName,
   opened,
   secrets,
@@ -46,17 +46,16 @@ const SaveConfirmDialog: React.FC<Props> = ({
   })
 
   const handleUpdateSecrets = () => {
-    const changes = secrets?.filter((s) => s.action !== null)
-
     let data: UpdatedSecretsBody = []
 
     // fix new key: state???
-    for (const { key, action, newKey, newValue } of changes) {
+    for (const { key, action, newKey, newValue, newDescription } of changes) {
       const updated: UpdatedSecret = {
         // orig key
         key: action === SecretAction.Created ? undefined : key,
         newKey,
         newValue: !newValue && action === SecretAction.Created ? '' : newValue,
+        newDescription: action === SecretAction.Deleted ? undefined:  newDescription === '' ? null : newDescription,
         deleted: action === SecretAction.Deleted ? true : undefined,
         // archived: action === SecretAction.Archived ? true : undefined,
       }
@@ -81,8 +80,8 @@ const SaveConfirmDialog: React.FC<Props> = ({
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm save</AlertDialogTitle>
             <AlertDialogDescription>
-              {`Do you really want to save ${changesCount} ${
-                changesCount === 1 ? 'change' : 'changes'
+              {`Do you really want to save ${changes?.length} ${
+                changes?.length === 1 ? 'change' : 'changes'
               }?`}
             </AlertDialogDescription>
 
