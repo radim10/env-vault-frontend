@@ -88,12 +88,20 @@ const SecretsToolbar: React.FC<Props> = ({ secretsCount }) => {
             </TooltipProvider>
           </div>
 
-          <div className="relative">
+          <div className="relative md:w-[20rem]">
             <Icons.search className="h-4 w-4 pointer-events-none absolute top-1/2 transform -translate-y-1/2 left-3" />
+            {search?.length > 0 && (
+              <button
+                className="absolute top-1/2 transform -translate-y-1/2 right-4 opacity-60 hover:opacity-100"
+                onClick={() => setSearch('')}
+              >
+                <Icons.x className="h-4 w-4" />
+              </button>
+            )}
 
             <Input
               placeholder="Search secrets"
-              className="pl-10 -mr-10"
+              className="pl-10 pr-10 -mr-10"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
