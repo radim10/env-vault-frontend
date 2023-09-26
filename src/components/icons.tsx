@@ -36,6 +36,8 @@ import {
   CheckCircle,
   CheckCircle2,
   Check,
+  MessageCircle,
+  MessageSquare,
 } from 'lucide-react'
 
 export const Icons = {
@@ -75,5 +77,7 @@ export const Icons = {
   refresh: RefreshCcw,
   checkCircle: CheckCircle,
   checkCircle2: CheckCircle2,
-  check: Check
+  check: Check,
+  messageCircle: MessageCircle,
+  messageSquare: MessageSquare,
 }
