@@ -19,6 +19,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { ListProject, UpdatedProjectData } from '@/types/projects'
 import UpdateProjectDialog from './UpdateProjectDialog'
 import { EnvironmentList } from '../environments/EnvironmentList'
+import CreateEnvironmentDialog from '../environments/CreateEnvironmentDialog'
 
 const dropdownItems = [
   { label: 'Rename', icon: Icons.pencil },
@@ -191,7 +192,7 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
         </div>
       </div>
       {/* Content */}
-      <div className="mt-16">
+      <div className="mt-8">
         <EnvironmentList
           workspaceId={workspaceId}
           projectName={project?.name}
