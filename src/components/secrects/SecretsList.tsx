@@ -254,7 +254,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                           action === SecretAction.Deleted
                         }
                         onChange={(e) => handleUpdateValue(index, e.target.value)}
-                        className={clsx(['pr-[5.3em]'], {
+                        className={clsx(['pr-[5.5em]'], {
                           'border-red-500/70 focus-visible:ring-red-500/70 dark:border-red-600/70 dark:focus-visible:ring-red-600/70':
                             action === SecretAction.Deleted,
                           'border-indigo-500/70 focus-visible:ring-indigo-500/70 dark:border-indigo-600/70 dark:focus-visible:ring-indigo-600/70':
@@ -268,7 +268,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                             newValue !== undefined,
                         })}
                       />
-                      <div className="absolute mr-4 w-10 flex justify-center items-center gap-2 md:gap-3">
+                      <div className="absolute mr-5 w-10 flex justify-center items-center gap-2 md:gap-3.5">
                         <button onClick={() => toggleVisibility(index)}>
                           {hidden ? (
                             <Icons.eye className="opacity-50 h-[1.1rem] w-[1.1rem] hover:text-primary hover:opacity-100" />
