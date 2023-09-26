@@ -43,7 +43,9 @@ const ProjectList: React.FC<Props> = ({ workspace }) => {
                 <div className="dark:text-gray-400 dark:border-gray-800  border-[1px] w-fit px-3 py-1 rounded-md">
                   <div className="flex items-center gap-2">
                     <Icons.layer className="h-[0.91rem] w-[0.91rem]" />
-                    <span className="text-[0.88rem]">{environmentCount === 0 ? "No" : environmentCount} environments</span>
+                    <span className="text-[0.88rem]">
+                      {environmentCount === 0 ? 'No' : environmentCount} environments
+                    </span>
                   </div>
                 </div>
               </div>
