@@ -225,7 +225,13 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                       onDelete={() => toggleDeleted(index)}
                       onArchive={() => toggleArchived(index)}
                       canDelete={action === null || action === SecretAction.Created}
-                      canUndo={action !== SecretAction.Created && action !== null}
+                      canUndo={
+                        (action !== SecretAction.Created && action !== null) ||
+                        (newDescription?.length === 0 && description) ||
+                        (description && newDescription && newDescription?.length > 0)
+                          ? true
+                          : false
+                      }
                       onCopy={() => copyValueToClipboard(value)}
                       onGenerate={() => setGenerateDialogIndex(index)}
                       // canArchive={(action !== SecretAction.Created && action !== SecretAction.Deleted) || action === null}
@@ -291,7 +297,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                                   description &&
                                   newDescription &&
                                   newDescription?.length > 0 &&
-                                  action === SecretAction.Deleted,
+                                  action !== SecretAction.Deleted,
                                 'text-red-500/80 dark:text-red-500/80 opacity-70':
                                   (newDescription?.length === 0 && description) ||
                                   action === SecretAction.Deleted,
@@ -311,7 +317,13 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                         canDelete={action === null || action === SecretAction.Created}
                         onArchive={() => toggleArchived(index)}
                         onCopy={() => copyValueToClipboard(value)}
-                        canUndo={action !== SecretAction.Created && action !== null}
+                        canUndo={
+                          (action !== SecretAction.Created && action !== null) ||
+                          (newDescription?.length === 0 && description) ||
+                          (description && newDescription && newDescription?.length > 0)
+                            ? true
+                            : false
+                        }
                         onGenerate={() => setGenerateDialogIndex(index)}
                         canArchive={action === null}
                       />
@@ -388,28 +400,51 @@ const Dropdown: React.FC<DropdowProps> = ({
   onGenerate,
 }) => {
   const [opened, setOpen] = useState(false)
-  const items = [
-    {
-      icon: Icons.refresh,
-      text: 'Generate',
-    },
-    {
-      icon: Icons.copy,
-      text: 'Copy',
-    },
-    {
-      icon: Icons.undo,
-      text: 'Undo',
-    },
-    {
-      icon: Icons.archive,
-      text: 'Archive',
-    },
-    {
-      icon: Icons.trash,
-      text: 'Delete',
-    },
-  ]
+  const items = isCreated
+    ? [
+        {
+          icon: Icons.refresh,
+          text: 'Generate',
+        },
+        {
+          icon: Icons.copy,
+          text: 'Copy',
+        },
+        {
+          icon: Icons.undo,
+          text: 'Undo',
+        },
+        {
+          icon: Icons.archive,
+          text: 'Archive',
+        },
+        {
+          icon: Icons.trash,
+          text: 'Delete',
+        },
+      ]
+    : [
+        {
+          icon: Icons.copy,
+          text: 'Copy',
+        },
+        {
+          icon: Icons.refresh,
+          text: 'Generate',
+        },
+        {
+          icon: Icons.undo,
+          text: 'Undo',
+        },
+        {
+          icon: Icons.archive,
+          text: 'Archive',
+        },
+        {
+          icon: Icons.trash,
+          text: 'Delete',
+        },
+      ]
 
   return (
     <DropdownMenu onOpenChange={(e) => setOpen(e)}>
