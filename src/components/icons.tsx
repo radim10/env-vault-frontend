@@ -39,6 +39,8 @@ import {
   MessageCircle,
   MessageSquare,
   FileX,
+  FilePlus,
+  FilePlus2,
 } from 'lucide-react'
 
 export const Icons = {
@@ -82,4 +84,6 @@ export const Icons = {
   messageCircle: MessageCircle,
   messageSquare: MessageSquare,
   fileX: FileX,
+  filePlus: FilePlus,
+  filePlus2: FilePlus2,
 }
