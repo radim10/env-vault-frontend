@@ -34,8 +34,10 @@ export interface EditSecretsActions {
   undoChanges: (args: { index: number; origItem: Secret }) => void
   toggleVisibility: (index: number) => void
   toggleDescription: (index: number) => void
+  toggleDescriptionAll: (hidden: boolean) => void
   toggleDeleted: (index: number) => void
   toggleArchived: (index: number) => void
+  toggleVisibilityAll: (hidden: boolean) => void
   updateValue: (args: { index: number; origValue: string; newValue: string }) => void
   updateKey: (args: { index: number; origKey: string; newKey: string }) => void
   updateDescription: (args: {
@@ -91,6 +93,27 @@ export const useEditedSecretsStore = create(
     toggleVisibility: (index) => {
       set((state) => {
         state.secrets[index].hidden = !state.secrets[index].hidden
+      })
+    },
+
+    toggleVisibilityAll: (hidden) => {
+      set((state) => {
+        for (const item of state.secrets) {
+          item.hidden = hidden
+        }
+      })
+    },
+
+    toggleDescriptionAll: (hidden) => {
+      set((state) => {
+        for (const item of state.secrets) {
+          if (
+            item.description ||
+            (item.newDescription !== undefined && item.newDescription?.length > 0)
+          ) {
+            item.showDescription = !hidden
+          }
+        }
       })
     },
 
