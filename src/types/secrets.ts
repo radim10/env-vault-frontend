@@ -1,6 +1,7 @@
 export interface Secret {
   key: string
   value: string
+  description?: string
 }
 
 export interface UpdatedSecret {
@@ -9,6 +10,7 @@ export interface UpdatedSecret {
 
   newKey?: string
   newValue?: string
+  newDescription?: string | null
   deleted?: boolean
   archived?: boolean
 }
