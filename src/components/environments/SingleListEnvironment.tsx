@@ -10,6 +10,7 @@ import {
 import { Icons } from '../icons'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
+import { EnvironmentType } from '@/types/environments'
 
 interface Props {
   link: string
@@ -18,6 +19,7 @@ interface Props {
 
   name: string
   locked: boolean
+  type: EnvironmentType
   secretsCount: number
 
   onLock: () => void
@@ -37,6 +39,7 @@ const SingleListEnvironment: React.FC<Props> = ({
   link,
   name,
   locked,
+  type,
   secretsCount,
 
   onLock,
@@ -80,15 +83,25 @@ const SingleListEnvironment: React.FC<Props> = ({
               {/* // badge */}
               <div className="w-44 bg-green-800X">
                 {/* // Green = developnent, orange = staging, blue = Production ???  */}
-                {index !== 3 ? (
-                  <Badge variant="default" className="bg-green-800 text-gray-200 text-[0.725rem]">
-                    Developnent
-                  </Badge>
-                ) : (
-                  <Badge variant="default" className="bg-blue-800 text-gray-200 text-[0.725rem]">
-                    Production
-                  </Badge>
-                )}
+
+                <Badge
+                  variant="default"
+                  className={clsx(['text-[0.725rem] text-gray-200'], {
+                    'bg-indigo-600 dark:bg-indigo-800/80 hover:bg-indigo-600 dark:hover:bg-indigo-800/80':
+                      type === EnvironmentType.DEVELOPMENT,
+                    'bg-green-600 dark:bg-green-800/80 hover:bg-green-600 dark:hover:bg-green-800/80':
+                      type === EnvironmentType.TESTING,
+                    'bg-blue-600 dark:bg-blue-800/80 hover:bg-blue-600 dark:hover:bg-blue-800/80':
+                      type === EnvironmentType.STAGING,
+                    'bg-red-600 dark:bg-red-800/80 hover:bg-red-600 dark:hover:bg-red-800/80':
+                      type === EnvironmentType.PRODUCTION,
+                  })}
+                >
+                  {type === EnvironmentType.DEVELOPMENT && 'Development'}
+                  {type === EnvironmentType.TESTING && 'Testing'}
+                  {type === EnvironmentType.STAGING && 'Staging'}
+                  {type === EnvironmentType.PRODUCTION && 'Production'}
+                </Badge>
               </div>
             </div>
           </div>

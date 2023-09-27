@@ -211,12 +211,13 @@ export const EnvironmentList: React.FC<Props> = ({
 
       {/* List */}
       <div className="flex flex-col gap-2.5 mt-6">
-        {values.map(({ name, secretsCount, locked }, index) => (
+        {values.map(({ name, type, locked, secretsCount }, index) => (
           <SingleListEnvironment
             key={index}
             index={index}
             link={`/workspace/${workspaceId}/projects/${projectName}/env/${name}`}
             locked={locked}
+            type={type}
             name={name}
             secretsCount={secretsCount}
             onLock={() => {
