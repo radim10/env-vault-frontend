@@ -104,7 +104,7 @@ export const EnvironmentList: React.FC<Props> = ({
                   <div className="w-[45%] bg-green-800X flex flex-row-reverse md:flex-row items-center gap-3 text-gray-300 text-[0.9rem]">
                     <div className="w-full">
                       <span>
-                        {secretsCount !== 0 ? secretsCount : 'No'}
+                        {secretsCount !== 0 ? secretsCount : 'No'}{' '}
                         {secretsCount === 1 ? 'secret' : 'secrets'}
                       </span>
                     </div>
