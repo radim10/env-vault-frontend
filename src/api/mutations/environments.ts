@@ -4,10 +4,13 @@ import {
   CreateEnvironmentResData,
   DeleteEnvironmentError,
   DeleteEnvironmentResData,
+  LockEnvironmentError,
+  LockEnvironmentResData,
   RenameEnvironmentError,
   RenameEnvironmentResData,
   createEnvironment,
   deleteEnvironment,
+  lockEnvironment,
   renameEnvironment,
 } from '../requests/projects/environments/environments'
 import { MutOpt } from './mutOpt'
@@ -24,6 +27,20 @@ type CreateEnvironmentVariables = {
 export const useCreateEnvironment = (opt?: MutOpt<CreateEnvironmentResData>) =>
   useMutation<CreateEnvironmentResData, CreateEnvironmentError, CreateEnvironmentVariables>(
     createEnvironment,
+    opt
+  )
+
+// lock/unlock
+type LockEnvironmentVariables = {
+  lock: boolean
+  workspaceId: string
+  projectName: string
+  envName: string
+}
+
+export const useLockEnvironment = (opt?: MutOpt<LockEnvironmentResData>) =>
+  useMutation<LockEnvironmentResData, LockEnvironmentError, LockEnvironmentVariables>(
+    lockEnvironment,
     opt
   )
 
