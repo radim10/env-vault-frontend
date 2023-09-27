@@ -62,7 +62,7 @@ const SingleListEnvironment: React.FC<Props> = ({
               />
               {/* {} */}
               <div className="flex flex-row gap-2.5 items-center ">
-                <span className="font-semibold">{name}</span>
+                <span className="font-semibold line-clamp-1">{name}</span>
                 {locked === true && (
                   <div className="opacity-80">
                     <Icons.lock className="h-4 w-4" />
