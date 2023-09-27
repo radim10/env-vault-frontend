@@ -98,7 +98,7 @@ const EnvironmentListToolbar: React.FC<Props> = ({
               <SelectValue placeholder="Group by" />
             </SelectTrigger>
             <SelectContent>
-              <SelectSeparator />
+              <SelectItem value={'None'}>None</SelectItem>
               {groupByOptions.map(({ value }) => (
                 <SelectItem value={value}>
                   <div className="flex items-center gap-2">
@@ -119,7 +119,6 @@ const EnvironmentListToolbar: React.FC<Props> = ({
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
-              <SelectSeparator />
               {sortOptions.map(({ value, label, icon: Icon }) => (
                 <SelectItem value={value}>
                   <div className="flex items-center gap-2">
