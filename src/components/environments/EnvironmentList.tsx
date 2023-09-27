@@ -1,6 +1,4 @@
-import React from 'react'
-import Link from 'next/link'
-import { Badge } from '../ui/badge'
+import React, { useState } from 'react'
 import { Icons } from '../icons'
 import { Button } from '../ui/button'
 import { ListEnvironment, Project } from '@/types/projects'
@@ -9,7 +7,8 @@ import EnvironmentListToolbar from './EnvironmentListToolbar'
 import { QueryClient } from '@tanstack/react-query'
 import CreateEnvironmentDialog from './CreateEnvironmentDialog'
 import { useToast } from '../ui/use-toast'
-import { SingleListEnvironment } from './SingleListEnvironment'
+import SingleListEnvironment from './SingleListEnvironment'
+import LockEnvDialog from './LockEnvDialog'
 
 interface Props {
   queryClient: QueryClient
@@ -28,6 +27,12 @@ export const EnvironmentList: React.FC<Props> = ({
   values,
 }) => {
   const { toast } = useToast()
+  // index of env
+  const [lockEnvDialog, setLockEnvDialog] = useState<{
+    environmentName: string
+    lock: boolean
+    index: number
+  } | null>(null)
 
   const handleNewEnvironment = (name: string) => {
     const data = queryClient.getQueryData<Project>(['project', workspaceId, projectName])
@@ -41,6 +46,24 @@ export const EnvironmentList: React.FC<Props> = ({
 
     toast({
       title: 'Environment has been created',
+      variant: 'success',
+    })
+  }
+
+  const handleLockedEnvironment = (index: number, locked: boolean) => {
+    const data = queryClient.getQueryData<Project>(['project', workspaceId, projectName])
+
+    if (data) {
+      queryClient.setQueryData(['project', workspaceId, projectName], {
+        ...data,
+        environments: data?.environments.map((env, i) =>
+          i === index ? { ...env, locked: !env.locked } : env
+        ),
+      })
+    }
+
+    toast({
+      title: locked ? 'Environment has been locked' : 'Environment has been unlocked',
       variant: 'success',
     })
   }
@@ -78,6 +101,21 @@ export const EnvironmentList: React.FC<Props> = ({
         onCreated={handleNewEnvironment}
       />
 
+      <LockEnvDialog
+        envName={lockEnvDialog?.environmentName ?? ''}
+        projectName={projectName}
+        workspaceId={workspaceId}
+        lock={lockEnvDialog?.lock ?? true}
+        opened={lockEnvDialog !== null}
+        onSuccess={() => {
+          handleLockedEnvironment(lockEnvDialog?.index ?? -1, lockEnvDialog?.lock ?? true)
+          setLockEnvDialog(null)
+        }}
+        onClose={() => {
+          setLockEnvDialog(null)
+        }}
+      />
+
       {/* List */}
       <div className="flex flex-col gap-3 mt-6">
         {values.map(({ name, secretsCount, locked }, index) => (
@@ -88,6 +126,9 @@ export const EnvironmentList: React.FC<Props> = ({
             locked={locked}
             name={name}
             secretsCount={secretsCount}
+            onLock={() => {
+              setLockEnvDialog({ lock: !locked, index, environmentName: name })
+            }}
           />
         ))}
       </div>
