@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import clsx from 'clsx'
 import Link from 'next/link'
 import {
@@ -19,6 +19,8 @@ interface Props {
   name: string
   locked: boolean
   secretsCount: number
+
+  onLock: () => void
 }
 
 const dropdownItems = [
@@ -28,13 +30,17 @@ const dropdownItems = [
   { label: 'Delete', icon: Icons.trash },
 ]
 
-export const SingleListEnvironment: React.FC<Props> = ({
+ const SingleListEnvironment: React.FC<Props> = ({
   index,
   link,
   name,
   locked,
   secretsCount,
+
+  onLock,
 }) => {
+  const [dropdownOpened, setDropdownOpened] = useState(false)
+
   return (
     <Link href={link}>
       <div className="pb-2.5 py-2.5 md:py-1.5 pl-5 md:pl-6 pr-2 md:pr-4 cursor-pointer border-2 dark:border-gray-800 transition hover:dark:shadow-xl hover:dark:shadow-primary/20 rounded-md hover:dark:border-primary hover:border-primary hover:scale-[101%] ease duration-200">
@@ -84,38 +90,59 @@ export const SingleListEnvironment: React.FC<Props> = ({
           </div>
 
           {/* // DropdownMenu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <Button
-                variant={'ghost'}
-                size={'sm'}
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                }}
-              >
-                <Icons.moreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="mr-10 w-[180px] mt-0 shadow-lg shadow-primary-foreground">
-              {dropdownItems
-                .filter(({ label }) => (locked ? label !== 'Lock' : label !== 'Unlock'))
-                ?.map((item, index) => (
-                  <DropdownMenuItem
-                    onClick={() => {}}
-                    className={clsx(['flex items-center gap-3 px-3.5 py-2'], {
-                      'hover:text-red-500 text-red-500 dark:hover:text-red-500 dark:text-red-500':
-                        item.label === 'Delete',
-                    })}
-                  >
-                    <item.icon className={clsx(['h-4 w-4 opacity-70'])} />
-                    <div className="">{item.label}</div>
-                  </DropdownMenuItem>
-                ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <SingleEnvironmentDropdown locked={locked} onLock={onLock} />
         </div>
       </div>
     </Link>
   )
 }
+
+interface DropdownProps {
+  locked: boolean
+  onLock: () => void
+}
+
+const SingleEnvironmentDropdown: React.FC<DropdownProps> = ({ locked, onLock }) => {
+  const [dropdownOpened, setDropdownOpened] = useState(false)
+
+  return (
+    <DropdownMenu onOpenChange={setDropdownOpened} open={dropdownOpened}>
+      <DropdownMenuTrigger>
+        <Button
+          variant={'ghost'}
+          size={'sm'}
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+          }}
+        >
+          <Icons.moreVertical className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="mr-10 w-[180px] mt-0 shadow-lg shadow-primary-foreground">
+        {dropdownItems
+          .filter(({ label }) => (locked ? label !== 'Lock' : label !== 'Unlock'))
+          ?.map((item, index) => (
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.preventDefault()
+                if (item.label === 'Lock' || item.label === 'Unlock') {
+                  setDropdownOpened(false)
+                  onLock()
+                }
+              }}
+              className={clsx(['flex items-center gap-3 px-3.5 py-2'], {
+                'hover:text-red-500 text-red-500 dark:hover:text-red-500 dark:text-red-500':
+                  item.label === 'Delete',
+              })}
+            >
+              <item.icon className={clsx(['h-4 w-4 opacity-70'])} />
+              <div className="">{item.label}</div>
+            </DropdownMenuItem>
+          ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
+export default SingleListEnvironment
