@@ -14,6 +14,8 @@ import RenameEnvironmentDialog from './RenameEnvironmentDialog'
 import DeleteEnvironmentDialog from './DeleteEnvironmentDialog'
 import { EnvironmentType } from '@/types/environments'
 import ChangeEnvironmentTypeDialog from './ChangeEnvironmentTypeDialog'
+import { Badge } from '../ui/badge'
+import { useEnvironmentListStore } from '@/stores/environments'
 
 interface Props {
   queryClient: QueryClient
@@ -23,6 +25,7 @@ interface Props {
 
   //
   values: ListEnvironment[]
+  groupedEnvironments?: { [key: string]: ListEnvironment[] } | null
 }
 
 export const EnvironmentList: React.FC<Props> = ({
@@ -30,8 +33,12 @@ export const EnvironmentList: React.FC<Props> = ({
   workspaceId,
   projectName,
   values,
+  groupedEnvironments,
 }) => {
   const { toast } = useToast()
+
+  const { setEnvironments, groupBy, setGroupedEnvironments } = useEnvironmentListStore()
+
   // index of env
   const [dialog, setDialog] = useImmer<{
     type?: 'lock' | 'rename' | 'changeType' | 'delete'
@@ -62,12 +69,16 @@ export const EnvironmentList: React.FC<Props> = ({
     const data = queryClient.getQueryData<Project>(['project', workspaceId, projectName])
 
     if (data) {
+      const newEnvironments = data?.environments.map((env, i) =>
+        i === index ? { ...env, locked: !env.locked } : env
+      )
+
       queryClient.setQueryData(['project', workspaceId, projectName], {
         ...data,
-        environments: data?.environments.map((env, i) =>
-          i === index ? { ...env, locked: !env.locked } : env
-        ),
+        environments: newEnvironments,
       })
+
+      updateState(newEnvironments)
     }
 
     toast({
@@ -87,12 +98,15 @@ export const EnvironmentList: React.FC<Props> = ({
 
       if (env) {
         const envIndex = environments?.findIndex((e) => e.name === name)
-        environments[envIndex].name = newName
+        // environments[envIndex].name = newName
+        environments[envIndex] = { ...environments[envIndex], name: newName }
 
         queryClient.setQueryData(['project', workspaceId, projectName], {
           ...data,
           environments,
         })
+
+        updateState(environments)
       }
     }
 
@@ -102,8 +116,11 @@ export const EnvironmentList: React.FC<Props> = ({
     })
   }
 
-
-  const handleUpdatedEnvType = (args: { index: number; name: string; newType: EnvironmentType }) => {
+  const handleUpdatedEnvType = (args: {
+    index: number
+    name: string
+    newType: EnvironmentType
+  }) => {
     const { index, name, newType } = args
 
     const data = queryClient.getQueryData<Project>(['project', workspaceId, projectName])
@@ -114,12 +131,17 @@ export const EnvironmentList: React.FC<Props> = ({
 
       if (env) {
         const envIndex = environments?.findIndex((e) => e.name === name)
-        environments[envIndex].type = newType
+        // environments[envIndex].type = newType
+        environments[envIndex] = { ...environments[envIndex], type: newType }
 
-        queryClient.setQueryData(['project', workspaceId, projectName], {
+        const newData = {
           ...data,
           environments,
-        })
+        }
+
+        queryClient.setQueryData(['project', workspaceId, projectName], newData)
+
+        updateState(environments)
       }
     }
 
@@ -141,6 +163,8 @@ export const EnvironmentList: React.FC<Props> = ({
         ...projectData,
         environments: updatedEnvironments,
       })
+
+      updateState(updatedEnvironments)
     }
 
     toast({
@@ -149,7 +173,16 @@ export const EnvironmentList: React.FC<Props> = ({
     })
   }
 
-  if (!values?.length) {
+  // TODO:
+  const updateState = (envArr: ListEnvironment[]) => {
+    if (!groupBy) {
+      setEnvironments(envArr)
+    } else {
+      setGroupedEnvironments(envArr)
+    }
+  }
+
+  if (!values?.length && !groupedEnvironments) {
     return (
       <div className="flex items-center justify-center mt-36">
         <div className="flex flex-col items-center gap-2">
@@ -190,7 +223,14 @@ export const EnvironmentList: React.FC<Props> = ({
       <EnvironmentListToolbar
         workspaceId={workspaceId}
         projectName={projectName}
-        environmentsCount={values.length}
+        environmentsCount={
+          !groupedEnvironments
+            ? values.length
+            : Object.values(groupedEnvironments).reduce(
+                (accumulator, currentArray) => accumulator + currentArray.length,
+                0
+              )
+        }
         onCreated={handleNewEnvironment}
       />
 
@@ -233,7 +273,11 @@ export const EnvironmentList: React.FC<Props> = ({
               type={dialog?.envType}
               opened={dialog?.type === 'changeType'}
               onSuccess={(newType) => {
-                handleUpdatedEnvType({ index:dialog?.index, name: dialog?.environmentName, newType })
+                handleUpdatedEnvType({
+                  index: dialog?.index,
+                  name: dialog?.environmentName,
+                  newType,
+                })
                 handleCloseDialog()
               }}
               onClose={handleCloseDialog}
@@ -256,6 +300,81 @@ export const EnvironmentList: React.FC<Props> = ({
       )}
 
       {/* List */}
+      {groupedEnvironments && (
+        <div className="mt-4 flex flex-col gap-3">
+          {Object.entries(groupedEnvironments).map(([group, environments]) => (
+            <div className="flex flex-col gap-2">
+              <div>
+                {group !== 'Unlocked' &&
+                group !== 'Locked' &&
+                group !== 'true' &&
+                group !== 'false' ? (
+                  <Badge
+                    variant="default"
+                    className={clsx(['text-[0.9rem] text-gray-200'], {
+                      'bg-indigo-600 dark:bg-indigo-800/80 hover:bg-indigo-600 dark:hover:bg-indigo-800/80':
+                        group === EnvironmentType.DEVELOPMENT,
+                      'bg-blue-600 dark:bg-blue-800/80 hover:bg-blue-600 dark:hover:bg-blue-800/80':
+                        group === EnvironmentType.TESTING,
+                      'bg-green-600 dark:bg-green-800/80 hover:bg-green-600 dark:hover:bg-green-800/80':
+                        group === EnvironmentType.STAGING,
+                      'bg-red-600 dark:bg-red-800/80 hover:bg-red-600 dark:hover:bg-red-800/80':
+                        group === EnvironmentType.PRODUCTION,
+                    })}
+                  >
+                    {group === EnvironmentType.DEVELOPMENT && 'Development'}
+                    {group === EnvironmentType.TESTING && 'Testing'}
+                    {group === EnvironmentType.STAGING && 'Staging'}
+                    {group === EnvironmentType.PRODUCTION && 'Production'}
+                  </Badge>
+                ) : (
+                  <div className="px-1 flex items-center gap-2 font-bold text-[1.125rem]">
+                    {(group === 'Locked' || group === 'true') && (
+                      <>
+                        <Icons.lock className="h-4 w-4" />
+                        Locked
+                      </>
+                    )}
+                    {(group === 'Unlocked' || group === 'false') && (
+                      <>
+                        <Icons.unlock className="h-4 w-4" />
+                        Unlocked
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-2.5 mt-2 mb-6">
+                {environments.map(({ name, type, locked, secretsCount }, index) => (
+                  <SingleListEnvironment
+                    key={index}
+                    index={index}
+                    link={`/workspace/${workspaceId}/projects/${projectName}/env/${name}`}
+                    locked={locked}
+                    type={type}
+                    name={name}
+                    secretsCount={secretsCount}
+                    onLock={() => {
+                      setDialog({ type: 'lock', lock: !locked, index, environmentName: name })
+                    }}
+                    onRename={() => {
+                      setDialog({ type: 'rename', index, environmentName: name })
+                    }}
+                    onDelete={() => {
+                      setDialog({ type: 'delete', index, environmentName: name })
+                    }}
+                    onChangeType={() => {
+                      setDialog({ type: 'changeType', envType: type, index, environmentName: name })
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="flex flex-col gap-2.5 mt-4">
         {values.map(({ name, type, locked, secretsCount }, index) => (
           <SingleListEnvironment
