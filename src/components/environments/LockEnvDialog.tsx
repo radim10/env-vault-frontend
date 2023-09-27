@@ -61,10 +61,10 @@ interface Props {
             <DialogTitle>{lock ? 'Lock environment' : 'Unlock environment'}</DialogTitle>
             <DialogDescription>
               {lock &&
-                `Locking environmnet makes it 'readonly'. Environmnet cannot be renamed, deleted or
+                `Locking environmnet makes it 'readonly'. Environment cannot be renamed, deleted or
               updated.`}
               {!lock &&
-                `Unlocking environmnet will allow environmnet to be renamed, deleted or updated.`}
+                `Unlocking environmet will allow environmnet to be renamed, deleted or updated.`}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-4">
