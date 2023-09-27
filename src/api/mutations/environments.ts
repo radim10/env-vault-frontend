@@ -1,13 +1,31 @@
 import { useMutation } from '@tanstack/react-query'
 import {
+  CreateEnvironmentError,
+  CreateEnvironmentResData,
   DeleteEnvironmentError,
   DeleteEnvironmentResData,
   RenameEnvironmentError,
   RenameEnvironmentResData,
+  createEnvironment,
   deleteEnvironment,
   renameEnvironment,
 } from '../requests/projects/environments/environments'
 import { MutOpt } from './mutOpt'
+
+// create
+type CreateEnvironmentVariables = {
+  workspaceId: string
+  projectName: string
+  data: {
+    name: string
+  }
+}
+
+export const useCreateEnvironment = (opt?: MutOpt<CreateEnvironmentResData>) =>
+  useMutation<CreateEnvironmentResData, CreateEnvironmentError, CreateEnvironmentVariables>(
+    createEnvironment,
+    opt
+  )
 
 // rename
 type RenameEnvironmentVariables = {
