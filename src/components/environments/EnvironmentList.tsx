@@ -256,7 +256,7 @@ export const EnvironmentList: React.FC<Props> = ({
       )}
 
       {/* List */}
-      <div className="flex flex-col gap-2.5 mt-6">
+      <div className="flex flex-col gap-2.5 mt-4">
         {values.map(({ name, type, locked, secretsCount }, index) => (
           <SingleListEnvironment
             key={index}
