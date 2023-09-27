@@ -6,7 +6,20 @@ export enum EnvironmentType {
 }
 
 export interface Environment {
+  createdAt: string
   name: string
   locked: boolean
   type: EnvironmentType
+}
+
+export enum EnvSortOption {
+  CreatedDesc = 'Created desc',
+  CreatedAsc = 'Created asc',
+  SecretsCountDesc = 'Secrets count desc',
+  SecretsCountAsc = 'Secrets count asc',
+}
+
+export enum EnvGroupBy {
+  Lock = 'Lock',
+  Type = 'Type',
 }
