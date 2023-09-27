@@ -192,7 +192,7 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
         </div>
       </div>
       {/* Content */}
-      <div className="mt-8">
+      <div className="mt-4">
         <EnvironmentList
           workspaceId={workspaceId}
           projectName={project?.name}
