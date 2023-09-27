@@ -1,4 +1,5 @@
 import sendRequest, { APIError } from '@/api/instance'
+import { EnvironmentType } from '@/types/environments'
 
 // TODO: error
 export type CreateEnvironmentError = APIError<
@@ -71,6 +72,29 @@ export async function lockEnvironment(args: {
     path: `${workspaceId}/projects/${projectName}/environments/${envName}/${
       lock ? 'lock' : 'unlock'
     }`,
+  })
+  return await response
+}
+
+// TODO: error
+export type UpdateEnvironmentTypeError = RenameEnvironmentError
+export type UpdateEnvironmentTypeResData = undefined
+
+export async function updateEnvironmentType(args: {
+  workspaceId: string
+  projectName: string
+  envName: string
+  data: {
+    type: EnvironmentType
+  }
+}) {
+  const { workspaceId, projectName, envName, data } = args
+
+  const response = sendRequest<UpdateEnvironmentTypeResData>({
+    method: 'PATCH',
+    basePath: 'workspaces',
+    path: `${workspaceId}/projects/${projectName}/environments/${envName}/type`,
+    body: data,
   })
   return await response
 }
