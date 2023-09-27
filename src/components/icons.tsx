@@ -49,6 +49,7 @@ import {
   PenSquare,
   ArrowUpWideNarrow,
   ArrowDownWideNarrow,
+  Group,
 } from 'lucide-react'
 
 export const Icons = {
@@ -102,4 +103,5 @@ export const Icons = {
   chevronUp: ChevronUp,
   arrowUpWideNarrow: ArrowUpWideNarrow,
   arrowDownWideNarrow: ArrowDownWideNarrow,
+  group: Group,
 }
