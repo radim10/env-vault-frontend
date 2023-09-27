@@ -1,8 +1,8 @@
 import React from 'react'
-import { Button } from '../ui/button'
-import { Icons } from '../icons'
 import CreateEnvironmentDialog from './CreateEnvironmentDialog'
 import { EnvironmentType } from '@/types/environments'
+import { useWindowScroll } from 'react-use'
+import clsx from 'clsx'
 
 interface Props {
   workspaceId: string
@@ -18,8 +18,14 @@ const EnvironmentListToolbar: React.FC<Props> = ({
   environmentsCount,
   onCreated,
 }) => {
+  const { y } = useWindowScroll()
+
   return (
-    <div className="flex flex-col md:flex-row justify-between md:items-center">
+    <div
+      className={clsx(['flex flex-col md:flex-row justify-between md:items-center sticky top-0 bg-background z-50 pb-2 pt-3' ], {
+        'border-b-2': y > 160,
+      })}
+    >
       <div className="pl-1 dark:text-gray-400 font-bold">
         <span>Total environments: {environmentsCount}</span>
       </div>
