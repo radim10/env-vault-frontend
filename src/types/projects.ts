@@ -8,7 +8,7 @@ export interface Project {
   environments: ListEnvironment[]
 }
 
-export type ListEnvironment = Pick<Environment, 'name'> & { secretsCount: number }
+export type ListEnvironment = Environment & { secretsCount: number }
 
 export type ListProject = Pick<Project, 'createdAt' | 'description' | 'name'> & {
   environmentCount: number
