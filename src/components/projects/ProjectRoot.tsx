@@ -20,6 +20,8 @@ import { ListProject, UpdatedProjectData } from '@/types/projects'
 import UpdateProjectDialog from './UpdateProjectDialog'
 import { EnvironmentList } from '../environments/EnvironmentList'
 import CreateEnvironmentDialog from '../environments/CreateEnvironmentDialog'
+import { useEnvironmentListStore } from '@/stores/environments'
+import { useUnmount, useUpdateEffect } from 'react-use'
 
 const dropdownItems = [
   { label: 'Rename', icon: Icons.pencil },
@@ -38,6 +40,9 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
 
   const queryClient = useQueryClient()
 
+  const { environments, setEnvironments, groupedEnvironments, groupBy, setGroupedEnvironments } =
+    useEnvironmentListStore()
+
   const [deleteDialogOpened, setDeleteDialogOpened] = useState(false)
   const [updateDialogOpened, setUpdateDialogOpened] = useState(false)
 
@@ -55,7 +60,22 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
     }
   )
 
-  if (isLoading) {
+  useUpdateEffect(() => {
+    if (project?.environments) {
+      if (!groupBy) {
+        setEnvironments(project?.environments)
+      } else {
+        setGroupedEnvironments(project?.environments)
+      }
+    }
+  }, [project?.environments])
+
+  useUnmount(() => {
+    setEnvironments([])
+    setGroupedEnvironments(null)
+  })
+
+  if (isLoading || !environments) {
     return 'loading'
   }
 
@@ -196,7 +216,9 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
         <EnvironmentList
           workspaceId={workspaceId}
           projectName={project?.name}
-          values={project?.environments}
+          values={environments}
+          groupedEnvironments={groupedEnvironments}
+          // values={project?.environments}
           queryClient={queryClient}
         />
       </div>
