@@ -21,6 +21,7 @@ interface Props {
   secretsCount: number
 
   onLock: () => void
+  onRename: () => void
 }
 
 const dropdownItems = [
@@ -30,7 +31,7 @@ const dropdownItems = [
   { label: 'Delete', icon: Icons.trash },
 ]
 
- const SingleListEnvironment: React.FC<Props> = ({
+const SingleListEnvironment: React.FC<Props> = ({
   index,
   link,
   name,
@@ -38,6 +39,7 @@ const dropdownItems = [
   secretsCount,
 
   onLock,
+  onRename,
 }) => {
   const [dropdownOpened, setDropdownOpened] = useState(false)
 
@@ -90,7 +92,7 @@ const dropdownItems = [
           </div>
 
           {/* // DropdownMenu */}
-          <SingleEnvironmentDropdown locked={locked} onLock={onLock} />
+          <SingleEnvironmentDropdown locked={locked} onLock={onLock} onRename={onRename} />
         </div>
       </div>
     </Link>
@@ -100,9 +102,10 @@ const dropdownItems = [
 interface DropdownProps {
   locked: boolean
   onLock: () => void
+  onRename: () => void
 }
 
-const SingleEnvironmentDropdown: React.FC<DropdownProps> = ({ locked, onLock }) => {
+const SingleEnvironmentDropdown: React.FC<DropdownProps> = ({ locked, onLock, onRename }) => {
   const [dropdownOpened, setDropdownOpened] = useState(false)
 
   return (
@@ -122,13 +125,16 @@ const SingleEnvironmentDropdown: React.FC<DropdownProps> = ({ locked, onLock }) 
       <DropdownMenuContent className="mr-10 w-[180px] mt-0 shadow-lg shadow-primary-foreground">
         {dropdownItems
           .filter(({ label }) => (locked ? label !== 'Lock' : label !== 'Unlock'))
-          ?.map((item, index) => (
+          ?.map((item) => (
             <DropdownMenuItem
+              disabled={(item.label === "Delete" || item.label === "Rename") && locked}
               onClick={(e) => {
                 e.preventDefault()
+                setDropdownOpened(false)
                 if (item.label === 'Lock' || item.label === 'Unlock') {
-                  setDropdownOpened(false)
                   onLock()
+                } else if (item.label === 'Rename') {
+                  onRename()
                 }
               }}
               className={clsx(['flex items-center gap-3 px-3.5 py-2'], {
