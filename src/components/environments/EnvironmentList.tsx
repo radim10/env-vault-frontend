@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useImmer } from 'use-immer'
 import { Icons } from '../icons'
 import { Button } from '../ui/button'
 import { ListEnvironment, Project } from '@/types/projects'
@@ -9,6 +10,7 @@ import CreateEnvironmentDialog from './CreateEnvironmentDialog'
 import { useToast } from '../ui/use-toast'
 import SingleListEnvironment from './SingleListEnvironment'
 import LockEnvDialog from './LockEnvDialog'
+import RenameEnvironmentDialog from './RenameEnvironmentDialog'
 
 interface Props {
   queryClient: QueryClient
@@ -28,9 +30,10 @@ export const EnvironmentList: React.FC<Props> = ({
 }) => {
   const { toast } = useToast()
   // index of env
-  const [lockEnvDialog, setLockEnvDialog] = useState<{
+  const [dialog, setDialog] = useImmer<{
+    type?: 'lock' | 'rename' | 'delete'
     environmentName: string
-    lock: boolean
+    lock?: boolean
     index: number
   } | null>(null)
 
@@ -68,6 +71,32 @@ export const EnvironmentList: React.FC<Props> = ({
     })
   }
 
+  const handleRenamedEnvironment = (args: { index: number; name: string; newName: string }) => {
+    const { index, name, newName } = args
+
+    const data = queryClient.getQueryData<Project>(['project', workspaceId, projectName])
+
+    if (data) {
+      const environments = data?.environments
+      const env = environments?.find((e) => e.name === name)
+
+      if (env) {
+        const envIndex = environments?.findIndex((e) => e.name === name)
+        environments[envIndex].name = newName
+
+        queryClient.setQueryData(['project', workspaceId, projectName], {
+          ...data,
+          environments,
+        })
+      }
+    }
+
+    toast({
+      title: 'Environment has been renamed',
+      variant: 'success',
+    })
+  }
+
   if (!values?.length) {
     return (
       <div className="flex items-center justify-center mt-36">
@@ -92,6 +121,18 @@ export const EnvironmentList: React.FC<Props> = ({
     )
   }
 
+  const handleCloseDialog = () => {
+    setDialog((draft) => {
+      if (draft) {
+        draft.type = undefined
+      }
+    })
+
+    setTimeout(() => {
+      setDialog(null)
+    }, 300)
+  }
+
   return (
     <>
       <EnvironmentListToolbar
@@ -102,18 +143,32 @@ export const EnvironmentList: React.FC<Props> = ({
       />
 
       <LockEnvDialog
-        envName={lockEnvDialog?.environmentName ?? ''}
+        envName={dialog?.environmentName ?? ''}
         projectName={projectName}
         workspaceId={workspaceId}
-        lock={lockEnvDialog?.lock ?? true}
-        opened={lockEnvDialog !== null}
+        lock={dialog?.lock ?? true}
+        opened={dialog?.type === 'lock'}
         onSuccess={() => {
-          handleLockedEnvironment(lockEnvDialog?.index ?? -1, lockEnvDialog?.lock ?? true)
-          setLockEnvDialog(null)
+          handleLockedEnvironment(dialog?.index ?? -1, dialog?.lock ?? true)
+          handleCloseDialog()
         }}
-        onClose={() => {
-          setLockEnvDialog(null)
+        onClose={handleCloseDialog}
+      />
+
+      <RenameEnvironmentDialog
+        envName={dialog?.environmentName ?? ''}
+        projectName={projectName}
+        workspaceId={workspaceId}
+        opened={dialog?.type === 'rename'}
+        onSuccess={(newName) => {
+          handleRenamedEnvironment({
+            index: dialog?.index ?? -1,
+            name: dialog?.environmentName ?? '',
+            newName,
+          })
+          handleCloseDialog()
         }}
+        onClose={handleCloseDialog}
       />
 
       {/* List */}
@@ -127,7 +182,10 @@ export const EnvironmentList: React.FC<Props> = ({
             name={name}
             secretsCount={secretsCount}
             onLock={() => {
-              setLockEnvDialog({ lock: !locked, index, environmentName: name })
+              setDialog({ type: 'lock', lock: !locked, index, environmentName: name })
+            }}
+            onRename={() => {
+              setDialog({ type: 'rename', lock: locked, index, environmentName: name })
             }}
           />
         ))}
