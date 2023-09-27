@@ -52,6 +52,31 @@ export async function renameEnvironment(args: {
   return await response
 }
 
+// lock/unlock
+// TODO: errors
+export type LockEnvironmentError = APIError<any>
+export type LockEnvironmentResData = undefined
+
+export async function lockEnvironment(args: {
+  workspaceId: string
+  projectName: string
+  envName: string
+  lock: boolean
+}) {
+  const { workspaceId, projectName, envName, lock } = args
+
+  const response = sendRequest<LockEnvironmentResData>({
+    method: 'PATCH',
+    basePath: 'workspaces',
+    path: `${workspaceId}/projects/${projectName}/environments/${envName}/${
+      lock ? 'lock' : 'unlock'
+    }`,
+  })
+  return await response
+}
+
+// delete
+
 export type DeleteEnvironmentError = APIError<
   'Workspace not found' | 'Project not found' | 'Environment not found'
 >
