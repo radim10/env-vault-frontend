@@ -1,6 +1,30 @@
 import sendRequest, { APIError } from '@/api/instance'
 
 // TODO: error
+export type CreateEnvironmentError = APIError<
+  'Workspace not found' | 'Project not found' | 'Environment not found'
+>
+export type CreateEnvironmentResData = undefined
+
+export async function createEnvironment(args: {
+  workspaceId: string
+  projectName: string
+  data: {
+    name: string
+  }
+}) {
+  const { workspaceId, projectName, data } = args
+
+  const response = sendRequest<CreateEnvironmentResData>({
+    method: 'POST',
+    basePath: 'workspaces',
+    path: `${workspaceId}/projects/${projectName}/environments`,
+    body: data,
+  })
+  return await response
+}
+
+// TODO: error
 export type RenameEnvironmentError = APIError<
   | 'Workspace not found'
   | 'Project not found'
