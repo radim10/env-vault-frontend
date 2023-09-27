@@ -104,7 +104,7 @@ const CreateEnvironmentDialog: React.FC<Props> = ({
                 </SelectTrigger>
                 <SelectContent>
                   {envTypes.map((type) => (
-                    <SelectItem value={type} key={type}>
+                    <SelectItem value={type} key={type} className="px-10">
                       <Badge
                         variant="default"
                         className={clsx(['text-[0.725rem] text-gray-200'], {
