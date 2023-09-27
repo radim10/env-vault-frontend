@@ -2,17 +2,17 @@ import React from 'react'
 import clsx from 'clsx'
 import { useWindowScroll } from 'react-use'
 import CreateEnvironmentDialog from './CreateEnvironmentDialog'
-import { EnvironmentType } from '@/types/environments'
+import { EnvironmentType, EnvGroupBy, EnvSortOption } from '@/types/environments'
 import {
   Select,
   SelectContent,
   SelectItem,
-  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
 import { Icons } from '../icons'
 import { LucideIcon } from 'lucide-react'
+import { useEnvironmentListStore } from '@/stores/environments'
 
 interface Props {
   workspaceId: string
@@ -22,48 +22,36 @@ interface Props {
   onCreated: (args: { name: string; type: EnvironmentType }) => void
 }
 
-export enum SortOption {
-  CreatedDesc = 'Created desc',
-  CreatedAsc = 'Created asc',
-  SecretsCountDesc = 'Secrets count desc',
-  SecretsCountAsc = 'Secrets count asc',
-}
-
-const sortOptions: Array<{ value: SortOption; label: string; icon: LucideIcon }> = [
+const sortOptions: Array<{ value: EnvSortOption; label: string; icon: LucideIcon }> = [
   {
     label: 'Created',
-    value: SortOption.CreatedDesc,
+    value: EnvSortOption.CreatedDesc,
     icon: Icons.arrowDownWideNarrow,
   },
   {
     label: 'Created',
-    value: SortOption.CreatedAsc,
+    value: EnvSortOption.CreatedAsc,
     icon: Icons.arrowUpWideNarrow,
   },
   {
     label: 'Secrets',
-    value: SortOption.SecretsCountDesc,
+    value: EnvSortOption.SecretsCountDesc,
     icon: Icons.arrowDownWideNarrow,
   },
   {
     label: 'Secrets',
-    value: SortOption.SecretsCountAsc,
+    value: EnvSortOption.SecretsCountAsc,
     icon: Icons.arrowUpWideNarrow,
   },
 ]
 
-export enum GroupBy {
-  Lock = 'Lock',
-  Type = 'Type',
-}
-
-const groupByOptions: Array<{ value: GroupBy; icon: LucideIcon }> = [
+const groupByOptions: Array<{ value: EnvGroupBy; icon: LucideIcon }> = [
   {
-    value: GroupBy.Lock,
+    value: EnvGroupBy.Lock,
     icon: Icons.lock,
   },
   {
-    value: GroupBy.Type,
+    value: EnvGroupBy.Type,
     icon: Icons.lock,
   },
 ]
@@ -75,6 +63,7 @@ const EnvironmentListToolbar: React.FC<Props> = ({
   onCreated,
 }) => {
   const { y } = useWindowScroll()
+  const { sort, setSort, groupBy, setGroupBy, unGroup } = useEnvironmentListStore()
 
   return (
     <div
@@ -93,7 +82,16 @@ const EnvironmentListToolbar: React.FC<Props> = ({
 
       <div className="flex items-center gap-2">
         <div>
-          <Select>
+          <Select
+            value={groupBy ?? 'None'}
+            onValueChange={(value) => {
+              if (value === 'None') {
+                unGroup()
+              } else {
+                setGroupBy(value as EnvGroupBy)
+              }
+            }}
+          >
             <SelectTrigger className="w-[160px]">
               <SelectValue placeholder="Group by" />
             </SelectTrigger>
@@ -103,9 +101,9 @@ const EnvironmentListToolbar: React.FC<Props> = ({
                 <SelectItem value={value}>
                   <div className="flex items-center gap-2">
                     <div className="">{value.toString()}</div>
-                    {/*   <div> */}
-                    {/*     <Icon className="h-4 w-4 opacity-80" /> */}
-                    {/*   </div> */}
+                    <div>
+                      <Icons.group className="h-4 w-4 opacity-80" />
+                    </div>
                   </div>
                 </SelectItem>
               ))}
@@ -114,7 +112,12 @@ const EnvironmentListToolbar: React.FC<Props> = ({
         </div>
 
         <div>
-          <Select>
+          <Select
+            value={sort}
+            onValueChange={(value) => {
+              setSort(value as EnvSortOption)
+            }}
+          >
             <SelectTrigger className="w-[160px]">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
