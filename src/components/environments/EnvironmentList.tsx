@@ -13,6 +13,7 @@ import LockEnvDialog from './LockEnvDialog'
 import RenameEnvironmentDialog from './RenameEnvironmentDialog'
 import DeleteEnvironmentDialog from './DeleteEnvironmentDialog'
 import { EnvironmentType } from '@/types/environments'
+import ChangeEnvironmentTypeDialog from './ChangeEnvironmentTypeDialog'
 
 interface Props {
   queryClient: QueryClient
@@ -33,13 +34,14 @@ export const EnvironmentList: React.FC<Props> = ({
   const { toast } = useToast()
   // index of env
   const [dialog, setDialog] = useImmer<{
-    type?: 'lock' | 'rename' | 'delete'
+    type?: 'lock' | 'rename' | 'changeType' | 'delete'
+    envType?: EnvironmentType
     environmentName: string
     lock?: boolean
     index: number
   } | null>(null)
 
-  const handleNewEnvironment = (args: { name: string, type: EnvironmentType }) => {
+  const handleNewEnvironment = (args: { name: string; type: EnvironmentType }) => {
     const data = queryClient.getQueryData<Project>(['project', workspaceId, projectName])
 
     if (data) {
@@ -96,6 +98,33 @@ export const EnvironmentList: React.FC<Props> = ({
 
     toast({
       title: 'Environment has been renamed',
+      variant: 'success',
+    })
+  }
+
+
+  const handleUpdatedEnvType = (args: { index: number; name: string; newType: EnvironmentType }) => {
+    const { index, name, newType } = args
+
+    const data = queryClient.getQueryData<Project>(['project', workspaceId, projectName])
+
+    if (data) {
+      const environments = data?.environments
+      const env = environments?.find((e) => e.name === name)
+
+      if (env) {
+        const envIndex = environments?.findIndex((e) => e.name === name)
+        environments[envIndex].type = newType
+
+        queryClient.setQueryData(['project', workspaceId, projectName], {
+          ...data,
+          environments,
+        })
+      }
+    }
+
+    toast({
+      title: 'Environment type has been changed',
       variant: 'success',
     })
   }
@@ -196,6 +225,21 @@ export const EnvironmentList: React.FC<Props> = ({
             onClose={handleCloseDialog}
           />
 
+          {dialog?.envType && (
+            <ChangeEnvironmentTypeDialog
+              envName={dialog?.environmentName}
+              projectName={projectName}
+              workspaceId={workspaceId}
+              type={dialog?.envType}
+              opened={dialog?.type === 'changeType'}
+              onSuccess={(newType) => {
+                handleUpdatedEnvType({ index:dialog?.index, name: dialog?.environmentName, newType })
+                handleCloseDialog()
+              }}
+              onClose={handleCloseDialog}
+            />
+          )}
+
           <DeleteEnvironmentDialog
             envName={dialog?.environmentName ?? ''}
             projectName={projectName}
@@ -230,6 +274,9 @@ export const EnvironmentList: React.FC<Props> = ({
             }}
             onDelete={() => {
               setDialog({ type: 'delete', index, environmentName: name })
+            }}
+            onChangeType={() => {
+              setDialog({ type: 'changeType', envType: type, index, environmentName: name })
             }}
           />
         ))}
