@@ -197,6 +197,7 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
           workspaceId={workspaceId}
           projectName={project?.name}
           values={project?.environments}
+          queryClient={queryClient}
         />
       </div>
     </div>
