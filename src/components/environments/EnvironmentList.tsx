@@ -12,6 +12,7 @@ import SingleListEnvironment from './SingleListEnvironment'
 import LockEnvDialog from './LockEnvDialog'
 import RenameEnvironmentDialog from './RenameEnvironmentDialog'
 import DeleteEnvironmentDialog from './DeleteEnvironmentDialog'
+import { EnvironmentType } from '@/types/environments'
 
 interface Props {
   queryClient: QueryClient
@@ -38,13 +39,14 @@ export const EnvironmentList: React.FC<Props> = ({
     index: number
   } | null>(null)
 
-  const handleNewEnvironment = (name: string) => {
+  const handleNewEnvironment = (args: { name: string, type: EnvironmentType }) => {
     const data = queryClient.getQueryData<Project>(['project', workspaceId, projectName])
 
     if (data) {
+      const { type, name } = args
       queryClient.setQueryData(['project', workspaceId, projectName], {
         ...data,
-        environments: [{ name, secretsCount: 0 }, ...data?.environments],
+        environments: [{ name, type, secretsCount: 0 }, ...data?.environments],
       })
     }
 
