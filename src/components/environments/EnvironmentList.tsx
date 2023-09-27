@@ -11,6 +11,7 @@ import { useToast } from '../ui/use-toast'
 import SingleListEnvironment from './SingleListEnvironment'
 import LockEnvDialog from './LockEnvDialog'
 import RenameEnvironmentDialog from './RenameEnvironmentDialog'
+import DeleteEnvironmentDialog from './DeleteEnvironmentDialog'
 
 interface Props {
   queryClient: QueryClient
@@ -97,6 +98,26 @@ export const EnvironmentList: React.FC<Props> = ({
     })
   }
 
+  const handleDeletedEnv = (envName: string) => {
+    const projectData = queryClient.getQueryData<Project>(['project', workspaceId, projectName])
+
+    // update secrets data ???
+    if (projectData) {
+      const environments = projectData?.environments
+      const updatedEnvironments = environments?.filter((val) => val?.name !== envName)
+
+      queryClient.setQueryData(['project', workspaceId, projectName], {
+        ...projectData,
+        environments: updatedEnvironments,
+      })
+    }
+
+    toast({
+      title: 'Environment has been delete',
+      variant: 'success',
+    })
+  }
+
   if (!values?.length) {
     return (
       <div className="flex items-center justify-center mt-36">
@@ -142,34 +163,51 @@ export const EnvironmentList: React.FC<Props> = ({
         onCreated={handleNewEnvironment}
       />
 
-      <LockEnvDialog
-        envName={dialog?.environmentName ?? ''}
-        projectName={projectName}
-        workspaceId={workspaceId}
-        lock={dialog?.lock ?? true}
-        opened={dialog?.type === 'lock'}
-        onSuccess={() => {
-          handleLockedEnvironment(dialog?.index ?? -1, dialog?.lock ?? true)
-          handleCloseDialog()
-        }}
-        onClose={handleCloseDialog}
-      />
+      {dialog && (
+        <>
+          <LockEnvDialog
+            envName={dialog?.environmentName}
+            projectName={projectName}
+            workspaceId={workspaceId}
+            lock={dialog?.lock ?? true}
+            opened={dialog?.type === 'lock'}
+            onSuccess={() => {
+              handleLockedEnvironment(dialog?.index, dialog?.lock ?? true)
+              handleCloseDialog()
+            }}
+            onClose={handleCloseDialog}
+          />
 
-      <RenameEnvironmentDialog
-        envName={dialog?.environmentName ?? ''}
-        projectName={projectName}
-        workspaceId={workspaceId}
-        opened={dialog?.type === 'rename'}
-        onSuccess={(newName) => {
-          handleRenamedEnvironment({
-            index: dialog?.index ?? -1,
-            name: dialog?.environmentName ?? '',
-            newName,
-          })
-          handleCloseDialog()
-        }}
-        onClose={handleCloseDialog}
-      />
+          <RenameEnvironmentDialog
+            envName={dialog?.environmentName}
+            projectName={projectName}
+            workspaceId={workspaceId}
+            opened={dialog?.type === 'rename'}
+            onSuccess={(newName) => {
+              handleRenamedEnvironment({
+                index: dialog?.index,
+                name: dialog?.environmentName,
+                newName,
+              })
+              handleCloseDialog()
+            }}
+            onClose={handleCloseDialog}
+          />
+
+          <DeleteEnvironmentDialog
+            envName={dialog?.environmentName ?? ''}
+            projectName={projectName}
+            workspaceId={workspaceId}
+            opened={dialog?.type === 'delete'}
+            onClose={handleCloseDialog}
+            onSuccess={() => {
+              handleDeletedEnv(dialog?.environmentName)
+              handleCloseDialog()
+              //
+            }}
+          />
+        </>
+      )}
 
       {/* List */}
       <div className="flex flex-col gap-3 mt-6">
@@ -185,7 +223,10 @@ export const EnvironmentList: React.FC<Props> = ({
               setDialog({ type: 'lock', lock: !locked, index, environmentName: name })
             }}
             onRename={() => {
-              setDialog({ type: 'rename', lock: locked, index, environmentName: name })
+              setDialog({ type: 'rename', index, environmentName: name })
+            }}
+            onDelete={() => {
+              setDialog({ type: 'delete', index, environmentName: name })
             }}
           />
         ))}

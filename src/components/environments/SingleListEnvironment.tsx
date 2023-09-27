@@ -22,6 +22,7 @@ interface Props {
 
   onLock: () => void
   onRename: () => void
+  onDelete: () => void
 }
 
 const dropdownItems = [
@@ -40,6 +41,7 @@ const SingleListEnvironment: React.FC<Props> = ({
 
   onLock,
   onRename,
+  onDelete,
 }) => {
   const [dropdownOpened, setDropdownOpened] = useState(false)
 
@@ -52,7 +54,7 @@ const SingleListEnvironment: React.FC<Props> = ({
               {/* // */}
               <div
                 className={clsx(['h-3 w-3 rounded-full bg-primary'], {
-                  'bg-red-600 dark:bg-red-800': index === 0,
+                  'bg-gray-600 dark:bg-gray-600': index === 0,
                 })}
               />
               {/* {} */}
@@ -92,7 +94,12 @@ const SingleListEnvironment: React.FC<Props> = ({
           </div>
 
           {/* // DropdownMenu */}
-          <SingleEnvironmentDropdown locked={locked} onLock={onLock} onRename={onRename} />
+          <SingleEnvironmentDropdown
+            locked={locked}
+            onLock={onLock}
+            onRename={onRename}
+            onDelete={onDelete}
+          />
         </div>
       </div>
     </Link>
@@ -103,9 +110,15 @@ interface DropdownProps {
   locked: boolean
   onLock: () => void
   onRename: () => void
+  onDelete: () => void
 }
 
-const SingleEnvironmentDropdown: React.FC<DropdownProps> = ({ locked, onLock, onRename }) => {
+const SingleEnvironmentDropdown: React.FC<DropdownProps> = ({
+  locked,
+  onLock,
+  onRename,
+  onDelete,
+}) => {
   const [dropdownOpened, setDropdownOpened] = useState(false)
 
   return (
@@ -127,7 +140,7 @@ const SingleEnvironmentDropdown: React.FC<DropdownProps> = ({ locked, onLock, on
           .filter(({ label }) => (locked ? label !== 'Lock' : label !== 'Unlock'))
           ?.map((item) => (
             <DropdownMenuItem
-              disabled={(item.label === "Delete" || item.label === "Rename") && locked}
+              disabled={(item.label === 'Delete' || item.label === 'Rename') && locked}
               onClick={(e) => {
                 e.preventDefault()
                 setDropdownOpened(false)
@@ -135,6 +148,8 @@ const SingleEnvironmentDropdown: React.FC<DropdownProps> = ({ locked, onLock, on
                   onLock()
                 } else if (item.label === 'Rename') {
                   onRename()
+                } else if (item.label === 'Delete') {
+                  onDelete()
                 }
               }}
               className={clsx(['flex items-center gap-3 px-3.5 py-2'], {
