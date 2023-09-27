@@ -89,9 +89,9 @@ const SingleListEnvironment: React.FC<Props> = ({
                   className={clsx(['text-[0.725rem] text-gray-200'], {
                     'bg-indigo-600 dark:bg-indigo-800/80 hover:bg-indigo-600 dark:hover:bg-indigo-800/80':
                       type === EnvironmentType.DEVELOPMENT,
-                    'bg-green-600 dark:bg-green-800/80 hover:bg-green-600 dark:hover:bg-green-800/80':
-                      type === EnvironmentType.TESTING,
                     'bg-blue-600 dark:bg-blue-800/80 hover:bg-blue-600 dark:hover:bg-blue-800/80':
+                      type === EnvironmentType.TESTING,
+                    'bg-green-600 dark:bg-green-800/80 hover:bg-green-600 dark:hover:bg-green-800/80':
                       type === EnvironmentType.STAGING,
                     'bg-red-600 dark:bg-red-800/80 hover:bg-red-600 dark:hover:bg-red-800/80':
                       type === EnvironmentType.PRODUCTION,
