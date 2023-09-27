@@ -2,13 +2,14 @@ import React from 'react'
 import { Button } from '../ui/button'
 import { Icons } from '../icons'
 import CreateEnvironmentDialog from './CreateEnvironmentDialog'
+import { EnvironmentType } from '@/types/environments'
 
 interface Props {
   workspaceId: string
   projectName: string
   //
   environmentsCount: number
-  onCreated: (name: string) => void
+  onCreated: (args: { name: string; type: EnvironmentType }) => void
 }
 
 const EnvironmentListToolbar: React.FC<Props> = ({
