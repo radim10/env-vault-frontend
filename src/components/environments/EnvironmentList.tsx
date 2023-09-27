@@ -8,6 +8,7 @@ import clsx from 'clsx'
 import EnvironmentListToolbar from './EnvironmentListToolbar'
 import { QueryClient } from '@tanstack/react-query'
 import CreateEnvironmentDialog from './CreateEnvironmentDialog'
+import { useToast } from '../ui/use-toast'
 
 interface Props {
   queryClient: QueryClient
@@ -25,16 +26,22 @@ export const EnvironmentList: React.FC<Props> = ({
   projectName,
   values,
 }) => {
+  const { toast } = useToast()
+
   const handleNewEnvironment = (name: string) => {
     const data = queryClient.getQueryData<Project>(['project', workspaceId, projectName])
 
     if (data) {
       queryClient.setQueryData(['project', workspaceId, projectName], {
-
         ...data,
         environments: [{ name, secretsCount: 0 }, ...data?.environments],
       })
     }
+
+    toast({
+      title: 'Environment has been created',
+      variant: 'success',
+    })
   }
 
   if (!values?.length) {
@@ -97,7 +104,8 @@ export const EnvironmentList: React.FC<Props> = ({
                   <div className="w-[45%] bg-green-800X flex flex-row-reverse md:flex-row items-center gap-3 text-gray-300 text-[0.9rem]">
                     <div className="w-full">
                       <span>
-                        {secretsCount ?? 'No'} {secretsCount === 1 ? 'secret' : 'secrets'}
+                        {secretsCount !== 0 ? secretsCount : 'No'}
+                        {secretsCount === 1 ? 'secret' : 'secrets'}
                       </span>
                     </div>
                     {/* //  */}
