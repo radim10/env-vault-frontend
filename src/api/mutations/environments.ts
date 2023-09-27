@@ -14,6 +14,7 @@ import {
   renameEnvironment,
 } from '../requests/projects/environments/environments'
 import { MutOpt } from './mutOpt'
+import { EnvironmentType } from '@/types/environments'
 
 // create
 type CreateEnvironmentVariables = {
@@ -21,6 +22,7 @@ type CreateEnvironmentVariables = {
   projectName: string
   data: {
     name: string
+    type: EnvironmentType
   }
 }
 
