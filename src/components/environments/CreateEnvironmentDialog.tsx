@@ -23,7 +23,12 @@ interface Props {
   onSuccess: (name: string) => void
 }
 
-const CreateEnvironmentDialog: React.FC<Props> = ({ workspaceId, projectName, btnText, onSuccess }) => {
+const CreateEnvironmentDialog: React.FC<Props> = ({
+  workspaceId,
+  projectName,
+  btnText,
+  onSuccess,
+}) => {
   const [opened, setOpened] = useState(false)
   const [name, setName] = useState('')
 
@@ -32,7 +37,10 @@ const CreateEnvironmentDialog: React.FC<Props> = ({ workspaceId, projectName, bt
     isLoading,
     error,
   } = useCreateEnvironment({
-    onSuccess: () => onSuccess(name),
+    onSuccess: () => {
+      onSuccess(name)
+      setOpened(false)
+    },
   })
 
   const close = () => {
@@ -57,7 +65,7 @@ const CreateEnvironmentDialog: React.FC<Props> = ({ workspaceId, projectName, bt
         <DialogTrigger asChild onClick={() => setOpened(true)}>
           <Button className="gap-1.5" variant="default" size={'sm'}>
             <Icons.plus className="h-4 w-4" />
-            <span>{btnText ?? "Add new"}</span>
+            <span>{btnText ?? 'Add new'}</span>
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
