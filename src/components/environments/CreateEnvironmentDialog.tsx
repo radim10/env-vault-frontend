@@ -14,20 +14,25 @@ import {
 import { Icons } from '../icons'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
+import { useCreateEnvironment } from '@/api/mutations/environments'
 
 interface Props {
   workspaceId: string
   projectName: string
-  onClose: () => void
-  onSuccess: () => void
+  onSuccess: (name: string) => void
 }
 
-const CreateEnvironmentDialog = (props: {}) => {
+const CreateEnvironmentDialog: React.FC<Props> = ({ workspaceId, projectName, onSuccess }) => {
   const [opened, setOpened] = useState(false)
   const [name, setName] = useState('')
 
-  const isLoading = false
-  const error: any = {}
+  const {
+    mutate: createEnvironment,
+    isLoading,
+    error,
+  } = useCreateEnvironment({
+    onSuccess: () => onSuccess(name),
+  })
 
   const close = () => {
     if (isLoading) return
@@ -49,15 +54,17 @@ const CreateEnvironmentDialog = (props: {}) => {
         }}
       >
         <DialogTrigger asChild onClick={() => setOpened(true)}>
-        <Button className="gap-1.5" variant="default" size={'sm'}>
-          <Icons.plus className="h-4 w-4" />
-          <span>Add new</span>
-        </Button>
+          <Button className="gap-1.5" variant="default" size={'sm'}>
+            <Icons.plus className="h-4 w-4" />
+            <span>Add new</span>
+          </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Create new environment</DialogTitle>
-            <DialogDescription>Environment is used to store secrets (environment variables).</DialogDescription>
+            <DialogDescription>
+              Environment is used to store secrets (environment variables).
+            </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4 py-4 text-lg">
             <div className="flex flex-col gap-1.5 items-start justify-center">
@@ -73,10 +80,7 @@ const CreateEnvironmentDialog = (props: {}) => {
               />
             </div>
 
-            <div className="flex flex-col gap-1.5 items-start justify-center">
-              Type dropdown
-
-            </div>
+            <div className="flex flex-col gap-1.5 items-start justify-center">Type dropdown</div>
 
             {error?.message && (
               <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
@@ -90,7 +94,7 @@ const CreateEnvironmentDialog = (props: {}) => {
               type="submit"
               loading={isLoading}
               disabled={name?.trim().length === 0 || isLoading}
-              onClick={() => {}}
+              onClick={() => createEnvironment({ workspaceId, projectName, data: { name } })}
             >
               Create
             </Button>
