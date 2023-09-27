@@ -44,6 +44,8 @@ import {
   SquareAsterisk,
   Lock,
   Unlock,
+  Tag,
+  PenSquare,
 } from 'lucide-react'
 
 export const Icons = {
@@ -92,4 +94,7 @@ export const Icons = {
   squareAsterisk: SquareAsterisk,
   lock: Lock,
   unlock: Unlock,
+  tag: Tag,
+  penSquare: PenSquare
 }
+
