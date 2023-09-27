@@ -42,7 +42,8 @@ import {
   FilePlus,
   FilePlus2,
   SquareAsterisk,
-  Lock
+  Lock,
+  Unlock,
 } from 'lucide-react'
 
 export const Icons = {
@@ -89,5 +90,6 @@ export const Icons = {
   filePlus: FilePlus,
   filePlus2: FilePlus2,
   squareAsterisk: SquareAsterisk,
-  lock:Lock
+  lock: Lock,
+  unlock: Unlock,
 }
