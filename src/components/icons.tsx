@@ -10,6 +10,7 @@ import {
   LogOut,
   ChevronDown,
   ChevronRight,
+  ChevronUp,
   Plus,
   Layers,
   XCircle,
@@ -46,6 +47,8 @@ import {
   Unlock,
   Tag,
   PenSquare,
+  ArrowUpWideNarrow,
+  ArrowDownWideNarrow,
 } from 'lucide-react'
 
 export const Icons = {
@@ -95,6 +98,8 @@ export const Icons = {
   lock: Lock,
   unlock: Unlock,
   tag: Tag,
-  penSquare: PenSquare
+  penSquare: PenSquare,
+  chevronUp: ChevronUp,
+  arrowUpWideNarrow: ArrowUpWideNarrow,
+  arrowDownWideNarrow: ArrowDownWideNarrow,
 }
-
