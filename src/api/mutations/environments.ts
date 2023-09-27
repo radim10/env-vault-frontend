@@ -8,10 +8,13 @@ import {
   LockEnvironmentResData,
   RenameEnvironmentError,
   RenameEnvironmentResData,
+  UpdateEnvironmentTypeError,
+  UpdateEnvironmentTypeResData,
   createEnvironment,
   deleteEnvironment,
   lockEnvironment,
   renameEnvironment,
+  updateEnvironmentType,
 } from '../requests/projects/environments/environments'
 import { MutOpt } from './mutOpt'
 import { EnvironmentType } from '@/types/environments'
@@ -55,6 +58,24 @@ type RenameEnvironmentVariables = {
     name: string
   }
 }
+
+// update type
+type UpdateEnvironmentTypeVariables = {
+  workspaceId: string
+  projectName: string
+  envName: string
+  data: {
+    type: EnvironmentType
+  }
+}
+
+export const useUpdateEnvironmentType = (opt?: MutOpt<UpdateEnvironmentTypeResData>) =>
+  useMutation<
+    UpdateEnvironmentTypeResData,
+    UpdateEnvironmentTypeError,
+    UpdateEnvironmentTypeVariables
+  >(updateEnvironmentType, opt)
+//
 
 export const useRenameEnvironment = (opt?: MutOpt<RenameEnvironmentResData>) =>
   useMutation<RenameEnvironmentResData, RenameEnvironmentError, RenameEnvironmentVariables>(
