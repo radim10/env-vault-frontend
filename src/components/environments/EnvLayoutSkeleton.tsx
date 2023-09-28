@@ -26,19 +26,16 @@ const EnvLayoutSkeleton = (props: {}) => {
       </div>
 
       <div className="block md:hidden mt-3">
-        <div className="flex flex-col justify-between items-start mt-0 gap-3">
+        <div className="flex flex-col justify-between items-start mt-0 gap-2">
           <div className="flex gap-2 items-center">
             <Skeleton className="h-6 w-44 md:w-80 " />
           </div>
           <div className="flex gap-2 items-center">
             <Skeleton className="h-6 w-44 md:w-80 " />
-          </div>
-          <div className="flex gap-2 items-center">
-            <Skeleton className="h-6 w-20 rounded-lg" />
           </div>
           {/* // FLEX END */}
         </div>
-        <div className="flex items-center justify-end w-full -mt-0">
+        <div className="flex items-center justify-end w-full -mt-1">
           <Skeleton className="w-[50px] h-[36px]" />
         </div>
 
