@@ -337,7 +337,7 @@ const SaveSecretsToolbar = () => {
     router.push(`/workspace/${selectedEnv?.workspaceId}/projects/${selectedEnv?.projectName}`)
   }
 
-  if (!loaded || !selectedEnv) {
+  if (!selectedEnv) {
     return <></>
   }
 
@@ -402,39 +402,46 @@ const SaveSecretsToolbar = () => {
       />
 
       <div className="flex items-center gap-3 lg:gap-5 -mt-1">
-        {secrets?.filter(
-          (s) =>
-            s.action !== null ||
-            (!s.description && s.newDescription) ||
-            (s.description && s.newDescription !== s.description && s.newDescription) ||
-            (s.newDescription?.length === 0 && s.description)
-        ).length > 0 && (
-          <div className="text-[0.92rem] text-yellow-500 dark:text-yellow-600 font-medium">
-            {getChangesText()}
-          </div>
+        {loaded && (
+          <>
+            {secrets?.filter(
+              (s) =>
+                s.action !== null ||
+                (!s.description && s.newDescription) ||
+                (s.description && s.newDescription !== s.description && s.newDescription) ||
+                (s.newDescription?.length === 0 && s.description)
+            ).length > 0 && (
+              <div className="text-[0.92rem] text-yellow-500 dark:text-yellow-600 font-medium">
+                {getChangesText()}
+              </div>
+            )}
+          </>
         )}
 
         <div className="flex items-center gap-2">
-          <Button
-            className="gap-2"
-            size="sm"
-            disabled={
-              !secrets?.filter(
-                (s) =>
-                  s.action !== null ||
-                  (!s.description && s.newDescription) ||
-                  (s.description && s.newDescription !== s.description && s.newDescription) ||
-                  (s.newDescription?.length === 0 && s.description)
-              )?.length
-            }
-            onClick={handleOpenDialog}
-          >
-            <Icons.save className="w-4 h-4" />
-            Save{' '}
-          </Button>
+          {loaded && (
+            <Button
+              className="gap-2"
+              size="sm"
+              disabled={
+                !secrets?.filter(
+                  (s) =>
+                    s.action !== null ||
+                    (!s.description && s.newDescription) ||
+                    (s.description && s.newDescription !== s.description && s.newDescription) ||
+                    (s.newDescription?.length === 0 && s.description)
+                )?.length
+              }
+              onClick={handleOpenDialog}
+            >
+              <Icons.save className="w-4 h-4" />
+              Save{' '}
+            </Button>
+          )}
 
           <EnvActionsDropdown
             isLocked={selectedEnv?.locked}
+            hideCopySecrets={!loaded}
             onCopy={copyEnv}
             onDelete={() => setDialog('delete')}
             onRename={() => setDialog('rename')}

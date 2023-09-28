@@ -28,6 +28,7 @@ const dropdownActionSecretsItems = [
 
 interface Props {
   isLocked: boolean
+  hideCopySecrets: boolean
   onCopy: (type: 'env' | 'json') => void
   onRename: () => void
   onDelete: () => void
@@ -36,6 +37,7 @@ interface Props {
 }
 
 const EnvActionsDropdown: React.FC<Props> = ({
+  hideCopySecrets,
   isLocked,
   onCopy,
   onRename,
@@ -52,22 +54,26 @@ const EnvActionsDropdown: React.FC<Props> = ({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="mr-10 w-[200px] mt-1">
-          {dropdownActionSecretsItems.map((item, index) => (
-            <DropdownMenuItem
-              onClick={() => {
-                if (index === 0) {
-                  onCopy('env')
-                } else {
-                  onCopy('json')
-                }
-              }}
-              className={clsx(['flex items-center gap-3 px-3.5 py-2'], {})}
-            >
-              <item.icon className={clsx(['h-4 w-4 opacity-70'])} />
-              <div className="">{item.label}</div>
-            </DropdownMenuItem>
-          ))}
-          <DropdownMenuSeparator />
+          {!hideCopySecrets && (
+            <>
+              {dropdownActionSecretsItems.map((item, index) => (
+                <DropdownMenuItem
+                  onClick={() => {
+                    if (index === 0) {
+                      onCopy('env')
+                    } else {
+                      onCopy('json')
+                    }
+                  }}
+                  className={clsx(['flex items-center gap-3 px-3.5 py-2'], {})}
+                >
+                  <item.icon className={clsx(['h-4 w-4 opacity-70'])} />
+                  <div className="">{item.label}</div>
+                </DropdownMenuItem>
+              ))}
+              <DropdownMenuSeparator />
+            </>
+          )}
           <DropdownMenuGroup>
             {(isLocked ? dropdownActionItemsLocked : dropdownActionItemsUnlocked).map((item) => (
               <DropdownMenuItem
