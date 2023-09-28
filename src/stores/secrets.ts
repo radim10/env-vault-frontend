@@ -31,7 +31,7 @@ export interface EditSecretsActions {
   setSearch: (search: string) => void
   reset: () => void
   set: (secrets: StateSecret[]) => void
-  add: () => void
+  add: (arg?: { key: string; value: string }) => void
   undoChanges: (args: { index: number; origItem: Secret }) => void
   toggleVisibility: (index: number) => void
   toggleDescription: (index: number) => void
@@ -72,14 +72,25 @@ export const useEditedSecretsStore = create(
           state.loaded = true
         })
       },
-      add: () => {
+      add: (args) => {
         set((state) => {
-          state.secrets.push({
-            key: '',
-            value: '',
-            hidden: false,
-            action: SecretAction.Created,
-          })
+          if (args) {
+            state.secrets.push({
+              key: '',
+              value: '',
+              newKey: args?.key,
+              newValue: args?.value,
+              hidden: false,
+              action: SecretAction.Created,
+            })
+          } else {
+            state.secrets.push({
+              key: '',
+              value: '',
+              hidden: false,
+              action: SecretAction.Created,
+            })
+          }
         })
       },
       undoChanges: ({ index, origItem }) => {
