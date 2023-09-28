@@ -28,7 +28,7 @@ const SecretsToolbar: React.FC<Props> = ({ secretsCount, onImport }) => {
           <span>Active count: {secretsCount}</span>
         </div>
         {/* */}
-        <div className="flex gap-3 items-center mt-3 md:mt-0">
+        <div className="flex gap-3 items-center justify-end mt-3 md:mt-0">
           <div className="flex items-center gap-2">
             <TooltipProvider>
               <Tooltip>
@@ -114,7 +114,7 @@ const SecretsToolbar: React.FC<Props> = ({ secretsCount, onImport }) => {
             )}
 
             <Input
-              placeholder="Search secrets"
+              placeholder="Search"
               className="pl-10 pr-10 -mr-10"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
