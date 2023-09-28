@@ -22,6 +22,7 @@ import { EnvironmentList } from '../environments/EnvironmentList'
 import CreateEnvironmentDialog from '../environments/CreateEnvironmentDialog'
 import { useEnvironmentListStore } from '@/stores/environments'
 import { useMount, useUnmount, useUpdateEffect } from 'react-use'
+import ProjectSkeleton from './ProjectSkeleton'
 
 const dropdownItems = [
   { label: 'Rename', icon: Icons.pencil },
@@ -85,18 +86,6 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
     setGroupedEnvironments(null)
   })
 
-  if (isLoading || !environments) {
-    return 'loading'
-  }
-
-  if (isError) {
-    return 'error'
-  }
-
-  if (project === null) {
-    return 'Project deleted'
-  }
-
   const handleRemovedProject = () => {
     // selected
     queryClient.setQueryData(['project', workspaceId, projectName], null)
@@ -149,6 +138,19 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
     if (updated?.name) {
       router.push(`/workspace/${workspaceId}/projects/${updated.name}`)
     }
+  }
+
+  if (isLoading || !environments) {
+    return <ProjectSkeleton grouped={false} />
+    // return <ProjectSkeleton grouped={groupBy !== null ? true : false} />
+  }
+
+  if (isError) {
+    return 'error'
+  }
+
+  if (project === null) {
+    return 'Project deleted'
   }
 
   return (
