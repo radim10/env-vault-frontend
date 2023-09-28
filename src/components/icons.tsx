@@ -50,6 +50,7 @@ import {
   ArrowUpWideNarrow,
   ArrowDownWideNarrow,
   Group,
+  Upload,
 } from 'lucide-react'
 
 export const Icons = {
@@ -104,4 +105,5 @@ export const Icons = {
   arrowUpWideNarrow: ArrowUpWideNarrow,
   arrowDownWideNarrow: ArrowDownWideNarrow,
   group: Group,
+  upload: Upload,
 }
