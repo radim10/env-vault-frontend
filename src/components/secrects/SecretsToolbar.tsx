@@ -7,9 +7,10 @@ import { useEditedSecretsStore } from '@/stores/secrets'
 
 interface Props {
   secretsCount: number
+  onImport: () => void
 }
 
-const SecretsToolbar: React.FC<Props> = ({ secretsCount }) => {
+const SecretsToolbar: React.FC<Props> = ({ secretsCount, onImport }) => {
   const { secrets, search, setSearch, toggleVisibilityAll, toggleDescriptionAll } =
     useEditedSecretsStore((state) => {
       return {
@@ -29,6 +30,19 @@ const SecretsToolbar: React.FC<Props> = ({ secretsCount }) => {
         {/* */}
         <div className="flex gap-3 items-center mt-3 md:mt-0">
           <div className="flex items-center gap-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button variant={'outline'} onClick={() => onImport()}>
+                    <Icons.upload className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Import secret</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            {/* // */}
+
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
