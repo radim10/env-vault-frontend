@@ -12,24 +12,28 @@ import {
 import { Icons } from '../icons'
 import { Button } from '../ui/button'
 
-interface Props {
-  onCopy: (type: 'env' | 'json') => void
-  onRename: () => void
-  onDelete: () => void
-}
-
-const dropdownActionItems = [
+const dropdownActionItemsUnlocked = [
   { label: 'Rename', icon: Icons.pencil },
+  { label: 'Lock', icon: Icons.lock },
   { label: 'Delete', icon: Icons.trash },
 ]
 
-// TODO:
+const dropdownActionItemsLocked = [{ label: 'Unlock', icon: Icons.unlock }]
+
 const dropdownActionSecretsItems = [
   { label: 'Copy secrets (.env)', icon: Icons.fileText },
   { label: 'Copy secrets (json)', icon: Icons.fileJson },
 ]
 
-const EnvActionsDropdown: React.FC<Props> = ({ onCopy, onRename, onDelete }) => {
+interface Props {
+  isLocked: boolean
+  onCopy: (type: 'env' | 'json') => void
+  onRename: () => void
+  onDelete: () => void
+  onLock: () => void
+}
+
+const EnvActionsDropdown: React.FC<Props> = ({ isLocked, onCopy, onRename, onDelete, onLock }) => {
   return (
     <>
       <DropdownMenu>
@@ -56,13 +60,15 @@ const EnvActionsDropdown: React.FC<Props> = ({ onCopy, onRename, onDelete }) => 
           ))}
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            {dropdownActionItems.map((item) => (
+            {(isLocked ? dropdownActionItemsLocked : dropdownActionItemsUnlocked).map((item) => (
               <DropdownMenuItem
                 onClick={() => {
                   if (item.label === 'Rename') {
                     onRename()
                   } else if (item.label === 'Delete') {
                     onDelete()
+                  } else if (item.label === 'Lock' || item.label === 'Unlock') {
+                    onLock()
                   }
                 }}
                 className={clsx(['flex items-center gap-3 px-3.5 py-2'], {
