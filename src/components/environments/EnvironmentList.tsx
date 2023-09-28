@@ -15,7 +15,7 @@ import DeleteEnvironmentDialog from './DeleteEnvironmentDialog'
 import { EnvironmentType } from '@/types/environments'
 import ChangeEnvironmentTypeDialog from './ChangeEnvironmentTypeDialog'
 import { Badge } from '../ui/badge'
-import { useEnvironmentListStore } from '@/stores/environments'
+import { areAllArraysEmpty, useEnvironmentListStore } from '@/stores/environments'
 
 interface Props {
   queryClient: QueryClient
@@ -37,7 +37,8 @@ export const EnvironmentList: React.FC<Props> = ({
 }) => {
   const { toast } = useToast()
 
-  const { setEnvironments, groupBy, setGroupedEnvironments } = useEnvironmentListStore()
+  const { setEnvironments, groupBy, setGroupedEnvironments, isGroupedEmpty } =
+    useEnvironmentListStore()
 
   // index of env
   const [dialog, setDialog] = useImmer<{
@@ -55,7 +56,7 @@ export const EnvironmentList: React.FC<Props> = ({
       const { type, name } = args
       queryClient.setQueryData(['project', workspaceId, projectName], {
         ...data,
-        environments: [{ name, type, secretsCount: 0 }, ...data?.environments],
+        environments: [{ name, type, locked: false, secretsCount: 0 }, ...data?.environments],
       })
     }
 
@@ -182,7 +183,7 @@ export const EnvironmentList: React.FC<Props> = ({
     }
   }
 
-  if (!values?.length && !groupedEnvironments) {
+  if ((!values?.length && !groupedEnvironments) || (groupedEnvironments && isGroupedEmpty())) {
     return (
       <div className="flex items-center justify-center mt-36">
         <div className="flex flex-col items-center gap-2">
