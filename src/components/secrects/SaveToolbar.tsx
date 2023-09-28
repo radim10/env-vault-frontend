@@ -15,18 +15,19 @@ import { Project } from '@/types/projects'
 import { Secret } from '@/types/secrets'
 import EnvActionsDropdown from './EnvActionsDropdown'
 import LockEnvDialog from '../environments/LockEnvDialog'
+import ChangeEnvironmentTypeDialog from '../environments/ChangeEnvironmentTypeDialog'
+import { EnvironmentType } from '@/types/environments'
 
 const SaveSecretsToolbar = () => {
   const router = useRouter()
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
-  const { data: selectedEnv, updateLocked } = useSelectedEnvironmentStore()
+  const { data: selectedEnv, update: updateSelectedEnv } = useSelectedEnvironmentStore()
 
-  const [saveDialogOpened, setSaveDialogOpened] = useState(false)
-  const [renameEnvDialogOpened, setEnvRenameDialogOpened] = useState(false)
-  const [deleteEnvDialogOpened, setDeleteEnvDialogOpened] = useState(false)
-  const [lockEnvDialogOpened, setLockEnvDialogOpened] = useState(false)
+  const [dialog, setDialog] = useState<'save' | 'rename' | 'delete' | 'lock' | 'changeType' | null>(
+    null
+  )
 
   const { loaded, secrets } = useEditedSecretsStore((state) => {
     return {
@@ -50,7 +51,7 @@ const SaveSecretsToolbar = () => {
   }
 
   const handleUpdatedSecrets = () => {
-    setSaveDialogOpened(false)
+    setDialog(null)
 
     updateCache()
     toast({
@@ -115,7 +116,7 @@ const SaveSecretsToolbar = () => {
       return
     }
 
-    setSaveDialogOpened(true)
+    setDialog('save')
   }
 
   const copyEnv = (type: 'env' | 'json') => {
@@ -155,7 +156,7 @@ const SaveSecretsToolbar = () => {
   }
 
   const handleRenamedEnv = (newName: string) => {
-    setEnvRenameDialogOpened(false)
+    setDialog(null)
 
     // update cache cache
     // TODO: update single item (check if env exists)
@@ -211,7 +212,7 @@ const SaveSecretsToolbar = () => {
   }
 
   const handleLockChange = (locked: boolean) => {
-    setLockEnvDialogOpened(false)
+    setDialog(null)
 
     const projectData = queryClient.getQueryData<Project>([
       'project',
@@ -235,13 +236,45 @@ const SaveSecretsToolbar = () => {
         })
       }
     }
-    updateLocked(locked)
 
-    //TODO: update current + update state
+    updateSelectedEnv({ locked })
+
+    //TODO: update current
+  }
+
+  const handleTypeChange = (type: EnvironmentType) => {
+    setDialog(null)
+
+    const projectData = queryClient.getQueryData<Project>([
+      'project',
+      selectedEnv?.workspaceId,
+      selectedEnv?.projectName,
+    ])
+
+    if (projectData) {
+      const environments = projectData?.environments
+      const prevName = selectedEnv?.name
+
+      const updatedEnvIndex = environments?.findIndex((e) => e.name === prevName)
+
+      if (updatedEnvIndex !== -1) {
+        const updated = environments?.[updatedEnvIndex]
+        updated.type = type
+
+        queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
+          ...projectData,
+          environments,
+        })
+      }
+    }
+
+    updateSelectedEnv({ type })
+
+    // TODO: update current
   }
 
   const handleDeletedEnv = () => {
-    setDeleteEnvDialogOpened(false)
+    setDialog(null)
 
     // update cache
     // TODO: update single item (check if env exists)
@@ -272,13 +305,13 @@ const SaveSecretsToolbar = () => {
     <>
       {true && (
         <SaveConfirmDialog
-          opened={saveDialogOpened}
+          opened={dialog === 'save'}
           workspaceId={selectedEnv.workspaceId}
           projectName={selectedEnv.projectName}
           envName={selectedEnv.name}
           secrets={secrets}
           onSuccess={handleUpdatedSecrets}
-          onClose={() => setSaveDialogOpened(false)}
+          onClose={() => setDialog(null)}
           changes={secrets?.filter(
             (s) =>
               s.action !== null ||
@@ -291,31 +324,41 @@ const SaveSecretsToolbar = () => {
       )}
 
       <RenameEnvironmentDialog
-        opened={renameEnvDialogOpened}
+        opened={dialog === 'rename'}
         workspaceId={selectedEnv.workspaceId}
         projectName={selectedEnv.projectName}
         envName={selectedEnv.name}
-        onClose={() => setEnvRenameDialogOpened(false)}
+        onClose={() => setDialog(null)}
         onSuccess={handleRenamedEnv}
       />
 
       <DeleteEnvironmentDialog
-        opened={deleteEnvDialogOpened}
+        opened={dialog === 'delete'}
         workspaceId={selectedEnv.workspaceId}
         projectName={selectedEnv.projectName}
         envName={selectedEnv.name}
-        onClose={() => setDeleteEnvDialogOpened(false)}
+        onClose={() => setDialog(null)}
         onSuccess={handleDeletedEnv}
       />
 
       <LockEnvDialog
-        opened={lockEnvDialogOpened}
+        opened={dialog === 'lock'}
         workspaceId={selectedEnv.workspaceId}
         projectName={selectedEnv.projectName}
         envName={selectedEnv.name}
         lock={!selectedEnv.locked}
-        onClose={() => setLockEnvDialogOpened(false)}
+        onClose={() => setDialog(null)}
         onSuccess={() => handleLockChange(!selectedEnv.locked)}
+      />
+
+      <ChangeEnvironmentTypeDialog
+        type={selectedEnv.type}
+        opened={dialog === 'changeType'}
+        workspaceId={selectedEnv.workspaceId}
+        projectName={selectedEnv.projectName}
+        envName={selectedEnv.name}
+        onClose={() => setDialog(null)}
+        onSuccess={handleTypeChange}
       />
 
       <div className="flex items-center gap-3 lg:gap-5 -mt-1">
@@ -353,9 +396,10 @@ const SaveSecretsToolbar = () => {
           <EnvActionsDropdown
             isLocked={selectedEnv?.locked}
             onCopy={copyEnv}
-            onDelete={() => setDeleteEnvDialogOpened(true)}
-            onRename={() => setEnvRenameDialogOpened(true)}
-            onLock={() => setLockEnvDialogOpened(true)}
+            onDelete={() => setDialog('delete')}
+            onRename={() => setDialog('rename')}
+            onLock={() => setDialog('lock')}
+            onChangeType={() => setDialog('changeType')}
           />
         </div>
       </div>
