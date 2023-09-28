@@ -78,6 +78,11 @@ export const useEnvironmentListStore = create(
             }
           })
 
+          //  sort
+          Object.keys(groupedByType).forEach((key) => {
+            groupedByType[key] = handleSort(groupedByType[key], get().sort)
+          })
+
           set((state) => {
             state.groupedEnvironments = groupedByType
           })
@@ -207,6 +212,32 @@ const handleSort = (arr: ListEnvironment[], sort: EnvSortOption | null): ListEnv
     sorted = arr.sort((a, b) => b.secretsCount - a.secretsCount)
   } else if (sort === EnvSortOption.SecretsCountAsc) {
     sorted = arr.sort((a, b) => a.secretsCount - b.secretsCount)
+  } else if (sort === EnvSortOption.AlphabeticalAsc) {
+    sorted = arr.sort((a, b) => {
+      const nameA = a.name.toLowerCase() // Convert names to lowercase for case-insensitive sorting
+      const nameB = b.name.toLowerCase()
+
+      if (nameA < nameB) {
+        return -1 // a should come before b in the sorted order
+      }
+      if (nameA > nameB) {
+        return 1 // a should come after b in the sorted order
+      }
+      return 0 // a and b are equal in terms of sorting
+    })
+  } else if (sort === EnvSortOption.AlphabeticalDesc) {
+    sorted = arr.sort((a, b) => {
+      const nameA = a.name.toLowerCase() // Convert names to lowercase for case-insensitive sorting
+      const nameB = b.name.toLowerCase()
+
+      if (nameA > nameB) {
+        return -1 // a should come before b in the sorted order
+      }
+      if (nameA < nameB) {
+        return 1 // a should come after b in the sorted order
+      }
+      return 0 // a and b are equal in terms of sorting
+    })
   }
 
   return sorted

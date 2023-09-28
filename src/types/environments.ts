@@ -17,6 +17,8 @@ export enum EnvSortOption {
   CreatedAsc = 'Created asc',
   SecretsCountDesc = 'Secrets count desc',
   SecretsCountAsc = 'Secrets count asc',
+  AlphabeticalAsc = 'Alphabetical asc',
+  AlphabeticalDesc = 'Alphabetical desc',
 }
 
 export enum EnvGroupBy {

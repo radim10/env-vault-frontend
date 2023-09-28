@@ -7,6 +7,7 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
@@ -42,6 +43,16 @@ const sortOptions: Array<{ value: EnvSortOption; label: string; icon: LucideIcon
     label: 'Secrets',
     value: EnvSortOption.SecretsCountAsc,
     icon: Icons.arrowUpWideNarrow,
+  },
+  {
+    label: 'Alphabet',
+    icon: Icons.arrowUpWideNarrow,
+    value: EnvSortOption.AlphabeticalAsc,
+  },
+  {
+    label: 'Alphabet',
+    value: EnvSortOption.AlphabeticalDesc,
+    icon: Icons.arrowDownWideNarrow,
   },
 ]
 
@@ -122,15 +133,18 @@ const EnvironmentListToolbar: React.FC<Props> = ({
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
-              {sortOptions.map(({ value, label, icon: Icon }) => (
-                <SelectItem value={value}>
-                  <div className="flex items-center gap-2">
-                    <div className="">{label}</div>
-                    <div>
-                      <Icon className="ml-1 h-4 w-4 opacity-80" />
+              {sortOptions.map(({ value, label, icon: Icon }, index) => (
+                <>
+                  {(index === 2 || index === 4) && <SelectSeparator />}
+                  <SelectItem value={value}>
+                    <div className="flex items-center gap-2">
+                      <div className="">{label}</div>
+                      <div>
+                        <Icon className="ml-1 h-4 w-4 opacity-80" />
+                      </div>
                     </div>
-                  </div>
-                </SelectItem>
+                  </SelectItem>
+                </>
               ))}
             </SelectContent>
           </Select>
