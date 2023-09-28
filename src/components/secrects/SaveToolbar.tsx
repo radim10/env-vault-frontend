@@ -221,14 +221,15 @@ const SaveSecretsToolbar = () => {
     ])
 
     if (projectData) {
-      const environments = projectData?.environments
+      const environments = [...projectData?.environments]
       const prevName = selectedEnv?.name
 
       const updatedEnvIndex = environments?.findIndex((e) => e.name === prevName)
 
       if (updatedEnvIndex !== -1) {
         const updated = environments?.[updatedEnvIndex]
-        updated.locked = locked
+
+        environments[updatedEnvIndex] = { ...updated, locked }
 
         queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
           ...projectData,
@@ -252,14 +253,15 @@ const SaveSecretsToolbar = () => {
     ])
 
     if (projectData) {
-      const environments = projectData?.environments
-      const prevName = selectedEnv?.name
+      const environments = [...projectData?.environments]
+      const name = selectedEnv?.name
 
-      const updatedEnvIndex = environments?.findIndex((e) => e.name === prevName)
+      const updatedEnvIndex = environments?.findIndex((e) => e.name === name)
 
       if (updatedEnvIndex !== -1) {
         const updated = environments?.[updatedEnvIndex]
-        updated.type = type
+
+        environments[updatedEnvIndex] = { ...updated, type }
 
         queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
           ...projectData,
