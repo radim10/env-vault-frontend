@@ -1,5 +1,23 @@
 import sendRequest, { APIError } from '@/api/instance'
-import { EnvironmentType } from '@/types/environments'
+import { Environment, EnvironmentType } from '@/types/environments'
+
+export type GetEnvironmentError = RenameEnvironmentError
+export type GetEnvironmentData = Environment
+
+export async function getEnvironment(args: {
+  workspaceId: string
+  projectName: string
+  envName: string
+}) {
+  const { workspaceId, projectName, envName } = args
+
+  const response = sendRequest<GetEnvironmentData>({
+    method: 'GET',
+    basePath: 'workspaces',
+    path: `${workspaceId}/projects/${projectName}/environments/${envName}`,
+  })
+  return await response
+}
 
 // TODO: error
 export type CreateEnvironmentError = APIError<
