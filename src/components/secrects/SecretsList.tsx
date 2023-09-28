@@ -18,6 +18,7 @@ import SecretsToolbar from './SecretsToolbar'
 import { SecretAction, StateSecret, useEditedSecretsStore } from '@/stores/secrets'
 import { useToast } from '../ui/use-toast'
 import GenerateSecretDialog from './GenerateSecretDialog'
+import ImportSecretsDrawer from './ImportSecretsDrawer'
 
 interface Props {
   data: Secret[]
@@ -27,6 +28,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
   const { toast } = useToast()
   const isSaving = useIsMutating({ mutationKey: ['secrets-update'] }) === 1 ? true : false
   const [genereteDialogIndex, setGenerateDialogIndex] = useState<number | null>(null)
+  const [importDialogOpened, setImportDialogOpened] = useState<boolean>(false)
 
   const {
     search,
@@ -234,25 +236,69 @@ const SecretsList: React.FC<Props> = ({ data }) => {
     setGenerateDialogIndex(null)
   }
 
+  const handleImportedSecrets = (values: Array<{ key: string; value: string }>) => {
+    console.log(values)
+
+    for (const { key, value } of values) {
+      const existingIndex = secrets?.findIndex((item) => item.key === key || item.newKey === key)
+
+      if (existingIndex !== -1) {
+        const existingItem = secrets?.[existingIndex]
+
+        if (!existingItem?.newValue) {
+          if (existingItem?.value !== value) {
+            updateValue({ index: existingIndex, origValue: existingItem?.value, newValue: value })
+          }
+        }
+      } else {
+        addSecret({ key, value })
+      }
+    }
+  }
+
   if (!data?.length && secrets?.length === 0) {
     return (
-      <div className="flex items-center justify-center mt-16">
-        <div className="flex flex-col items-center gap-2">
-          <div>
-            <Icons.inbox className="h-20 w-20 opacity-30" />
-          </div>
-          <div className="text-center">
-            <span className="text-lg font-bold opacity-85">No secrets here...</span>
-            <div className="my-1">Add secrets to this environment</div>
-            <div className="mt-5">
-              <Button className="gap-2" onClick={addSecret} variant="default" disabled={isSaving}>
-                <Icons.plus className="h-5 w-5" />
-                Add secret
-              </Button>
+      <>
+        <ImportSecretsDrawer
+          opened={importDialogOpened}
+          onClose={() => setImportDialogOpened(false)}
+          onConfirm={(values) => {
+            setImportDialogOpened(false)
+            setTimeout(() => {
+              handleImportedSecrets(values)
+            }, 50)
+          }}
+        />
+        <div className="flex items-center justify-center mt-16">
+          <div className="flex flex-col items-center gap-2">
+            <div>
+              <Icons.inbox className="h-20 w-20 opacity-30" />
+            </div>
+            <div className="text-center">
+              <span className="text-lg font-bold opacity-85">No secrets here...</span>
+              <div className="my-1">Add secrets to this environment</div>
+              <div className="mt-5 flex items-center gap-3 justify-center">
+                <Button
+                  className="gap-2"
+                  onClick={() => addSecret()}
+                  variant="default"
+                  disabled={isSaving}
+                >
+                  <Icons.plus className="h-5 w-5" />
+                  Add secret
+                </Button>
+                <Button
+                  className="gap-2"
+                  onClick={() => setImportDialogOpened(true)}
+                  variant="outline"
+                >
+                  <Icons.upload className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </>
     )
   }
 
@@ -266,9 +312,18 @@ const SecretsList: React.FC<Props> = ({ data }) => {
           handleConfirmGeneratedSecret(genereteDialogIndex ?? 0, value)
         }}
       />
+
+      <ImportSecretsDrawer
+        opened={importDialogOpened}
+        onClose={() => setImportDialogOpened(false)}
+        onConfirm={(values) => {
+          setImportDialogOpened(false)
+          handleImportedSecrets(values)
+        }}
+      />
       {/*  */}
 
-      <SecretsToolbar secretsCount={secrets.length} />
+      <SecretsToolbar secretsCount={secrets.length} onImport={() => setImportDialogOpened(true)} />
       {/* // */}
       <div className="mt-4 w-full flex flex-col gap-7 md:gap-3 justify-center items-start">
         {!secrets?.filter((val) => val?.key?.toLowerCase().includes(search?.toLowerCase()))
@@ -481,7 +536,12 @@ const SecretsList: React.FC<Props> = ({ data }) => {
       {/* FOOTER  */}
       {!search?.length && (
         <div className="mt-5">
-          <Button className="gap-2" onClick={addSecret} variant="outline" disabled={isSaving}>
+          <Button
+            className="gap-2"
+            onClick={() => addSecret()}
+            variant="outline"
+            disabled={isSaving}
+          >
             <Icons.plus className="h-5 w-5" />
             Add new
           </Button>
