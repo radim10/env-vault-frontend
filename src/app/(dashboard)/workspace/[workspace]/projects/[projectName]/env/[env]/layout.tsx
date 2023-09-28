@@ -1,9 +1,11 @@
 'use client'
 
 import { useGetEnvironment } from '@/api/queries/projects/environments/environments'
+import EnvLayoutSkeleton from '@/components/environments/EnvLayoutSkeleton'
 import EnvTabs from '@/components/environments/EnvTabs'
 import { Icons } from '@/components/icons'
 import NotFound from '@/components/projects/NotFound'
+import ProjectSkeleton from '@/components/projects/ProjectSkeleton'
 import SaveSecretsToolbar from '@/components/secrects/SaveToolbar'
 import { Badge } from '@/components/ui/badge'
 import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
@@ -49,7 +51,11 @@ export default function EnvLayout({
   )
 
   if (isLoading) {
-    return <>Loading</>
+    return (
+      <>
+        <EnvLayoutSkeleton />
+      </>
+    )
   }
 
   if (error) {
@@ -81,7 +87,7 @@ export default function EnvLayout({
       <div
         className={clsx(
           [
-            'flex justify-between items-center -mt-1 sticky top-0 bg-background pb-2 pt-3 w-full z-10',
+            'flex justify-between items-center -mt-2 sticky top-0 bg-background pb-2 pt-3 w-full z-10',
           ],
           {
             'border-b-2': y > 120,
