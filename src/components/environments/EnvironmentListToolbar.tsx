@@ -91,63 +91,65 @@ const EnvironmentListToolbar: React.FC<Props> = ({
         <span>Total environments: {environmentsCount}</span>
       </div>
 
-      <div className="flex items-center justify-end md:justify-start gap-2 ">
-        <div>
-          <Select
-            value={groupBy ?? 'No groups'}
-            onValueChange={(value) => {
-              if (value === 'No groups') {
-                unGroup()
-              } else {
-                setGroupBy(value as EnvGroupBy)
-              }
-            }}
-          >
-            <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="Group by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={'No groups'}>No groups</SelectItem>
-              {groupByOptions.map(({ value, icon: Icon }) => (
-                <SelectItem value={value}>
-                  <div className="flex items-center gap-2">
-                    <div className="">{value.toString()}</div>
-                    <div>
-                      <Icon className="h-4 w-4 opacity-80" />
-                    </div>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Select
-            value={sort}
-            onValueChange={(value) => {
-              setSort(value as EnvSortOption)
-            }}
-          >
-            <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              {sortOptions.map(({ value, label, icon: Icon }, index) => (
-                <>
-                  {(index === 2 || index === 4) && <SelectSeparator />}
+      <div className="flex flex-col md:flex-row items-center justify-end md:justify-start gap-3.5 md:gap-2">
+        <div className="flex items-center gap-2 w-full">
+          <div className="w-1/2">
+            <Select
+              value={groupBy ?? 'No groups'}
+              onValueChange={(value) => {
+                if (value === 'No groups') {
+                  unGroup()
+                } else {
+                  setGroupBy(value as EnvGroupBy)
+                }
+              }}
+            >
+              <SelectTrigger className="md:w-[160px] w-full">
+                <SelectValue placeholder="Group by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={'No groups'}>No groups</SelectItem>
+                {groupByOptions.map(({ value, icon: Icon }) => (
                   <SelectItem value={value}>
                     <div className="flex items-center gap-2">
-                      <div className="">{label}</div>
+                      <div className="">{value.toString()}</div>
                       <div>
-                        <Icon className="ml-1 h-4 w-4 opacity-80" />
+                        <Icon className="h-4 w-4 opacity-80" />
                       </div>
                     </div>
                   </SelectItem>
-                </>
-              ))}
-            </SelectContent>
-          </Select>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="w-1/2">
+            <Select
+              value={sort}
+              onValueChange={(value) => {
+                setSort(value as EnvSortOption)
+              }}
+            >
+              <SelectTrigger className="md:w-[160px] w-full">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                {sortOptions.map(({ value, label, icon: Icon }, index) => (
+                  <>
+                    {(index === 2 || index === 4) && <SelectSeparator />}
+                    <SelectItem value={value}>
+                      <div className="flex items-center gap-2">
+                        <div className="">{label}</div>
+                        <div>
+                          <Icon className="ml-1 h-4 w-4 opacity-80" />
+                        </div>
+                      </div>
+                    </SelectItem>
+                  </>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <CreateEnvironmentDialog
