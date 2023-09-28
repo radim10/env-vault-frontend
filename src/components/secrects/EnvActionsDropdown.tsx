@@ -14,6 +14,7 @@ import { Button } from '../ui/button'
 
 const dropdownActionItemsUnlocked = [
   { label: 'Rename', icon: Icons.pencil },
+  { label: 'Change type', icon: Icons.penSquare },
   { label: 'Lock', icon: Icons.lock },
   { label: 'Delete', icon: Icons.trash },
 ]
@@ -31,9 +32,17 @@ interface Props {
   onRename: () => void
   onDelete: () => void
   onLock: () => void
+  onChangeType: () => void
 }
 
-const EnvActionsDropdown: React.FC<Props> = ({ isLocked, onCopy, onRename, onDelete, onLock }) => {
+const EnvActionsDropdown: React.FC<Props> = ({
+  isLocked,
+  onCopy,
+  onRename,
+  onDelete,
+  onLock,
+  onChangeType,
+}) => {
   return (
     <>
       <DropdownMenu>
@@ -69,6 +78,8 @@ const EnvActionsDropdown: React.FC<Props> = ({ isLocked, onCopy, onRename, onDel
                     onDelete()
                   } else if (item.label === 'Lock' || item.label === 'Unlock') {
                     onLock()
+                  } else if (item.label === 'Change type') {
+                    onChangeType()
                   }
                 }}
                 className={clsx(['flex items-center gap-3 px-3.5 py-2'], {
