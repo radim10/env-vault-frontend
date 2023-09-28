@@ -1,5 +1,6 @@
 import { Secret } from '@/types/secrets'
 import { create } from 'zustand'
+import { devtools } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 
 export type StateSecret = Secret & {
@@ -48,165 +49,170 @@ export interface EditSecretsActions {
 }
 
 export const useEditedSecretsStore = create(
-  immer<EditedSecretsState & EditSecretsActions>((set) => ({
-    search: '',
-    loaded: false,
-    secrets: [],
-    setSearch: (search) => {
-      set((state) => {
-        state.search = search
-      })
-    },
-    reset: () => {
-      set((state) => {
-        state.secrets = []
-        state.loaded = false
-        state.search = ''
-      })
-    },
-    set: (secrets) => {
-      set((state) => {
-        state.secrets = secrets
-        state.loaded = true
-      })
-    },
-    add: () => {
-      set((state) => {
-        state.secrets.push({
-          key: '',
-          value: '',
-          hidden: false,
-          action: SecretAction.Created,
+  devtools(
+    immer<EditedSecretsState & EditSecretsActions>((set) => ({
+      search: '',
+      loaded: false,
+      secrets: [],
+      setSearch: (search) => {
+        set((state) => {
+          state.search = search
         })
-      })
-    },
-    undoChanges: ({ index, origItem }) => {
-      set((state) => {
-        state.secrets[index] = {
-          ...origItem,
-          action: null,
-          hidden: state?.secrets?.[index]?.hidden,
-          showDescription: state?.secrets?.[index]?.showDescription,
-        }
-      })
-    },
-    toggleVisibility: (index) => {
-      set((state) => {
-        state.secrets[index].hidden = !state.secrets[index].hidden
-      })
-    },
-
-    toggleVisibilityAll: (hidden) => {
-      set((state) => {
-        for (const item of state.secrets) {
-          item.hidden = hidden
-        }
-      })
-    },
-
-    toggleDescriptionAll: (hidden) => {
-      set((state) => {
-        for (const item of state.secrets) {
-          if (
-            item.description ||
-            (item.newDescription !== undefined && item.newDescription?.length > 0)
-          ) {
-            item.showDescription = !hidden
+      },
+      reset: () => {
+        set((state) => {
+          state.secrets = []
+          state.loaded = false
+          state.search = ''
+        })
+      },
+      set: (secrets) => {
+        set((state) => {
+          state.secrets = secrets
+          state.loaded = true
+        })
+      },
+      add: () => {
+        set((state) => {
+          state.secrets.push({
+            key: '',
+            value: '',
+            hidden: false,
+            action: SecretAction.Created,
+          })
+        })
+      },
+      undoChanges: ({ index, origItem }) => {
+        set((state) => {
+          state.secrets[index] = {
+            ...origItem,
+            action: null,
+            hidden: state?.secrets?.[index]?.hidden,
+            showDescription: state?.secrets?.[index]?.showDescription,
           }
-        }
-      })
-    },
+        })
+      },
+      toggleVisibility: (index) => {
+        set((state) => {
+          state.secrets[index].hidden = !state.secrets[index].hidden
+        })
+      },
 
-    toggleDescription: (index) => {
-      set((state) => {
-        state.secrets[index].showDescription = !state.secrets[index].showDescription
-      })
-    },
+      toggleVisibilityAll: (hidden) => {
+        set((state) => {
+          for (const item of state.secrets) {
+            item.hidden = hidden
+          }
+        })
+      },
 
-    toggleDeleted: (index) =>
-      set((state) => {
-        const item = state.secrets?.[index]
+      toggleDescriptionAll: (hidden) => {
+        set((state) => {
+          for (const item of state.secrets) {
+            if (
+              item.description ||
+              (item.newDescription !== undefined && item.newDescription?.length > 0)
+            ) {
+              item.showDescription = !hidden
+            }
+          }
+        })
+      },
 
-        if (item.action === SecretAction.Created) {
-          state.secrets.splice(index, 1)
-        } else {
-          if (item.action === SecretAction.Deleted) {
-            item.action = null
+      toggleDescription: (index) => {
+        set((state) => {
+          state.secrets[index].showDescription = !state.secrets[index].showDescription
+        })
+      },
+
+      toggleDeleted: (index) =>
+        set((state) => {
+          const item = state.secrets?.[index]
+
+          if (item.action === SecretAction.Created) {
+            state.secrets.splice(index, 1)
           } else {
-            item.action = SecretAction.Deleted
+            if (item.action === SecretAction.Deleted) {
+              item.action = null
+            } else {
+              item.action = SecretAction.Deleted
+            }
           }
-        }
-      }),
+        }),
 
-    toggleArchived: (index) =>
-      set((state) => {
-        const item = state?.secrets?.[index]
+      toggleArchived: (index) =>
+        set((state) => {
+          const item = state?.secrets?.[index]
 
-        if (item.action === SecretAction.Created) {
-          // no action
-        } else {
-          if (item.action === SecretAction.Archived) {
-            item.action = null
+          if (item.action === SecretAction.Created) {
+            // no action
           } else {
-            item.action = SecretAction.Archived
+            if (item.action === SecretAction.Archived) {
+              item.action = null
+            } else {
+              item.action = SecretAction.Archived
+            }
           }
-        }
-      }),
+        }),
 
-    updateValue: ({ index, origValue, newValue }) => {
-      set((state) => {
-        const item = state?.secrets?.[index]
+      updateValue: ({ index, origValue, newValue }) => {
+        set((state) => {
+          const item = state?.secrets?.[index]
 
-        if (item.action === SecretAction.Created) {
-          item.newValue = newValue
-        } else {
-          if (origValue !== newValue) {
-            item.action = SecretAction.Updated
+          if (item.action === SecretAction.Created) {
             item.newValue = newValue
-          } else if (item?.value === origValue && item.action === SecretAction.Updated) {
-            item.action = null
-            item.newValue = undefined
+          } else {
+            if (origValue !== newValue) {
+              item.action = SecretAction.Updated
+              item.newValue = newValue
+            } else if (item?.value === origValue && item.action === SecretAction.Updated) {
+              item.action = null
+              item.newValue = undefined
+            }
           }
-        }
-      })
-    },
+        })
+      },
 
-    updateKey: ({ index, origKey, newKey }) => {
-      set((state) => {
-        const item = state?.secrets?.[index]
-        const k = newKey
-          .replace(/[^a-zA-Z0-9 ]/g, '_')
-          .replace(/ /g, '_')
-          .toUpperCase()
+      updateKey: ({ index, origKey, newKey }) => {
+        set((state) => {
+          const item = state?.secrets?.[index]
+          const k = newKey
+            .replace(/[^a-zA-Z0-9 ]/g, '_')
+            .replace(/ /g, '_')
+            .toUpperCase()
 
-        if (item.action === SecretAction.Created) {
-          item.newKey = k
-        } else {
-          if (newKey !== origKey) {
-            item.action = SecretAction.Updated
+          if (item.action === SecretAction.Created) {
             item.newKey = k
-          } else if (item?.key === origKey && item.action === SecretAction.Updated) {
-            item.action = null
-            item.newKey = undefined
+          } else {
+            if (newKey !== origKey) {
+              item.action = SecretAction.Updated
+              item.newKey = k
+            } else if (item?.key === origKey && item.action === SecretAction.Updated) {
+              item.action = null
+              item.newKey = undefined
+            }
           }
-        }
-      })
-    },
+        })
+      },
 
-    updateDescription: ({ index, origDescription, newDescription }) => {
-      set((state) => {
-        const item = state?.secrets?.[index]
+      updateDescription: ({ index, origDescription, newDescription }) => {
+        set((state) => {
+          const item = state?.secrets?.[index]
 
-        if (item.action === SecretAction.Created) {
-          item.newDescription = newDescription
-        } else {
-          if (newDescription !== origDescription) {
+          if (item.action === SecretAction.Created) {
             item.newDescription = newDescription
-          } else if (item?.description === newDescription) {
-            item.newDescription = undefined
+          } else {
+            if (newDescription !== origDescription) {
+              item.newDescription = newDescription
+            } else if (item?.description === newDescription) {
+              item.newDescription = undefined
+            }
           }
-        }
-      })
-    },
-  }))
+        })
+      },
+    })),
+    {
+      store: 'editedSecrets',
+    }
+  )
 )

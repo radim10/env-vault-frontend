@@ -2,7 +2,7 @@ import { EnvGroupBy, EnvSortOption, EnvironmentType } from '@/types/environments
 import { ListEnvironment } from '@/types/projects'
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
-import { persist } from 'zustand/middleware'
+import { devtools, persist } from 'zustand/middleware'
 
 export interface EnvironmentListState {
   environments: ListEnvironment[]
@@ -29,47 +29,130 @@ const groupOrder = [
 ]
 
 export const useEnvironmentListStore = create(
-  persist(
-    immer<EnvironmentListState & EnvironmentListActions>((set, get) => ({
-      environments: [],
-      groupedEnvironments: null,
-      sort: EnvSortOption.CreatedDesc,
-      groupBy: null,
-      setEnvironments: (environments) => {
-        set((state) => {
-          state.environments = environments
-          state.groupedEnvironments = null
-        })
-        get().setSort(get().sort)
-      },
-      setGroupedEnvironments: (environments) => {
-        if (environments === null) {
+  devtools(
+    persist(
+      immer<EnvironmentListState & EnvironmentListActions>((set, get) => ({
+        environments: [],
+        groupedEnvironments: null,
+        sort: EnvSortOption.CreatedDesc,
+        groupBy: null,
+        setEnvironments: (environments) => {
           set((state) => {
+            state.environments = environments
             state.groupedEnvironments = null
           })
-        } else {
+          get().setSort(get().sort)
+        },
+        setGroupedEnvironments: (environments) => {
+          if (environments === null) {
+            set((state) => {
+              state.groupedEnvironments = null
+            })
+          } else {
+            const groupedByType: { [key: string]: ListEnvironment[] } = {}
+
+            const sorted = [...environments].sort((a, b) => {
+              const typeA = a.type
+              const typeB = b.type
+
+              // Get the index of typeA and typeB in the custom order array
+              const indexA = groupOrder.indexOf(typeA)
+              const indexB = groupOrder.indexOf(typeB)
+
+              // Compare the indices to determine the sorting order
+              return indexA - indexB
+            })
+
+            sorted.forEach((obj) => {
+              const { type, locked } = obj
+
+              if (get().groupBy === EnvGroupBy.Lock) {
+                if (!groupedByType[locked.toString()]) {
+                  groupedByType[locked.toString()] = []
+                }
+                groupedByType[locked.toString()].push(obj)
+              } else {
+                if (!groupedByType[type]) {
+                  groupedByType[type] = []
+                }
+                groupedByType[type].push(obj)
+              }
+            })
+
+            //  sort
+            Object.keys(groupedByType).forEach((key) => {
+              groupedByType[key] = handleSort(groupedByType[key], get().sort)
+            })
+
+            set((state) => {
+              state.groupedEnvironments = groupedByType
+            })
+          }
+          // get().setSort(get().sort)
+          // get().setGroupBy(get().groupBy)
+        },
+        unGroup: () => {
+          set((state) => {
+            if (state.groupedEnvironments) {
+              const resultArray = Object.values(state.groupedEnvironments).flat()
+
+              state.groupBy = null
+              state.environments = resultArray
+              state.groupedEnvironments = null
+            }
+          })
+        },
+        isGroupedEmpty: () => {
+          if (!get().groupedEnvironments) {
+            return true
+          }
+          return areAllArraysEmpty(get().groupedEnvironments ?? {})
+        },
+        setSort: (sort) => {
+          set((state) => {
+            if (!state.groupBy) {
+              const sorted = handleSort(state.environments, sort)
+
+              state.environments = sorted
+              state.sort = sort
+            } else {
+              for (const key in state.groupedEnvironments) {
+                state.groupedEnvironments[key] = handleSort(state.groupedEnvironments[key], sort)
+                state.sort = sort
+              }
+            }
+          })
+        },
+        setGroupBy: (groupBy) => {
           const groupedByType: { [key: string]: ListEnvironment[] } = {}
 
-          const sorted = [...environments].sort((a, b) => {
-            const typeA = a.type
-            const typeB = b.type
+          let arr = !get().groupBy
+            ? get().environments
+            : Object.values(get().groupedEnvironments ?? {}).flat()
 
-            // Get the index of typeA and typeB in the custom order array
-            const indexA = groupOrder.indexOf(typeA)
-            const indexB = groupOrder.indexOf(typeB)
+          if (groupBy === EnvGroupBy.Type) {
+            arr = [...arr].sort((a, b) => {
+              const typeA = a.type
+              const typeB = b.type
 
-            // Compare the indices to determine the sorting order
-            return indexA - indexB
-          })
+              // Get the index of typeA and typeB in the custom order array
+              const indexA = groupOrder.indexOf(typeA)
+              const indexB = groupOrder.indexOf(typeB)
 
-          sorted.forEach((obj) => {
+              // Compare the indices to determine the sorting order
+              return indexA - indexB
+            })
+          }
+
+          arr.forEach((obj) => {
             const { type, locked } = obj
 
-            if (get().groupBy === EnvGroupBy.Lock) {
-              if (!groupedByType[locked.toString()]) {
-                groupedByType[locked.toString()] = []
+            if (groupBy === EnvGroupBy.Lock) {
+              const l = locked ? 'Locked' : 'Unlocked'
+              if (!groupedByType[l]) {
+                groupedByType[l] = []
               }
-              groupedByType[locked.toString()].push(obj)
+              groupedByType[l].push(obj)
             } else {
               if (!groupedByType[type]) {
                 groupedByType[type] = []
@@ -78,103 +161,25 @@ export const useEnvironmentListStore = create(
             }
           })
 
-          //  sort
-          Object.keys(groupedByType).forEach((key) => {
-            groupedByType[key] = handleSort(groupedByType[key], get().sort)
-          })
-
           set((state) => {
+            state.environments = []
             state.groupedEnvironments = groupedByType
+            state.groupBy = groupBy
           })
-        }
-        // get().setSort(get().sort)
-        // get().setGroupBy(get().groupBy)
-      },
-      unGroup: () => {
-        set((state) => {
-          if (state.groupedEnvironments) {
-            const resultArray = Object.values(state.groupedEnvironments).flat()
-
-            state.groupBy = null
-            state.environments = resultArray
-            state.groupedEnvironments = null
-          }
-        })
-      },
-      isGroupedEmpty: () => {
-        if (!get().groupedEnvironments) {
-          return true
-        }
-        return areAllArraysEmpty(get().groupedEnvironments ?? {})
-      },
-      setSort: (sort) => {
-        set((state) => {
-          if (!state.groupBy) {
-            const sorted = handleSort(state.environments, sort)
-
-            state.environments = sorted
-            state.sort = sort
-          } else {
-            for (const key in state.groupedEnvironments) {
-              state.groupedEnvironments[key] = handleSort(state.groupedEnvironments[key], sort)
-              state.sort = sort
-            }
-          }
-        })
-      },
-      setGroupBy: (groupBy) => {
-        const groupedByType: { [key: string]: ListEnvironment[] } = {}
-
-        let arr = !get().groupBy
-          ? get().environments
-          : Object.values(get().groupedEnvironments ?? {}).flat()
-
-        if (groupBy === EnvGroupBy.Type) {
-          arr = [...arr].sort((a, b) => {
-            const typeA = a.type
-            const typeB = b.type
-
-            // Get the index of typeA and typeB in the custom order array
-            const indexA = groupOrder.indexOf(typeA)
-            const indexB = groupOrder.indexOf(typeB)
-
-            // Compare the indices to determine the sorting order
-            return indexA - indexB
-          })
-        }
-
-        arr.forEach((obj) => {
-          const { type, locked } = obj
-
-          if (groupBy === EnvGroupBy.Lock) {
-            const l = locked ? 'Locked' : 'Unlocked'
-            if (!groupedByType[l]) {
-              groupedByType[l] = []
-            }
-            groupedByType[l].push(obj)
-          } else {
-            if (!groupedByType[type]) {
-              groupedByType[type] = []
-            }
-            groupedByType[type].push(obj)
-          }
-        })
-
-        set((state) => {
-          state.environments = []
-          state.groupedEnvironments = groupedByType
-          state.groupBy = groupBy
-        })
-      },
-    })),
+        },
+      })),
+      {
+        name: 'env-list-options',
+        partialize: (state) =>
+          Object.fromEntries(
+            Object.entries(state).filter(
+              ([key]) => !['environments'].includes(key) && !['groupedEnvironments'].includes(key)
+            )
+          ),
+      }
+    ),
     {
-      name: 'env-list-options',
-      partialize: (state) =>
-        Object.fromEntries(
-          Object.entries(state).filter(
-            ([key]) => !['environments'].includes(key) && !['groupedEnvironments'].includes(key)
-          )
-        ),
+      store: 'environments',
     }
   )
 )
