@@ -94,7 +94,7 @@ export const EnvironmentList: React.FC<Props> = ({
     const data = queryClient.getQueryData<Project>(['project', workspaceId, projectName])
 
     if (data) {
-      const environments = data?.environments
+      const environments = [...data?.environments]
       const env = environments?.find((e) => e.name === name)
 
       if (env) {
@@ -127,7 +127,7 @@ export const EnvironmentList: React.FC<Props> = ({
     const data = queryClient.getQueryData<Project>(['project', workspaceId, projectName])
 
     if (data) {
-      const environments = data?.environments
+      const environments = [...data?.environments]
       const env = environments?.find((e) => e.name === name)
 
       if (env) {
