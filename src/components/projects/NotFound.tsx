@@ -4,10 +4,13 @@ import { Button } from '../ui/button'
 import Link from 'next/link'
 
 interface Props {
-  workspaceId: string
+  title: string
+  description: string
+  btnText: string
+  link: string
 }
 
-const NotFound: React.FC<Props> = ({ workspaceId }) => {
+const NotFound: React.FC<Props> = ({ title, description, link, btnText }) => {
   return (
     <div>
       <div className="flex items-center justify-center mt-36">
@@ -16,11 +19,11 @@ const NotFound: React.FC<Props> = ({ workspaceId }) => {
             <Icons.xCircle className="h-20 w-20 opacity-30" />
           </div>
           <div className="text-center">
-            <span className="text-lg font-bold opacity-85">Project not found</span>
-            <div className="my-1">Looks like this project doesn't exist</div>
+            <span className="text-lg font-bold opacity-85">{title}</span>
+            <div className="my-1">{description}</div>
             <div className="mt-5">
-              <Link href={`/workspace/${workspaceId}/projects`}>
-                <Button>Go to projects</Button>
+              <Link href={link}>
+                <Button>{btnText}</Button>
               </Link>
             </div>
           </div>
