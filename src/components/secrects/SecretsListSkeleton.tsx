@@ -13,7 +13,7 @@ const SecretsListSkeleton = () => {
 
           <div className="flex gap-3 items-center">
             <div className="flex items-center gap-2">
-              {Array.from({ length: 2 }).map((_, index) => (
+              {Array.from({ length: 3 }).map((_, index) => (
                 <Skeleton className="w-[3.05rem] h-10" key={index} />
               ))}
             </div>
