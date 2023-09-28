@@ -35,17 +35,18 @@ const EnvironmentListSkeleton = ({ grouped }: { grouped: boolean }) => {
 
       <div
         className={
-          'w-full flex flex-col md:flex-row justify-between md:items-center gap-3 md:gap-0'
+          'w-full flex flex-col md:flex-row justify-between md:items-center gap-3.5 md:gap-0'
         }
       >
         <div className="pl-1">
           <Skeleton className="h-7 w-44" />
         </div>
         <div className="flex items-center justify-end md:justify-start gap-2 ">
-          <Skeleton className="w-[160px] h-10" />
-          <Skeleton className="w-[160px] h-10" />
-          <Skeleton className="w-[105px] h-10" />
+          <Skeleton className="w-full md:w-[160px] md:h-10 h-9" />
+          <Skeleton className="w-full md:w-[160px] md:h-10 h-9" />
+          <Skeleton className="hidden md:block md:w-[105px] h-10" />
         </div>
+        <Skeleton className="md:hidden block w-full h-9" />
       </div>
 
       {/* // LIST */}
