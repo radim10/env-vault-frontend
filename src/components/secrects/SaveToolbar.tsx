@@ -14,28 +14,19 @@ import DeleteEnvironmentDialog from '../environments/DeleteEnvironmentDialog'
 import { Project } from '@/types/projects'
 import { Secret } from '@/types/secrets'
 import EnvActionsDropdown from './EnvActionsDropdown'
-
-const dropdownActionItems = [
-  { label: 'Rename', icon: Icons.pencil },
-  { label: 'Delete', icon: Icons.trash },
-]
-
-// TODO:
-const dropdownActionSecretsItems = [
-  { label: 'Copy secrets (.env)', icon: Icons.fileText },
-  { label: 'Copy secrets (json)', icon: Icons.fileJson },
-]
+import LockEnvDialog from '../environments/LockEnvDialog'
 
 const SaveSecretsToolbar = () => {
   const router = useRouter()
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
-  const selectedEnv = useSelectedEnvironmentStore((state) => state?.data)
+  const { data: selectedEnv, updateLocked } = useSelectedEnvironmentStore()
 
   const [saveDialogOpened, setSaveDialogOpened] = useState(false)
   const [renameEnvDialogOpened, setEnvRenameDialogOpened] = useState(false)
   const [deleteEnvDialogOpened, setDeleteEnvDialogOpened] = useState(false)
+  const [lockEnvDialogOpened, setLockEnvDialogOpened] = useState(false)
 
   const { loaded, secrets } = useEditedSecretsStore((state) => {
     return {
@@ -85,7 +76,7 @@ const SaveSecretsToolbar = () => {
       })
 
     queryClient.setQueryData(
-      [selectedEnv?.workspaceId, selectedEnv?.projectName, selectedEnv?.envName, 'secrets'],
+      [selectedEnv?.workspaceId, selectedEnv?.projectName, selectedEnv?.name, 'secrets'],
       updatedSecrets
     )
   }
@@ -131,7 +122,7 @@ const SaveSecretsToolbar = () => {
     const secretsData = queryClient.getQueryData<Secret[]>([
       selectedEnv?.workspaceId,
       selectedEnv?.projectName,
-      selectedEnv?.envName,
+      selectedEnv?.name,
       'secrets',
     ])
 
@@ -178,7 +169,7 @@ const SaveSecretsToolbar = () => {
 
     if (projectData) {
       const environments = projectData?.environments
-      const prevName = selectedEnv?.envName
+      const prevName = selectedEnv?.name
 
       const updatedEnvIndex = environments?.findIndex((e) => e.name === prevName)
 
@@ -197,7 +188,7 @@ const SaveSecretsToolbar = () => {
     const secretsData = queryClient.getQueryData<Secret[]>([
       selectedEnv?.workspaceId,
       selectedEnv?.projectName,
-      selectedEnv?.envName,
+      selectedEnv?.name,
       'secrets',
     ])
 
@@ -219,6 +210,36 @@ const SaveSecretsToolbar = () => {
     )
   }
 
+  const handleLockChange = (locked: boolean) => {
+    setLockEnvDialogOpened(false)
+
+    const projectData = queryClient.getQueryData<Project>([
+      'project',
+      selectedEnv?.workspaceId,
+      selectedEnv?.projectName,
+    ])
+
+    if (projectData) {
+      const environments = projectData?.environments
+      const prevName = selectedEnv?.name
+
+      const updatedEnvIndex = environments?.findIndex((e) => e.name === prevName)
+
+      if (updatedEnvIndex !== -1) {
+        const updated = environments?.[updatedEnvIndex]
+        updated.locked = locked
+
+        queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
+          ...projectData,
+          environments,
+        })
+      }
+    }
+    updateLocked(locked)
+
+    //TODO: update current + update state
+  }
+
   const handleDeletedEnv = () => {
     setDeleteEnvDialogOpened(false)
 
@@ -232,7 +253,7 @@ const SaveSecretsToolbar = () => {
 
     if (projectData) {
       const environments = projectData?.environments
-      const updatedEnvironments = environments?.filter((val) => val?.name !== selectedEnv?.envName)
+      const updatedEnvironments = environments?.filter((val) => val?.name !== selectedEnv?.name)
 
       queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
         ...projectData,
@@ -254,7 +275,7 @@ const SaveSecretsToolbar = () => {
           opened={saveDialogOpened}
           workspaceId={selectedEnv.workspaceId}
           projectName={selectedEnv.projectName}
-          envName={selectedEnv.envName}
+          envName={selectedEnv.name}
           secrets={secrets}
           onSuccess={handleUpdatedSecrets}
           onClose={() => setSaveDialogOpened(false)}
@@ -273,7 +294,7 @@ const SaveSecretsToolbar = () => {
         opened={renameEnvDialogOpened}
         workspaceId={selectedEnv.workspaceId}
         projectName={selectedEnv.projectName}
-        envName={selectedEnv.envName}
+        envName={selectedEnv.name}
         onClose={() => setEnvRenameDialogOpened(false)}
         onSuccess={handleRenamedEnv}
       />
@@ -282,9 +303,19 @@ const SaveSecretsToolbar = () => {
         opened={deleteEnvDialogOpened}
         workspaceId={selectedEnv.workspaceId}
         projectName={selectedEnv.projectName}
-        envName={selectedEnv.envName}
+        envName={selectedEnv.name}
         onClose={() => setDeleteEnvDialogOpened(false)}
         onSuccess={handleDeletedEnv}
+      />
+
+      <LockEnvDialog
+        opened={lockEnvDialogOpened}
+        workspaceId={selectedEnv.workspaceId}
+        projectName={selectedEnv.projectName}
+        envName={selectedEnv.name}
+        lock={!selectedEnv.locked}
+        onClose={() => setLockEnvDialogOpened(false)}
+        onSuccess={() => handleLockChange(!selectedEnv.locked)}
       />
 
       <div className="flex items-center gap-3 lg:gap-5 -mt-1">
@@ -320,9 +351,11 @@ const SaveSecretsToolbar = () => {
           </Button>
 
           <EnvActionsDropdown
+            isLocked={selectedEnv?.locked}
             onCopy={copyEnv}
             onDelete={() => setDeleteEnvDialogOpened(true)}
             onRename={() => setEnvRenameDialogOpened(true)}
+            onLock={() => setLockEnvDialogOpened(true)}
           />
         </div>
       </div>
