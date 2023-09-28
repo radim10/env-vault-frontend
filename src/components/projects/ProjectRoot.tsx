@@ -19,10 +19,10 @@ import { useQueryClient } from '@tanstack/react-query'
 import { ListProject, UpdatedProjectData } from '@/types/projects'
 import UpdateProjectDialog from './UpdateProjectDialog'
 import { EnvironmentList } from '../environments/EnvironmentList'
-import CreateEnvironmentDialog from '../environments/CreateEnvironmentDialog'
 import { useEnvironmentListStore } from '@/stores/environments'
 import { useMount, useUnmount, useUpdateEffect } from 'react-use'
 import ProjectSkeleton from './ProjectSkeleton'
+import NotFound from './NotFound'
 
 const dropdownItems = [
   { label: 'Rename', icon: Icons.pencil },
@@ -51,6 +51,7 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
     data: project,
     isLoading,
     isError,
+    error,
   } = useGetProject(
     {
       workspaceId,
@@ -146,7 +147,11 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
   }
 
   if (isError) {
-    return 'error'
+    if (error?.message === 'Project not found') {
+      return <NotFound workspaceId={workspaceId} />
+    } else {
+      return 'error'
+    }
   }
 
   if (project === null) {
