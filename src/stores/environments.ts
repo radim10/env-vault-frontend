@@ -15,6 +15,7 @@ export interface EnvironmentListState {
 interface EnvironmentListActions {
   setEnvironments: (environments: ListEnvironment[]) => void
   setGroupedEnvironments: (environments: ListEnvironment[] | null) => void
+  isGroupedEmpty: () => boolean
   setSort: (sort: EnvSortOption) => void
   setGroupBy: (groupBy: EnvGroupBy | null) => void
   unGroup: () => void
@@ -49,7 +50,7 @@ export const useEnvironmentListStore = create(
         } else {
           const groupedByType: { [key: string]: ListEnvironment[] } = {}
 
-          const sorted = environments.sort((a, b) => {
+          const sorted = [...environments].sort((a, b) => {
             const typeA = a.type
             const typeB = b.type
 
@@ -94,6 +95,12 @@ export const useEnvironmentListStore = create(
             state.groupedEnvironments = null
           }
         })
+      },
+      isGroupedEmpty: () => {
+        if (!get().groupedEnvironments) {
+          return true
+        }
+        return areAllArraysEmpty(get().groupedEnvironments ?? {})
       },
       setSort: (sort) => {
         set((state) => {
@@ -203,4 +210,13 @@ const handleSort = (arr: ListEnvironment[], sort: EnvSortOption | null): ListEnv
   }
 
   return sorted
+}
+
+export function areAllArraysEmpty(obj: Record<string, any>): boolean {
+  for (const key in obj) {
+    if (Array.isArray(obj[key]) && obj[key].length > 0) {
+      return false // Found a non-empty array, return false
+    }
+  }
+  return true // All arrays are empty
 }
