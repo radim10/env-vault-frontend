@@ -5,7 +5,7 @@ const SecretsListSkeleton = () => {
   return (
     <>
       <div>
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col md:flex-row justify-between md:items-center gap-2 md:gap-0">
           <div className="p0-1 dark:text-gray-400 font-bold">
             <Skeleton className="h-7 w-24" />
           </div>
