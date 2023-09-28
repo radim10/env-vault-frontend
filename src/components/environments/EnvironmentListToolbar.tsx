@@ -52,7 +52,7 @@ const groupByOptions: Array<{ value: EnvGroupBy; icon: LucideIcon }> = [
   },
   {
     value: EnvGroupBy.Type,
-    icon: Icons.lock,
+    icon: Icons.group,
   },
 ]
 
@@ -69,7 +69,7 @@ const EnvironmentListToolbar: React.FC<Props> = ({
     <div
       className={clsx(
         [
-          'flex flex-col md:flex-row justify-between md:items-center sticky top-0 bg-background z-50 pb-2 pt-3',
+          'w-full flex flex-col md:flex-row justify-between md:items-center sticky top-0 bg-background z-50 pb-2 pt-3 gap-3 md:gap-0',
         ],
         {
           'border-b-2': y > 160,
@@ -80,12 +80,12 @@ const EnvironmentListToolbar: React.FC<Props> = ({
         <span>Total environments: {environmentsCount}</span>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-end md:justify-start gap-2 ">
         <div>
           <Select
-            value={groupBy ?? 'None'}
+            value={groupBy ?? 'No groups'}
             onValueChange={(value) => {
-              if (value === 'None') {
+              if (value === 'No groups') {
                 unGroup()
               } else {
                 setGroupBy(value as EnvGroupBy)
@@ -96,13 +96,13 @@ const EnvironmentListToolbar: React.FC<Props> = ({
               <SelectValue placeholder="Group by" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={'None'}>None</SelectItem>
-              {groupByOptions.map(({ value }) => (
+              <SelectItem value={'No groups'}>No groups</SelectItem>
+              {groupByOptions.map(({ value, icon: Icon }) => (
                 <SelectItem value={value}>
                   <div className="flex items-center gap-2">
                     <div className="">{value.toString()}</div>
                     <div>
-                      <Icons.group className="h-4 w-4 opacity-80" />
+                      <Icon className="h-4 w-4 opacity-80" />
                     </div>
                   </div>
                 </SelectItem>
