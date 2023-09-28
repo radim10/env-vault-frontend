@@ -19,7 +19,7 @@ export interface SelectedEnvironmentState {
 
 interface SelectedEnvironmentActions {
   set: (env: SelectedEnvironment) => void
-  updateLocked: (locked: boolean) => void
+  update: (locked: Partial<{ name: string; locked: boolean; type: EnvironmentType }>) => void
   reset: () => void
 }
 
@@ -28,10 +28,18 @@ export const useSelectedEnvironmentStore = create(
     immer<SelectedEnvironmentState & SelectedEnvironmentActions>((set) => ({
       data: null,
       set: (env) => set({ data: env }),
-      updateLocked: (locked) => {
+      update: ({ name, locked, type }) => {
         set((state) => {
           if (state.data) {
-            state.data.locked = locked
+            if (locked !== undefined) {
+              state.data.locked = locked
+            }
+            if (name !== undefined) {
+              state.data.name = name
+            }
+            if (type !== undefined) {
+              state.data.type = type
+            }
           }
         })
       },
