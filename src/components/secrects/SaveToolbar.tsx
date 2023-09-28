@@ -169,14 +169,14 @@ const SaveSecretsToolbar = () => {
     ])
 
     if (projectData) {
-      const environments = projectData?.environments
+      const environments = [...projectData?.environments]
       const prevName = selectedEnv?.name
 
       const updatedEnvIndex = environments?.findIndex((e) => e.name === prevName)
 
       if (updatedEnvIndex !== -1) {
         const updated = environments?.[updatedEnvIndex]
-        updated.name = newName
+        environments[updatedEnvIndex] = { ...updated, name: newName }
 
         queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
           ...projectData,
