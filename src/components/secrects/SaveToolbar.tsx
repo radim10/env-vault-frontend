@@ -238,9 +238,14 @@ const SaveSecretsToolbar = () => {
       }
     }
 
+    // TODO: update current
+
     updateSelectedEnv({ locked })
 
-    //TODO: update current
+    toast({
+      title: `Environment has been ${locked ? 'locked' : 'unlocked'}`,
+      variant: 'success',
+    })
   }
 
   const handleTypeChange = (type: EnvironmentType) => {
@@ -270,9 +275,14 @@ const SaveSecretsToolbar = () => {
       }
     }
 
-    updateSelectedEnv({ type })
-
     // TODO: update current
+
+    toast({
+      title: 'Environment type has been changed',
+      variant: 'success',
+    })
+
+    updateSelectedEnv({ type })
   }
 
   const handleDeletedEnv = () => {
