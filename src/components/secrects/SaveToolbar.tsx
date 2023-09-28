@@ -16,7 +16,7 @@ import { Secret } from '@/types/secrets'
 import EnvActionsDropdown from './EnvActionsDropdown'
 import LockEnvDialog from '../environments/LockEnvDialog'
 import ChangeEnvironmentTypeDialog from '../environments/ChangeEnvironmentTypeDialog'
-import { EnvironmentType } from '@/types/environments'
+import { Environment, EnvironmentType } from '@/types/environments'
 
 const SaveSecretsToolbar = () => {
   const router = useRouter()
@@ -238,7 +238,21 @@ const SaveSecretsToolbar = () => {
       }
     }
 
-    // TODO: update current
+    const environmentData = queryClient.getQueryData<Environment>([
+      selectedEnv?.workspaceId,
+      selectedEnv?.projectName,
+      selectedEnv?.name,
+    ])
+
+    if (environmentData) {
+      queryClient.setQueryData(
+        [selectedEnv?.workspaceId, selectedEnv?.projectName, selectedEnv?.name],
+        {
+          ...environmentData,
+          locked,
+        }
+      )
+    }
 
     updateSelectedEnv({ locked })
 
@@ -275,7 +289,21 @@ const SaveSecretsToolbar = () => {
       }
     }
 
-    // TODO: update current
+    const environmentData = queryClient.getQueryData<Environment>([
+      selectedEnv?.workspaceId,
+      selectedEnv?.projectName,
+      selectedEnv?.name,
+    ])
+
+    if (environmentData) {
+      queryClient.setQueryData(
+        [selectedEnv?.workspaceId, selectedEnv?.projectName, selectedEnv?.name],
+        {
+          ...environmentData,
+          type,
+        }
+      )
+    }
 
     toast({
       title: 'Environment type has been changed',
