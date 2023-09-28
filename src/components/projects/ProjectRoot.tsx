@@ -21,7 +21,7 @@ import UpdateProjectDialog from './UpdateProjectDialog'
 import { EnvironmentList } from '../environments/EnvironmentList'
 import CreateEnvironmentDialog from '../environments/CreateEnvironmentDialog'
 import { useEnvironmentListStore } from '@/stores/environments'
-import { useUnmount, useUpdateEffect } from 'react-use'
+import { useMount, useUnmount, useUpdateEffect } from 'react-use'
 
 const dropdownItems = [
   { label: 'Rename', icon: Icons.pencil },
@@ -69,6 +69,16 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
       }
     }
   }, [project?.environments])
+
+  useMount(() => {
+    if (project?.environments) {
+      if (!groupBy) {
+        setEnvironments(project?.environments)
+      } else {
+        setGroupedEnvironments(project?.environments)
+      }
+    }
+  })
 
   useUnmount(() => {
     setEnvironments([])
