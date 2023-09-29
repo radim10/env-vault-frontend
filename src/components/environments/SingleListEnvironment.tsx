@@ -51,14 +51,14 @@ const SingleListEnvironment: React.FC<Props> = ({
 }) => {
   return (
     <Link href={link}>
-      <div className="pb-2.5 py-2.5 md:py-1.5 pl-5 md:pl-6 pr-2 md:pr-4 cursor-pointer border-2 dark:border-gray-800 transition hover:dark:shadow-xl hover:dark:shadow-primary/20 rounded-md hover:dark:border-primary hover:border-primary hover:scale-[101%] ease duration-200">
+      <div className="pb-2.5 py-2.5 md:py-1.5 pl-5 md:pl-6 pr-2 md:pr-4 cursor-pointer border-2 dark:border-gray-800 transition hover:dark:shadow-xl hover:shadow-xl hover:shadow-primary/20 hover:dark:shadow-primary/20 rounded-md hover:dark:border-primary hover:border-primary hover:scale-[101%] ease duration-200">
         <div className="flex justify-between items-center">
           <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-0 w-[90%] bg-red-700X">
             <div className="w-full md:w-[50%] bg-red-800X flex items-center gap-2 md:gap-4">
               {/* // */}
               <div
                 className={clsx(['h-3 w-3 rounded-full bg-primary'], {
-                  'bg-gray-600 dark:bg-gray-600': index === 0,
+                  'bg-gray-400 dark:bg-gray-600': index === 0,
                 })}
               />
               {/* {} */}
@@ -72,7 +72,7 @@ const SingleListEnvironment: React.FC<Props> = ({
               </div>
             </div>
             {/* // */}
-            <div className="w-full md:w-[45%] bg-green-800X flex flex-row-reverse md:flex-row items-center gap-0 md:gap-3 text-gray-300 text-[0.9rem]">
+            <div className="w-full md:w-[45%] bg-green-800X flex flex-row-reverse md:flex-row items-center gap-0 md:gap-3 dark:text-gray-300 text-gray-800 text-[0.9rem]">
               <div className="w-full">
                 <span>
                   {secretsCount !== 0 ? secretsCount : 'No'}{' '}
@@ -87,14 +87,14 @@ const SingleListEnvironment: React.FC<Props> = ({
 
                 <Badge
                   variant="default"
-                  className={clsx(['text-[0.725rem] text-gray-200'], {
-                    'bg-indigo-600 dark:bg-indigo-800/80 hover:bg-indigo-600 dark:hover:bg-indigo-800/80':
+                  className={clsx(['text-[0.725rem] text-white dark:text-gray-200'], {
+                    'bg-indigo-600/90 dark:bg-indigo-800/80 hover:bg-indigo-600/90 dark:hover:bg-indigo-800/80':
                       type === EnvironmentType.DEVELOPMENT,
-                    'bg-blue-600 dark:bg-blue-800/80 hover:bg-blue-600 dark:hover:bg-blue-800/80':
+                    'bg-blue-600/90 dark:bg-blue-800/80 hover:bg-blue-600/90 dark:hover:bg-blue-800/80':
                       type === EnvironmentType.TESTING,
-                    'bg-green-600 dark:bg-green-800/80 hover:bg-green-600 dark:hover:bg-green-800/80':
+                    'bg-green-600/90 dark:bg-green-800/80 hover:bg-green-600/90 dark:hover:bg-green-800/80':
                       type === EnvironmentType.STAGING,
-                    'bg-red-600 dark:bg-red-800/80 hover:bg-red-600 dark:hover:bg-red-800/80':
+                    'bg-red-600/90 dark:bg-red-800/80 hover:bg-red-600/90 dark:hover:bg-red-800/80':
                       type === EnvironmentType.PRODUCTION,
                   })}
                 >
@@ -177,7 +177,7 @@ const SingleEnvironmentDropdown: React.FC<DropdownProps> = ({
                 }
               }}
               className={clsx(['flex items-center gap-3 px-3.5 py-2'], {
-                'hover:text-red-500 text-red-500 dark:hover:text-red-500 dark:text-red-500':
+                'hover:text-red-600 text-red-600 dark:hover:text-red-500 dark:text-red-500':
                   item.label === 'Delete',
               })}
             >

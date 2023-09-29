@@ -374,13 +374,13 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                       'font-semibold':
                         key.length > 0 ||
                         (newKey && newKey?.length > 0 && action === SecretAction.Created),
-                      'border-red-500/70 focus-visible:ring-red-500/70 dark:border-red-600/70 dark:focus-visible:ring-red-600/70':
+                      'border-red-600/90 focus-visible:ring-red-600/90 dark:border-red-600/70 dark:focus-visible:ring-red-600/70':
                         action === SecretAction.Deleted,
-                      'border-indigo-500/70 focus-visible:ring-indigo-500/70 dark:border-indigo-600/70 dark:focus-visible:ring-indigo-600/70':
+                      'border-indigo-600/90 focus-visible:ring-indigo-600/90 dark:border-indigo-600/70 dark:focus-visible:ring-indigo-600/70':
                         action === SecretAction.Archived,
-                      'border-orange-500/70 focus-visible:ring-orange-500/70 dark:border-orange-600/70 dark:focus-visible:ring-orange-600/70':
+                      'border-orange-600/90 focus-visible:ring-orange-600/90 dark:border-orange-600/70 dark:focus-visible:ring-orange-600/70':
                         newKey !== undefined && action === SecretAction.Updated,
-                      'border-green-500/70 focus-visible:ring-green-500/70 dark:border-green-600/70 dark:focus-visible:ring-green-600/70':
+                      'border-green-600/90 focus-visible:ring-green-600/90 dark:border-green-600/70 dark:focus-visible:ring-green-600/70':
                         action === SecretAction.Created &&
                         newKey?.trim().length !== 0 &&
                         newKey !== undefined,
@@ -425,14 +425,14 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                         }
                         onChange={(e) => handleUpdateValue({ index, key, value: e.target.value })}
                         className={clsx(['pr-[5.5em]'], {
-                          'border-red-500/70 focus-visible:ring-red-500/70 dark:border-red-600/70 dark:focus-visible:ring-red-600/70':
+                          'border-red-600/90 focus-visible:ring-red-600/90 dark:border-red-600/70 dark:focus-visible:ring-red-600/70':
                             action === SecretAction.Deleted,
-                          'border-indigo-500/70 focus-visible:ring-indigo-500/70 dark:border-indigo-600/70 dark:focus-visible:ring-indigo-600/70':
+                          'border-indigo-600/90 focus-visible:ring-indigo-600/90 dark:border-indigo-600/70 dark:focus-visible:ring-indigo-600/70':
                             action === SecretAction.Archived,
-                          'border-orange-500/70 focus-visible:ring-orange-500/70 dark:border-orange-600/70 dark:focus-visible:ring-orange-600/70':
+                          'border-orange-700/90 focus-visible:ring-orange-600/90 dark:border-orange-600/70 dark:focus-visible:ring-orange-600/70':
                             // action === Action.Updated,
                             newValue !== undefined && action === SecretAction.Updated,
-                          'border-green-500/70 focus-visible:ring-green-500/70 dark:border-green-600/70 dark:focus-visible:ring-green-600/70':
+                          'border-green-600/90 focus-visible:ring-green-600/90 dark:border-green-600/70 dark:focus-visible:ring-green-600/70':
                             action === SecretAction.Created &&
                             newValue?.trim().length !== 0 &&
                             newValue !== undefined,
@@ -458,17 +458,17 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                                 'text-primary hover:text-primary':
                                   (description !== undefined && !newDescription) ||
                                   (showDescription && !newDescription && !description),
-                                'text-green-500/80 opacity-70':
+                                'text-green-600/90 dark:text-green-500/80 opacity-70':
                                   description === undefined &&
                                   newDescription &&
                                   newDescription?.length > 0 &&
                                   action !== SecretAction.Deleted,
-                                'text-orange-500/80 dark:text-orange-500/80 opacity-70':
+                                'text-orange-600/90 dark:text-orange-500/80 opacity-70':
                                   description &&
                                   newDescription &&
                                   newDescription?.length > 0 &&
                                   action !== SecretAction.Deleted,
-                                'text-red-500/80 dark:text-red-500/80 opacity-70':
+                                'text-red-600/90 dark:text-red-500/80 opacity-70':
                                   (newDescription?.length === 0 && description) ||
                                   action === SecretAction.Deleted,
                               }
@@ -506,15 +506,15 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                     <Input
                       placeholder={'Description...'}
                       className={clsx({
-                        'border-red-500/70 focus-visible:ring-red-500/70 dark:border-red-600/70 dark:focus-visible:ring-red-600/70':
+                        'border-red-600/90 focus-visible:ring-red-600/90 dark:border-red-600/70 dark:focus-visible:ring-red-600/70':
                           (newDescription?.length === 0 && description) ||
                           action === SecretAction.Deleted,
-                        'border-green-500/70 focus-visible:ring-green-500/70 dark:border-green-600/70 dark:focus-visible:ring-green-600/70':
+                        'border-green-600/90 focus-visible:ring-green-600/90 dark:border-green-600/70 dark:focus-visible:ring-green-600/70':
                           description === undefined &&
                           newDescription &&
                           newDescription?.length > 0 &&
                           action !== SecretAction.Deleted,
-                        'border-orange-500/70 focus-visible:ring-orange-500/70 dark:border-orange-600/70 dark:focus-visible:ring-orange-600/70':
+                        'border-orange-600/90 focus-visible:ring-orange-600/90 dark:border-orange-600/70 dark:focus-visible:ring-orange-600/70':
                           description &&
                           newDescription &&
                           newDescription?.length > 0 &&
@@ -661,7 +661,8 @@ const Dropdown: React.FC<DropdowProps> = ({
                   }
                 }}
                 className={clsx(['flex gap-4 items-center px-3.5'], {
-                  'hover:text-red-500 text-red-500': item.text === 'Delete',
+                  'dark:hover:text-red-500 dark:text-red-500 text-red-600 hover:text-red-600':
+                    item.text === 'Delete',
                 })}
               >
                 <item.icon className=" h-4 w-4 opacity-70" />

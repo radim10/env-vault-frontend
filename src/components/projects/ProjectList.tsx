@@ -100,7 +100,7 @@ const ProjectList: React.FC<Props> = ({ workspace, sort, search, setLoaded }) =>
     return (
       <div className="lg:grid lg:grid-cols-3 gap-4 flex flex-col">
         {Array.from({ length: 6 }).map(() => (
-          <div className="h-[8.2rem]  rounded-md border-2 dark:border-gray-800 animate-pulse dark:bg-gray-900" />
+          <div className="h-[8.2rem]  rounded-md border-2 border-gray-200 bg-gray-100 dark:border-gray-800 animate-pulse dark:bg-gray-900" />
         ))}
       </div>
     )
@@ -131,7 +131,7 @@ const ProjectList: React.FC<Props> = ({ workspace, sort, search, setLoaded }) =>
           ({ description, name, environmentCount }) => (
             <Link
               href={`/workspace/${workspace}/projects/${name}`}
-              className="cursor-pointer h-[8.2rem] border-2 dark:border-gray-800 transition hover:dark:shadow-xl hover:dark:shadow-primary/20 rounded-md hover:dark:border-primary hover:border-primary hover:scale-[103%] ease duration-200"
+              className="cursor-pointer h-[8.2rem] border-2 dark:border-gray-800 transition hover:dark:shadow-xl hover:shadow-xl hover:shadow-primary/20 hover:dark:shadow-primary/20 rounded-md hover:dark:border-primary hover:border-primary hover:scale-[103%] ease duration-200"
             >
               <div className="px-4 py-3 h-full">
                 <div className="flex flex-col justify-between h-full">

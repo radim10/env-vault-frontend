@@ -32,7 +32,7 @@ const EnvTabs: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
             {
               'border-primary dark:text-gray-200 font-medium':
                 params?.tab === label?.toLowerCase() || (index === 0 && !params?.tab),
-              'border-b-transparent':
+              'border-b-transparent text-gray-700 dark:text-gray-400':
                 params?.tab !== label?.toLowerCase() && !(index === 0 && !params?.tab),
             }
           )}

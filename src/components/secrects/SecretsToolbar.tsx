@@ -24,7 +24,7 @@ const SecretsToolbar: React.FC<Props> = ({ secretsCount, onImport }) => {
   return (
     <div>
       <div className="flex flex-col md:flex-row justify-between md:items-center">
-        <div className="pl-1 dark:text-gray-400 font-bold">
+        <div className="pl-1 text-gray-700 dark:text-gray-400 font-bold">
           <span>Active count: {secretsCount}</span>
         </div>
         {/* */}

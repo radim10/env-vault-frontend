@@ -87,7 +87,7 @@ const EnvironmentListToolbar: React.FC<Props> = ({
         }
       )}
     >
-      <div className="pl-1 dark:text-gray-400 font-bold">
+      <div className="pl-1 dark:text-gray-400 text-gray-700 font-bold">
         <span>Total environments: {environmentsCount}</span>
       </div>
 

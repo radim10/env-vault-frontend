@@ -185,7 +185,7 @@ export const EnvironmentList: React.FC<Props> = ({
 
   if ((!values?.length && !groupedEnvironments) || (groupedEnvironments && isGroupedEmpty())) {
     return (
-      <div className="flex items-center justify-center mt-28">
+      <div className="flex items-center justify-center mt-32">
         <div className="flex flex-col items-center gap-2">
           <div>
             <Icons.inbox className="h-20 w-20 opacity-30" />
@@ -312,14 +312,14 @@ export const EnvironmentList: React.FC<Props> = ({
                 group !== 'false' ? (
                   <Badge
                     variant="default"
-                    className={clsx(['text-[0.9rem] text-gray-200'], {
-                      'bg-indigo-600 dark:bg-indigo-800/80 hover:bg-indigo-600 dark:hover:bg-indigo-800/80':
+                    className={clsx(['text-[0.9rem] text-white dark:text-gray-200'], {
+                      'bg-indigo-600/90 dark:bg-indigo-800/80 hover:bg-indigo-600/90 dark:hover:bg-indigo-800/80':
                         group === EnvironmentType.DEVELOPMENT,
-                      'bg-blue-600 dark:bg-blue-800/80 hover:bg-blue-600 dark:hover:bg-blue-800/80':
+                      'bg-blue-600/90 dark:bg-blue-800/80 hover:bg-blue-600/90 dark:hover:bg-blue-800/80':
                         group === EnvironmentType.TESTING,
-                      'bg-green-600 dark:bg-green-800/80 hover:bg-green-600 dark:hover:bg-green-800/80':
+                      'bg-green-600/90 dark:bg-green-800/80 hover:bg-green-600/90 dark:hover:bg-green-800/80':
                         group === EnvironmentType.STAGING,
-                      'bg-red-600 dark:bg-red-800/80 hover:bg-red-600 dark:hover:bg-red-800/80':
+                      'bg-red-600/90 dark:bg-red-800/80 hover:bg-red-600/90 dark:hover:bg-red-800/80':
                         group === EnvironmentType.PRODUCTION,
                     })}
                   >

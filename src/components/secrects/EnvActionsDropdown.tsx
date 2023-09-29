@@ -89,7 +89,7 @@ const EnvActionsDropdown: React.FC<Props> = ({
                   }
                 }}
                 className={clsx(['flex items-center gap-3 px-3.5 py-2'], {
-                  'text-red-500 dark:hover:text-red-500 hover:text-red-500':
+                  'dark:text-red-500 dark:hover:text-red-500 text-red-600 hover:text-red-600':
                     item.label === 'Delete',
                 })}
               >
