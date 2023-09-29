@@ -81,7 +81,7 @@ const CreateEnvironmentDialog: React.FC<Props> = ({
         }}
       >
         <DialogTrigger asChild onClick={() => setOpened(true)}>
-          <Button className="gap-1.5 w-full" variant="default" size={'sm'}>
+          <Button className="gap-1.5 w-fullX" variant="default" size={'sm'}>
             <Icons.plus className="h-4 w-4" />
             <span>{btnText ?? 'Add new'}</span>
           </Button>
