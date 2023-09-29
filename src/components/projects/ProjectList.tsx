@@ -5,16 +5,91 @@ import Link from 'next/link'
 import React from 'react'
 import { Icons } from '../icons'
 import Error from '../Error'
+import { ListProject, ProjectSort } from '@/types/projects'
 
 interface Props {
   // id
   workspace: string
+  sort: ProjectSort
 }
 
-const ProjectList: React.FC<Props> = ({ workspace }) => {
-  const { data, isLoading, error } = useGetProjects({
-    workspaceId: workspace,
-  })
+const ProjectList: React.FC<Props> = ({ workspace, sort }) => {
+  const sortProjects = (data: ListProject[]): ListProject[] => {
+    let sorted: ListProject[] = []
+
+    if (sort === ProjectSort.CreatedDesc) {
+      sorted = data.sort((a, b) => {
+        const dateA = new Date(a.createdAt).getTime()
+        const dateB = new Date(b.createdAt).getTime()
+
+        if (dateA > dateB) {
+          return -1
+        } else if (dateA < dateB) {
+          return 1
+        } else {
+          return 0
+        }
+      })
+    } else if (sort === ProjectSort.CreatedAsc) {
+      sorted = data.sort((a, b) => {
+        const dateA = new Date(a.createdAt).getTime()
+        const dateB = new Date(b.createdAt).getTime()
+
+        if (dateA < dateB) {
+          return -1
+        } else if (dateA > dateB) {
+          return 1
+        } else {
+          return 0
+        }
+      })
+    } else if (sort === ProjectSort.AlphabeticalAsc) {
+      sorted = data.sort((a, b) => {
+        const nameA = a.name.toLowerCase()
+        const nameB = b.name.toLowerCase()
+
+        if (nameA < nameB) {
+          return -1
+        }
+        if (nameA > nameB) {
+          return 1
+        }
+        return 0
+      })
+    } else if (sort === ProjectSort.AlphabeticalDesc) {
+      sorted = data.sort((a, b) => {
+        const nameA = a.name.toLowerCase()
+        const nameB = b.name.toLowerCase()
+
+        if (nameA > nameB) {
+          return -1
+        }
+        if (nameA < nameB) {
+          return 1
+        }
+        return 0
+      })
+    } else if (sort === ProjectSort.EnvCountDesc) {
+      sorted = data.sort((a, b) => {
+        return b.environmentCount - a.environmentCount
+      })
+    } else if (sort === ProjectSort.EnvCountAsc) {
+      sorted = data.sort((a, b) => {
+        return a.environmentCount - b.environmentCount
+      })
+    }
+
+    return sorted
+  }
+
+  const { data, isLoading, error } = useGetProjects(
+    {
+      workspaceId: workspace,
+    },
+    {
+      select: sortProjects,
+    }
+  )
 
   if (isLoading) {
     return (
