@@ -156,6 +156,7 @@ const EnvironmentListToolbar: React.FC<Props> = ({
           workspaceId={workspaceId}
           projectName={projectName}
           onSuccess={onCreated}
+          fullBtn
         />
       </div>
     </div>

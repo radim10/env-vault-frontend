@@ -30,6 +30,7 @@ interface Props {
   workspaceId: string
   projectName: string
   btnText?: string
+  fullBtn?: boolean
   onSuccess: (args: { name: string; type: EnvironmentType }) => void
 }
 
@@ -44,6 +45,7 @@ const CreateEnvironmentDialog: React.FC<Props> = ({
   workspaceId,
   projectName,
   btnText,
+  fullBtn,
   onSuccess,
 }) => {
   const [opened, setOpened] = useState(false)
@@ -81,7 +83,13 @@ const CreateEnvironmentDialog: React.FC<Props> = ({
         }}
       >
         <DialogTrigger asChild onClick={() => setOpened(true)}>
-          <Button className="gap-1.5 w-fullX" variant="default" size={'sm'}>
+          <Button
+            className={clsx(['gap-1.5'], {
+              'w-full': fullBtn,
+            })}
+            variant="default"
+            size={'sm'}
+          >
             <Icons.plus className="h-4 w-4" />
             <span>{btnText ?? 'Add new'}</span>
           </Button>
