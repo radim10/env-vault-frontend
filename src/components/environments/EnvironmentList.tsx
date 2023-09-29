@@ -185,7 +185,7 @@ export const EnvironmentList: React.FC<Props> = ({
 
   if ((!values?.length && !groupedEnvironments) || (groupedEnvironments && isGroupedEmpty())) {
     return (
-      <div className="flex items-center justify-center mt-36">
+      <div className="flex items-center justify-center mt-28">
         <div className="flex flex-col items-center gap-2">
           <div>
             <Icons.inbox className="h-20 w-20 opacity-30" />
