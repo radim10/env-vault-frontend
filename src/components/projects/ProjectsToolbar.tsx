@@ -29,9 +29,11 @@ const ProjectsToolbar: React.FC<Props> = ({
     <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:gap-0">
       <div className="flex items-center gap-4">
         <TypographyH2>Projects</TypographyH2>
-        <CreateProject workspaceId={workspaceId} />
+        <div className="md:hidden block">
+          <CreateProject workspaceId={workspaceId} />
+        </div>
       </div>
-      <div className="flex items-end w-full justify-end gap-3">
+      <div className="flex items-center w-full justify-end gap-3">
         <div className="relative md:w-[12rem] lg:w-[16rem]">
           <Icons.search className="h-4 w-4 pointer-events-none absolute top-1/2 transform -translate-y-1/2 left-3" />
           {search?.length !== 0 && (
@@ -53,6 +55,9 @@ const ProjectsToolbar: React.FC<Props> = ({
         </div>
 
         <ProjectsSortSelect sort={sort} setSort={setSort} disabled={disabled} />
+        <div className="hidden md:block">
+          <CreateProject workspaceId={workspaceId} />
+        </div>
       </div>
     </div>
   )
