@@ -419,7 +419,7 @@ const SaveSecretsToolbar = () => {
         )}
 
         <div className="flex items-center gap-2">
-          {loaded && (
+          {loaded && secrets?.length !== 0 && (
             <Button
               className="gap-2"
               size="sm"

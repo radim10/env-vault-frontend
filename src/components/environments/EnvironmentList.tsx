@@ -303,7 +303,7 @@ export const EnvironmentList: React.FC<Props> = ({
 
       {/* List */}
       {groupedEnvironments && (
-        <div className="mt-4 flex flex-col gap-3">
+        <div className="mt-4 flex flex-col gap-3 px-6 lg:px-10">
           {Object.entries(groupedEnvironments).map(([group, environments]) => (
             <div className="flex flex-col gap-2">
               <div>
@@ -360,7 +360,7 @@ export const EnvironmentList: React.FC<Props> = ({
         </div>
       )}
 
-      <div className="flex flex-col gap-2.5 mt-4">
+      <div className="flex flex-col gap-2.5 mt-4 px-6 lg:px-10">
         {values.map(({ name, type, locked, secretsCount }, index) => (
           <SingleListEnvironment
             key={index}

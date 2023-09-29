@@ -194,7 +194,7 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
         </>
       )}
       <div>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center px-6 lg:px-10">
           <div className="flex gap-2 items-center">
             <Link
               href={`/workspace/${workspaceId}/projects`}

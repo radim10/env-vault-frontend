@@ -5,6 +5,8 @@ import ProjectsSortSelect from './ProjectsSortSelect'
 import { ProjectSort } from '@/types/projects'
 import { Icons } from '../icons'
 import { Input } from '../ui/input'
+import { useWindowScroll } from 'react-use'
+import clsx from 'clsx'
 
 interface Props {
   workspaceId: string
@@ -25,8 +27,19 @@ const ProjectsToolbar: React.FC<Props> = ({
   setSearch,
   setSort,
 }) => {
+  const { y } = useWindowScroll()
+
   return (
-    <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:gap-0">
+    <div
+      className={clsx(
+        [
+          'py-2 -mt-1 flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:gap-0 px-6 md:px-10 bg-transparent backdrop-blur-xl sticky top-0 z-10',
+        ],
+        {
+          'border-b-2': y > 150,
+        }
+      )}
+    >
       <div className="flex items-center gap-4">
         <TypographyH2>Projects</TypographyH2>
         <div className="md:hidden block">

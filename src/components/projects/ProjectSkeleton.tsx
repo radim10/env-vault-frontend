@@ -7,7 +7,7 @@ interface Props {
 
 const ProjectSkeleton: React.FC<Props> = ({ grouped }) => {
   return (
-    <div>
+    <div className="px-6 lg:px-10">
       <div className="flex justify-between items-center mt-0">
         <div className="flex gap-2 items-center">
           <div className="font-semibold ">
@@ -21,7 +21,7 @@ const ProjectSkeleton: React.FC<Props> = ({ grouped }) => {
       </div>
 
       {/* // */}
-      <div className="mt-7">
+      <div className="mt-6">
         <EnvironmentListSkeleton grouped={grouped} />
       </div>
     </div>

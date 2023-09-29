@@ -96,14 +96,14 @@ export default function EnvLayout({
       <div
         className={clsx(
           [
-            'flex md:flex-row flex-col justify-between md:items-center gap-0 md:gap-0 -mt-2 sticky top-0 bg-background pb-2 pt-3 w-full z-10',
+            'px-6 lg:px-10  backdrop-blur-xl flex md:flex-row flex-col justify-between md:items-center gap-0 md:gap-0 -mt-2 sticky top-0 bg-transparent pb-2 pt-3 w-full z-10',
           ],
           {
-            'border-b-2': y > 120,
+            'border-b-2': y > 104,
           }
         )}
       >
-        <div className="flex md:flex-row flex-col gap-2 md:items-center">
+        <div className="flex md:flex-row flex-col gap-2 md:items-center ">
           <div className="flex gap-2 items-center">
             <Link
               href={`/workspace/${params?.workspace}/projects/${params?.projectName}`}
@@ -142,7 +142,7 @@ export default function EnvLayout({
           workspaceId={params?.workspace}
           projectName={params?.projectName}
         />
-        <div className="mt-4">{children}</div>
+        <div className="mt-4 px-6 lg:px-10">{children}</div>
       </div>
     </>
   )

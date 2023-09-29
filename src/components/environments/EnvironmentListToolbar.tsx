@@ -80,7 +80,7 @@ const EnvironmentListToolbar: React.FC<Props> = ({
     <div
       className={clsx(
         [
-          'w-full flex flex-col md:flex-row justify-between md:items-center sticky top-0 bg-background z-50 pb-2 pt-3 gap-3 md:gap-0',
+          'px-6 py-6 lg:px-10 backdrop-blur-xl w-full flex flex-col md:flex-row justify-between md:items-center sticky top-0 bg-transparent z-50 pb-2 pt-2 gap-3 md:gap-0',
         ],
         {
           'border-b-2': y > 160,

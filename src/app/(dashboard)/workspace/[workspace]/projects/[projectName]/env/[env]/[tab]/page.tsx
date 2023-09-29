@@ -6,13 +6,13 @@ export default function EnvTabePage({
 }: {
   params: { workspace: string; projectName: string; env: string; tab: string }
 }) {
-  if (params.tab !== 'access' && params.tab !== 'changelog' && params.tab !== 'settings') {
+  if (params.tab !== 'tokens' && params.tab !== 'changelog' && params.tab !== 'settings' && params.tab !== 'users') {
     redirect(`/workspace/${params.workspace}/projects/${params.projectName}/env/${params.env}`)
   }
 
   return (
     <div>
-      {params.tab === 'access' && (
+      {params.tab === 'tokens' && (
         <Access
           workspaceId={params.workspace}
           projectName={params.projectName}

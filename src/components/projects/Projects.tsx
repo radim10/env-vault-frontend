@@ -29,7 +29,7 @@ const Projects: React.FC<Props> = ({ workspaceId }) => {
           setSearch={setSearch}
         />
 
-        <div className="md:mt-16 mt-8">
+        <div className="md:mt-10 mt-8">
           <ProjectList
             workspace={workspaceId}
             sort={sort}

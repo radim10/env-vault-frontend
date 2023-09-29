@@ -98,7 +98,7 @@ const ProjectList: React.FC<Props> = ({ workspace, sort, search, setLoaded }) =>
 
   if (isLoading) {
     return (
-      <div className="lg:grid lg:grid-cols-3 gap-4 flex flex-col">
+      <div className="lg:grid lg:grid-cols-3 gap-4 flex flex-col px-6 md:px-10">
         {Array.from({ length: 6 }).map(() => (
           <div className="h-[8.2rem]  rounded-md border-2 border-gray-200 bg-gray-100 dark:border-gray-800 animate-pulse dark:bg-gray-900" />
         ))}
@@ -114,7 +114,7 @@ const ProjectList: React.FC<Props> = ({ workspace, sort, search, setLoaded }) =>
     <div>
       {search && data?.filter(({ name }) => name.includes(search?.toLowerCase()))?.length === 0 && (
         <>
-          <div className="flex items-center justify-center mt-28 w-full">
+          <div className="flex items-center justify-center mt-28 w-full  px-6 lg:px-10">
             <div className="flex flex-col items-center gap-2">
               <div>
                 <Icons.searchX className="h-20 w-20 opacity-30" />
@@ -126,7 +126,7 @@ const ProjectList: React.FC<Props> = ({ workspace, sort, search, setLoaded }) =>
           </div>
         </>
       )}
-      <div className="lg:grid lg:grid-cols-3 gap-4 flex flex-col">
+      <div className="lg:grid lg:grid-cols-3 gap-4 flex flex-col px-6 lg:px-10">
         {(!search ? data : data?.filter(({ name }) => name.includes(search?.toLowerCase())))?.map(
           ({ description, name, environmentCount }) => (
             <Link

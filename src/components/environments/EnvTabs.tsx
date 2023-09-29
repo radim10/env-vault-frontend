@@ -13,8 +13,10 @@ interface Props {
 
 const items = [
   { label: 'Secrets', href: '' },
-  { label: 'Access', href: 'access' },
+  { label: 'Tokens', href: 'tokens' },
+  { label: 'Users', href: 'users' },
   { label: 'Settings', href: 'settings' },
+
   // { label: 'Changelog', href: 'changelog' },
 ]
 
@@ -22,7 +24,7 @@ const EnvTabs: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
   const params = useParams<{ workspace: string; projectName: string; env: string; tab?: string }>()
 
   return (
-    <div className="dark:text-gray-400 flex items-center gap-2 md:gap-4 overflow-y-auto text-[1rem] border-b-[1px] pb-0 md:px-3">
+    <div className="px-6 lg:px-10 dark:text-gray-400 flex items-center gap-2 md:gap-4 overflow-y-auto text-[1rem] border-b-[1px] pb-0 md:px-3">
       {items.map(({ label, href }, index) => (
         <Link
           href={`/workspace/${workspaceId}/projects/${projectName}/env/${envName}/${href}`}
