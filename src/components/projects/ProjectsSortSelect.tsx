@@ -10,6 +10,7 @@ import {
 import { ProjectSort } from '@/types/projects'
 import { Icons } from '../icons'
 import { LucideIcon } from 'lucide-react'
+import clsx from 'clsx'
 
 const sortOptions: Array<{ value: ProjectSort; label: string; icon: LucideIcon }> = [
   {
@@ -46,14 +47,19 @@ const sortOptions: Array<{ value: ProjectSort; label: string; icon: LucideIcon }
 
 interface Props {
   sort: ProjectSort
+  disabled: boolean
   setSort: (sort: ProjectSort) => void
 }
 
-const ProjectsSortSelect: React.FC<Props> = ({ sort, setSort }) => {
+const ProjectsSortSelect: React.FC<Props> = ({ disabled, sort, setSort }) => {
   return (
     <div>
       <Select value={sort} onValueChange={(value) => setSort(value as ProjectSort)}>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger
+          className={clsx(['w-[180px] ease duration-500'], {
+            'opacity-60': disabled,
+          })}
+        >
           <SelectValue placeholder="Sort by" />
         </SelectTrigger>
         <SelectContent>
