@@ -100,7 +100,7 @@ const RenameEnvironmentDialog: React.FC<Props> = ({
             <Button
               type="submit"
               loading={isLoading}
-              disabled={newName?.trim().length === 0 || isLoading || newName === envName}
+              disabled={newName?.trim().length < 2 || isLoading || newName === envName}
               onClick={() => handleSubmit()}
             >
               Create

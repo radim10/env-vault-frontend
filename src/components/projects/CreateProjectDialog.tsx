@@ -138,7 +138,7 @@ const CreateProject: React.FC<Props> = ({ workspaceId }) => {
             <Button
               type="submit"
               loading={isLoading}
-              disabled={name?.trim().length === 0 || isLoading}
+              disabled={name?.trim().length < 2 || isLoading}
               onClick={() => handleCreateProject()}
             >
               Create

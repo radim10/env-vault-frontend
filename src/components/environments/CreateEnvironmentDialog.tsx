@@ -166,7 +166,7 @@ const CreateEnvironmentDialog: React.FC<Props> = ({
             <Button
               type="submit"
               loading={isLoading}
-              disabled={name?.trim().length === 0 || isLoading || selectedType === null}
+              disabled={name?.trim().length < 2 || isLoading || selectedType === null}
               onClick={() => {
                 createEnvironment({
                   workspaceId,

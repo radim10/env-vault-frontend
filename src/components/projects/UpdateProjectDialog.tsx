@@ -141,7 +141,7 @@ const UpdateProjectDialog: React.FC<Props> = ({
               type="submit"
               loading={isLoading}
               disabled={
-                name?.trim().length === 0 ||
+                name?.trim().length < 2 ||
                 isLoading ||
                 (name === prevName && prevDesciption === description)
               }
