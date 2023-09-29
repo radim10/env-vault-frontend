@@ -16,7 +16,7 @@ const NotFound: React.FC<Props> = ({ title, description, link, btnText }) => {
       <div className="flex items-center justify-center mt-36">
         <div className="flex flex-col items-center gap-2">
           <div>
-            <Icons.xCircle className="h-20 w-20 opacity-30" />
+            <Icons.searchSlash className="h-20 w-20 opacity-30" />
           </div>
           <div className="text-center">
             <span className="text-lg font-bold opacity-85">{title}</span>
