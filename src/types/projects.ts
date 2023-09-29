@@ -23,3 +23,12 @@ export interface UpdatedProjectData {
   name?: string
   description?: string | null
 }
+
+export enum ProjectSort {
+  CreatedDesc = 'Created desc',
+  CreatedAsc = 'Created asc',
+  EnvCountDesc = 'Environment count desc',
+  EnvCountAsc = 'Environment count asc',
+  AlphabeticalAsc = 'Alphabetical asc',
+  AlphabeticalDesc = 'Alphabetical desc',
+}
