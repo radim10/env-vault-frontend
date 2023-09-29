@@ -191,8 +191,12 @@ const GenerateSecretDialog: React.FC<Props> = ({ opened, onClose, onConfirm }) =
                   <SelectValue placeholder="Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Random value">Random value</SelectItem>
-                  <SelectItem value="UUID">UUID</SelectItem>
+                  <SelectItem value="Random value" onFocus={(e) => e.stopPropagation()}>
+                    Random value
+                  </SelectItem>
+                  <SelectItem value="UUID" onFocus={(e) => e.stopPropagation()}>
+                    UUID
+                  </SelectItem>
                 </SelectContent>
               </Select>
 
@@ -206,7 +210,9 @@ const GenerateSecretDialog: React.FC<Props> = ({ opened, onClose, onConfirm }) =
                   </SelectTrigger>
                   <SelectContent>
                     {alpabetItems.map((item) => (
-                      <SelectItem value={item}>{item.toString()}</SelectItem>
+                      <SelectItem value={item} onFocus={(e) => e.stopPropagation()}>
+                        {item.toString()}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -221,7 +227,9 @@ const GenerateSecretDialog: React.FC<Props> = ({ opened, onClose, onConfirm }) =
                   </SelectTrigger>
                   <SelectContent>
                     {uuidItems.map((item) => (
-                      <SelectItem value={item}>{item.toString()}</SelectItem>
+                      <SelectItem value={item} onFocus={(e) => e.stopPropagation()}>
+                        {item.toString()}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
