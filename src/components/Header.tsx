@@ -8,6 +8,7 @@ import {
 } from './ui/dropdown-menu'
 import clsx from 'clsx'
 import { Icons } from './icons'
+import { ThemeToggle } from './ui/theme-toggle'
 
 const dropdownItems = [
   { text: 'Account', icon: Icons.user },
@@ -18,7 +19,8 @@ const Header = () => {
   return (
     <div className="flex flex-row justify-between items-center">
       <div>Workspace name or search input</div>
-      <div>
+      <div className="flex items-center gap-2 md:gap-3">
+        <ThemeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger className="flex gap-2 items-center">
             <Avatar>
