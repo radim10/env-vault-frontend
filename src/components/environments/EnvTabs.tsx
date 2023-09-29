@@ -14,7 +14,8 @@ interface Props {
 const items = [
   { label: 'Secrets', href: '' },
   { label: 'Access', href: 'access' },
-  { label: 'Changelog', href: 'changelog' },
+  { label: 'Settings', href: 'settings' },
+  // { label: 'Changelog', href: 'changelog' },
 ]
 
 const EnvTabs: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
