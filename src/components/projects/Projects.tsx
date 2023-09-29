@@ -1,33 +1,41 @@
 'use client'
 
 import React from 'react'
-import TypographyH2 from '@/components/typography/TypographyH2'
 import ProjectList from '@/components/projects/ProjectList'
-import CreateProject from '@/components/projects/CreateProjectDialog'
-import ProjectsSortSelect from './ProjectsSortSelect'
-import { useProjectsSortStore } from '@/stores/projects'
+import { useProjectsStore } from '@/stores/projects'
+import ProjectsToolbar from './ProjectsToolbar'
+import { useMount } from 'react-use'
 
 interface Props {
   workspaceId: string
 }
 
 const Projects: React.FC<Props> = ({ workspaceId }) => {
-  const { sort, setSort } = useProjectsSortStore()
+  const { sort, setSort, search, setSearch, loaded, setLoaded } = useProjectsStore()
+
+  useMount(() => {
+    if (search?.length) setSearch('')
+  })
+
   return (
     <div>
       <div>
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:gap-0">
-          <div className="flex items-center gap-4">
-            <TypographyH2>Projects</TypographyH2>
-            <CreateProject workspaceId={workspaceId} />
-          </div>
-          <div className="flex items-end w-full justify-end">
-            <ProjectsSortSelect sort={sort} setSort={setSort} />
-          </div>
-        </div>
+        <ProjectsToolbar
+          workspaceId={workspaceId}
+          disabled={loaded === false}
+          sort={sort}
+          setSort={setSort}
+          search={search}
+          setSearch={setSearch}
+        />
 
         <div className="md:mt-16 mt-8">
-          <ProjectList workspace={workspaceId} sort={sort} />
+          <ProjectList
+            workspace={workspaceId}
+            sort={sort}
+            search={search?.length > 0 ? search : undefined}
+            setLoaded={setLoaded}
+          />
         </div>
       </div>
     </div>
