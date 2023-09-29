@@ -51,6 +51,8 @@ import {
   ArrowDownWideNarrow,
   Group,
   Upload,
+  ServerCrash,
+  SearchSlash,
 } from 'lucide-react'
 
 export const Icons = {
@@ -106,4 +108,6 @@ export const Icons = {
   arrowDownWideNarrow: ArrowDownWideNarrow,
   group: Group,
   upload: Upload,
+  serverCrash: ServerCrash,
+  searchSlash: SearchSlash,
 }
