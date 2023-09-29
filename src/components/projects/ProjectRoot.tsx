@@ -23,6 +23,7 @@ import { useEnvironmentListStore } from '@/stores/environments'
 import { useMount, useUnmount, useUpdateEffect } from 'react-use'
 import ProjectSkeleton from './ProjectSkeleton'
 import NotFound from './NotFound'
+import Error from '../Error'
 
 const dropdownItems = [
   { label: 'Rename', icon: Icons.pencil },
@@ -50,7 +51,6 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
   const {
     data: project,
     isLoading,
-    isError,
     error,
   } = useGetProject(
     {
@@ -146,7 +146,7 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
     // return <ProjectSkeleton grouped={groupBy !== null ? true : false} />
   }
 
-  if (isError) {
+  if (error) {
     if (error?.message === 'Project not found') {
       return (
         <NotFound
@@ -157,7 +157,14 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
         />
       )
     } else {
-      return 'error'
+      return (
+        <Error
+          link={{
+            text: 'Go to projects',
+            href: `/workspace/${workspaceId}/projects`,
+          }}
+        />
+      )
     }
   }
 

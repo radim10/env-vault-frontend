@@ -4,6 +4,7 @@ import { useGetProjects } from '@/api/queries/projects/root'
 import Link from 'next/link'
 import React from 'react'
 import { Icons } from '../icons'
+import Error from '../Error'
 
 interface Props {
   // id
@@ -11,7 +12,7 @@ interface Props {
 }
 
 const ProjectList: React.FC<Props> = ({ workspace }) => {
-  const { data, isLoading } = useGetProjects({
+  const { data, isLoading, error } = useGetProjects({
     workspaceId: workspace,
   })
 
@@ -24,6 +25,11 @@ const ProjectList: React.FC<Props> = ({ workspace }) => {
       </div>
     )
   }
+
+  if (error) {
+    return <Error />
+  }
+
   return (
     <div>
       <div className="lg:grid lg:grid-cols-3 gap-4 flex flex-col">

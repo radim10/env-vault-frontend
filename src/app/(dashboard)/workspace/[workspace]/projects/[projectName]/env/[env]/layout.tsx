@@ -1,6 +1,7 @@
 'use client'
 
 import { useGetEnvironment } from '@/api/queries/projects/environments/environments'
+import Error from '@/components/Error'
 import EnvLayoutSkeleton from '@/components/environments/EnvLayoutSkeleton'
 import EnvTabs from '@/components/environments/EnvTabs'
 import { Icons } from '@/components/icons'
@@ -78,7 +79,14 @@ export default function EnvLayout({
         />
       )
     } else {
-      return 'error'
+      return (
+        <Error
+          link={{
+            text: 'Go to projects',
+            href: `/workspace/${params?.workspace}/projects`,
+          }}
+        />
+      )
     }
   }
 
