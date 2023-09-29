@@ -1,7 +1,7 @@
 export enum EnvTokenGrant {
-  READ,
-  WRITE,
-  READ_WRITE,
+  READ = 'READ',
+  WRITE = 'WRITE',
+  READ_WRITE = 'READ_WRITE',
 }
 
 export interface EnvironmentToken {

@@ -14,14 +14,15 @@ import { useImmer } from 'use-immer'
 import { useDebounce } from 'react-use'
 import dayjs, { Dayjs } from 'dayjs'
 import { useCreateEnvironmentToken } from '@/api/mutations/envTokens'
+import { EnvTokenGrant } from '@/types/environmentTokens'
 
-enum EnvTokenGrant {
+enum Grant {
   Read = 'Read',
   Write = 'Write',
   ReadWrite = 'Read/write',
 }
 
-const grantTypes: EnvTokenGrant[] = [EnvTokenGrant.Read, EnvTokenGrant.Write]
+const grantTypes: Grant[] = [Grant.Read, Grant.Write]
 
 interface Props {
   workspaceId: string
@@ -30,7 +31,12 @@ interface Props {
 
   opened: boolean
   onClose: () => void
-  onSuccess: (args: { name: string; value: string; expiresAt: string | null }) => void
+  onSuccess: (args: {
+    name: string
+    value: string
+    expiresAt: string | null
+    grant: EnvTokenGrant
+  }) => void
 }
 
 export const GenerateEnvTokenDialog: React.FC<Props> = ({
@@ -81,6 +87,12 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
         name,
         expiresAt: expirationDate ? expirationDate.toDate().toString() : null,
         value: token,
+        grant:
+          grant.Read && grant.Write
+            ? EnvTokenGrant.READ_WRITE
+            : grant.Read
+            ? EnvTokenGrant.READ_WRITE
+            : EnvTokenGrant.WRITE,
       })
     },
   })
@@ -92,6 +104,12 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
       envName,
       data: {
         name,
+        grant:
+          grant.Read && grant.Write
+            ? EnvTokenGrant.READ_WRITE
+            : grant.Read
+            ? EnvTokenGrant.READ
+            : EnvTokenGrant.WRITE,
         expiration: expiration ?? undefined,
       },
     })
