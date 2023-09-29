@@ -11,6 +11,7 @@ import { Icons } from '../icons'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { EnvironmentType } from '@/types/environments'
+import EnvTypeBadge from './EnvTypeBadge'
 
 interface Props {
   link: string
@@ -83,26 +84,7 @@ const SingleListEnvironment: React.FC<Props> = ({
 
               {/* // badge */}
               <div className="w-44 bg-green-800X">
-                {/* // Green = developnent, orange = staging, blue = Production ???  */}
-
-                <Badge
-                  variant="default"
-                  className={clsx(['text-[0.725rem] text-white dark:text-gray-200'], {
-                    'bg-indigo-600/90 dark:bg-indigo-800/80 hover:bg-indigo-600/90 dark:hover:bg-indigo-800/80':
-                      type === EnvironmentType.DEVELOPMENT,
-                    'bg-blue-600/90 dark:bg-blue-800/80 hover:bg-blue-600/90 dark:hover:bg-blue-800/80':
-                      type === EnvironmentType.TESTING,
-                    'bg-green-600/90 dark:bg-green-800/80 hover:bg-green-600/90 dark:hover:bg-green-800/80':
-                      type === EnvironmentType.STAGING,
-                    'bg-red-600/90 dark:bg-red-800/80 hover:bg-red-600/90 dark:hover:bg-red-800/80':
-                      type === EnvironmentType.PRODUCTION,
-                  })}
-                >
-                  {type === EnvironmentType.DEVELOPMENT && 'Development'}
-                  {type === EnvironmentType.TESTING && 'Testing'}
-                  {type === EnvironmentType.STAGING && 'Staging'}
-                  {type === EnvironmentType.PRODUCTION && 'Production'}
-                </Badge>
+                <EnvTypeBadge type={type} />
               </div>
             </div>
           </div>

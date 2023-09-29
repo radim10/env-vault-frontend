@@ -4,6 +4,7 @@ import { useGetEnvironment } from '@/api/queries/projects/environments/environme
 import Error from '@/components/Error'
 import EnvLayoutSkeleton from '@/components/environments/EnvLayoutSkeleton'
 import EnvTabs from '@/components/environments/EnvTabs'
+import EnvTypeBadge from '@/components/environments/EnvTypeBadge'
 import { Icons } from '@/components/icons'
 import NotFound from '@/components/projects/NotFound'
 import ProjectSkeleton from '@/components/projects/ProjectSkeleton'
@@ -122,24 +123,7 @@ export default function EnvLayout({
               {selectedEnvironment?.data?.locked && <Icons.lock className="h-4 w-4" />}
             </div>
 
-            <Badge
-              variant="default"
-              className={clsx(['text-[0.725rem] text-white dark:text-gray-200'], {
-                'bg-indigo-600/90 dark:bg-indigo-800/80 hover:bg-indigo-600/90 dark:hover:bg-indigo-800/80':
-                  selectedEnvironment?.data?.type === EnvironmentType.DEVELOPMENT,
-                'bg-blue-600/90 dark:bg-blue-800/80 hover:bg-blue-600/90 dark:hover:bg-blue-800/80':
-                  selectedEnvironment?.data?.type === EnvironmentType.TESTING,
-                'bg-green-600/90 dark:bg-green-800/80 hover:bg-green-600/90 dark:hover:bg-green-800/80':
-                  selectedEnvironment?.data?.type === EnvironmentType.STAGING,
-                'bg-red-600/90 dark:bg-red-800/80 hover:bg-red-600/90 dark:hover:bg-red-800/80':
-                  selectedEnvironment?.data?.type === EnvironmentType.PRODUCTION,
-              })}
-            >
-              {selectedEnvironment?.data?.type === EnvironmentType.DEVELOPMENT && 'Development'}
-              {selectedEnvironment?.data?.type === EnvironmentType.TESTING && 'Testing'}
-              {selectedEnvironment?.data?.type === EnvironmentType.STAGING && 'Staging'}
-              {selectedEnvironment?.data?.type === EnvironmentType.PRODUCTION && 'Production'}
-            </Badge>
+            <EnvTypeBadge type={selectedEnvironment?.data?.type as EnvironmentType} />
 
             <div className="block md:hidden">
               {selectedEnvironment?.data?.locked && <Icons.lock className="h-4 w-4" />}

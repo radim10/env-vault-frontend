@@ -16,6 +16,7 @@ import { EnvironmentType } from '@/types/environments'
 import ChangeEnvironmentTypeDialog from './ChangeEnvironmentTypeDialog'
 import { Badge } from '../ui/badge'
 import { areAllArraysEmpty, useEnvironmentListStore } from '@/stores/environments'
+import EnvTypeBadge from './EnvTypeBadge'
 
 interface Props {
   queryClient: QueryClient
@@ -310,24 +311,7 @@ export const EnvironmentList: React.FC<Props> = ({
                 group !== 'Locked' &&
                 group !== 'true' &&
                 group !== 'false' ? (
-                  <Badge
-                    variant="default"
-                    className={clsx(['text-[0.9rem] text-white dark:text-gray-200'], {
-                      'bg-indigo-600/90 dark:bg-indigo-800/80 hover:bg-indigo-600/90 dark:hover:bg-indigo-800/80':
-                        group === EnvironmentType.DEVELOPMENT,
-                      'bg-blue-600/90 dark:bg-blue-800/80 hover:bg-blue-600/90 dark:hover:bg-blue-800/80':
-                        group === EnvironmentType.TESTING,
-                      'bg-green-600/90 dark:bg-green-800/80 hover:bg-green-600/90 dark:hover:bg-green-800/80':
-                        group === EnvironmentType.STAGING,
-                      'bg-red-600/90 dark:bg-red-800/80 hover:bg-red-600/90 dark:hover:bg-red-800/80':
-                        group === EnvironmentType.PRODUCTION,
-                    })}
-                  >
-                    {group === EnvironmentType.DEVELOPMENT && 'Development'}
-                    {group === EnvironmentType.TESTING && 'Testing'}
-                    {group === EnvironmentType.STAGING && 'Staging'}
-                    {group === EnvironmentType.PRODUCTION && 'Production'}
-                  </Badge>
+                  <EnvTypeBadge type={group as EnvironmentType} className="text-[0.9rem]" />
                 ) : (
                   <div className="px-1 flex items-center gap-2 font-bold text-[1.125rem]">
                     {(group === 'Locked' || group === 'true') && (
