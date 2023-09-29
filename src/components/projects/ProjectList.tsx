@@ -6,14 +6,18 @@ import React from 'react'
 import { Icons } from '../icons'
 import Error from '../Error'
 import { ListProject, ProjectSort } from '@/types/projects'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface Props {
   // id
   workspace: string
   sort: ProjectSort
+
+  search?: string
+  setLoaded: (loaded: boolean) => void
 }
 
-const ProjectList: React.FC<Props> = ({ workspace, sort }) => {
+const ProjectList: React.FC<Props> = ({ workspace, sort, search, setLoaded }) => {
   const sortProjects = (data: ListProject[]): ListProject[] => {
     let sorted: ListProject[] = []
 
@@ -88,6 +92,7 @@ const ProjectList: React.FC<Props> = ({ workspace, sort }) => {
     },
     {
       select: sortProjects,
+      onSuccess: () => setLoaded(true),
     }
   )
 
@@ -107,32 +112,48 @@ const ProjectList: React.FC<Props> = ({ workspace, sort }) => {
 
   return (
     <div>
+      {search && data?.filter(({ name }) => name.includes(search?.toLowerCase()))?.length === 0 && (
+        <>
+          <div className="flex items-center justify-center mt-28 w-full">
+            <div className="flex flex-col items-center gap-2">
+              <div>
+                <Icons.searchX className="h-20 w-20 opacity-30" />
+              </div>
+              <div className="text-center">
+                <span className="text-lg font-bold opacity-85">No projects found</span>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
       <div className="lg:grid lg:grid-cols-3 gap-4 flex flex-col">
-        {data?.map(({ description, name, environmentCount }) => (
-          <Link
-            href={`/workspace/${workspace}/projects/${name}`}
-            className="cursor-pointer h-[8.2rem] border-2 dark:border-gray-800 transition hover:dark:shadow-xl hover:dark:shadow-primary/20 rounded-md hover:dark:border-primary hover:border-primary hover:scale-[103%] ease duration-200"
-          >
-            <div className="px-4 py-3 h-full">
-              <div className="flex flex-col justify-between h-full">
-                <div className="flex flex-col gap-1">
-                  <div className="font-medium dark:text-gray-300 line-clamp-2">{name}</div>
-                  <div className="opacity-60 italic text-[0.93rem] line-clamp-2 leading-5">
-                    {description && description}
+        {(!search ? data : data?.filter(({ name }) => name.includes(search?.toLowerCase())))?.map(
+          ({ description, name, environmentCount }) => (
+            <Link
+              href={`/workspace/${workspace}/projects/${name}`}
+              className="cursor-pointer h-[8.2rem] border-2 dark:border-gray-800 transition hover:dark:shadow-xl hover:dark:shadow-primary/20 rounded-md hover:dark:border-primary hover:border-primary hover:scale-[103%] ease duration-200"
+            >
+              <div className="px-4 py-3 h-full">
+                <div className="flex flex-col justify-between h-full">
+                  <div className="flex flex-col gap-1">
+                    <div className="font-medium dark:text-gray-300 line-clamp-2">{name}</div>
+                    <div className="opacity-60 italic text-[0.93rem] line-clamp-2 leading-5">
+                      {description && description}
+                    </div>
                   </div>
-                </div>
-                <div className="dark:text-gray-400 dark:border-gray-800  border-[1px] w-fit px-3 py-1 rounded-md">
-                  <div className="flex items-center gap-2">
-                    <Icons.layer className="h-[0.91rem] w-[0.91rem]" />
-                    <span className="text-[0.88rem]">
-                      {environmentCount === 0 ? 'No' : environmentCount} environments
-                    </span>
+                  <div className="dark:text-gray-400 dark:border-gray-800  border-[1px] w-fit px-3 py-1 rounded-md">
+                    <div className="flex items-center gap-2">
+                      <Icons.layer className="h-[0.91rem] w-[0.91rem]" />
+                      <span className="text-[0.88rem]">
+                        {environmentCount === 0 ? 'No' : environmentCount} environments
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          )
+        )}
       </div>
     </div>
   )
