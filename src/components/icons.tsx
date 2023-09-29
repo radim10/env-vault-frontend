@@ -53,6 +53,8 @@ import {
   Upload,
   ServerCrash,
   SearchSlash,
+  Sun,
+  Moon,
 } from 'lucide-react'
 
 export const Icons = {
@@ -110,4 +112,6 @@ export const Icons = {
   upload: Upload,
   serverCrash: ServerCrash,
   searchSlash: SearchSlash,
+  sun: Sun,
+  moon: Moon,
 }
