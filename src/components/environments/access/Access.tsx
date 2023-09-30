@@ -12,6 +12,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { EnvironmentToken } from '@/types/environmentTokens'
 import dayjs from 'dayjs'
 import { useToast } from '@/components/ui/use-toast'
+import RevokeTokenDialog from './RevokeTokenDialog'
+import Error from '@/components/Error'
 
 interface Props {
   workspaceId: string
@@ -23,6 +25,7 @@ const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
   const queryClient = useQueryClient()
   const { toast } = useToast()
   const [dialogOpened, setDialogOpened] = useState(false)
+  const [revokeDialog, setRevokeDialog] = useState<{ id: string; name: string } | null>(null)
 
   const {
     data: tokens,
@@ -30,15 +33,19 @@ const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
     error,
   } = useGetEnvironmentTokens({ workspaceId, projectName, envName })
 
-  const handleNewToken = (args: { name: string; value: string; expiresAt: string | null }) => {
-    setDialogOpened(false)
-
-    const data = queryClient.getQueryData<EnvironmentToken[]>([
+  const getCacheData = (): EnvironmentToken[] | undefined => {
+    return queryClient.getQueryData<EnvironmentToken[]>([
       workspaceId,
       projectName,
       envName,
       'tokens',
     ])
+  }
+
+  const handleNewToken = (args: { name: string; value: string; expiresAt: string | null }) => {
+    setDialogOpened(false)
+
+    const data = getCacheData()
 
     if (data) {
       queryClient.setQueryData<EnvironmentToken[]>(
@@ -59,13 +66,43 @@ const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
     })
   }
 
+  const handleRevokedToken = (tokenId: string) => {
+    closeRevokeDialog()
+
+    const data = getCacheData()
+
+    if (data) {
+      const newData = [...data].filter(({ id }) => id !== tokenId)
+
+      queryClient.setQueryData<EnvironmentToken[]>(
+        [workspaceId, projectName, envName, 'tokens'],
+        newData
+      )
+    }
+
+    toast({
+      title: 'Token has been revoked!',
+      variant: 'success',
+    })
+  }
+
+  const closeRevokeDialog = () => {
+    if (!revokeDialog) return
+
+    setRevokeDialog({ ...revokeDialog, id: '' })
+    setTimeout(() => {
+      setRevokeDialog(null)
+    }, 150)
+  }
+
   if (isLoading) {
     return <Skeleton className="mt-2 border-2 h-48 w-full" />
   }
 
   if (error) {
-    return 'error'
+    return <Error />
   }
+
   return (
     <>
       <GenerateEnvTokenDialog
@@ -76,6 +113,19 @@ const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
         onClose={() => setDialogOpened(false)}
         onSuccess={handleNewToken}
       />
+
+      {revokeDialog && (
+        <RevokeTokenDialog
+          workspaceId={workspaceId}
+          projectName={projectName}
+          envName={envName}
+          tokenId={revokeDialog?.id}
+          tokenName={revokeDialog?.name}
+          opened={revokeDialog?.id?.length > 0}
+          onClose={closeRevokeDialog}
+          onSuccess={() => handleRevokedToken(revokeDialog.id)}
+        />
+      )}
       <div className="mt-2 gap-2 rounded-md border-2">
         <div className="px-3 py-3 md:px-5 md:py-4">
           <div className="flex items-center justify-between">
@@ -105,7 +155,7 @@ const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
             Add new
           </Button>
         </div>
-        <AccessTable data={tokens} />
+        <AccessTable data={tokens} onRevoke={setRevokeDialog} />
       </div>
     </>
   )
