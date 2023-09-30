@@ -13,7 +13,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="md:block hidden px-6 pt-6 lg:px-10">
             <Header />
           </div>
-          <div className="md:pt-8 pb-20">{children}</div>
+          <div className="md:pt-8 pt-5 pb-20">{children}</div>
         </div>
       </div>
     </>
