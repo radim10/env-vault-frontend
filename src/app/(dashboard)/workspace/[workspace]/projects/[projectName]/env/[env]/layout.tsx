@@ -106,7 +106,7 @@ export default function EnvLayout({
         )}
       >
         <div className="flex md:flex-row flex-col gap-2 md:items-center ">
-          <div className="flex gap-2 items-center">
+          <div className="flex md:gap-2 items-center flex-wrap">
             <Link
               href={`/workspace/${params?.workspace}/projects/${params?.projectName}`}
               className="text-primary hover:text-primary hover:underline underline-offset-[6px] hover:decoration-2"
@@ -120,7 +120,7 @@ export default function EnvLayout({
             <div className="font-semibold text-2xl ">{params?.env}</div>
           </div>
 
-          <div className="flex gap-3 items-center">
+          <div className="mt-2 md:mt-0 flex gap-3 items-center">
             <div className="hidden md:block">
               {selectedEnvironment?.data?.locked && <Icons.lock className="h-4 w-4" />}
             </div>

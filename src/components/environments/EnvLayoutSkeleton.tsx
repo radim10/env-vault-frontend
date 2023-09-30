@@ -17,9 +17,11 @@ const EnvLayoutSkeleton: React.FC<Props> = ({ isTokens }) => {
             </div>
           </div>
           {/* // FLEX END */}
-          <div>
-            <Skeleton className="w-[47px] h-[40px]" />
-          </div>
+          {isTokens && (
+            <div>
+              <Skeleton className="w-[117px] h-[36px]" />
+            </div>
+          )}
         </div>
 
         {/* NOTE: Tabs */}
@@ -41,13 +43,20 @@ const EnvLayoutSkeleton: React.FC<Props> = ({ isTokens }) => {
             <Skeleton className="h-6 w-44 md:w-80 " />
           </div>
           <div className="flex gap-2 items-center">
-            <Skeleton className="h-6 w-44 md:w-80 " />
+            <Skeleton className="h-6 w-56 md:w-80 " />
+          </div>
+          <div className="flex gap-2 items-center">
+            <Skeleton className="h-6 w-32 md:w-80 " />
           </div>
           {/* // FLEX END */}
         </div>
-        <div className="flex items-center justify-end w-full -mt-1 pr-6">
-          <Skeleton className="w-[50px] h-[36px]" />
-        </div>
+        {isTokens && (
+          <div className="flex items-center justify-end w-full mt-1 pr-6">
+            <div>
+              <Skeleton className="w-[117px] h-[36px]" />
+            </div>
+          </div>
+        )}
 
         {/* NOTE: Tabs */}
 
@@ -57,7 +66,7 @@ const EnvLayoutSkeleton: React.FC<Props> = ({ isTokens }) => {
               'mt-7X MT-0 (secrets with save ) flex flex-row gap-2 md:gap-5 border-b-[1px] pb-[0.9rem] pl-[2rem]',
             ],
             {
-              'mt-7': isTokens,
+              'mt-7 md:mt-7': isTokens,
             }
           )}
         >
