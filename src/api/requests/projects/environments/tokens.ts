@@ -48,3 +48,25 @@ export async function getEnvironmentTokens(args: GetEnvironmentTokensArgs) {
   })
   return await response
 }
+
+// revoke (delete)
+export type RevokeEnvironmentTokenError = APIError<
+  'Workspace not found' | 'Project not found' | 'Environment not found' | 'Token not found'
+>
+export type RevokeEnvironmentTokenResData = undefined
+
+export type RevokeEnvironmentTokenArgs = Pick<
+  CreateEnvironmentTokenArgs,
+  'workspaceId' | 'projectName' | 'envName'
+> & { tokenId: string }
+
+export async function revokeEnvironmentToken(args: RevokeEnvironmentTokenArgs) {
+  const { workspaceId, projectName, envName, tokenId } = args
+
+  const response = sendRequest<RevokeEnvironmentTokenResData>({
+    method: 'DELETE',
+    basePath: 'workspaces',
+    path: `${workspaceId}/projects/${projectName}/environments/${envName}/tokens/${tokenId}`,
+  })
+  return await response
+}
