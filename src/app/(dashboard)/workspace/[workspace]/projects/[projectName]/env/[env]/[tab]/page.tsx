@@ -1,3 +1,4 @@
+import { EnvSettings } from '@/components/environments/Settings/EnvSettings'
 import Access from '@/components/environments/access/Access'
 import { redirect } from 'next/navigation'
 
@@ -24,6 +25,7 @@ export default function EnvTabePage({
           envName={params.env}
         />
       )}
+      {params.tab === 'settings' && <EnvSettings />}
     </div>
   )
 }
