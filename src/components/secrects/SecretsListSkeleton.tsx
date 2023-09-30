@@ -6,19 +6,25 @@ const SecretsListSkeleton = () => {
     <>
       <div>
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-2 md:gap-0">
-          <div className="p0-1 dark:text-gray-400 font-bold">
+          <div className="p0-1 dark:text-gray-400 font-bold flex justify-between items-center">
             <Skeleton className="h-7 w-24" />
-          </div>
-          {/* */}
 
-          <div className="flex gap-3 items-center">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 md:hidden">
               {Array.from({ length: 4 }).map((_, index) => (
                 <Skeleton className="w-[3.05rem] h-10" key={index} />
               ))}
             </div>
-            <div className="relative">
-              <Skeleton className="w-[13.3rem] md:w-[20rem] h-10" />
+          </div>
+          {/* */}
+
+          <div className="flex gap-3 items-center">
+            <div className="hidden items-center gap-2 md:flex">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <Skeleton className="w-[3.05rem] h-10" key={index} />
+              ))}
+            </div>
+            <div className="relative w-full">
+              <Skeleton className="w-full md:w-[20rem] h-10" />
             </div>
           </div>
         </div>
