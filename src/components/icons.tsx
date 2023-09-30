@@ -55,6 +55,10 @@ import {
   SearchSlash,
   Sun,
   Moon,
+  Settings2,
+  Users2,
+  Clock4,
+  FileLock2,
 } from 'lucide-react'
 
 export const Icons = {
@@ -114,4 +118,8 @@ export const Icons = {
   searchSlash: SearchSlash,
   sun: Sun,
   moon: Moon,
+  settings2: Settings2,
+  users2: Users2,
+  clock4: Clock4,
+  fileLock2: FileLock2
 }
