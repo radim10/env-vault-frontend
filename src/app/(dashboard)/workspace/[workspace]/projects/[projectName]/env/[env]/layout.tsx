@@ -14,6 +14,7 @@ import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
 import { EnvironmentType } from '@/types/environments'
 import clsx from 'clsx'
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 import { useMount, useUnmount, useWindowScroll } from 'react-use'
 
 // TODO: check if env exists
@@ -26,6 +27,7 @@ export default function EnvLayout({
 }) {
   const { y } = useWindowScroll()
   const selectedEnvironment = useSelectedEnvironmentStore()
+  const paramsData = useParams()
 
   useMount(() => {})
 
@@ -55,7 +57,7 @@ export default function EnvLayout({
   if (isLoading) {
     return (
       <>
-        <EnvLayoutSkeleton />
+        <EnvLayoutSkeleton isTokens={paramsData?.tab === undefined} />
       </>
     )
   }

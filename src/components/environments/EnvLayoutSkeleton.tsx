@@ -2,7 +2,11 @@ import React from 'react'
 import { Skeleton } from '../ui/skeleton'
 import clsx from 'clsx'
 
-const EnvLayoutSkeleton = (props: {}) => {
+interface Props {
+  isTokens?: boolean
+}
+
+const EnvLayoutSkeleton: React.FC<Props> = ({ isTokens }) => {
   return (
     <>
       <div className="hidden md:block ">
@@ -47,7 +51,16 @@ const EnvLayoutSkeleton = (props: {}) => {
 
         {/* NOTE: Tabs */}
 
-        <div className="mt-7 flex flex-row gap-2 md:gap-5 border-b-[1px] pb-[0.9rem] pl-[2rem]">
+        <div
+          className={clsx(
+            [
+              'mt-7X MT-0 (secrets with save ) flex flex-row gap-2 md:gap-5 border-b-[1px] pb-[0.9rem] pl-[2rem]',
+            ],
+            {
+              'mt-7': isTokens,
+            }
+          )}
+        >
           {Array.from({ length: 3 }).map((_, index) => (
             <Skeleton className="h-6 w-20" />
           ))}
