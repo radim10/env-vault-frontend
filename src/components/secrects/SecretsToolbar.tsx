@@ -26,9 +26,11 @@ const SecretsToolbar: React.FC<Props> = ({ secretsCount, onImport, onCopySecrets
   return (
     <div>
       <div className="flex flex-col md:flex-row justify-between md:items-center">
-        <div className="pl-1 text-gray-700 dark:text-gray-400 font-bold">
-          <span className="hidden md:inline">Active count: {secretsCount}</span>
-          <span className="inline md:hidden">Count: {secretsCount}</span>
+        <div className="pl-1 text-gray-700 dark:text-gray-400 font-bold w-full">
+          <span className="hidden lg:block">
+            Active count: {secretsCount} {''}
+          </span>
+          <span className="inline lg:hidden">Count: {secretsCount}</span>
         </div>
         {/* */}
         <div className="flex flex-col md:flex-row w-full gap-3 md:items-center justify-end md:mt-3 -mt-8 mb-4 md:mb-0 ">
