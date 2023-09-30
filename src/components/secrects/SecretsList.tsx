@@ -256,6 +256,33 @@ const SecretsList: React.FC<Props> = ({ data }) => {
     }
   }
 
+  const copyEnvSecrets = (type: 'env' | 'json') => {
+    if (type === 'env') {
+      const dotenvString = data
+        .map((obj) => {
+          if (obj.description) {
+            return `# ${obj.description}\n${obj.key}=${obj.value}`
+          } else {
+            return `${obj.key}=${obj.value}`
+          }
+        })
+        .join('\n')
+      navigator.clipboard.writeText(dotenvString)
+    } else {
+      const resultObject: { [key: string]: string } = data.reduce((acc: any, obj: any) => {
+        acc[obj.key] = obj.value
+        return acc
+      }, {})
+
+      navigator.clipboard.writeText(JSON.stringify(resultObject, null, 2))
+    }
+
+    toast({
+      title: 'Environment secrets copied to clipboard!',
+      variant: 'success',
+    })
+  }
+
   if (!data?.length && secrets?.length === 0) {
     return (
       <>
@@ -323,7 +350,11 @@ const SecretsList: React.FC<Props> = ({ data }) => {
       />
       {/*  */}
 
-      <SecretsToolbar secretsCount={secrets.length} onImport={() => setImportDialogOpened(true)} />
+      <SecretsToolbar
+        secretsCount={secrets.length}
+        onImport={() => setImportDialogOpened(true)}
+        onCopySecrets={copyEnvSecrets}
+      />
       {/* // */}
       <div className="mt-4 w-full flex flex-col gap-7 md:gap-3 justify-center items-start">
         {!secrets?.filter((val) => val?.key?.toLowerCase().includes(search?.toLowerCase()))

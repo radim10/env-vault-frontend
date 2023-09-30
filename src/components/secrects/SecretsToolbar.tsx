@@ -4,13 +4,15 @@ import { Button } from '../ui/button'
 import { Icons } from '../icons'
 import { Input } from '../ui/input'
 import { useEditedSecretsStore } from '@/stores/secrets'
+import CopySecretsDropdown from './CopySecretsDropdown'
 
 interface Props {
   secretsCount: number
   onImport: () => void
+  onCopySecrets: (type: 'env' | 'json') => void
 }
 
-const SecretsToolbar: React.FC<Props> = ({ secretsCount, onImport }) => {
+const SecretsToolbar: React.FC<Props> = ({ secretsCount, onImport, onCopySecrets }) => {
   const { secrets, search, setSearch, toggleVisibilityAll, toggleDescriptionAll } =
     useEditedSecretsStore((state) => {
       return {
@@ -40,6 +42,10 @@ const SecretsToolbar: React.FC<Props> = ({ secretsCount, onImport }) => {
                 <TooltipContent>Import secret</TooltipContent>
               </Tooltip>
             </TooltipProvider>
+
+            <div>
+              <CopySecretsDropdown onCopy={onCopySecrets} />
+            </div>
 
             {/* // */}
 
