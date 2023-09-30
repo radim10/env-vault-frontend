@@ -22,9 +22,10 @@ dayjs.extend(relativeTime)
 
 interface Props {
   data: EnvironmentToken[]
+  onRevoke: (args: { id: string; name: string }) => void
 }
 
-const AccessTable: React.FC<Props> = ({ data }) => {
+const AccessTable: React.FC<Props> = ({ data, onRevoke }) => {
   const { toast } = useToast()
 
   const copyToken = (token: string) => {
@@ -50,13 +51,13 @@ const AccessTable: React.FC<Props> = ({ data }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(({ name, value, grant, revoked, createdAt, expiresAt }) => (
+          {data.map(({ id, name, value, grant, revoked, createdAt, expiresAt }) => (
             <TableRow>
               <>
                 <TableCell>
                   <div className="flex gap-2.5 items-center py-1 min-w-[100px]">
                     <div
-                      className={clsx(['h-2.5 w-2.5 rounded-full'], {
+                      className={clsx(['h-2.5 w-2.5 rounded-full mt-[1.5px]'], {
                         'bg-primary': !revoked,
                         'bg-red-600 dark:bg-red-700': revoked || dayjs(expiresAt).isBefore(dayjs()),
                       })}
@@ -113,7 +114,10 @@ const AccessTable: React.FC<Props> = ({ data }) => {
                 </TableCell>
                 <TableCell>
                   {!revoked && !dayjs(expiresAt).isBefore(dayjs()) ? (
-                    <button className="text-red-600 dark:text-red-600 opacity-80 hover:opacity-100 ease duration-150">
+                    <button
+                      onClick={() => onRevoke({ id, name })}
+                      className="text-red-600 dark:text-red-600 opacity-80 hover:opacity-100 ease duration-150"
+                    >
                       Revoke
                     </button>
                   ) : (
