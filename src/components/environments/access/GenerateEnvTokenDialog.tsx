@@ -15,6 +15,7 @@ import { useDebounce } from 'react-use'
 import dayjs, { Dayjs } from 'dayjs'
 import { useCreateEnvironmentToken } from '@/api/mutations/envTokens'
 import { EnvTokenGrant } from '@/types/environmentTokens'
+import { Icons } from '@/components/icons'
 
 enum Grant {
   Read = 'Read',
@@ -32,6 +33,7 @@ interface Props {
   opened: boolean
   onClose: () => void
   onSuccess: (args: {
+    id: string
     name: string
     value: string
     expiresAt: string | null
@@ -82,8 +84,9 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
     isLoading,
     error,
   } = useCreateEnvironmentToken({
-    onSuccess: ({ token }) => {
+    onSuccess: ({ id, token }) => {
       onSuccess({
+        id,
         name,
         expiresAt: expirationDate ? expirationDate.toDate().toString() : null,
         value: token,
@@ -251,6 +254,13 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
                   ))}
                 </div>
               </div>
+
+              {error?.message && (
+                <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
+                  <Icons.xCircle className="h-4 w-4" />
+                  {error?.message}
+                </div>
+              )}
               {/* // */}
             </div>
 

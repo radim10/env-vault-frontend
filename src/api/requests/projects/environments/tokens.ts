@@ -3,7 +3,7 @@ import { RenameEnvironmentError } from './environments'
 import { EnvTokenGrant, EnvironmentToken } from '@/types/environmentTokens'
 
 export type CreateEnvironmentTokenError = RenameEnvironmentError
-export type CreateEnvironmentTokenResData = { token: string }
+export type CreateEnvironmentTokenResData = { id: string; token: string }
 
 export interface CreateEnvironmentTokenArgs {
   workspaceId: string
