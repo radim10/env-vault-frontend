@@ -434,20 +434,21 @@ const SaveSecretsToolbar = () => {
               }
               onClick={handleOpenDialog}
             >
-              <Icons.save className="w-4 h-4" />
-              Save{' '}
+              {/* <Icons.save className="w-4 h-4" /> */}
+              <span className="md:hidden block">Save </span>
+              <span className="md:block hidden">Save changes</span>
             </Button>
           )}
 
-          <EnvActionsDropdown
-            isLocked={selectedEnv?.locked}
-            hideCopySecrets={!loaded}
-            onCopy={copyEnv}
-            onDelete={() => setDialog('delete')}
-            onRename={() => setDialog('rename')}
-            onLock={() => setDialog('lock')}
-            onChangeType={() => setDialog('changeType')}
-          />
+          {/*   <EnvActionsDropdown */}
+          {/*     isLocked={selectedEnv?.locked} */}
+          {/*     hideCopySecrets={!loaded} */}
+          {/*     onCopy={copyEnv} */}
+          {/*     onDelete={() => setDialog('delete')} */}
+          {/*     onRename={() => setDialog('rename')} */}
+          {/*     onLock={() => setDialog('lock')} */}
+          {/*     onChangeType={() => setDialog('changeType')} */}
+          {/*   /> */}
         </div>
       </div>
     </>
