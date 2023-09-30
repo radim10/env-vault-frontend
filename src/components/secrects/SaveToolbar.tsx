@@ -435,8 +435,8 @@ const SaveSecretsToolbar = () => {
               onClick={handleOpenDialog}
             >
               {/* <Icons.save className="w-4 h-4" /> */}
-              <span className="md:hidden block">Save </span>
-              <span className="md:block hidden">Save changes</span>
+              {/* <span className="md:hidden block">Save </span> */}
+              <span className="">Save changes</span>
             </Button>
           )}
 
