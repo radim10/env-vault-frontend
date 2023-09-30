@@ -3,7 +3,11 @@ import {
   CreateEnvironmentTokenArgs,
   CreateEnvironmentTokenError,
   CreateEnvironmentTokenResData,
+  RevokeEnvironmentTokenArgs,
+  RevokeEnvironmentTokenError,
+  RevokeEnvironmentTokenResData,
   createEnvironmentToken,
+  revokeEnvironmentToken,
 } from '../requests/projects/environments/tokens'
 import { MutOpt } from './mutOpt'
 
@@ -16,3 +20,12 @@ export const useCreateEnvironmentToken = (opt?: MutOpt<CreateEnvironmentTokenRes
     CreateEnvironmentTokenError,
     CreateEnvironmentTokenVariables
   >(createEnvironmentToken, opt)
+
+// revoke (delete)
+type RevokeEnvironmentTokenVariables = RevokeEnvironmentTokenArgs
+
+export const useRevokeEnvironmentToken = (opt?: MutOpt<RevokeEnvironmentTokenResData>) =>
+  useMutation<undefined, RevokeEnvironmentTokenError, RevokeEnvironmentTokenVariables>(
+    revokeEnvironmentToken,
+    opt
+  )
