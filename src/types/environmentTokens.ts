@@ -5,6 +5,7 @@ export enum EnvTokenGrant {
 }
 
 export interface EnvironmentToken {
+  id: string
   name: string
   revoked: boolean
   expiresAt: string | null
