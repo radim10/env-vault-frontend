@@ -13,3 +13,12 @@ export interface EnvironmentToken {
   createdAt: string
   value: string
 }
+
+// for tokens from home
+export type ReadOnlyEnvToken = Omit<EnvironmentToken, 'id'> & {
+  // names
+  ref: {
+    project: string
+    environment: string
+  }
+}
