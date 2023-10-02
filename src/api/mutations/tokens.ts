@@ -4,7 +4,11 @@ import {
   CreateWorkspaceTokenArgs,
   CreateWorkspaceTokenError,
   CreateWorkspaceTokenResData,
+  RevokeWorkspaceTokenArgs,
+  RevokeWorkspaceTokenError,
+  RevokeWorkspaceTokenResData,
   createWorkspaceToken,
+  revokeWorkspaceToken,
 } from '../requests/tokens'
 
 // create
@@ -18,10 +22,10 @@ export const useCreateWorkspaceToken = (opt?: MutOpt<CreateWorkspaceTokenResData
   >(createWorkspaceToken, opt)
 
 // revoke (delete)
-// type RevokeEnvironmentTokenVariables = RevokeEnvironmentTokenArgs
-//
-// export const useRevokeEnvironmentToken = (opt?: MutOpt<RevokeEnvironmentTokenResData>) =>
-//   useMutation<undefined, RevokeEnvironmentTokenError, RevokeEnvironmentTokenVariables>(
-//     revokeEnvironmentToken,
-//     opt
-//   )
+type RevokeWorkspaceTokenVariables = RevokeWorkspaceTokenArgs
+
+export const useRevokeWorkspaceToken = (opt?: MutOpt<RevokeWorkspaceTokenResData>) =>
+  useMutation<undefined, RevokeWorkspaceTokenError, RevokeWorkspaceTokenVariables>(
+    revokeWorkspaceToken,
+    opt
+  )
