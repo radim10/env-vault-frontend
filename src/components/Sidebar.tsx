@@ -12,7 +12,7 @@ const navItems = [
   { label: 'Projects', href: 'projects', icon: Icons.folder },
   { label: 'Team', href: 'team', icon: Icons.users },
   { label: 'Activity', href: 'activity', icon: Icons.users },
-  { label: 'Tokens', href: 'tokens', icon: Icons.keyRound },
+  { label: 'Tokens', href: 'tokens/cli', icon: Icons.keyRound },
   { label: 'Settings', href: 'settings', icon: Icons.settings },
 ]
 
@@ -57,7 +57,7 @@ const Sidebar = () => {
         </div>
         <div className="mt-5 py-5 pl-9 pr-6">
           <div className="bg-red-40 flex flex-col gap-3">
-            {navItems.map((item) => (
+            {navItems.map((item, index) => (
               <Link
                 href={`/workspace/${params.workspace}/${item.href}`}
                 className={clsx(
@@ -66,12 +66,14 @@ const Sidebar = () => {
                   ],
                   {
                     // 'text-primary dark:text-primary': pathname === item.href,
-                    'text-primary dark:text-primary': pathname?.split('/')?.[3] === item.href,
+                    'text-primary dark:text-primary':
+                      pathname?.split('/')?.[3] === item.href ||
+                      (pathname?.split('/')?.[3] === item.href?.split('/')[0] && index === 3),
                   }
                 )}
               >
                 {/* {pathname === item.href} */}
-                {/* {pathname.split("/")?.[3]} */}
+                {/* {pathname.split('/')?.[3]} */}
                 <item.icon className=" h-5 w-5 opacity-70" />
                 <div className="text-[1.14rem]">{item.label}</div>
               </Link>
