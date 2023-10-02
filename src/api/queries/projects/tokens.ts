@@ -1,4 +1,11 @@
-import { getEnvTokens, GetEnvTokensData, GetEnvTokensError } from '@/api/requests/tokens'
+import {
+  getEnvTokens,
+  GetEnvTokensData,
+  GetEnvTokensError,
+  getWorkspaceTokens,
+  GetWorkspaceTokensData,
+  GetWorkspaceTokensError,
+} from '@/api/requests/tokens'
 import { UseQueryOptions, useQuery } from '@tanstack/react-query'
 
 export const useGetEnvTokens = (
@@ -11,6 +18,21 @@ export const useGetEnvTokens = (
     [args.workspaceId, 'env-tokens'],
     () => {
       return getEnvTokens(args)
+    },
+    opt
+  )
+
+//
+export const useGetWorkspaceTokens = (
+  args: {
+    workspaceId: string
+  },
+  opt?: UseQueryOptions<GetWorkspaceTokensData, GetWorkspaceTokensError>
+) =>
+  useQuery<GetWorkspaceTokensData, GetWorkspaceTokensError>(
+    [args.workspaceId, 'workspace-tokens'],
+    () => {
+      return getWorkspaceTokens(args)
     },
     opt
   )
