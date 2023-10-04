@@ -23,7 +23,7 @@ const ImportSecretsDrawer: React.FC<Props> = ({ opened, onClose, onConfirm }) =>
   const [value, setValue] = useState('')
 
   useUpdateEffect(() => {
-    if (value !=='' && opened) setValue("")
+    if (value !== '' && opened) setValue('')
   }, [opened])
 
   const handleConfirm = (value: string) => {
@@ -32,9 +32,16 @@ const ImportSecretsDrawer: React.FC<Props> = ({ opened, onClose, onConfirm }) =>
     const envArray = []
 
     for (const line of lines) {
-  if (!line.startsWith('#') && line?.trim() !== "") {
-      const [key, value] = line.split('=')
-      envArray.push({ key, value: value || '' }) // Use an empty string if there's no value
+      if (!line.startsWith('#') && line?.trim() !== '') {
+        const [key, value] = line.split('=')
+        // envArray.push({ key, value: value || '' }) // Use an empty string if there's no value
+
+        const formattedKey = key
+          .replace(/[^a-zA-Z0-9 ]/g, '_')
+          .replace(/ /g, '_')
+          .toUpperCase()
+
+        envArray.push({ key: formattedKey, value: value || '' }) // Use an empty string if there's no value
       }
     }
 
@@ -52,7 +59,7 @@ const ImportSecretsDrawer: React.FC<Props> = ({ opened, onClose, onConfirm }) =>
       reader.readAsText(selectedFile)
 
       reader.onload = (e) => {
-        if (typeof e.target?.result === 'string'){
+        if (typeof e.target?.result === 'string') {
           setValue(e.target?.result as string)
         }
       }
