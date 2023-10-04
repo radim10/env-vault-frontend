@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
+import { MutOpt } from '../mutOpt'
 import {
   CreateEnvironmentTokenArgs,
   CreateEnvironmentTokenError,
@@ -8,8 +9,7 @@ import {
   RevokeEnvironmentTokenResData,
   createEnvironmentToken,
   revokeEnvironmentToken,
-} from '../requests/projects/environments/tokens'
-import { MutOpt } from './mutOpt'
+} from '../../requests/projects/environments/tokens'
 
 // create
 type CreateEnvironmentTokenVariables = CreateEnvironmentTokenArgs

@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { MutOpt } from './mutOpt'
+import { MutOpt } from '../mutOpt'
 import {
   CreateWorkspaceTokenArgs,
   CreateWorkspaceTokenError,
@@ -9,7 +9,7 @@ import {
   RevokeWorkspaceTokenResData,
   createWorkspaceToken,
   revokeWorkspaceToken,
-} from '../requests/tokens'
+} from '../../requests/tokens'
 
 // create
 type CreateWorkspaceTokenVariables = CreateWorkspaceTokenArgs
