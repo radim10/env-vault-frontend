@@ -1,6 +1,6 @@
 import sendRequest, { APIError } from '@/api/instance'
 import { RenameEnvironmentError } from './environments'
-import { EnvTokenGrant, EnvironmentToken } from '@/types/environmentTokens'
+import { EnvTokenGrant, EnvironmentToken } from '@/types/tokens/environment'
 
 export type CreateEnvironmentTokenError = RenameEnvironmentError
 export type CreateEnvironmentTokenResData = { id: string; token: string }

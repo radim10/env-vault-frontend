@@ -1,6 +1,6 @@
-import { EnvTokenGrant, ReadOnlyEnvToken } from '@/types/environmentTokens'
+import { EnvTokenGrant, ReadOnlyEnvToken } from '@/types/tokens/environment'
 import sendRequest, { APIError } from '../instance'
-import { WorkspaceToken } from '@/types/workspaceTokens'
+import { WorkspaceToken } from '@/types/tokens/workspace'
 
 export type GetEnvTokensError = APIError<'Workspace not found'>
 export type GetEnvTokensData = Awaited<ReturnType<typeof getEnvTokens>>
@@ -81,3 +81,5 @@ export async function revokeWorkspaceToken(args: RevokeWorkspaceTokenArgs) {
   })
   return await response
 }
+
+// cli tokens
