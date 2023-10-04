@@ -1,4 +1,4 @@
-import { EnvTokenGrant } from './environmentTokens'
+import { EnvTokenGrant } from './environment'
 
 export type WorkspaceTokenGrant = EnvTokenGrant
 
