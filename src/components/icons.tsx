@@ -59,6 +59,8 @@ import {
   Users2,
   Clock4,
   FileLock2,
+  TerminalSquare,
+  Terminal,
 } from 'lucide-react'
 
 export const Icons = {
@@ -121,5 +123,8 @@ export const Icons = {
   settings2: Settings2,
   users2: Users2,
   clock4: Clock4,
-  fileLock2: FileLock2
+  fileLock2: FileLock2,
+  terminal: Terminal,
+  terminalSquare: TerminalSquare,
+  layers: Layers,
 }
