@@ -71,9 +71,10 @@ export const EnvironmentList: React.FC<Props> = ({
     const data = queryClient.getQueryData<Project>(['project', workspaceId, projectName])
 
     if (data) {
-      const newEnvironments = data?.environments.map((env, i) =>
-        i === index ? { ...env, locked: !env.locked } : env
-      )
+      const newEnvironments = [...data?.environments]
+
+      const env = newEnvironments[index]
+      newEnvironments[index] = { ...env, locked }
 
       queryClient.setQueryData(['project', workspaceId, projectName], {
         ...data,
