@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import { useRevokeEnvironmentToken } from '@/api/mutations/envTokens'
+import { useRevokeEnvironmentToken } from '@/api/mutations/tokens/environment'
 import { Icons } from '@/components/icons'
 import DeleteDialog from '@/components/DeleteDialog'
 import { Input } from '@/components/ui/input'
-import { useRevokeWorkspaceToken } from '@/api/mutations/tokens'
+import { useRevokeWorkspaceToken } from '@/api/mutations/tokens/workspace'
 import { APIError } from '@/api/instance'
 import { useUpdateEffect } from 'react-use'
 

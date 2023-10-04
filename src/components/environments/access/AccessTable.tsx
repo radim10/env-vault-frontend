@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { EnvTokenGrant, EnvironmentToken } from '@/types/environmentTokens'
+import { EnvironmentToken } from '@/types/tokens/environment'
 import dayjs from 'dayjs'
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'

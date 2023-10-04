@@ -13,11 +13,10 @@ import { Input } from '@/components/ui/input'
 import { useImmer } from 'use-immer'
 import { useDebounce } from 'react-use'
 import dayjs, { Dayjs } from 'dayjs'
-import { useCreateEnvironmentToken } from '@/api/mutations/envTokens'
-import { EnvTokenGrant } from '@/types/environmentTokens'
+import { EnvTokenGrant } from '@/types/tokens/environment'
 import { Icons } from '@/components/icons'
-import { WorkspaceTokenGrant } from '@/types/workspaceTokens'
-import { useCreateWorkspaceToken } from '@/api/mutations/tokens'
+import { WorkspaceTokenGrant } from '@/types/tokens/workspace'
+import { useCreateWorkspaceToken } from '@/api/mutations/tokens/workspace'
 
 enum Grant {
   Read = 'Read',

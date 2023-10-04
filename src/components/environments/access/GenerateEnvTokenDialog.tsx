@@ -13,9 +13,9 @@ import { Input } from '@/components/ui/input'
 import { useImmer } from 'use-immer'
 import { useDebounce } from 'react-use'
 import dayjs, { Dayjs } from 'dayjs'
-import { useCreateEnvironmentToken } from '@/api/mutations/envTokens'
-import { EnvTokenGrant } from '@/types/environmentTokens'
+import { useCreateEnvironmentToken } from '@/api/mutations/tokens/environment'
 import { Icons } from '@/components/icons'
+import { EnvTokenGrant } from '@/types/tokens/environment'
 
 enum Grant {
   Read = 'Read',
