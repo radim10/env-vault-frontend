@@ -6,6 +6,7 @@ import {
   GetWorkspaceTokensData,
   GetWorkspaceTokensError,
 } from '@/api/requests/tokens'
+import { getCliTokens, GetCliTokensData, GetCliTokensError } from '@/api/requests/tokens/cli'
 import { UseQueryOptions, useQuery } from '@tanstack/react-query'
 
 export const useGetEnvTokens = (
@@ -33,6 +34,20 @@ export const useGetWorkspaceTokens = (
     [args.workspaceId, 'workspace-tokens'],
     () => {
       return getWorkspaceTokens(args)
+    },
+    opt
+  )
+
+export const useGetCliTokens = (
+  args: {
+    workspaceId: string
+  },
+  opt?: UseQueryOptions<GetCliTokensData, GetCliTokensError>
+) =>
+  useQuery<GetCliTokensData, GetCliTokensError>(
+    [args.workspaceId, 'cli-tokens'],
+    () => {
+      return getCliTokens(args.workspaceId)
     },
     opt
   )
