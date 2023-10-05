@@ -20,6 +20,7 @@ export type CreateCliTokenResData = { id: string; value: string }
 
 export type CreateCliTokenArgs = {
   workspaceId: string
+  name: string
 }
 
 export async function createCliToken(args: CreateCliTokenArgs) {
@@ -28,7 +29,8 @@ export async function createCliToken(args: CreateCliTokenArgs) {
   const response = sendRequest<CreateCliTokenResData>({
     method: 'POST',
     basePath: 'workspaces',
-    path: `${workspaceId}/tokens/cli/`,
+    path: `${workspaceId}/tokens/cli`,
+    body: { name: args.name },
   })
 
   return await response
