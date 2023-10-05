@@ -32,16 +32,22 @@ const CliTokensTable: React.FC<Props> = ({ data, onCopyToken, onRevoke }) => {
         )}
         <TableHeader className="bg-gray-100/60 hover:bg-gray-100/60 dark:bg-gray-900/80 hover:dark:bg-gray-900/80 sticky">
           <TableRow className="">
-            <TableHead className="w-">Token</TableHead>
+            <TableHead className="w-[200px]">Name</TableHead>
+            <TableHead className="w-[120px]">Token</TableHead>
             <TableHead className="w-">Created at</TableHead>
             <TableHead className="w-">Last used at</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(({ id, value, createdAt }) => (
+          {data.map(({ id, name, value, createdAt }) => (
             <TableRow>
               <>
+                <TableCell>
+                  <div className="flex gap-2.5 items-center py-1 min-w-[100px]">
+                    <span>{name}</span>
+                  </div>
+                </TableCell>
                 <TableCell>
                   <div className="min-w-[100px]">
                     <div className="w-56 lg:w-56 flex gap-1.5">

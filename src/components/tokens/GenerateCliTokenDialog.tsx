@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import {
@@ -10,23 +10,31 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { useCreateCliToken } from '@/api/mutations/tokens/cli'
+import { Input } from '../ui/input'
+import { useUpdateEffect } from 'react-use'
 
 interface Props {
   opened: boolean
   workspaceId: string
 
   onClose: () => void
-  onSuccess: (args: { id: string; value: string }) => void
+  onSuccess: (args: { id: string; value: string; name: string }) => void
 }
 
 const CreateCliTokenDialog: React.FC<Props> = ({ workspaceId, opened, onClose, onSuccess }) => {
+  const [name, setName] = useState('')
+
   const {
     mutate: createToken,
     isLoading,
     error,
   } = useCreateCliToken({
-    onSuccess: (data) => onSuccess(data),
+    onSuccess: (data) => onSuccess({ ...data, name }),
   })
+
+  useUpdateEffect(() => {
+    if (opened && name !== '') setName('')
+  }, [opened])
 
   const handleClose = () => {
     if (isLoading) return
@@ -47,25 +55,32 @@ const CreateCliTokenDialog: React.FC<Props> = ({ workspaceId, opened, onClose, o
             <DialogDescription>
               With cli token you can run commands against your workspace from the cli.
             </DialogDescription>
-
-            {error?.message && (
-              <div className="flex flex-col gap-4 mt-3 pb-1">
-                <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
-                  <Icons.xCircle className="h-4 w-4" />
-                  {error?.message}
-                </div>
-              </div>
-            )}
           </DialogHeader>
-          <DialogFooter className="mt-4">
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Token name"
+            disabled={isLoading}
+            className="mt-0"
+          />
+
+          {error?.message && (
+            <div className="flex flex-col gap-4 mt-3 pb-1">
+              <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
+                <Icons.xCircle className="h-4 w-4" />
+                {error?.message}
+              </div>
+            </div>
+          )}
+          <DialogFooter className="mt-2">
             <Button
               type="submit"
               variant="default"
               className="w-full gap-2"
               loading={isLoading}
-              disabled={isLoading}
+              disabled={isLoading || name?.trim().length === 0}
               onClick={() => {
-                createToken({ workspaceId })
+                createToken({ workspaceId, name })
               }}
             >
               <span>Generate</span>

@@ -50,7 +50,7 @@ const CliTokens: React.FC<Props> = ({ workspaceId }) => {
     })
   }
 
-  const handleNewToken = (args: { id: string; value: string }) => {
+  const handleNewToken = (args: { id: string; value: string, name: string }) => {
     setDialogOpened(false)
 
     const data = getCacheData()
