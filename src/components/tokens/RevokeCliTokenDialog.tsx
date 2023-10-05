@@ -37,14 +37,17 @@ const RevokeCliTokenDialog: React.FC<Props> = ({
     onSuccess: () => onSuccess(),
   })
 
+  const handleClose = () => {
+    if (isLoading) return
+    onClose()
+  }
+
   return (
     <div>
       <Dialog
         open={opened}
         onOpenChange={(e) => {
-          if (!e) {
-            close()
-          }
+          if (!e) handleClose()
         }}
       >
         <DialogContent className="sm:max-w-[425px]">
@@ -75,7 +78,6 @@ const RevokeCliTokenDialog: React.FC<Props> = ({
                 revokeToken({ workspaceId, tokenId })
               }}
             >
-              <Icons.trash className="h-4 w-4" />
               <span>Revoke</span>
             </Button>
           </DialogFooter>
