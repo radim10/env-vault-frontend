@@ -12,6 +12,7 @@ import RevokeCliTokenDialog from './RevokeCliTokenDialog'
 import { CliToken } from '@/types/tokens/cli'
 import { useToast } from '../ui/use-toast'
 import { useQueryClient } from '@tanstack/react-query'
+import CreateCliTokenDialog from './GenerateCliTokenDialog'
 
 interface Props {
   workspaceId: string
@@ -49,8 +50,37 @@ const CliTokens: React.FC<Props> = ({ workspaceId }) => {
     })
   }
 
-  const copyToken = (token: string) => {
+  const handleNewToken = (args: { id: string; value: string }) => {
+    setDialogOpened(false)
+
+    const data = getCacheData()
+
+    if (data) {
+      queryClient.setQueryData<CliToken[]>(
+        [workspaceId, 'cli-tokens'],
+        (oldData: CliToken[] | any) => {
+          if (oldData) {
+            return [{ ...args }, ...oldData]
+          } else {
+            return [args]
+          }
+        }
+      )
+    }
+
+    toast({
+      title: 'New token created!',
+      description: 'Token has been copied to clipboard',
+      variant: 'success',
+    })
+
+    copyToken(args.value, false)
+  }
+
+  const copyToken = (token: string, showToast: boolean) => {
     navigator.clipboard.writeText(token)
+    if (!showToast) return
+
     toast({
       title: 'Token copied to clipboard!',
       variant: 'success',
@@ -76,6 +106,12 @@ const CliTokens: React.FC<Props> = ({ workspaceId }) => {
 
   return (
     <>
+      <CreateCliTokenDialog
+        opened={dialogOpened}
+        workspaceId={workspaceId}
+        onClose={() => setDialogOpened(false)}
+        onSuccess={handleNewToken}
+      />
       {revokeDialog && (
         <RevokeCliTokenDialog
           workspaceId={workspaceId}
@@ -123,7 +159,7 @@ const CliTokens: React.FC<Props> = ({ workspaceId }) => {
           <CliTokensTable
             data={data}
             onRevoke={(id) => setRevokeDialog({ id })}
-            onCopyToken={copyToken}
+            onCopyToken={(token) => copyToken(token, true)}
           />
         </div>
       </div>
