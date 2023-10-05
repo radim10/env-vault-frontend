@@ -14,6 +14,26 @@ export async function getCliTokens(workspaceId: string) {
   return await response
 }
 
+// create
+export type CreateCliTokenError = APIError<'User not found'>
+export type CreateCliTokenResData = { id: string; value: string }
+
+export type CreateCliTokenArgs = {
+  workspaceId: string
+}
+
+export async function createCliToken(args: CreateCliTokenArgs) {
+  const { workspaceId } = args
+
+  const response = sendRequest<CreateCliTokenResData>({
+    method: 'POST',
+    basePath: 'workspaces',
+    path: `${workspaceId}/tokens/cli/`,
+  })
+
+  return await response
+}
+
 // revoke (delete)
 export type RevokeCliTokenError = APIError<'Workspace not found' | 'Token not found'>
 export type RevokeCliTokenResData = undefined
