@@ -63,10 +63,12 @@ export const useEnvironmentListStore = create(
               return indexA - indexB
             })
 
+            const groupBy = get().groupBy
+
             sorted.forEach((obj) => {
               const { type, locked } = obj
 
-              if (get().groupBy === EnvGroupBy.Lock) {
+              if (groupBy === EnvGroupBy.Lock) {
                 if (!groupedByType[locked.toString()]) {
                   groupedByType[locked.toString()] = []
                 }
