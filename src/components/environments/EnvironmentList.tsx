@@ -243,10 +243,13 @@ export const EnvironmentList: React.FC<Props> = ({
             envName={dialog?.environmentName}
             projectName={projectName}
             workspaceId={workspaceId}
-            lock={dialog?.lock ?? true}
+            lock={dialog?.lock !== undefined ? dialog?.lock : true}
             opened={dialog?.type === 'lock'}
             onSuccess={() => {
-              handleLockedEnvironment(dialog?.index, dialog?.lock ?? true)
+              handleLockedEnvironment(
+                dialog?.index,
+                dialog?.lock !== undefined ? dialog?.lock : true
+              )
               handleCloseDialog()
             }}
             onClose={handleCloseDialog}
