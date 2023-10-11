@@ -40,7 +40,7 @@ const CliTokensTable: React.FC<Props> = ({ data, onCopyToken, onRevoke }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(({ id, name, value, createdAt }) => (
+          {data.map(({ id, name, value, createdAt, lastUsedAt }) => (
             <TableRow>
               <>
                 <TableCell>
@@ -73,12 +73,20 @@ const CliTokensTable: React.FC<Props> = ({ data, onCopyToken, onRevoke }) => {
                 </TableCell>
 
                 <TableCell className="min-w-[100px]">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>{dayjs().format('YYYY-MM-DD HH:mm:ss')}</TooltipTrigger>
-                      <TooltipContent>{dayjs().fromNow()}</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  {lastUsedAt ? (
+                    <TooltipProvider>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            {dayjs(lastUsedAt).format('YYYY-MM-DD HH:mm:ss')}
+                          </TooltipTrigger>
+                          <TooltipContent>{dayjs(lastUsedAt).fromNow()}</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </TooltipProvider>
+                  ) : (
+                    <span>-----</span>
+                  )}
                 </TableCell>
                 <TableCell className="min-w-[80px]">
                   <button
