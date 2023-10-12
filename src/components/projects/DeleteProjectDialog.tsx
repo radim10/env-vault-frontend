@@ -4,6 +4,7 @@ import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Icons } from '../icons'
 import { useDeleteProject } from '@/api/mutations/projects'
+import { projectErrorMsgFromCode } from '@/api/requests/projects/root'
 
 interface Props {
   workspaceId: string
@@ -52,10 +53,10 @@ const DeleteProjectDialog: React.FC<Props> = ({
             onChange={(e) => setName(e.target.value)}
           />
 
-          {error?.message && (
+          {error?.code && (
             <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
               <Icons.xCircle className="h-4 w-4" />
-              {error?.message}
+              {projectErrorMsgFromCode(error.code)}
             </div>
           )}
         </div>

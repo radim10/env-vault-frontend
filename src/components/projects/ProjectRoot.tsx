@@ -147,7 +147,7 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
   }
 
   if (error) {
-    if (error?.message === 'Project not found') {
+    if (error?.code === 'project_not_found') {
       return (
         <NotFound
           link={`/workspace/${workspaceId}/projects`}

@@ -18,6 +18,7 @@ import { Textarea } from '../ui/textarea'
 import { useCreateProject } from '@/api/mutations/projects'
 import { ListProject, NewProject } from '@/types/projects'
 import { useQueryClient } from '@tanstack/react-query'
+import { projectErrorMsgFromCode } from '@/api/requests/projects/root'
 
 interface Props {
   workspaceId: string
@@ -127,10 +128,10 @@ const CreateProject: React.FC<Props> = ({ workspaceId }) => {
                 placeholder="Description (optional)"
               />
             </div>
-            {error?.message && (
+            {error?.code && (
               <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
                 <Icons.xCircle className="h-4 w-4" />
-                {error?.message}
+                {projectErrorMsgFromCode(error.code)}
               </div>
             )}
           </div>

@@ -18,6 +18,7 @@ import { Icons } from '../icons'
 import { Textarea } from '../ui/textarea'
 import { useUpdateProject } from '@/api/mutations/projects'
 import { UpdatedProjectData } from '@/types/projects'
+import { projectErrorMsgFromCode } from '@/api/requests/projects/root'
 
 interface Props {
   opened: boolean
@@ -132,7 +133,7 @@ const UpdateProjectDialog: React.FC<Props> = ({
             {error?.message && (
               <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
                 <Icons.xCircle className="h-4 w-4" />
-                {error?.message}
+                {projectErrorMsgFromCode(error.code)}
               </div>
             )}
           </div>
