@@ -6,8 +6,8 @@ import Link from 'next/link'
 interface Props {
   title: string
   description: string
-  btnText: string
-  link: string
+  btnText?: string
+  link?: string
 }
 
 const NotFound: React.FC<Props> = ({ title, description, link, btnText }) => {
@@ -22,9 +22,11 @@ const NotFound: React.FC<Props> = ({ title, description, link, btnText }) => {
             <span className="text-lg font-bold opacity-85">{title}</span>
             <div className="my-1">{description}</div>
             <div className="mt-5">
-              <Link href={link}>
-                <Button>{btnText}</Button>
-              </Link>
+              {link && btnText && (
+                <Link href={link}>
+                  <Button>{btnText}</Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>
