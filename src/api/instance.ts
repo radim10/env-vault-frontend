@@ -2,6 +2,7 @@ import axios from 'axios'
 
 export type APIError<T> = {
   message: T
+  code: T
   status: number
 }
 
@@ -36,11 +37,12 @@ export default async function sendRequest<ResponseType>(config: {
     console.log({ err })
     console.log(err?.response?.data)
 
-    const errorMsg = err?.response?.data?.error
+    const errorData = err?.response?.data?.error
 
-    if (errorMsg) {
+    if (errorData && errorData?.code) {
       const error = new Error() as any
-      error.message = errorMsg
+      error.message = errorData
+      error.code = errorData?.code
       // Attach extra info to the error object.
       error.status = err?.response?.status
       throw error
