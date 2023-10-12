@@ -1,12 +1,17 @@
 'use client'
 
 import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
 import { LucideIcon } from 'lucide-react'
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+import Error from '../Error'
 import { Icons } from '../icons'
-import TypographyH4 from '../typography/TypographyH4'
 import { Button } from '../ui/button'
+import { Skeleton } from '../ui/skeleton'
 import { Separator } from '../ui/separator'
+import NotFound from '../projects/NotFound'
+import TypographyH4 from '../typography/TypographyH4'
+import { useGetWorkspace } from '@/api/queries/workspaces'
 
 dayjs.extend(relativeTime)
 
@@ -35,10 +40,29 @@ const generalItems: Array<{
 ]
 
 // TODO: workspace actions based on user role
-const WorkspaceSettings: React.FC<Props> = ({}) => {
+const WorkspaceSettings: React.FC<Props> = ({ workspaceId }) => {
+  const { data, isLoading, error } = useGetWorkspace(workspaceId)
+
+  if (isLoading) {
+    return <Skeleton className="mt-2 border-2 h-64 w-full" />
+  }
+
+  if (error) {
+    if (error?.code === 'workspace_not_found') {
+      return (
+        <NotFound
+          title="Workspace not found"
+          description="Looks like this workspace doesn't exist"
+        />
+      )
+    } else {
+      return <Error />
+    }
+  }
+
   return (
     <>
-      <div>
+      <div className="flex flex-col gap-7">
         <div className="mt-2 gap-2 rounded-md border-2">
           <div className="px-0 py-3 md:px-0 lg:px-0 md:py-4">
             <div className="flex items-center justify-start gap-3 px-3 md:px-6 lg:px-6">
@@ -59,11 +83,13 @@ const WorkspaceSettings: React.FC<Props> = ({}) => {
                       <span className="font-semibold text-[0.96rem]">{label}</span>
                     </div>
                     <div>
-                      {label === 'Created at' && <span>{dayjs().format('YYYY-MM-DD HH:mm')}</span>}
+                      {label === 'Created at' && (
+                        <span>{dayjs(data?.createdAt).format('YYYY-MM-DD HH:mm')}</span>
+                      )}
                       {label === 'Super admin' && <span>@dimak00 (you)</span>}
                       {label === 'Name' && (
                         <div className="flex justify-between md:justify-start items-center gap-3 md:gap-6">
-                          <span>Workspace name</span>
+                          <span>{data?.name}</span>
                           <Button size={'sm'} variant={'outline'}>
                             <Icons.pencil className="h-3.5 w-3.5" />
                           </Button>
@@ -77,8 +103,9 @@ const WorkspaceSettings: React.FC<Props> = ({}) => {
             </div>
           </div>
         </div>
+        {/* //  */}
+        <WorkspaceDangerZone />
       </div>
-      <WorkspaceDangerZone />
     </>
   )
 }
@@ -86,7 +113,7 @@ const WorkspaceSettings: React.FC<Props> = ({}) => {
 const WorkspaceDangerZone: React.FC = () => {
   return (
     <>
-      <div className="mt-7 gap-2 rounded-md border-2">
+      <div className="gap-2 rounded-md border-2">
         <div className="px-0 py-3 md:px-0 lg:px-0 md:py-4">
           <div className="flex items-center justify-start gap-3 px-3 md:px-6 lg:px-6">
             <TypographyH4 className="text-red-600 dark:text-red-600">Danger zone</TypographyH4>
