@@ -11,7 +11,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useImmer } from 'use-immer'
-import { useDebounce } from 'react-use'
+import { useDebounce, useUpdateEffect } from 'react-use'
 import dayjs, { Dayjs } from 'dayjs'
 import { useCreateEnvironmentToken } from '@/api/mutations/tokens/environment'
 import { Icons } from '@/components/icons'
@@ -85,6 +85,7 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
     mutate: createEnvironmentToken,
     isLoading,
     error,
+    reset,
   } = useCreateEnvironmentToken({
     onSuccess: ({ id, token }) => {
       onSuccess({
@@ -101,6 +102,12 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
       })
     },
   })
+
+  useUpdateEffect(() => {
+    if (!opened && error) {
+      setTimeout(() => reset(), 150)
+    }
+  }, [opened])
 
   const handleCreateToken = () => {
     createEnvironmentToken({

@@ -5,6 +5,7 @@ import { Icons } from '../icons'
 import { useDeleteProject } from '@/api/mutations/projects'
 import { useDeleteEnvironment } from '@/api/mutations/environments'
 import { envErrorMsgFromCode } from '@/api/requests/projects/environments/environments'
+import { useUpdateEffect } from 'react-use'
 
 interface Props {
   workspaceId: string
@@ -29,9 +30,16 @@ const DeleteEnvironmentDialog: React.FC<Props> = ({
     mutate: deleteEnvironment,
     isLoading,
     error,
+    reset,
   } = useDeleteEnvironment({
     onSuccess: () => onSuccess(),
   })
+
+  useUpdateEffect(() => {
+    if (!opened && error) {
+      setTimeout(() => reset(), 150)
+    }
+  }, [opened])
 
   return (
     <div>

@@ -44,9 +44,16 @@ const RenameEnvironmentDialog: React.FC<Props> = ({
     mutate: renameEnvironment,
     isLoading,
     error,
+    reset,
   } = useRenameEnvironment({
     onSuccess: () => onSuccess(newName),
   })
+
+  useUpdateEffect(() => {
+    if (!opened && error) {
+      setTimeout(() => reset(), 150)
+    }
+  }, [opened])
 
   const handleSubmit = () => {
     renameEnvironment({ workspaceId, envName, projectName, data: { name: newName } })

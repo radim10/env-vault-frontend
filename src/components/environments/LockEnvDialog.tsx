@@ -7,11 +7,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog'
 import { Icons } from '../icons'
 import { useLockEnvironment } from '@/api/mutations/environments'
 import { envErrorMsgFromCode } from '@/api/requests/projects/environments/environments'
+import { useUpdateEffect } from 'react-use'
 
 interface Props {
   workspaceId: string
@@ -38,9 +38,16 @@ const LockEnvDialog: React.FC<Props> = ({
     mutate: lockEnvironment,
     isLoading,
     error,
+    reset,
   } = useLockEnvironment({
     onSuccess,
   })
+
+  useUpdateEffect(() => {
+    if (!opened && error) {
+      setTimeout(() => reset(), 150)
+    }
+  }, [opened])
 
   const close = () => {
     if (isLoading) return
