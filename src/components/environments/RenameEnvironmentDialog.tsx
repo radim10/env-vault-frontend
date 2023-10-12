@@ -14,6 +14,7 @@ import { Icons } from '../icons'
 import { Button } from '../ui/button'
 import { useUpdateEffect } from 'react-use'
 import { useRenameEnvironment } from '@/api/mutations/environments'
+import { envErrorMsgFromCode } from '@/api/requests/projects/environments/environments'
 
 interface Props {
   projectName: string
@@ -89,10 +90,10 @@ const RenameEnvironmentDialog: React.FC<Props> = ({
               />
             </div>
 
-            {error?.message && (
+            {error?.code && (
               <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
                 <Icons.xCircle className="h-4 w-4" />
-                {error?.message}
+                {envErrorMsgFromCode(error?.code)}
               </div>
             )}
           </div>

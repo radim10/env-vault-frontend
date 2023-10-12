@@ -24,6 +24,7 @@ import { EnvironmentType } from '@/types/environments'
 import { Badge } from '../ui/badge'
 import clsx from 'clsx'
 import EnvTypeBadge from './EnvTypeBadge'
+import { envErrorMsgFromCode } from '@/api/requests/projects/environments/environments'
 
 interface Props {
   workspaceId: string
@@ -117,10 +118,10 @@ const ChangeEnvironmentTypeDialog: React.FC<Props> = ({
               </Select>
             </div>
 
-            {error?.message && (
+            {error?.code && (
               <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
                 <Icons.xCircle className="h-4 w-4" />
-                {error?.message}
+                {envErrorMsgFromCode(error?.code)}
               </div>
             )}
           </div>
