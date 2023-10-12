@@ -15,6 +15,7 @@ import { Button } from '../ui/button'
 import { SecretAction, StateSecret } from '@/stores/secrets'
 import { UpdatedSecret, UpdatedSecretsBody } from '@/types/secrets'
 import { Icons } from '../icons'
+import { secretsErrorMsgFromCode } from '@/api/requests/projects/environments/secrets'
 
 interface Props {
   opened: boolean
@@ -55,7 +56,12 @@ const SaveConfirmDialog: React.FC<Props> = ({
         key: action === SecretAction.Created ? undefined : key,
         newKey,
         newValue: !newValue && action === SecretAction.Created ? '' : newValue,
-        newDescription: action === SecretAction.Deleted ? undefined:  newDescription === '' ? null : newDescription,
+        newDescription:
+          action === SecretAction.Deleted
+            ? undefined
+            : newDescription === ''
+            ? null
+            : newDescription,
         deleted: action === SecretAction.Deleted ? true : undefined,
         // archived: action === SecretAction.Archived ? true : undefined,
       }
@@ -85,12 +91,17 @@ const SaveConfirmDialog: React.FC<Props> = ({
               }?`}
             </AlertDialogDescription>
 
-            {error?.message && (
+            {error?.code && (
               <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
                 <Icons.xCircle className="h-4 w-4" />
-                {error?.message === 'Out of sync'
-                  ? 'Cannot save because secrets has beenm updated in the meantime'
-                  : error.message}
+                {secretsErrorMsgFromCode(error?.code)}
+              </div>
+            )}
+
+            {error && !error?.code && (
+              <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
+                <Icons.xCircle className="h-4 w-4" />
+                Something went wrong
               </div>
             )}
           </AlertDialogHeader>
