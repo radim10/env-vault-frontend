@@ -10,8 +10,8 @@ import clsx from 'clsx'
 
 const navItems = [
   { label: 'Projects', href: 'projects', icon: Icons.folder },
-  { label: 'Team', href: 'team', icon: Icons.users },
   { label: 'Activity', href: 'activity', icon: Icons.users },
+  { label: 'Users', href: 'users', icon: Icons.users },
   { label: 'Tokens', href: 'tokens/cli', icon: Icons.keyRound },
   { label: 'Settings', href: 'settings/workspace', icon: Icons.settings },
 ]
@@ -68,7 +68,8 @@ const Sidebar = () => {
                     // 'text-primary dark:text-primary': pathname === item.href,
                     'text-primary dark:text-primary':
                       pathname?.split('/')?.[3] === item.href ||
-                      (pathname?.split('/')?.[3] === item.href?.split('/')[0] && index === 3),
+                      (pathname?.split('/')?.[3] === item.href?.split('/')[0] && index === 3) ||
+                      (pathname?.split('/')?.[3] === item.href?.split('/')[0] && index === 4),
                   }
                 )}
               >
