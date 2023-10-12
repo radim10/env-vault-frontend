@@ -1,7 +1,40 @@
 import sendRequest, { APIError } from '@/api/instance'
 import { Environment, EnvironmentType } from '@/types/environments'
 
-export type GetEnvironmentError = RenameEnvironmentError
+// NOTE: errors
+type EnvErrorCode =
+  | 'project_not_found'
+  | 'environment_not_found'
+  | 'environment_already_exists'
+  | 'environment_locked'
+
+export type EnvError<T extends EnvErrorCode | void> = APIError<T>
+
+export function envErrorMsgFromCode(code: EnvErrorCode | 'workspace_not_found'): string {
+  let msg = ''
+
+  if (code === 'project_not_found') {
+    msg = 'Project not found'
+  }
+  if (code === 'environment_not_found') {
+    msg = 'Environment not found'
+  }
+  if (code === 'environment_locked') {
+    msg = 'Environment is locked'
+  }
+  if (code == 'environment_already_exists') {
+    msg = 'Environment already exists'
+  }
+
+  if (code === 'workspace_not_found') {
+    msg = 'Workspace has been deleted'
+  }
+
+  return msg
+}
+
+// NOTE: requests
+export type GetEnvironmentError = EnvError<'project_not_found' | 'environment_not_found'>
 export type GetEnvironmentData = Environment
 
 export async function getEnvironment(args: {
@@ -20,9 +53,7 @@ export async function getEnvironment(args: {
 }
 
 // TODO: error
-export type CreateEnvironmentError = APIError<
-  'Workspace not found' | 'Project not found' | 'Environment not found'
->
+export type CreateEnvironmentError = EnvError<'project_not_found' | 'environment_already_exists'>
 export type CreateEnvironmentResData = undefined
 
 export async function createEnvironment(args: {
@@ -44,11 +75,8 @@ export async function createEnvironment(args: {
 }
 
 // TODO: error
-export type RenameEnvironmentError = APIError<
-  | 'Workspace not found'
-  | 'Project not found'
-  | 'Environment not found'
-  | 'Environment already exists'
+export type RenameEnvironmentError = EnvError<
+  'project_not_found' | 'environment_not_found' | 'environment_already_exists'
 >
 export type RenameEnvironmentResData = undefined
 
@@ -73,7 +101,7 @@ export async function renameEnvironment(args: {
 
 // lock/unlock
 // TODO: errors
-export type LockEnvironmentError = APIError<any>
+export type LockEnvironmentError = EnvError<'project_not_found' | 'environment_not_found'>
 export type LockEnvironmentResData = undefined
 
 export async function lockEnvironment(args: {
@@ -119,9 +147,7 @@ export async function updateEnvironmentType(args: {
 
 // delete
 
-export type DeleteEnvironmentError = APIError<
-  'Workspace not found' | 'Project not found' | 'Environment not found'
->
+export type DeleteEnvironmentError = EnvError<'project_not_found' | 'environment_not_found'>
 export type DeleteEnvironmentResData = undefined
 
 export async function deleteEnvironment(args: {

@@ -2,7 +2,7 @@ import axios from 'axios'
 
 export type APIError<T> = {
   message: T
-  code: T
+  code: T | 'workspace_not_found'
   status: number
 }
 
