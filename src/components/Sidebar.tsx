@@ -13,7 +13,7 @@ const navItems = [
   { label: 'Team', href: 'team', icon: Icons.users },
   { label: 'Activity', href: 'activity', icon: Icons.users },
   { label: 'Tokens', href: 'tokens/cli', icon: Icons.keyRound },
-  { label: 'Settings', href: 'settings', icon: Icons.settings },
+  { label: 'Settings', href: 'settings/workspace', icon: Icons.settings },
 ]
 
 const helpNavItems = [
