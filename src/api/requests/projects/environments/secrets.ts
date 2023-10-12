@@ -1,10 +1,29 @@
 import sendRequest, { APIError } from '@/api/instance'
 import { Secret, UpdatedSecretsBody } from '@/types/secrets'
 
+type SecretsErrorCode = 'project_not_found' | 'environment_not_found' | 'out_of_sync'
+export type SecretsError<T extends SecretsErrorCode | void> = APIError<T>
+
+export function secretsErrorMsgFromCode(code: SecretsErrorCode | 'workspace_not_found'): string {
+  let msg = ''
+
+  if (code === 'project_not_found') {
+    msg = 'Project not found'
+  }
+
+  if (code === 'out_of_sync') {
+    msg = 'Cannot save because secrets has beenm updated in the meantime'
+  }
+
+  if (code === 'workspace_not_found') {
+    msg = 'Workspace has been deleted'
+  }
+
+  return msg
+}
+
 // TODO: error
-export type GetSecretsError = APIError<
-  'Workspace not found' | 'Project not found' | 'Environment not found' | 'Out of sync'
->
+export type GetSecretsError = SecretsError<'project_not_found' | 'environment_not_found'>
 export type GetSecretsData = Awaited<ReturnType<typeof getSecrets>>
 
 export async function getSecrets(args: {
@@ -22,8 +41,8 @@ export async function getSecrets(args: {
   return await response
 }
 
-export type UpdateSecretsError = APIError<
-  'Workspace not found' | 'Project not found' | 'Out of sync'
+export type UpdateSecretsError = SecretsError<
+  'project_not_found' | 'environment_not_found' | 'out_of_sync'
 >
 export type UpdateSecretsResData = Awaited<ReturnType<typeof updateSecrets>>
 
