@@ -65,7 +65,7 @@ const CreateCliTokenDialog: React.FC<Props> = ({ workspaceId, opened, onClose, o
             className="mt-0"
           />
 
-          {error?.message && (
+          {error && (
             <div className="flex flex-col gap-4 mt-3 pb-1">
               <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
                 <Icons.xCircle className="h-4 w-4" />
