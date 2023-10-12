@@ -17,6 +17,7 @@ import { EnvTokenGrant } from '@/types/tokens/environment'
 import { Icons } from '@/components/icons'
 import { WorkspaceTokenGrant } from '@/types/tokens/workspace'
 import { useCreateWorkspaceToken } from '@/api/mutations/tokens/workspace'
+import { tokensErrorMsgFromCode } from '@/api/requests/tokens'
 
 enum Grant {
   Read = 'Read',
@@ -251,10 +252,10 @@ export const CreateWorkspaceTokenDialog: React.FC<Props> = ({
                 </div>
               </div>
 
-              {error?.message && (
+              {error && (
                 <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
                   <Icons.xCircle className="h-4 w-4" />
-                  {error?.message}
+                  {error?.code ? tokensErrorMsgFromCode(error?.code) : 'Something went wrong'}
                 </div>
               )}
               {/* // */}

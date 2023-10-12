@@ -12,6 +12,7 @@ import {
 import { useCreateCliToken } from '@/api/mutations/tokens/cli'
 import { Input } from '../ui/input'
 import { useUpdateEffect } from 'react-use'
+import { cliTokensErrorMsgFromCode } from '@/api/requests/tokens/cli'
 
 interface Props {
   opened: boolean
@@ -68,7 +69,7 @@ const CreateCliTokenDialog: React.FC<Props> = ({ workspaceId, opened, onClose, o
             <div className="flex flex-col gap-4 mt-3 pb-1">
               <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
                 <Icons.xCircle className="h-4 w-4" />
-                {error?.message}
+                {error?.code ? cliTokensErrorMsgFromCode(error?.code) : 'Something went wrong'}
               </div>
             </div>
           )}

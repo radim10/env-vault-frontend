@@ -128,10 +128,10 @@ const CreateProject: React.FC<Props> = ({ workspaceId }) => {
                 placeholder="Description (optional)"
               />
             </div>
-            {error?.code && (
+            {error && (
               <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
                 <Icons.xCircle className="h-4 w-4" />
-                {projectErrorMsgFromCode(error.code)}
+                {error?.code ? projectErrorMsgFromCode(error.code): "Something went wrong"}
               </div>
             )}
           </div>

@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog'
 import { Icons } from '../icons'
 import { useLockEnvironment } from '@/api/mutations/environments'
+import { envErrorMsgFromCode } from '@/api/requests/projects/environments/environments'
 
 interface Props {
   workspaceId: string
@@ -24,7 +25,7 @@ interface Props {
   onSuccess: () => void
 }
 
- const LockEnvDialog: React.FC<Props> = ({
+const LockEnvDialog: React.FC<Props> = ({
   workspaceId,
   projectName,
   envName,
@@ -67,6 +68,14 @@ interface Props {
                 `Unlocking environmet will allow environmnet to be renamed, deleted or updated.`}
             </DialogDescription>
           </DialogHeader>
+
+          {error && (
+            <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
+              <Icons.xCircle className="h-4 w-4" />
+              {error?.code ? envErrorMsgFromCode(error?.code) : 'Something went wrong'}
+            </div>
+          )}
+
           <DialogFooter className="mt-4">
             <Button
               type="submit"
