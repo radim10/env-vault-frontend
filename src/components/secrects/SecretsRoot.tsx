@@ -23,7 +23,7 @@ const SecretsRoot: React.FC<Props> = ({ workspaceId, projectName, envName }) => 
   }
 
   if (error) {
-    return <div>Error</div>
+    return <div>Error getting secrets</div>
   }
 
   return (
