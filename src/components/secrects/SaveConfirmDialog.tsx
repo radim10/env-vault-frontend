@@ -100,7 +100,7 @@ const SaveConfirmDialog: React.FC<Props> = ({
             </AlertDialogDescription>
 
             {error && (
-              <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
+              <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mt-0">
                 <Icons.xCircle className="h-4 w-4" />
                 {error?.code ? secretsErrorMsgFromCode(error?.code) : 'Something went wrong'}
               </div>
