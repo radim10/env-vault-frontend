@@ -1,8 +1,31 @@
 import sendRequest, { APIError } from '@/api/instance'
 import { CliToken } from '@/types/tokens/cli'
 
+type CliTokensErrorCode = 'token_not_found' | 'user_not_found'
+export type CliTokensError<T extends CliTokensErrorCode | void> = APIError<T>
+
+export function cliTokensErrorMsgFromCode(
+  code: CliTokensErrorCode | 'workspace_not_found'
+): string {
+  let msg = ''
+
+  if (code === 'token_not_found') {
+    msg = 'Token not found'
+  }
+
+  if (code === 'user_not_found') {
+    msg = 'Current user not found'
+  }
+
+  if (code === 'workspace_not_found') {
+    msg = 'Workspace has been deleted'
+  }
+
+  return msg
+}
+
 // TODO: errors
-export type GetCliTokensError = APIError<'Workspace not found' | 'User not found'>
+export type GetCliTokensError = CliTokensError<'user_not_found'>
 export type GetCliTokensData = Array<CliToken>
 
 export async function getCliTokens(workspaceId: string) {
@@ -15,7 +38,7 @@ export async function getCliTokens(workspaceId: string) {
 }
 
 // create
-export type CreateCliTokenError = APIError<'User not found'>
+export type CreateCliTokenError = CliTokensError<'user_not_found'>
 export type CreateCliTokenResData = { id: string; value: string }
 
 export type CreateCliTokenArgs = {
@@ -37,7 +60,7 @@ export async function createCliToken(args: CreateCliTokenArgs) {
 }
 
 // revoke (delete)
-export type RevokeCliTokenError = APIError<'Workspace not found' | 'Token not found'>
+export type RevokeCliTokenError = CliTokensError<'token_not_found'>
 export type RevokeCliTokenResData = undefined
 
 export type RevokeCliTokenArgs = {
