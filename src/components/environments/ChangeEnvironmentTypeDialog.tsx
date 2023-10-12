@@ -21,10 +21,9 @@ import { Icons } from '../icons'
 import { Label } from '../ui/label'
 import { useUpdateEnvironmentType } from '@/api/mutations/environments'
 import { EnvironmentType } from '@/types/environments'
-import { Badge } from '../ui/badge'
-import clsx from 'clsx'
 import EnvTypeBadge from './EnvTypeBadge'
 import { envErrorMsgFromCode } from '@/api/requests/projects/environments/environments'
+import { useUpdateEffect } from 'react-use'
 
 interface Props {
   workspaceId: string
@@ -58,11 +57,18 @@ const ChangeEnvironmentTypeDialog: React.FC<Props> = ({
     mutate: updateEnvironmentType,
     isLoading,
     error,
+    reset,
   } = useUpdateEnvironmentType({
     onSuccess: () => {
       onSuccess(selectedType)
     },
   })
+
+  useUpdateEffect(() => {
+    if (!opened && error) {
+      setTimeout(() => reset(), 150)
+    }
+  }, [opened])
 
   const close = () => {
     if (isLoading) return
