@@ -36,7 +36,7 @@ const ProjectsToolbar: React.FC<Props> = ({
           'py-2 -mt-1 flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:gap-0 px-6 md:px-10 bg-transparent backdrop-blur-xl sticky top-0 z-10',
         ],
         {
-          'border-b-2': y > 150,
+          'border-b-2': y > 132,
         }
       )}
     >
