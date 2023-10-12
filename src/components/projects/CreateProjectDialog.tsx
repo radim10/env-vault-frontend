@@ -19,6 +19,7 @@ import { useCreateProject } from '@/api/mutations/projects'
 import { ListProject, NewProject } from '@/types/projects'
 import { useQueryClient } from '@tanstack/react-query'
 import { projectErrorMsgFromCode } from '@/api/requests/projects/root'
+import { useUpdateEffect } from 'react-use'
 
 interface Props {
   workspaceId: string
@@ -35,6 +36,7 @@ const CreateProject: React.FC<Props> = ({ workspaceId }) => {
     mutate: createProject,
     isLoading,
     error,
+    reset,
   } = useCreateProject({
     onSuccess: () => {
       // update cache
@@ -59,6 +61,14 @@ const CreateProject: React.FC<Props> = ({ workspaceId }) => {
       setOpened(false)
     },
   })
+
+  useUpdateEffect(() => {
+    if (!opened) {
+      setTimeout(() => {
+        reset()
+      }, 150)
+    }
+  }, [opened])
 
   const handleCreateProject = () => {
     const newProject: NewProject = {
@@ -131,7 +141,7 @@ const CreateProject: React.FC<Props> = ({ workspaceId }) => {
             {error && (
               <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
                 <Icons.xCircle className="h-4 w-4" />
-                {error?.code ? projectErrorMsgFromCode(error.code): "Something went wrong"}
+                {error?.code ? projectErrorMsgFromCode(error.code) : 'Something went wrong'}
               </div>
             )}
           </div>
