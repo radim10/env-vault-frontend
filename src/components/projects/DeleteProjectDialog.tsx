@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import DeleteDialog from '../DeleteDialog'
-import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Icons } from '../icons'
 import { useDeleteProject } from '@/api/mutations/projects'
 import { projectErrorMsgFromCode } from '@/api/requests/projects/root'
+import { useUpdateEffect } from 'react-use'
 
 interface Props {
   workspaceId: string
@@ -27,9 +27,16 @@ const DeleteProjectDialog: React.FC<Props> = ({
     mutate: deleteProject,
     isLoading,
     error,
+    reset,
   } = useDeleteProject({
     onSuccess: () => onSuccess(),
   })
+
+  useUpdateEffect(() => {
+    if (!opened && error) {
+      setTimeout(() => reset(), 150)
+    }
+  }, [opened])
 
   return (
     <div>
