@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { useRevokeCliToken } from '@/api/mutations/tokens/cli'
+import { tokensErrorMsgFromCode } from '@/api/requests/tokens'
 
 interface Props {
   opened: boolean
@@ -58,11 +59,11 @@ const RevokeCliTokenDialog: React.FC<Props> = ({
               token with the cli.
             </DialogDescription>
 
-            {error?.message && (
+            {error && (
               <div className="flex flex-col gap-4 mt-3 pb-1">
                 <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
                   <Icons.xCircle className="h-4 w-4" />
-                  {error?.message}
+                  {error?.code ? tokensErrorMsgFromCode(error?.code) : 'Something went wrong'}
                 </div>
               </div>
             )}
