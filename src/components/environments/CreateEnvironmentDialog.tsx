@@ -23,10 +23,10 @@ import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { useCreateEnvironment } from '@/api/mutations/environments'
 import { EnvironmentType } from '@/types/environments'
-import { Badge } from '../ui/badge'
 import clsx from 'clsx'
 import EnvTypeBadge from './EnvTypeBadge'
 import { envErrorMsgFromCode } from '@/api/requests/projects/environments/environments'
+import { useUpdateEffect } from 'react-use'
 
 interface Props {
   workspaceId: string
@@ -58,12 +58,19 @@ const CreateEnvironmentDialog: React.FC<Props> = ({
     mutate: createEnvironment,
     isLoading,
     error,
+    reset,
   } = useCreateEnvironment({
     onSuccess: () => {
       onSuccess({ name: name, type: selectedType as EnvironmentType })
       setOpened(false)
     },
   })
+
+  useUpdateEffect(() => {
+    if (!opened) {
+      setTimeout(() => reset(), 150)
+    }
+  }, [opened])
 
   const close = () => {
     if (isLoading) return
