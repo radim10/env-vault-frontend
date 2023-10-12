@@ -1,8 +1,29 @@
 import sendRequest, { APIError } from '@/api/instance'
 import { ListProject, NewProject, Project, UpdatedProjectData } from '@/types/projects'
 
+// NOTE: errors
+type ProjectsErrorCode = 'project_not_found' | 'project_already_exists'
+export type ProjectsError<T extends ProjectsErrorCode | void> = APIError<T | 'workspace_not_found'>
+
+export function projectErrorMsgFromCode(code: ProjectsErrorCode | 'workspace_not_found'): string {
+  let msg = ''
+
+  if (code === 'project_not_found') {
+    msg = 'Project not found'
+  }
+  if (code === 'project_already_exists') {
+    msg = 'Project already exists'
+  }
+  if (code === 'workspace_not_found') {
+    msg = 'Workspace has been deleted'
+  }
+
+  return msg
+}
+
+// NOTE: requests
 // list
-export type GetProjectsError = APIError<'Workspace not found'>
+export type GetProjectsError = ProjectsError<void>
 export type GetProjectsData = Awaited<ReturnType<typeof getProjects>>
 
 export async function getProjects(args: { workspaceId: string }) {
@@ -17,7 +38,7 @@ export async function getProjects(args: { workspaceId: string }) {
 }
 
 // get project
-export type GetProjectError = APIError<'Workspace not found' | 'Project not found'>
+export type GetProjectError = ProjectsError<'project_not_found'>
 export type GetProjectData = Awaited<ReturnType<typeof getProject>>
 
 export async function getProject(args: { workspaceId: string; projectName: string }) {
@@ -32,7 +53,7 @@ export async function getProject(args: { workspaceId: string; projectName: strin
 }
 
 // create project
-export type CreateProjectError = APIError<'Workspace not found' | 'Project already exists'>
+export type CreateProjectError = ProjectsError<'project_already_exists'>
 export type CreateProjectResData = Awaited<ReturnType<typeof createProject>>
 
 export async function createProject(args: { workspaceId: string; data: NewProject }) {
@@ -48,9 +69,11 @@ export async function createProject(args: { workspaceId: string; data: NewProjec
 }
 
 // update
-export type UpdateProjectError = APIError<
-  'Workspace not found' | 'Project already exists' | 'Project not found'
->
+// export type UpdateProjectError = APIError<
+//   'Workspace not found' | 'Project already exists' | 'Project not found'
+// >
+
+export type UpdateProjectError = ProjectsError<'project_already_exists' | 'project_not_found'>
 export type UpdateProjectResData = Awaited<ReturnType<typeof updateProject>>
 
 export async function updateProject(args: {
@@ -69,7 +92,7 @@ export async function updateProject(args: {
   return await response
 }
 
-export type DeleteProjectError = APIError<'Workspace not found' | 'Project note found'>
+export type DeleteProjectError = ProjectsError<'project_not_found'>
 export type DeleteProjectResData = Awaited<ReturnType<typeof deleteProject>>
 
 export async function deleteProject(args: { workspaceId: string; name: string }) {
