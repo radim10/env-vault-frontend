@@ -16,6 +16,7 @@ import { SecretAction, StateSecret } from '@/stores/secrets'
 import { UpdatedSecret, UpdatedSecretsBody } from '@/types/secrets'
 import { Icons } from '../icons'
 import { secretsErrorMsgFromCode } from '@/api/requests/projects/environments/secrets'
+import { useUpdateEffect } from 'react-use'
 
 interface Props {
   opened: boolean
@@ -42,6 +43,7 @@ const SaveConfirmDialog: React.FC<Props> = ({
     mutate: updateSecret,
     isLoading,
     error,
+    reset,
   } = useUpdateSecrets({
     onSuccess: () => onSuccess(),
   })
@@ -79,6 +81,12 @@ const SaveConfirmDialog: React.FC<Props> = ({
     console.log(data)
   }
 
+  useUpdateEffect(() => {
+    if (!opened) {
+      setTimeout(() => reset(), 150)
+    }
+  }, [opened])
+
   return (
     <div>
       <AlertDialog open={opened}>
@@ -91,17 +99,10 @@ const SaveConfirmDialog: React.FC<Props> = ({
               }?`}
             </AlertDialogDescription>
 
-            {error?.code && (
+            {error && (
               <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
                 <Icons.xCircle className="h-4 w-4" />
-                {secretsErrorMsgFromCode(error?.code)}
-              </div>
-            )}
-
-            {error && !error?.code && (
-              <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
-                <Icons.xCircle className="h-4 w-4" />
-                Something went wrong
+                {error?.code ? secretsErrorMsgFromCode(error?.code) : 'Something went wrong'}
               </div>
             )}
           </AlertDialogHeader>
