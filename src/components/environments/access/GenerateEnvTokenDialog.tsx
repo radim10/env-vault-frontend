@@ -16,6 +16,8 @@ import dayjs, { Dayjs } from 'dayjs'
 import { useCreateEnvironmentToken } from '@/api/mutations/tokens/environment'
 import { Icons } from '@/components/icons'
 import { EnvTokenGrant } from '@/types/tokens/environment'
+import { tokensErrorMsgFromCode } from '@/api/requests/tokens'
+import { envTokensErrorMsgFromCode } from '@/api/requests/projects/environments/tokens'
 
 enum Grant {
   Read = 'Read',
@@ -255,10 +257,10 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
                 </div>
               </div>
 
-              {error?.message && (
+              {error && (
                 <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
                   <Icons.xCircle className="h-4 w-4" />
-                  {error?.message}
+                  {error?.code ? envTokensErrorMsgFromCode(error?.code) : 'Something went wrong'}
                 </div>
               )}
               {/* // */}

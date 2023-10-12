@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { useRevokeWorkspaceToken } from '@/api/mutations/tokens/workspace'
 import { APIError } from '@/api/instance'
 import { useUpdateEffect } from 'react-use'
+import { tokensErrorMsgFromCode } from '@/api/requests/tokens'
 
 interface Props {
   opened: boolean
@@ -102,10 +103,10 @@ const RevokeTokenDialog: React.FC<Props> = ({
             />
           </div>
 
-          {error?.message && (
+          {error && (
             <div className="text-red-600 text-[0.92rem] flex items-center gap-2 -mt-1">
               <Icons.xCircle className="h-4 w-4" />
-              {error?.message}
+              {error?.code ? tokensErrorMsgFromCode(error?.code) : 'Something went wrong'}
             </div>
           )}
         </div>
