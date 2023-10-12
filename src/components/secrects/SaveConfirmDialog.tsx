@@ -82,7 +82,7 @@ const SaveConfirmDialog: React.FC<Props> = ({
   }
 
   useUpdateEffect(() => {
-    if (!opened) {
+    if (!opened && error) {
       setTimeout(() => reset(), 150)
     }
   }, [opened])
