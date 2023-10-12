@@ -2,7 +2,38 @@ import sendRequest, { APIError } from '@/api/instance'
 import { RenameEnvironmentError } from './environments'
 import { EnvTokenGrant, EnvironmentToken } from '@/types/tokens/environment'
 
-export type CreateEnvironmentTokenError = RenameEnvironmentError
+// NOTE: error
+type EnvTokensErrorCode = 'project_not_found' | 'environment_not_found' | 'token_not_found'
+export type EnvTokensError<T extends EnvTokensErrorCode | void> = APIError<T>
+
+export function envTokensErrorMsgFromCode(
+  code: EnvTokensErrorCode | 'workspace_not_found'
+): string {
+  let msg = ''
+
+  if (code === 'token_not_found') {
+    msg = 'Token not found'
+  }
+
+  if (code === 'project_not_found') {
+    msg = 'Project not found'
+  }
+
+  if (code === 'environment_not_found') {
+    msg = 'Environment not found'
+  }
+
+  if (code === 'workspace_not_found') {
+    msg = 'Workspace has been deleted'
+  }
+
+  return msg
+}
+
+// NOTE: requests
+export type CreateEnvironmentTokenError = EnvTokensError<
+  'project_not_found' | 'environment_not_found'
+>
 export type CreateEnvironmentTokenResData = { id: string; token: string }
 
 export interface CreateEnvironmentTokenArgs {
@@ -50,8 +81,8 @@ export async function getEnvironmentTokens(args: GetEnvironmentTokensArgs) {
 }
 
 // revoke (delete)
-export type RevokeEnvironmentTokenError = APIError<
-  'Workspace not found' | 'Project not found' | 'Environment not found' | 'Token not found'
+export type RevokeEnvironmentTokenError = EnvTokensError<
+  'project_not_found' | 'environment_not_found' | 'token_not_found'
 >
 export type RevokeEnvironmentTokenResData = undefined
 
