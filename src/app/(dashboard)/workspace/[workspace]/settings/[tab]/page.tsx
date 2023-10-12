@@ -1,3 +1,4 @@
+import WorkspaceSettings from '@/components/settings/WorkspaceSettings'
 import { Metadata, ResolvingMetadata } from 'next'
 
 export function generateMetadata(
@@ -11,6 +12,10 @@ export function generateMetadata(
   }
 }
 
-export default function Settings({ params }: { params: { workspace: string; tab: string } }) {
-  return <></>
+export default function Settings({
+  params: { workspace, tab },
+}: {
+  params: { workspace: string; tab: string }
+}) {
+  return <>{tab === 'workspace' && <WorkspaceSettings workspaceId={workspace} />}</>
 }
