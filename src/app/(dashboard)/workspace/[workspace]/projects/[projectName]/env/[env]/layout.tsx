@@ -63,7 +63,7 @@ export default function EnvLayout({
   }
 
   if (error) {
-    if (error?.message === 'Project not found') {
+    if (error?.code === 'project_not_found') {
       return (
         <NotFound
           link={`/workspace/${params.workspace}/projects`}
@@ -72,7 +72,7 @@ export default function EnvLayout({
           btnText="Go to projects"
         />
       )
-    } else if (error?.message === 'Environment not found') {
+    } else if (error?.code === 'environment_not_found') {
       return (
         <NotFound
           link={`/workspace/${params.workspace}/projects/${params.projectName}`}
