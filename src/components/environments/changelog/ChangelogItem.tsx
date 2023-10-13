@@ -35,7 +35,7 @@ const ChangelogItem: React.FC<Props> = ({ changes }) => {
             <div className="flex flex-col gap-0">
               <div>
                 <div className="font-bold text-[0.97rem]">dimak00</div>
-                <div className="-mt-0.5 text-[0.97rem]">Modified secrets</div>
+                <div className="-mt-0.5 text-[0.97rem] text-muted-foreground">Modified secrets</div>
               </div>
             </div>
           </div>
@@ -72,20 +72,20 @@ const ChangelogItem: React.FC<Props> = ({ changes }) => {
           </div>
         </div>
         {/* // Secrets changes */}
-        <div className="ml-[3.75rem] bg-red-400x mt-2.5">
+        <div className="md:ml-[3.75rem] bg-red-400x mt-4 md:mt-2.5">
           <div className="rounded-md border border-input flex flex-col gap-0">
             {changes?.map(({ secretKey, newValue, oldValue }, index) => (
               <>
                 <div
-                  className={clsx(['w-full bg-red-400X text-sm h-10'], {
+                  className={clsx(['w-full bg-red-400X text-sm h-fit py-2 md:py-0 md:h-11'], {
                     'border-b border-input': index !== changes?.length - 1,
                   })}
                 >
-                  <div className="flex flex-row gap-2 items-center h-full">
+                  <div className="flex flex-col w-full md:flex-row gap-0 md:gap-2 md:items-center h-full">
                     <div
-                      className={clsx(['h-full flex gap-3.5 px-3.5 items-center'], {
-                        'w-1/2': (oldValue && !newValue) || (!oldValue && newValue),
-                        'w-1/3': !((oldValue && !newValue) || (!oldValue && newValue)),
+                      className={clsx(['w-full h-9 md:h-full flex gap-3.5 px-3.5 items-center'], {
+                        'md:w-1/2': (oldValue && !newValue) || (!oldValue && newValue),
+                        'md:w-1/3': !((oldValue && !newValue) || (!oldValue && newValue)),
                       })}
                     >
                       <input
@@ -97,12 +97,12 @@ const ChangelogItem: React.FC<Props> = ({ changes }) => {
 
                     {oldValue && (
                       <div
-                        className={clsx(['h-full pr-2 flex gap-3.5 items-center'], {
-                          'w-1/2': !newValue,
-                          'w-1/3': newValue,
+                        className={clsx(['w-full h-10 md:h-full pr-2 flex gap-3.5 items-center'], {
+                          'md:w-1/2': !newValue,
+                          'md:w-1/3': newValue,
                         })}
                       >
-                        <div className="px-2 h-full flex justify-center items-center bg-red-600/5 dark:bg-red-600/10 border-red-600/40 dark:border-red-600/20 border-x-[1.5px]">
+                        <div className="px-2.5 h-full flex justify-center items-center md:bg-red-600/5 md:dark:bg-red-600/10 md:border-red-600/40 md:dark:border-red-600/20 border-r-[1.5px] md:border-x-[1.5px] ">
                           <Icons.minus className="opacity-70 h-3.5 w-3.5 text-red-600" />
                         </div>
 
@@ -120,12 +120,12 @@ const ChangelogItem: React.FC<Props> = ({ changes }) => {
 
                     {newValue && (
                       <div
-                        className={clsx(['h-full flex gap-3.5 items-center'], {
-                          'w-1/2': !oldValue,
-                          'w-1/3': oldValue,
+                        className={clsx(['w-full h-10 md:h-full flex gap-3.5 items-center'], {
+                          'md:w-1/2': !oldValue,
+                          'md:w-1/3': oldValue,
                         })}
                       >
-                        <div className="px-2 h-full flex justify-center items-center bg-green-600/5 dark:bg-green-600/10 border-green-600/40 dark:border-green-600/20 border-x-[1.5px]">
+                        <div className="px-2.5 h-full flex justify-center items-center md:bg-green-600/5 md:dark:bg-green-600/10 md:border-green-600/40 md:dark:border-green-600/20 border-r-[1.5px] md:border-x-[1.5px] ">
                           <Icons.plus className="opacity-70 h-3.5 w-3.5 text-green-600" />
                         </div>
                         {hidden ? (
