@@ -22,6 +22,7 @@ import { LucideIcon } from 'lucide-react'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { Skeleton } from '@/components/ui/skeleton'
 import SettingsList from '@/components/SettingsList'
+import DangerZone from '@/components/DangerZone'
 
 dayjs.extend(relativeTime)
 
@@ -294,7 +295,7 @@ export const EnvSettings = (props: {}) => {
         </>
       )}
 
-      <div>
+      <div className="flex flex-col gap-7">
         <SettingsList
           title="General settings"
           description={'Edit this environment'}
@@ -337,16 +338,15 @@ export const EnvSettings = (props: {}) => {
               icon: Icons.fileLock2,
               label: 'Lock status',
               editBtn: {
-                disabled: selectedEnv?.locked,
                 onClick: () => setDialog('lock'),
               },
               component: (
                 <div className="flex items-center gap-2">
                   <span>{selectedEnv?.locked ? 'Locked' : 'Unlocked'}</span>
                   {selectedEnv?.locked ? (
-                    <Icons.lock className="h-4 w-4" />
+                    <Icons.lock className="h-4 w-4 -mt-[1.5px]" />
                   ) : (
-                    <Icons.unlock className="h-4 w-4" />
+                    <Icons.unlock className="h-4 w-4 -mt-[1.5px]" />
                   )}
                 </div>
               ),
@@ -431,33 +431,15 @@ export const EnvSettings = (props: {}) => {
         {/*   </div> */}
         {/* </div> */}
         {/* // DANGER ZONE */}
-        <div className="mt-7 gap-2 rounded-md border-2">
-          <div className="px-0 py-3 md:px-0 lg:px-0 md:py-4">
-            <div className="flex items-center justify-start gap-3 px-3 md:px-6 lg:px-6">
-              <TypographyH4 className="text-red-600 dark:text-red-600">Danger zone</TypographyH4>
-            </div>
 
-            <div className="mt-4 flex items-center gap-2 text-md justify-between px-3 md:px-8">
-              <div className="flex flex-col items-start gap-0 md:gap-0">
-                <span className="font-semibold text-[1.01rem]">{`Delete environment `}</span>
-                <span className="text-muted-foreground text-[0.95rem]">
-                  Permanently delete this environment, cannot be undone.
-                </span>
-              </div>
-              <div className="flex items-center gap-6">
-                <Button
-                  size={'sm'}
-                  variant={'destructive'}
-                  className="px-5"
-                  disabled={selectedEnv?.locked}
-                  onClick={() => setDialog('delete')}
-                >
-                  Delete
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <DangerZone
+          btn={{
+            onClick: () => setDialog('delete'),
+            disabled: selectedEnv?.locked,
+          }}
+          title="Delete environment"
+          description="Permanently delete this environment, cannto be undone"
+        />
       </div>
     </>
   )

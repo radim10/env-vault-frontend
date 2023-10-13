@@ -12,6 +12,7 @@ import { Separator } from '../ui/separator'
 import NotFound from '../projects/NotFound'
 import TypographyH4 from '../typography/TypographyH4'
 import { useGetWorkspace } from '@/api/queries/workspaces'
+import DangerZone from '../DangerZone'
 
 dayjs.extend(relativeTime)
 
@@ -104,35 +105,13 @@ const WorkspaceSettings: React.FC<Props> = ({ workspaceId }) => {
           </div>
         </div>
         {/* //  */}
-        <WorkspaceDangerZone />
-      </div>
-    </>
-  )
-}
-
-const WorkspaceDangerZone: React.FC = () => {
-  return (
-    <>
-      <div className="gap-2 rounded-md border-2">
-        <div className="px-0 py-3 md:px-0 lg:px-0 md:py-4">
-          <div className="flex items-center justify-start gap-3 px-3 md:px-6 lg:px-6">
-            <TypographyH4 className="text-red-600 dark:text-red-600">Danger zone</TypographyH4>
-          </div>
-
-          <div className="mt-4 flex items-center gap-2 text-md justify-between px-3 md:px-8">
-            <div className="flex flex-col items-start gap-0 md:gap-0">
-              <span className="font-semibold text-[1.01rem]">{`Delete workspace `}</span>
-              <span className="text-muted-foreground text-[0.95rem]">
-                Permanently delete this workspace, cannot be undone.
-              </span>
-            </div>
-            <div className="flex items-center gap-6">
-              <Button size={'sm'} variant={'destructive'} className="px-5" disabled={false}>
-                Delete
-              </Button>
-            </div>
-          </div>
-        </div>
+        <DangerZone
+          btn={{
+            onClick: () => {},
+          }}
+          title="Delete workspace"
+          description="Permanently delete this workspace, cannto be undone"
+        />
       </div>
     </>
   )
