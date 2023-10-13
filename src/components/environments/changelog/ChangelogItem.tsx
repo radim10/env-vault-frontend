@@ -1,4 +1,6 @@
-import React from 'react'
+'use client'
+
+import React, { useState } from 'react'
 
 import dayjs from 'dayjs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -8,12 +10,16 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import clsx from 'clsx'
 
 interface Props {
-  key: string
+  secretKey: string
   newValue?: string
   oldValue?: string
 }
 
-const ChangelogItem: React.FC<Props> = ({ key, newValue, oldValue }) => {
+const ChangelogItem: React.FC<Props> = ({ secretKey, newValue, oldValue }) => {
+  const [hidden, setHidden] = useState(true)
+
+  const toggleHide = () => setHidden(!hidden)
+
   return (
     <>
       <div>
@@ -45,63 +51,83 @@ const ChangelogItem: React.FC<Props> = ({ key, newValue, oldValue }) => {
 
               <Tooltip>
                 <TooltipTrigger>
-                  <Button size={'sm'} variant={'ghost'} className="opacity-80 hover:opacity-100">
-                    <Icons.eye className="h-4 w-4" />
+                  <Button
+                    size={'sm'}
+                    variant={'ghost'}
+                    className="opacity-80 hover:opacity-100"
+                    onClick={() => toggleHide()}
+                  >
+                    {hidden ? (
+                      <Icons.eye className="h-4 w-4" />
+                    ) : (
+                      <Icons.eyeOff className="h-4 w-4" />
+                    )}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Show values</TooltipContent>
+                <TooltipContent>{hidden ? 'Show values' : 'Hide values'}</TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>
         </div>
         {/* // Secrets changes */}
         <div className="ml-[3.75rem] bg-red-400x">
-          <div className="w-full h-fit bg-red-400X my-2 text-sm">
-            <div className="flex flex-row gap-2">
+          <div className="w-full h-fit bg-red-400X my-2 text-sm rounded-md border border-input">
+            <div className="flex flex-row gap-2 items-center">
               <div
-                className={clsx(
-                  ['h-10 flex gap-3.5 px-3.5 items-center rounded-md border border-input'],
-                  {
-                    'w-1/2': (oldValue && !newValue) || (!oldValue && newValue),
-                    'w-1/3': !((oldValue && !newValue) || (!oldValue && newValue)),
-                  }
-                )}
+                className={clsx(['h-10 flex gap-3.5 px-3.5 items-center'], {
+                  'w-1/2': (oldValue && !newValue) || (!oldValue && newValue),
+                  'w-1/3': !((oldValue && !newValue) || (!oldValue && newValue)),
+                })}
               >
-                <span className="block opacity-85 font-bold">SECRET_KEY</span>
+                <input
+                  readOnly
+                  className="w-full opacity-80 font-bold outline-none bg-transparent"
+                  value={secretKey}
+                />
               </div>
 
               {oldValue && (
                 <div
-                  className={clsx(
-                    [
-                      'h-10 flex gap-3.5 px-3.5 items-center rounded-md border border-red-600/90 dark:border-red-600/70',
-                    ],
-                    {
-                      'w-1/2': !newValue,
-                      'w-1/3': newValue,
-                    }
-                  )}
+                  className={clsx(['h-10 pr-2 flex gap-3.5 items-center'], {
+                    'w-1/2': !newValue,
+                    'w-1/3': newValue,
+                  })}
                 >
-                  <Icons.minus className="opacity-70 h-3.5 w-3.5 text-red-600" />
-                  <div className="opacity-50 w-[1px] h-full bg-red-600/90 dark:bg-red-600/70"></div>
-                  <span className="block opacity-85 font-bold ">•••••••••••</span>
+                  <div className="px-2 h-full flex justify-center items-center bg-red-600/5 dark:bg-red-600/10 border-red-600/40 dark:border-red-600/20 border-x-[1.5px]">
+                    <Icons.minus className="opacity-70 h-3.5 w-3.5 text-red-600" />
+                  </div>
+
+                  {hidden ? (
+                    <span className="block opacity-85">•••••••••••</span>
+                  ) : (
+                    <input
+                      readOnly
+                      className="w-full text-red-600 dark:text-red-600/90 outline-none bg-transparent"
+                      value={oldValue}
+                    />
+                  )}
                 </div>
               )}
 
               {newValue && (
                 <div
-                  className={clsx(
-                    [
-                      'h-10 flex gap-3.5 px-3.5 items-center rounded-md border border-green-600/90 dark:border-green-600/70',
-                    ],
-                    {
-                      'w-1/2': !oldValue,
-                      'w-1/3': oldValue,
-                    }
-                  )}
+                  className={clsx(['h-10 flex gap-3.5 items-center'], {
+                    'w-1/2': !oldValue,
+                    'w-1/3': oldValue,
+                  })}
                 >
-                  <Icons.plus className="opacity-70 h-3.5 w-3.5 text-green-600" />
-                  <span className="block opacity-85 font-bold ">•••••••••••</span>
+                  <div className="px-2 h-full flex justify-center items-center bg-green-600/5 dark:bg-green-600/10 border-green-600/40 dark:border-green-600/20 border-x-[1.5px]">
+                    <Icons.minus className="opacity-70 h-3.5 w-3.5 text-green-600" />
+                  </div>
+                  {hidden ? (
+                    <span className="block opacity-85 font-bold ">•••••••••••</span>
+                  ) : (
+                    <input
+                      readOnly
+                      className="w-full text-green-600 dark:text-green-600/90 outline-none bg-transparent"
+                      value={newValue}
+                    />
+                  )}
                 </div>
               )}
             </div>
