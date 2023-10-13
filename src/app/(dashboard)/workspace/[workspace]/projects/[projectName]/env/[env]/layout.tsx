@@ -134,7 +134,7 @@ export default function EnvLayout({
         </div>
 
         <div className="md:block flex items-center justify-end">
-          <SaveSecretsToolbar />
+          <SaveSecretsToolbar showBtn={!paramsData?.tab} />
         </div>
       </div>
       {/**/}

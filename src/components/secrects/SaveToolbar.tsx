@@ -18,7 +18,11 @@ import LockEnvDialog from '../environments/LockEnvDialog'
 import ChangeEnvironmentTypeDialog from '../environments/ChangeEnvironmentTypeDialog'
 import { Environment, EnvironmentType } from '@/types/environments'
 
-const SaveSecretsToolbar = () => {
+interface Props {
+  showBtn: boolean
+}
+
+const SaveSecretsToolbar: React.FC<Props> = ({ showBtn }) => {
   const router = useRouter()
   const { toast } = useToast()
   const queryClient = useQueryClient()
@@ -341,6 +345,10 @@ const SaveSecretsToolbar = () => {
     return <></>
   }
 
+  if (!showBtn) {
+    return <></>
+  }
+
   return (
     <>
       {true && (
@@ -419,26 +427,27 @@ const SaveSecretsToolbar = () => {
         )}
 
         <div className="flex items-center gap-2">
-          {loaded && secrets?.length !== 0 && (
-            <Button
-              className="gap-2"
-              size="sm"
-              disabled={
-                !secrets?.filter(
-                  (s) =>
-                    s.action !== null ||
-                    (!s.description && s.newDescription) ||
-                    (s.description && s.newDescription !== s.description && s.newDescription) ||
-                    (s.newDescription?.length === 0 && s.description)
-                )?.length
-              }
-              onClick={handleOpenDialog}
-            >
-              {/* <Icons.save className="w-4 h-4" /> */}
-              {/* <span className="md:hidden block">Save </span> */}
-              <span className="">Save changes</span>
-            </Button>
-          )}
+          {/* {loaded && secrets?.length !== 0 && ( */}
+          <Button
+            className="gap-2"
+            size="sm"
+            disabled={
+              secrets?.length === 0 &&
+              !secrets?.filter(
+                (s) =>
+                  s.action !== null ||
+                  (!s.description && s.newDescription) ||
+                  (s.description && s.newDescription !== s.description && s.newDescription) ||
+                  (s.newDescription?.length === 0 && s.description)
+              )?.length
+            }
+            onClick={handleOpenDialog}
+          >
+            {/* <Icons.save className="w-4 h-4" /> */}
+            {/* <span className="md:hidden block">Save </span> */}
+            <span className="">Save changes</span>
+          </Button>
+          {/* )} */}
 
           {/*   <EnvActionsDropdown */}
           {/*     isLocked={selectedEnv?.locked} */}
