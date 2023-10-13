@@ -61,6 +61,7 @@ import {
   FileLock2,
   TerminalSquare,
   Terminal,
+  Minus,
 } from 'lucide-react'
 
 export const Icons = {
@@ -127,4 +128,5 @@ export const Icons = {
   terminal: Terminal,
   terminalSquare: TerminalSquare,
   layers: Layers,
+  minus: Minus,
 }
