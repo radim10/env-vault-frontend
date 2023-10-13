@@ -24,19 +24,21 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
       <div className="flex flex-col gap-6 md:gap-8">
         {[
           {
-            secretKey: 'KEY_1',
-            newValue: 'new_value_1',
-          },
-          {
-            secretKey: 'KEY_2',
-            newValue: 'new_value_2',
-            oldValue: 'old_value_2',
-          },
-
-          {
-            secretKey: 'KEY_1',
-            oldValue:
-              'new_value_1 very long long kjkghdjkfgh gijfhjdkghdfkjugh hdfg;hdfjk;ghdjkf hkjghdjkfhg jkdfhgjk dfhkgj hdfjklghdfjklghldfkjghdfklh',
+            changes: [
+              {
+                secretKey: 'KEY_2',
+                newValue: 'new_value_2',
+                oldValue: 'old_value_2',
+              },
+              {
+                secretKey: 'KEY_3',
+                newValue: 'new_value_3',
+              },
+              {
+                secretKey: 'VERY_SECRET',
+                oldValue: 'old_value',
+              },
+            ],
           },
         ]?.map((val, index) => (
           <>
