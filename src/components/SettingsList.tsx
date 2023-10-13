@@ -41,13 +41,13 @@ const SettingsList: React.FC<Props> = ({ title, description, icon: Icon, items }
             </div>
           )}
 
-          <div className="mt-7 flex flex-col gap-2.5 text-[0.965rem] ox-0">
+          <div className="mt-7 flex flex-col gap-2.5 text-[0.96rem]">
             {items.map(({ label, icon: Icon, value, component, editBtn }, index) => (
               <>
                 <div className="flex flex-col md:flex-row md:items-center gap-2 text-md md:justify-between px-4 md:px-10 md:h-8">
                   <div className="flex items-center gap-2 md:gap-3">
                     <Icon className="h-4 w-4 opacity-80" />
-                    <span className="font-semibold text-[0.965rem]">{label}</span>
+                    <span className="font-semibold text-[0.96rem]">{label}</span>
                   </div>
                   <div>
                     {value && <div>{value}</div>}
