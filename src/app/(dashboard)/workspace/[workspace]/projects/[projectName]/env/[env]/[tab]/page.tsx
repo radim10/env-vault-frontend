@@ -1,6 +1,6 @@
 import { EnvSettings } from '@/components/environments/Settings/EnvSettings'
 import Access from '@/components/environments/access/Access'
-import Changelog from '@/components/environments/changelog/ChangelogList'
+import Changelog from '@/components/environments/changelog/Changelog'
 import { Metadata, ResolvingMetadata } from 'next'
 import { redirect } from 'next/navigation'
 
