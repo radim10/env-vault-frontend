@@ -17,25 +17,31 @@ interface Props {
 const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
   return (
     <>
-      <div className="mb-4">
+      <div className="mb-6">
         <TypographyH4>Today</TypographyH4>
       </div>
 
-      <div className="flex flex-col gap-6 md:gap-7">
+      <div className="flex flex-col gap-6 md:gap-8">
         {[
           {
-            key: 'KEY_1',
+            secretKey: 'KEY_1',
             newValue: 'new_value_1',
           },
           {
-            key: 'KEY_2',
+            secretKey: 'KEY_2',
             newValue: 'new_value_2',
             oldValue: 'old_value_2',
+          },
+
+          {
+            secretKey: 'KEY_1',
+            oldValue:
+              'new_value_1 very long long kjkghdjkfgh gijfhjdkghdfkjugh hdfg;hdfjk;ghdjkf hkjghdjkfhg jkdfhgjk dfhkgj hdfjklghdfjklghldfkjghdfklh',
           },
         ]?.map((val, index) => (
           <>
             <ChangelogItem {...val} />
-            {index === 0 && <Separator />}
+            {index !== 2 && <Separator />}
           </>
         ))}
       </div>
