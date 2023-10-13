@@ -432,7 +432,7 @@ const SaveSecretsToolbar: React.FC<Props> = ({ showBtn }) => {
             className="gap-2"
             size="sm"
             disabled={
-              secrets?.length === 0 &&
+              secrets?.length === 0 ||
               !secrets?.filter(
                 (s) =>
                   s.action !== null ||
