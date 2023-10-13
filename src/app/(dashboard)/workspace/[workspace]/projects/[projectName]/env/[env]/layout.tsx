@@ -57,7 +57,7 @@ export default function EnvLayout({
   if (isLoading) {
     return (
       <>
-        <EnvLayoutSkeleton isTokens={paramsData?.tab === undefined} />
+        <EnvLayoutSkeleton isSecrets={paramsData?.tab === undefined} />
       </>
     )
   }
