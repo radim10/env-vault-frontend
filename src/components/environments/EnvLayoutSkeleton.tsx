@@ -19,7 +19,7 @@ const EnvLayoutSkeleton: React.FC<Props> = ({ isTokens }) => {
           {/* // FLEX END */}
           {isTokens && (
             <div>
-              <Skeleton className="w-[117px] h-[36px]" />
+              <Skeleton className="w-[110px] h-[36px]" />
             </div>
           )}
         </div>
