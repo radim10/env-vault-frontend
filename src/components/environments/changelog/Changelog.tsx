@@ -22,9 +22,19 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
       </div>
 
       <div className="flex flex-col gap-6 md:gap-7">
-        {Array.from({ length: 2 })?.map((_, index) => (
+        {[
+          {
+            key: 'KEY_1',
+            newValue: 'new_value_1',
+          },
+          {
+            key: 'KEY_2',
+            newValue: 'new_value_2',
+            oldValue: 'old_value_2',
+          },
+        ]?.map((val, index) => (
           <>
-            <ChangelogItem />
+            <ChangelogItem {...val} />
             {index === 0 && <Separator />}
           </>
         ))}
