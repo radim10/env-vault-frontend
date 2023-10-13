@@ -33,7 +33,7 @@ const SecretsToolbar: React.FC<Props> = ({ secretsCount, onImport, onCopySecrets
           <span className="inline lg:hidden">Count: {secretsCount}</span>
         </div>
         {/* */}
-        <div className="flex flex-col md:flex-row w-full gap-3 md:items-center justify-end md:mt-3 -mt-8 mb-4 md:mb-0 ">
+        <div className="flex flex-col md:flex-row w-full gap-3 md:items-center justify-end md:mt-0 -mt-8 mb-4 md:mb-0 ">
           <div className="flex items-center gap-2 justify-end md:justify-start">
             <TooltipProvider>
               <Tooltip>
