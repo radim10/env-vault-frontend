@@ -10,7 +10,7 @@ export function generateMetadata(
   const env = params?.env
 
   return {
-    title: `${projectName} / ${env}`,
+    title: `${projectName} / ${env} / secrets`,
   }
 }
 
