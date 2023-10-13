@@ -40,6 +40,22 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
               },
             ],
           },
+          {
+            changes: [
+              {
+                secretKey: 'KEY_2',
+                newValue: 'new_value_2',
+              },
+              {
+                secretKey: 'KEY_3',
+                oldValue: 'new_value_3',
+              },
+              {
+                secretKey: 'VERY_SECRET',
+                oldValue: 'old_value',
+              },
+            ],
+          },
         ]?.map((val, index) => (
           <>
             <ChangelogItem {...val} />
