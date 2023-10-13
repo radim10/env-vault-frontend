@@ -14,7 +14,7 @@ const items = [
   { label: 'Projects', href: 'projects' },
   { label: 'Subscription', href: 'subscription' },
   { label: 'Integrations', href: 'integrations' },
-  // { label: 'Preferences', href: 'preferences' },
+  { label: 'Preferences', href: 'preferences' },
 ]
 
 const SettingsTabs: React.FC<Props> = ({ workspaceId }) => {
