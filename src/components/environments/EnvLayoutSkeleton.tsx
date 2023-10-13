@@ -6,7 +6,7 @@ interface Props {
   isSecrets?: boolean
 }
 
-const EnvLayoutSkeleton: React.FC<Props> = ({ isSecrets: isTokens }) => {
+const EnvLayoutSkeleton: React.FC<Props> = ({ isSecrets }) => {
   return (
     <>
       <div className="hidden md:block ">
@@ -17,7 +17,7 @@ const EnvLayoutSkeleton: React.FC<Props> = ({ isSecrets: isTokens }) => {
             </div>
           </div>
           {/* // FLEX END */}
-          {isTokens && (
+          {isSecrets && (
             <div>
               <Skeleton className="w-[110px] h-[36px]" />
             </div>
@@ -25,11 +25,16 @@ const EnvLayoutSkeleton: React.FC<Props> = ({ isSecrets: isTokens }) => {
         </div>
 
         {/* NOTE: Tabs */}
-        <div className="mt-7 flex flex-row gap-2 md:gap-5 border-b-[1px] pb-[0.9rem] lg:px-12">
+        <div
+          className={clsx(['flex flex-row gap-2 md:gap-5 border-b-[1px] pb-[0.9rem] lg:px-12'], {
+            'mt-7': isSecrets,
+            'mt-8': !isSecrets,
+          })}
+        >
           {Array.from({ length: 4 }).map((_, index) => (
             <Skeleton
               className={clsx(['h-6'], {
-                'w-20': index === 0 || index === 3,
+                'w-20': index == 0 || index === 3,
                 'w-16': index === 1 || index === 2,
               })}
             />
@@ -45,12 +50,12 @@ const EnvLayoutSkeleton: React.FC<Props> = ({ isSecrets: isTokens }) => {
           <div className="flex gap-2 items-center">
             <Skeleton className="h-6 w-56 md:w-80 " />
           </div>
-          <div className="flex gap-2 items-center">
-            <Skeleton className="h-6 w-32 md:w-80 " />
-          </div>
+          {/* <div className="flex gap-2 items-center"> */}
+          {/*   <Skeleton className="h-6 w-32 md:w-80 " /> */}
+          {/* </div> */}
           {/* // FLEX END */}
         </div>
-        {isTokens && (
+        {isSecrets && (
           <div className="flex items-center justify-end w-full mt-1 pr-6">
             <div>
               <Skeleton className="w-[117px] h-[36px]" />
@@ -66,7 +71,8 @@ const EnvLayoutSkeleton: React.FC<Props> = ({ isSecrets: isTokens }) => {
               'mt-7X MT-0 (secrets with save ) flex flex-row gap-2 md:gap-5 border-b-[1px] pb-[0.9rem] pl-[2rem]',
             ],
             {
-              'mt-7 md:mt-7': isTokens,
+              'mt-9': !isSecrets,
+              'mt-7': isSecrets,
             }
           )}
         >
