@@ -36,10 +36,15 @@ export async function getEnvChangelog(args: {
   workspaceId: string
   projectName: string
   envName: string
+  params?: {
+    id: string
+    date: string
+  }
 }) {
-  const { workspaceId, projectName, envName } = args
+  const { workspaceId, projectName, envName, params } = args
 
   const response = sendRequest<GetEnvChangelogData>({
+    params,
     method: 'GET',
     basePath: 'workspaces',
     path: `${workspaceId}/projects/${projectName}/environments/${envName}/changelog`,
