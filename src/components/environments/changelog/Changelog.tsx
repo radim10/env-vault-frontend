@@ -88,6 +88,10 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
       updatedData.pages[0] = updatedPage
 
       queryClient.setQueryData(key, updatedData)
+
+      if (newItem?.secretsChanges) {
+        // queryClient.setQueryData(['changelog-secrets', newItem?.id], newItem?.secretsChanges)
+      }
     }
 
     closeDialog()
@@ -192,7 +196,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
             </div>
 
             <ChangelogItem
-              key={index}
+              key={val?.id}
               workspaceId={workspaceId}
               projectName={projectName}
               envName={envName}
