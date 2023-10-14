@@ -5,9 +5,10 @@ import React, { useState } from 'react'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import TypographyH4 from '@/components/typography/TypographyH4'
 import ChangelogItem from './ChangelogItem'
-import { Separator } from '@/components/ui/separator'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { getEnvChangelog } from '@/api/requests/envChangelog'
+import { Button } from '@/components/ui/button'
+import { Icons } from '@/components/icons'
 
 dayjs.extend(relativeTime)
 
@@ -28,6 +29,10 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
           workspaceId,
           projectName,
           envName,
+          params: pageParam && {
+            date: pageParam?.date,
+            id: pageParam?.id,
+          },
         })
 
         setHasMore(res?.hasMore ?? false)
@@ -57,21 +62,21 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
         {data?.pages?.flat(1)?.map((val, index) => (
           <div>
             <div className="mb-6">
-              {(dayjs(val?.createdAt).hour(12).format('YYYY-MM-DD') !==
+              {((dayjs(val?.createdAt).hour(12).format('YYYY-MM-DD') !==
                 dayjs(data?.pages?.flat(1)?.[index - 1]?.createdAt)
                   .hour(12)
                   .format('YYYY-MM-DD') &&
                 index > 0) ||
-                (index === 0 && (
-                  <TypographyH4>
-                    {dayjs(val?.createdAt).hour(12).format('YYYY-MM-DD') ===
-                    dayjs().format('YYYY-MM-DD')
-                      ? 'Today'
-                      : dayjs(val?.createdAt)?.year() === dayjs().year()
-                      ? dayjs(val?.createdAt).hour(12).format('MMM DD,  dd')
-                      : dayjs(val?.createdAt).hour(12).format('YYYY  MMM DD,  dd')}
-                  </TypographyH4>
-                ))}
+                index === 0) && (
+                <TypographyH4>
+                  {dayjs(val?.createdAt).hour(12).format('YYYY-MM-DD') ===
+                  dayjs().format('YYYY-MM-DD')
+                    ? 'Today'
+                    : dayjs(val?.createdAt)?.year() === dayjs().year()
+                    ? dayjs(val?.createdAt).hour(12).format('MMMM DD,  dd')
+                    : dayjs(val?.createdAt).hour(12).format('YYYY  MMM DD,  dd')}
+                </TypographyH4>
+              )}
             </div>
 
             <ChangelogItem
@@ -84,6 +89,21 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
           </div>
         ))}
       </div>
+
+      {hasMore && !isRefetching && !isFetching && !isFetchingNextPage && data && (
+        <>
+          <div className="w-full flex justify-center mt-8">
+            <Button
+              variant="outline"
+              className="flex items-ceter gap-2"
+              onClick={() => fetchNextPage()}
+            >
+              <Icons.arrowDown className="h-4 w-4" />
+              Load more
+            </Button>
+          </div>
+        </>
+      )}
     </>
   )
 }
