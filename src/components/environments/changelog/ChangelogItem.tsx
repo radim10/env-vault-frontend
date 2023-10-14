@@ -8,13 +8,10 @@ import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import clsx from 'clsx'
+import { SecretsChange } from '@/types/envChangelog'
 
 interface Props {
-  changes: Array<{
-    secretKey: string
-    newValue?: string
-    oldValue?: string
-  }>
+  changes: SecretsChange[]
 }
 
 const ChangelogItem: React.FC<Props> = ({ changes }) => {
@@ -84,8 +81,13 @@ const ChangelogItem: React.FC<Props> = ({ changes }) => {
                   <div className="flex flex-col w-full md:flex-row gap-0 md:gap-2 md:items-center h-full">
                     <div
                       className={clsx(['w-full h-9 md:h-full flex gap-3.5 px-3.5 items-center'], {
-                        'md:w-1/2': (oldValue && !newValue) || (!oldValue && newValue),
-                        'md:w-1/3': !((oldValue && !newValue) || (!oldValue && newValue)),
+                        'md:w-1/2':
+                          (oldValue !== null && newValue === null) ||
+                          (oldValue === null && newValue !== null),
+                        'md:w-1/3': !(
+                          (oldValue !== null && newValue === null) ||
+                          (oldValue === null && newValue !== null)
+                        ),
                       })}
                     >
                       <input
@@ -95,11 +97,11 @@ const ChangelogItem: React.FC<Props> = ({ changes }) => {
                       />
                     </div>
 
-                    {oldValue && (
+                    {oldValue !== null && (
                       <div
                         className={clsx(['w-full h-10 md:h-full pr-2 flex gap-3.5 items-center'], {
-                          'md:w-1/2': !newValue,
-                          'md:w-1/3': newValue,
+                          'md:w-1/2': newValue === null,
+                          'md:w-1/3': newValue !== null,
                         })}
                       >
                         <div className="px-2.5 h-full flex justify-center items-center md:bg-red-600/5 md:dark:bg-red-600/10 md:border-red-600/40 md:dark:border-red-600/20 border-r-[1.5px] md:border-x-[1.5px] ">
@@ -118,11 +120,11 @@ const ChangelogItem: React.FC<Props> = ({ changes }) => {
                       </div>
                     )}
 
-                    {newValue && (
+                    {newValue !== null && (
                       <div
                         className={clsx(['w-full h-10 md:h-full flex gap-3.5 items-center'], {
-                          'md:w-1/2': !oldValue,
-                          'md:w-1/3': oldValue,
+                          'md:w-1/2': oldValue === null,
+                          'md:w-1/3': oldValue !== null,
                         })}
                       >
                         <div className="px-2.5 h-full flex justify-center items-center md:bg-green-600/5 md:dark:bg-green-600/10 md:border-green-600/40 md:dark:border-green-600/20 border-r-[1.5px] md:border-x-[1.5px] ">
@@ -133,8 +135,15 @@ const ChangelogItem: React.FC<Props> = ({ changes }) => {
                         ) : (
                           <input
                             readOnly
-                            className="w-full text-green-600 dark:text-green-600/90 outline-none bg-transparent"
-                            value={newValue}
+                            className={clsx(
+                              [
+                                'w-full text-green-600 dark:text-green-600/90 outline-none bg-transparent',
+                              ],
+                              {
+                                'italic opacity-75': newValue === '',
+                              }
+                            )}
+                            value={newValue === '' ? 'empty string' : newValue}
                           />
                         )}
                       </div>
