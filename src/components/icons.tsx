@@ -62,6 +62,7 @@ import {
   TerminalSquare,
   Terminal,
   Minus,
+  ArrowDown,
 } from 'lucide-react'
 
 export const Icons = {
@@ -129,4 +130,5 @@ export const Icons = {
   terminalSquare: TerminalSquare,
   layers: Layers,
   minus: Minus,
+  arrowDown: ArrowDown,
 }
