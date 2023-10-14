@@ -11,6 +11,7 @@ import { useUpdateEffect } from 'react-use'
 import { Icons } from '@/components/icons'
 import { useRollbackEnvChange } from '@/api/mutations/envChangelog'
 import { envChangelogErrorMsgFromCode } from '@/api/requests/envChangelog'
+import { EnvChangelogItem } from '@/types/envChangelog'
 
 interface Props {
   workspaceId: string
@@ -21,7 +22,7 @@ interface Props {
   opened: boolean
 
   onClose: () => void
-  onSuccess: () => void
+  onSuccess: (item?: EnvChangelogItem) => void
 }
 
 const RollbackDialog: React.FC<Props> = ({
