@@ -131,7 +131,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
           if (!item) handleNoChangesToRollback()
         }}
       />
-      <div className="flex flex-col gap-6 md:gap-8">
+      <div className="flex flex-col gap-6 md:gap-6">
         {data?.pages?.flat(1)?.map((val, index) => (
           <div>
             <div className="mb-6">
@@ -163,7 +163,11 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
           </div>
         ))}
 
-        {isFetchingNextPage && <ChangelogItemSkeleton count={1} />}
+        {isFetchingNextPage && (
+          <div className="mt-6">
+            <ChangelogItemSkeleton count={1} />
+          </div>
+        )}
       </div>
 
       {hasMore && !isRefetching && !isFetching && !isFetchingNextPage && data && (
