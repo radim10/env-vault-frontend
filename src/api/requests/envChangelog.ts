@@ -2,7 +2,7 @@ import sendRequest, { APIError } from '@/api/instance'
 import { EnvChangelogItem } from '@/types/envChangelog'
 
 // NOTE: errors
-type EnvChangelogErrorCode = 'project_not_found' | 'environment_not_found'
+type EnvChangelogErrorCode = 'project_not_found' | 'environment_not_found' | 'change_not_found'
 
 export type EnvChangelogError<T extends EnvChangelogErrorCode | void> = APIError<T>
 
@@ -48,6 +48,30 @@ export async function getEnvChangelog(args: {
     method: 'GET',
     basePath: 'workspaces',
     path: `${workspaceId}/projects/${projectName}/environments/${envName}/changelog`,
+  })
+  return await response
+}
+
+export type RollbackEnvChangelogError = EnvChangelogError<
+  'project_not_found' | 'environment_not_found' | 'change_not_found'
+>
+// TODO:
+export type RollbackEnvChangelogResData = undefined
+
+export type RollbackEnvChangeReqArgs = {
+  workspaceId: string
+  projectName: string
+  envName: string
+  changeId: string
+}
+
+export async function rollbackEnvChangelog(args: RollbackEnvChangeReqArgs) {
+  const { workspaceId, projectName, envName, changeId } = args
+
+  const response = sendRequest<RollbackEnvChangelogResData>({
+    method: 'POST',
+    basePath: 'workspaces',
+    path: `${workspaceId}/projects/${projectName}/environments/${envName}/changelog/${changeId}/rollback`,
   })
   return await response
 }
