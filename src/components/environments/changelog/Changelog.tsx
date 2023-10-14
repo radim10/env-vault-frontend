@@ -6,11 +6,12 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import TypographyH4 from '@/components/typography/TypographyH4'
 import ChangelogItem from './ChangelogSecretsItem'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { getEnvChangelog } from '@/api/requests/envChangelog'
+import { getEnvChangelog, rollbackEnvChangelog } from '@/api/requests/envChangelog'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
 import ChangelogItemSkeleton from './ChangelogItemSkeleton'
 import { Skeleton } from '@/components/ui/skeleton'
+import RollbackDialog from './RollbackDialog'
 
 dayjs.extend(relativeTime)
 
@@ -22,6 +23,7 @@ interface Props {
 
 const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
   const [hasMore, setHasMore] = useState(true)
+  const [rollbackDialogChangeId, setRollbackDialogChangeId] = useState<string | null>(null)
 
   const {
     data,
@@ -77,6 +79,15 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
 
   return (
     <>
+      <RollbackDialog
+        workspaceId={workspaceId}
+        projectName={projectName}
+        envName={envName}
+        changeId={rollbackDialogChangeId ?? ''}
+        opened={rollbackDialogChangeId !== null}
+        onClose={() => setRollbackDialogChangeId(null)}
+        onSuccess={() => setRollbackDialogChangeId(null)}
+      />
       <div className="flex flex-col gap-6 md:gap-8">
         {data?.pages?.flat(1)?.map((val, index) => (
           <div>
@@ -103,6 +114,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
               createdAt={`${dayjs(val?.createdAt).format('HH:mm')} (${dayjs(
                 val?.createdAt
               ).fromNow()})`}
+              onRollback={() => setRollbackDialogChangeId(val?.id)}
             />
             {/* {index !== 2 && <Separator />} */}
           </div>
