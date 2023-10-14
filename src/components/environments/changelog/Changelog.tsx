@@ -6,13 +6,13 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import TypographyH4 from '@/components/typography/TypographyH4'
 import ChangelogItem from './ChangelogSecretsItem'
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
-import { getEnvChangelogItems, rollbackEnvChangelog } from '@/api/requests/envChangelog'
+import { getEnvChangelogItems } from '@/api/requests/envChangelog'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
 import ChangelogItemSkeleton from './ChangelogItemSkeleton'
 import { Skeleton } from '@/components/ui/skeleton'
 import RollbackDialog from './RollbackDialog'
-import { EnvChangelogItem } from '@/types/envChangelog'
+import { EnvChangelogItem, SecretsChange } from '@/types/envChangelog'
 import { useToast } from '@/components/ui/use-toast'
 
 dayjs.extend(relativeTime)
@@ -58,6 +58,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
     },
     {
       enabled: true,
+      structuralSharing: false,
       getPreviousPageParam: (firstPage) => {
         return {
           id: firstPage?.[0]?.createdAt ?? undefined,
@@ -104,6 +105,35 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
       variant: 'info',
     })
     closeDialog()
+  }
+
+  const handleFetchedSecretValues = (page: number, changeId: string, secrets: SecretsChange[]) => {
+    const key = ['changelog', workspaceId, projectName, envName]
+    const existingData = queryClient?.getQueryData<{ pages: Array<EnvChangelogItem[]> }>(key)
+
+    if (existingData) {
+      const pageData = existingData?.pages?.[page]
+      if (!pageData) return
+
+      const updatedPage = [...pageData]
+      const item = updatedPage?.find((val) => val?.id === changeId)
+
+      if (!item) return
+      const itemIndex = updatedPage?.findIndex((val) => val?.id === changeId)
+
+      if (itemIndex === -1) return
+      const updatedItem = { ...item, secretsChanges: secrets }
+
+      console.log('Updated item:\n', updatedItem)
+      updatedPage[itemIndex] = updatedItem
+
+      const updatedData = { ...existingData }
+      updatedData.pages[page] = updatedPage
+
+      console.log(updatedData)
+
+      queryClient.setQueryData(key, updatedData)
+    }
   }
 
   const closeDialog = () => setRollbackDialogChangeId(null)
@@ -156,11 +186,28 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
             </div>
 
             <ChangelogItem
-              changes={val?.secretsChanges ?? []}
+              key={index}
+              workspaceId={workspaceId}
+              projectName={projectName}
+              envName={envName}
+              changeId={val?.id}
+              valuesLoaded={queryClient?.getQueryData(['changelog-secrets', val?.id]) !== undefined}
+              changes={
+                queryClient?.getQueryData(['changelog-secrets', val?.id]) ??
+                val?.secretsChanges ??
+                []
+              }
               createdAt={`${dayjs(val?.createdAt).format('HH:mm')} (${dayjs(
                 val?.createdAt
               ).fromNow()})`}
               onRollback={() => setRollbackDialogChangeId(val?.id)}
+              onValuesLoaded={(values) => handleFetchedSecretValues(0, val?.id, values)}
+              onError={() => {
+                toast({
+                  title: 'Something went wrong',
+                  variant: 'destructive',
+                })
+              }}
             />
             {/* {index !== 2 && <Separator />} */}
           </div>
