@@ -92,14 +92,14 @@ const ChangelogSecretsItem: React.FC<Props> = ({ changes, createdAt }) => {
                     >
                       <input
                         readOnly
-                        className="w-full opacity-100 font-bold outline-none bg-transparent"
+                        className="w-full opacity-100 font-semibold outline-none bg-transparent"
                         value={secretKey}
                       />
                     </div>
 
                     {oldValue !== null && (
                       <div
-                        className={clsx(['w-full h-10 md:h-full pr-2 flex gap-3.5 items-center'], {
+                        className={clsx(['w-full h-10 md:h-full pr-1 flex gap-3.5 items-center'], {
                           'md:w-1/2': newValue === null,
                           'md:w-1/3': newValue !== null,
                         })}
@@ -131,7 +131,7 @@ const ChangelogSecretsItem: React.FC<Props> = ({ changes, createdAt }) => {
 
                     {newValue !== null && (
                       <div
-                        className={clsx(['w-full h-10 md:h-full flex gap-3.5 items-center'], {
+                        className={clsx(['w-full h-10 md:h-full flex pr-3 gap-3.5 items-center'], {
                           'md:w-1/2': oldValue === null,
                           'md:w-1/3': oldValue !== null,
                         })}
