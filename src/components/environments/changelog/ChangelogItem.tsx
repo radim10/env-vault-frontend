@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react'
 
-import dayjs from 'dayjs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
@@ -12,9 +11,10 @@ import { SecretsChange } from '@/types/envChangelog'
 
 interface Props {
   changes: SecretsChange[]
+  createdAt: string
 }
 
-const ChangelogItem: React.FC<Props> = ({ changes }) => {
+const ChangelogItem: React.FC<Props> = ({ changes, createdAt }) => {
   const [hidden, setHidden] = useState(true)
 
   const toggleHide = () => setHidden(!hidden)
@@ -155,8 +155,8 @@ const ChangelogItem: React.FC<Props> = ({ changes }) => {
           </div>
 
           <div className="mt-3">
-            <div className="flex items-center text-[0.90rem] opacity-80">
-              <span className="block">{`${dayjs().format('HH:mm')} (${dayjs().fromNow()})`}</span>
+            <div className="flex items-center text-[0.90rem] opacity-85">
+              <span className="block ml-0.5 text-muted-foreground opacity-100">{createdAt}</span>
             </div>
           </div>
         </div>
