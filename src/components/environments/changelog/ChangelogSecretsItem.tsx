@@ -108,13 +108,10 @@ const ChangelogSecretsItem: React.FC<Props> = ({ changes, createdAt, onRollback 
 
                     {oldValue !== null && (
                       <div
-                        className={clsx(
-                          ['w-full h-10 md:h-full pr-2.5 flex gap-3.5 items-center'],
-                          {
-                            'md:w-1/2': newValue === null,
-                            'md:w-1/3': newValue !== null,
-                          }
-                        )}
+                        className={clsx(['w-full h-10 md:h-full flex gap-3.5 items-center'], {
+                          'md:w-1/2 pr-2.5': newValue === null,
+                          'md:w-1/3 pr-1': newValue !== null,
+                        })}
                       >
                         <div className="px-2.5 h-full flex justify-center items-center md:bg-red-600/5 md:dark:bg-red-600/10 md:border-red-600/40 md:dark:border-red-600/20 border-r-[1.5px] md:border-x-[1.5px] ">
                           <Icons.minus className="opacity-70 h-3.5 w-3.5 text-red-600" />
@@ -144,10 +141,10 @@ const ChangelogSecretsItem: React.FC<Props> = ({ changes, createdAt, onRollback 
                     {newValue !== null && (
                       <div
                         className={clsx(
-                          ['w-full h-10 md:h-full flex pr-2.5 gap-3.5 items-center'],
+                          ['w-full pr-2.5 h-10 md:h-full flex  gap-3.5 items-center'],
                           {
                             'md:w-1/2': oldValue === null,
-                            'md:w-1/3': oldValue !== null,
+                            'md:w-1/3 ': oldValue !== null,
                           }
                         )}
                       >
