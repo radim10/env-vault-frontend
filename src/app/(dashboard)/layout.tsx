@@ -1,4 +1,5 @@
 import Header from '@/components/Header'
+import ScrollToTopButton from '@/components/ScrollToTopBtn'
 import Sidebar from '@/components/Sidebar'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -16,6 +17,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="md:pt-8 pt-5 pb-20">{children}</div>
         </div>
       </div>
+      <ScrollToTopButton />
     </>
   )
 }
