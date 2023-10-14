@@ -10,14 +10,14 @@ const ScrollToTopButton = () => {
   const [scrolling, setScrolling] = useState(false)
 
   useEffect(() => {
-    if (y < 100 && scrolling) {
+    if (y < 200 && scrolling) {
       setScrolling(false)
     }
   }, [y, scrolling])
 
   return (
     <>
-      {y > 100 && !scrolling && (
+      {y > 200 && !scrolling && (
         <div className="fixed right-4 bottom-4 ease-in-out animate-in slide-in-from-bottom duration-300 z-20">
           <button
             onClick={() => {
