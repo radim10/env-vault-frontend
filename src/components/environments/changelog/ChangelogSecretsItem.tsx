@@ -141,7 +141,7 @@ const ChangelogSecretsItem: React.FC<Props> = ({
             {changes?.map(({ secretKey, newValue, oldValue }, index) => (
               <>
                 <div
-                  className={clsx(['w-full bg-red-400X text-sm h-fit py-2 md:py-0 md:h-11'], {
+                  className={clsx(['w-full bg-red-400X text-sm h-fit py-2 md:py-0 md:h-10'], {
                     'border-b border-input': index !== changes?.length - 1,
                   })}
                 >
@@ -162,7 +162,7 @@ const ChangelogSecretsItem: React.FC<Props> = ({
                     >
                       <input
                         readOnly
-                        className="w-full opacity-100 font-semibold outline-none bg-transparent"
+                        className="w-full h-full opacity-100 font-semibold outline-none bg-transparent"
                         value={secretKey}
                       />
                     </div>
@@ -185,7 +185,7 @@ const ChangelogSecretsItem: React.FC<Props> = ({
                             readOnly
                             className={clsx(
                               [
-                                'w-full text-red-600 dark:text-red-600/80 outline-none bg-transparent',
+                                'w-full h-full text-red-600 dark:text-red-600/80 outline-none bg-transparent',
                               ],
                               {
                                 'opacity-100 italic placeholder:text-red-600 placeholder:dark:text-red-600/80':
