@@ -56,7 +56,7 @@ export type RollbackEnvChangelogError = EnvChangelogError<
   'project_not_found' | 'environment_not_found' | 'change_not_found'
 >
 // TODO:
-export type RollbackEnvChangelogResData = undefined
+export type RollbackEnvChangelogResData = EnvChangelogItem | undefined
 
 export type RollbackEnvChangeReqArgs = {
   workspaceId: string
