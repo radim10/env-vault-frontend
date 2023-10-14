@@ -53,16 +53,35 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
 
   return (
     <>
-      <div className="mb-6">
-        <TypographyH4>Today</TypographyH4>
-      </div>
-
-      <div className="flex flex-col gap-6 md:gap-12">
+      <div className="flex flex-col gap-6 md:gap-8">
         {data?.pages?.flat(1)?.map((val, index) => (
-          <>
-            <ChangelogItem changes={val?.secretsChanges ?? []} />
+          <div>
+            <div className="mb-6">
+              {(dayjs(val?.createdAt).hour(12).format('YYYY-MM-DD') !==
+                dayjs(data?.pages?.flat(1)?.[index - 1]?.createdAt)
+                  .hour(12)
+                  .format('YYYY-MM-DD') &&
+                index > 0) ||
+                (index === 0 && (
+                  <TypographyH4>
+                    {dayjs(val?.createdAt).hour(12).format('YYYY-MM-DD') ===
+                    dayjs().format('YYYY-MM-DD')
+                      ? 'Today'
+                      : dayjs(val?.createdAt)?.year() === dayjs().year()
+                      ? dayjs(val?.createdAt).hour(12).format('MMM DD,  dd')
+                      : dayjs(val?.createdAt).hour(12).format('YYYY  MMM DD,  dd')}
+                  </TypographyH4>
+                ))}
+            </div>
+
+            <ChangelogItem
+              changes={val?.secretsChanges ?? []}
+              createdAt={`${dayjs(val?.createdAt).format('HH:mm')} (${dayjs(
+                val?.createdAt
+              ).fromNow()})`}
+            />
             {/* {index !== 2 && <Separator />} */}
-          </>
+          </div>
         ))}
       </div>
     </>
