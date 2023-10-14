@@ -107,7 +107,13 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
     closeDialog()
   }
 
-  const handleFetchedSecretValues = (page: number, changeId: string, secrets: SecretsChange[]) => {
+  const handleFetchedSecretValues = (args: {
+    page: number
+    changeId: string
+    secrets: SecretsChange[]
+  }) => {
+    const { page, changeId, secrets } = args
+
     const key = ['changelog', workspaceId, projectName, envName]
     const existingData = queryClient?.getQueryData<{ pages: Array<EnvChangelogItem[]> }>(key)
 
@@ -201,7 +207,13 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
                 val?.createdAt
               ).fromNow()})`}
               onRollback={() => setRollbackDialogChangeId(val?.id)}
-              onValuesLoaded={(values) => handleFetchedSecretValues(0, val?.id, values)}
+              onValuesLoaded={(values) =>
+                handleFetchedSecretValues({
+                  page: Math.ceil((index + 1) / 5) - 1,
+                  changeId: val?.id,
+                  secrets: values,
+                })
+              }
               onError={() => {
                 toast({
                   title: 'Something went wrong',
