@@ -1,5 +1,5 @@
 import sendRequest, { APIError } from '@/api/instance'
-import { EnvChangelogItem } from '@/types/envChangelog'
+import { EnvChangelogItem, SecretsChange } from '@/types/envChangelog'
 
 // NOTE: errors
 type EnvChangelogErrorCode = 'project_not_found' | 'environment_not_found' | 'change_not_found'
@@ -56,7 +56,30 @@ export async function getEnvChangelogItems(args: {
 }
 
 // get secrets
+export type GetEnvChangelogItemSecretsError = EnvChangelogError<
+  'project_not_found' | 'environment_not_found' | 'change_not_found'
+>
+export type GetEnvChangelogItemSecretsData = Array<SecretsChange>
 
+export type GetEnvChangelogItemSecretsReqArgs = {
+  workspaceId: string
+  projectName: string
+  envName: string
+  changeId: string
+}
+
+export async function getEnvChangelogItemSecrets(args: GetEnvChangelogItemSecretsReqArgs) {
+  const { workspaceId, projectName, envName, changeId } = args
+
+  const response = sendRequest<GetEnvChangelogItemSecretsData>({
+    method: 'GET',
+    basePath: 'workspaces',
+    path: `${workspaceId}/projects/${projectName}/environments/${envName}/changelog/${changeId}/secrets`,
+  })
+  return await response
+}
+
+// rollback
 export type RollbackEnvChangelogError = EnvChangelogError<
   'project_not_found' | 'environment_not_found' | 'change_not_found'
 >
