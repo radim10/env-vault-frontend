@@ -92,7 +92,7 @@ const ChangelogSecretsItem: React.FC<Props> = ({ changes, createdAt }) => {
                     >
                       <input
                         readOnly
-                        className="w-full opacity-80 font-bold outline-none bg-transparent"
+                        className="w-full opacity-100 font-bold outline-none bg-transparent"
                         value={secretKey}
                       />
                     </div>
