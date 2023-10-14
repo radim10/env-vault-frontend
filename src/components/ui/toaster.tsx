@@ -9,7 +9,7 @@ import {
   ToastViewport,
 } from '@/components/ui/toast'
 import { useToast } from '@/components/ui/use-toast'
-import { AlertCircle, CheckCircleIcon } from 'lucide-react'
+import { AlertCircle, CheckCircleIcon, InfoIcon } from 'lucide-react'
 
 export function Toaster() {
   const { toasts } = useToast()
@@ -19,10 +19,11 @@ export function Toaster() {
       {toasts.map(function ({ id, title, description, variant, action, ...props }) {
         return (
           <Toast key={id} {...props}>
-            <div className="flex items-center gap-4">
+            <div className="flex items-start gap-4">
               {variant && variant === 'success' && (
                 <CheckCircleIcon className="h-5 w-5 text-green-600" />
               )}
+              {variant && variant === 'info' && <InfoIcon className="h-5 w-5 text-blue-600" />}
               {variant && variant === 'destructive' && (
                 <AlertCircle className="h-5 w-5 text-destructive" />
               )}
