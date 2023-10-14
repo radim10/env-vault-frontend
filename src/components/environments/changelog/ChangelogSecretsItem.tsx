@@ -88,7 +88,7 @@ const ChangelogSecretsItem: React.FC<Props> = ({
           <div className="flex gap-1.5 items-center">
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger>
+                <TooltipTrigger disabled>
                   <Button
                     size={'sm'}
                     variant={'ghost'}
