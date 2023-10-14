@@ -9,6 +9,8 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import { getEnvChangelog } from '@/api/requests/envChangelog'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
+import ChangelogItemSkeleton from './ChangelogItemSkeleton'
+import { Skeleton } from '@/components/ui/skeleton'
 
 dayjs.extend(relativeTime)
 
@@ -21,40 +23,57 @@ interface Props {
 const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
   const [hasMore, setHasMore] = useState(true)
 
-  const { data, error, isFetching, isFetchingNextPage, fetchNextPage, isRefetching, refetch } =
-    useInfiniteQuery(
-      ['changelog', workspaceId, projectName, envName],
-      async ({ pageParam = undefined }) => {
-        const res = await getEnvChangelog({
-          workspaceId,
-          projectName,
-          envName,
-          params: pageParam && {
-            date: pageParam?.date,
-            id: pageParam?.id,
-          },
-        })
+  const {
+    data,
+    error,
+    isFetching,
+    isFetchingNextPage,
+    fetchNextPage,
+    isRefetching,
+    refetch,
+    isLoading,
+  } = useInfiniteQuery(
+    ['changelog', workspaceId, projectName, envName],
+    async ({ pageParam = undefined }) => {
+      const res = await getEnvChangelog({
+        workspaceId,
+        projectName,
+        envName,
+        params: pageParam && {
+          date: pageParam?.date,
+          id: pageParam?.id,
+        },
+      })
 
-        setHasMore(res?.hasMore ?? false)
+      setHasMore(res?.hasMore ?? false)
 
-        return res.data
+      return res.data
+    },
+    {
+      enabled: true,
+      getPreviousPageParam: (firstPage) => {
+        return {
+          id: firstPage?.[0]?.createdAt ?? undefined,
+          date: firstPage?.[0]?.createdAt ?? undefined,
+        }
       },
-      {
-        enabled: true,
-        getPreviousPageParam: (firstPage) => {
-          return {
-            id: firstPage?.[0]?.createdAt ?? undefined,
-            date: firstPage?.[0]?.createdAt ?? undefined,
-          }
-        },
-        getNextPageParam: (lastPage) => {
-          return {
-            id: lastPage?.[lastPage.length - 1]?.id ?? undefined,
-            date: lastPage?.[lastPage.length - 1]?.createdAt ?? undefined,
-          }
-        },
-      }
+      getNextPageParam: (lastPage) => {
+        return {
+          id: lastPage?.[lastPage.length - 1]?.id ?? undefined,
+          date: lastPage?.[lastPage.length - 1]?.createdAt ?? undefined,
+        }
+      },
+    }
+  )
+
+  if (isLoading || isRefetching) {
+    return (
+      <>
+        <Skeleton className="h-7 w-28 mb-6" />
+        <ChangelogItemSkeleton />
+      </>
     )
+  }
 
   return (
     <>
@@ -88,6 +107,8 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
             {/* {index !== 2 && <Separator />} */}
           </div>
         ))}
+
+        {isFetchingNextPage && <ChangelogItemSkeleton count={1} />}
       </div>
 
       {hasMore && !isRefetching && !isFetching && !isFetchingNextPage && data && (
