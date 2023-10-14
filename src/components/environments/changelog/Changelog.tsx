@@ -14,6 +14,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import RollbackDialog from './RollbackDialog'
 import { EnvChangelogItem, SecretsChange } from '@/types/envChangelog'
 import { useToast } from '@/components/ui/use-toast'
+import Error from '@/components/Error'
 
 dayjs.extend(relativeTime)
 
@@ -30,49 +31,41 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
   const [hasMore, setHasMore] = useState(true)
   const [rollbackDialogChangeId, setRollbackDialogChangeId] = useState<string | null>(null)
 
-  const {
-    data,
-    error,
-    isFetching,
-    isFetchingNextPage,
-    fetchNextPage,
-    isRefetching,
-    refetch,
-    isLoading,
-  } = useInfiniteQuery(
-    ['changelog', workspaceId, projectName, envName],
-    async ({ pageParam = undefined }) => {
-      const res = await getEnvChangelogItems({
-        workspaceId,
-        projectName,
-        envName,
-        params: pageParam && {
-          date: pageParam?.date,
-          id: pageParam?.id,
+  const { data, error, isFetching, isFetchingNextPage, fetchNextPage, isRefetching, isLoading } =
+    useInfiniteQuery(
+      ['changelog', workspaceId, projectName, envName],
+      async ({ pageParam = undefined }) => {
+        const res = await getEnvChangelogItems({
+          workspaceId,
+          projectName,
+          envName,
+          params: pageParam && {
+            date: pageParam?.date,
+            id: pageParam?.id,
+          },
+        })
+
+        setHasMore(res?.hasMore ?? false)
+
+        return res.data
+      },
+      {
+        enabled: true,
+        structuralSharing: false,
+        getPreviousPageParam: (firstPage) => {
+          return {
+            id: firstPage?.[0]?.createdAt ?? undefined,
+            date: firstPage?.[0]?.createdAt ?? undefined,
+          }
         },
-      })
-
-      setHasMore(res?.hasMore ?? false)
-
-      return res.data
-    },
-    {
-      enabled: true,
-      structuralSharing: false,
-      getPreviousPageParam: (firstPage) => {
-        return {
-          id: firstPage?.[0]?.createdAt ?? undefined,
-          date: firstPage?.[0]?.createdAt ?? undefined,
-        }
-      },
-      getNextPageParam: (lastPage) => {
-        return {
-          id: lastPage?.[lastPage.length - 1]?.id ?? undefined,
-          date: lastPage?.[lastPage.length - 1]?.createdAt ?? undefined,
-        }
-      },
-    }
-  )
+        getNextPageParam: (lastPage) => {
+          return {
+            id: lastPage?.[lastPage.length - 1]?.id ?? undefined,
+            date: lastPage?.[lastPage.length - 1]?.createdAt ?? undefined,
+          }
+        },
+      }
+    )
 
   const handleRollbackData = (newItem: EnvChangelogItem) => {
     const key = ['changelog', workspaceId, projectName, envName]
@@ -158,6 +151,10 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
         </div>
       </>
     )
+  }
+
+  if (error) {
+    return <Error />
   }
 
   return (
