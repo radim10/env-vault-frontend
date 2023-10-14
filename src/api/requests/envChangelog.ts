@@ -26,13 +26,16 @@ export function envChangelogErrorMsgFromCode(
 }
 
 // NOTE: requests
-export type GetEnvChangelogError = EnvChangelogError<'project_not_found' | 'environment_not_found'>
-export type GetEnvChangelogData = {
+// list
+export type GetEnvChangelogItemsError = EnvChangelogError<
+  'project_not_found' | 'environment_not_found'
+>
+export type GetEnvChangelogItemsData = {
   hasMore: boolean
   data: EnvChangelogItem[]
 }
 
-export async function getEnvChangelog(args: {
+export async function getEnvChangelogItems(args: {
   workspaceId: string
   projectName: string
   envName: string
@@ -43,7 +46,7 @@ export async function getEnvChangelog(args: {
 }) {
   const { workspaceId, projectName, envName, params } = args
 
-  const response = sendRequest<GetEnvChangelogData>({
+  const response = sendRequest<GetEnvChangelogItemsData>({
     params,
     method: 'GET',
     basePath: 'workspaces',
@@ -52,10 +55,11 @@ export async function getEnvChangelog(args: {
   return await response
 }
 
+// get secrets
+
 export type RollbackEnvChangelogError = EnvChangelogError<
   'project_not_found' | 'environment_not_found' | 'change_not_found'
 >
-// TODO:
 export type RollbackEnvChangelogResData = EnvChangelogItem | undefined
 
 export type RollbackEnvChangeReqArgs = {

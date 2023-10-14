@@ -6,7 +6,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import TypographyH4 from '@/components/typography/TypographyH4'
 import ChangelogItem from './ChangelogSecretsItem'
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
-import { getEnvChangelog, rollbackEnvChangelog } from '@/api/requests/envChangelog'
+import { getEnvChangelogItems, rollbackEnvChangelog } from '@/api/requests/envChangelog'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
 import ChangelogItemSkeleton from './ChangelogItemSkeleton'
@@ -42,7 +42,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
   } = useInfiniteQuery(
     ['changelog', workspaceId, projectName, envName],
     async ({ pageParam = undefined }) => {
-      const res = await getEnvChangelog({
+      const res = await getEnvChangelogItems({
         workspaceId,
         projectName,
         envName,
