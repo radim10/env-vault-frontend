@@ -80,15 +80,18 @@ const ChangelogSecretsItem: React.FC<Props> = ({ changes, createdAt }) => {
                 >
                   <div className="flex flex-col w-full md:flex-row gap-0 md:gap-2 md:items-center h-full">
                     <div
-                      className={clsx(['w-full h-9 md:h-full flex gap-3.5 px-3.5 items-center'], {
-                        'md:w-1/2':
-                          (oldValue !== null && newValue === null) ||
-                          (oldValue === null && newValue !== null),
-                        'md:w-1/3': !(
-                          (oldValue !== null && newValue === null) ||
-                          (oldValue === null && newValue !== null)
-                        ),
-                      })}
+                      className={clsx(
+                        ['w-full h-9 md:h-full flex gap-3.5 pl-3.5 pr-1.5 items-center'],
+                        {
+                          'md:w-1/2':
+                            (oldValue !== null && newValue === null) ||
+                            (oldValue === null && newValue !== null),
+                          'md:w-1/3': !(
+                            (oldValue !== null && newValue === null) ||
+                            (oldValue === null && newValue !== null)
+                          ),
+                        }
+                      )}
                     >
                       <input
                         readOnly
