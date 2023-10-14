@@ -12,9 +12,10 @@ import { SecretsChange } from '@/types/envChangelog'
 interface Props {
   changes: SecretsChange[]
   createdAt: string
+  onRollback: () => void
 }
 
-const ChangelogSecretsItem: React.FC<Props> = ({ changes, createdAt }) => {
+const ChangelogSecretsItem: React.FC<Props> = ({ changes, createdAt, onRollback }) => {
   const [hidden, setHidden] = useState(true)
 
   const toggleHide = () => setHidden(!hidden)
@@ -41,7 +42,12 @@ const ChangelogSecretsItem: React.FC<Props> = ({ changes, createdAt }) => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
-                  <Button size={'sm'} variant={'ghost'} className="opacity-80 hover:opacity-100">
+                  <Button
+                    size={'sm'}
+                    variant={'ghost'}
+                    className="opacity-80 hover:opacity-100"
+                    onClick={onRollback}
+                  >
                     <Icons.undo className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
