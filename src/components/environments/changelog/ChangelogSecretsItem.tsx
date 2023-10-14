@@ -14,7 +14,7 @@ interface Props {
   createdAt: string
 }
 
-const ChangelogItem: React.FC<Props> = ({ changes, createdAt }) => {
+const ChangelogSecretsItem: React.FC<Props> = ({ changes, createdAt }) => {
   const [hidden, setHidden] = useState(true)
 
   const toggleHide = () => setHidden(!hidden)
@@ -176,4 +176,4 @@ const ChangelogItem: React.FC<Props> = ({ changes, createdAt }) => {
   )
 }
 
-export default ChangelogItem
+export default ChangelogSecretsItem
