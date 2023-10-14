@@ -113,8 +113,17 @@ const ChangelogItem: React.FC<Props> = ({ changes, createdAt }) => {
                         ) : (
                           <input
                             readOnly
-                            className="w-full text-red-600 dark:text-red-600/80 outline-none bg-transparent"
-                            value={oldValue}
+                            className={clsx(
+                              [
+                                'w-full text-red-600 dark:text-red-600/80 outline-none bg-transparent',
+                              ],
+                              {
+                                'opacity-100 italic placeholder:text-red-600 placeholder:dark:text-red-600/80':
+                                  oldValue === '',
+                              }
+                            )}
+                            placeholder="empty string"
+                            value={oldValue === '' ? undefined : oldValue}
                           />
                         )}
                       </div>
@@ -131,7 +140,7 @@ const ChangelogItem: React.FC<Props> = ({ changes, createdAt }) => {
                           <Icons.plus className="opacity-70 h-3.5 w-3.5 text-green-600" />
                         </div>
                         {hidden ? (
-                          <span className="block opacity-85 font-bold ">•••••••••••</span>
+                          <span className="block opacity-85">•••••••••••</span>
                         ) : (
                           <input
                             readOnly
@@ -140,10 +149,12 @@ const ChangelogItem: React.FC<Props> = ({ changes, createdAt }) => {
                                 'w-full text-green-600 dark:text-green-600/90 outline-none bg-transparent',
                               ],
                               {
-                                'italic opacity-75': newValue === '',
+                                'opacity-100 italic placeholder:text-green-600 placeholder:dark:text-green-600/80':
+                                  newValue === '',
                               }
                             )}
-                            value={newValue === '' ? 'empty string' : newValue}
+                            placeholder="empty string"
+                            value={newValue === '' ? undefined : newValue}
                           />
                         )}
                       </div>
