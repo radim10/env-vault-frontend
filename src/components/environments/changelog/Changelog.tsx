@@ -112,7 +112,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
     return (
       <>
         <Skeleton className="h-7 w-28 mb-6" />
-        <div className="flex flex-col gap-10 md:gap-10">
+        <div className="flex flex-col gap-11 md:gap-11">
           <ChangelogItemSkeleton />
           <ChangelogItemSkeleton />
         </div>
@@ -134,7 +134,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
           if (!item) handleNoChangesToRollback()
         }}
       />
-      <div className="flex flex-col gap-4 md:gap-4">
+      <div className="flex flex-col gap-5 md:gap-5">
         {data?.pages?.flat(1)?.map((val, index) => (
           <div>
             <div className="mb-6">
