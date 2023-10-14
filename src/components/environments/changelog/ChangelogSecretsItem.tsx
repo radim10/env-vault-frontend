@@ -1,24 +1,71 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import clsx from 'clsx'
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import clsx from 'clsx'
 import { SecretsChange } from '@/types/envChangelog'
+import { useGetEnvChangelogItemSecrets } from '@/api/queries/envChangelog'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 interface Props {
+  workspaceId: string
+  projectName: string
+  envName: string
+  changeId: string
+  valuesLoaded: boolean
+
+  //
   changes: SecretsChange[]
   createdAt: string
   onRollback: () => void
+  onValuesLoaded: (values: SecretsChange[]) => void
+  onError: () => void
 }
 
-const ChangelogSecretsItem: React.FC<Props> = ({ changes, createdAt, onRollback }) => {
-  const [hidden, setHidden] = useState(true)
+const ChangelogSecretsItem: React.FC<Props> = ({
+  workspaceId,
+  projectName,
+  envName,
+  changeId,
+  valuesLoaded,
 
-  const toggleHide = () => setHidden(!hidden)
+  changes,
+  createdAt,
+  onError,
+  onRollback,
+  onValuesLoaded,
+}) => {
+  const [hidden, setHidden] = useState(true)
+  // const toggleHide = () => setHidden(!hidden)
+
+  const { refetch, isFetching } = useGetEnvChangelogItemSecrets(
+    {
+      workspaceId,
+      projectName,
+      envName,
+      changeId,
+    },
+    {
+      onSuccess: (data) => {
+        onValuesLoaded(data)
+        setHidden(false)
+      },
+      onError,
+      enabled: false,
+      staleTime: Infinity,
+    }
+  )
+
+  const toggleHide = () => {
+    if (valuesLoaded) {
+      setHidden(!hidden)
+    } else {
+      refetch()
+    }
+  }
 
   return (
     <>
@@ -45,7 +92,13 @@ const ChangelogSecretsItem: React.FC<Props> = ({ changes, createdAt, onRollback 
                   <Button
                     size={'sm'}
                     variant={'ghost'}
-                    className="opacity-80 hover:opacity-100"
+                    disabled={isFetching}
+                    className={clsx([
+                      'opacity-80 hover:opacity-100',
+                      {
+                        'cursor-default': isFetching,
+                      },
+                    ])}
                     onClick={onRollback}
                   >
                     <Icons.undo className="h-4 w-4" />
@@ -55,17 +108,25 @@ const ChangelogSecretsItem: React.FC<Props> = ({ changes, createdAt, onRollback 
               </Tooltip>
 
               <Tooltip>
-                <TooltipTrigger>
+                <TooltipTrigger disabled={true}>
                   <Button
                     size={'sm'}
                     variant={'ghost'}
-                    className="opacity-80 hover:opacity-100"
+                    loading={isFetching}
+                    className={clsx(['opacity-80 hover:opacity-100 flex gap-0 '], {
+                      'text-primary hover:text-primary opacity-100 cursor-default hover:bg-transparent':
+                        isFetching,
+                    })}
                     onClick={() => toggleHide()}
                   >
-                    {hidden ? (
-                      <Icons.eye className="h-4 w-4" />
-                    ) : (
-                      <Icons.eyeOff className="h-4 w-4" />
+                    {!isFetching && (
+                      <>
+                        {hidden ? (
+                          <Icons.eye className="h-4 w-4" />
+                        ) : (
+                          <Icons.eyeOff className="h-4 w-4" />
+                        )}
+                      </>
                     )}
                   </Button>
                 </TooltipTrigger>
