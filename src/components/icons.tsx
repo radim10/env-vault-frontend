@@ -133,4 +133,5 @@ export const Icons = {
   minus: Minus,
   arrowDown: ArrowDown,
   arrowUp: ArrowUp,
+  asterisk: SquareAsterisk,
 }
