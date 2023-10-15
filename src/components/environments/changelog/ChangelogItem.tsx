@@ -28,7 +28,7 @@ const ChangelogItem: React.FC<Props> = ({ createdAt, change, onRollback }) => {
                   <span className="font-semiboldX text-primary">{change?.old}</span> to{' '}
                   <span className="font-semiboldX text-primary">{change?.new}</span>
                 </div>
-                <Icons.pencil className="hidden md:block w-3.5 h-3.5 text-foregroundX opacity-80X -mt-0.5" />
+                <Icons.pencil className="hidden md:block w-3.5 h-3.5 text-foregroundX opacity-80 -mt-0.5" />
               </div>
             )}
 

@@ -77,7 +77,7 @@ const ChangelogSecretsItem: React.FC<Props> = ({
             <div>
               <span>Modified secrets</span>
             </div>
-            <Icons.asterisk className="hidden md:block w-4 h-4 text-foreground opacity-80 -mt-0.5" />
+            <Icons.asterisk className="hidden md:block w-4 h-4 text-foreground opacity-80" />
           </div>
         }
         rollbackBtn={{ onClick: onRollback, disabled: isFetching }}
