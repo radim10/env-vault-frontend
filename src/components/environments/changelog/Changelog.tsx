@@ -1,7 +1,9 @@
 'use client'
 
+import clsx from 'clsx'
 import dayjs from 'dayjs'
-import React, { useState } from 'react'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import TypographyH4 from '@/components/typography/TypographyH4'
 import ChangelogSecretsItem from './ChangelogSecretsItem'
@@ -16,7 +18,7 @@ import { EnvChangelogItem, SecretsChange } from '@/types/envChangelog'
 import { useToast } from '@/components/ui/use-toast'
 import Error from '@/components/Error'
 import ChangelogItem from './ChangelogItem'
-import clsx from 'clsx'
+import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
 
 dayjs.extend(relativeTime)
 
@@ -27,11 +29,15 @@ interface Props {
 }
 
 const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
+  const router = useRouter()
   const { toast } = useToast()
   const queryClient = useQueryClient()
+  const selectedEnvironment = useSelectedEnvironmentStore()
 
   const [hasMore, setHasMore] = useState(true)
-  const [rollbackDialogChangeId, setRollbackDialogChangeId] = useState<string | null>(null)
+  const [rollbackDialog, setRollbackDialog] = useState<{ id: string; secrets: boolean } | null>(
+    null
+  )
 
   const { data, error, isFetching, isFetchingNextPage, fetchNextPage, isRefetching, isLoading } =
     useInfiniteQuery(
@@ -82,10 +88,27 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
 
       updatedData.pages[0] = updatedPage
 
-      queryClient.setQueryData(key, updatedData)
-
       if (newItem?.secretsChanges) {
-        // queryClient.setQueryData(['changelog-secrets', newItem?.id], newItem?.secretsChanges)
+        queryClient.setQueryData(key, updatedData)
+      }
+
+      if (newItem?.change) {
+        const change = newItem?.change
+
+        if (change?.action === 'renamed') {
+          // navigate + chache
+          handleRenameRollback({
+            newName: change?.new,
+            changelogKey: key,
+            updatedData,
+          })
+        } else if (change?.action === 'type') {
+          selectedEnvironment?.update({ type: change?.new })
+          // update state + cache
+        } else if (change?.action === 'lock') {
+          selectedEnvironment?.update({ locked: change?.locked })
+          // state + cache
+        }
       }
     }
 
@@ -97,12 +120,56 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
     })
   }
 
-  const handleNoChangesToRollback = () => {
+  const handleRenameRollback = (args: {
+    changelogKey: string[]
+    newName: string
+    updatedData: {
+      pages: Array<EnvChangelogItem[]>
+    }
+  }) => {
+    const { changelogKey, updatedData, newName } = args
+
+    queryClient.setQueryData(['changelog', workspaceId, projectName, newName], updatedData)
+    queryClient.setQueryData(changelogKey, null)
+
+    // update env cache
+    const existingEnvData = queryClient.getQueryData([workspaceId, projectName, envName])
+
+    if (existingEnvData) {
+      // ???
+      // queryClient.removeQueries([workspaceId, projectName], { exact: false })
+      queryClient.invalidateQueries([workspaceId, projectName], { exact: false })
+
+      queryClient.setQueryData([workspaceId, projectName, envName], null)
+      queryClient.setQueryData([workspaceId, projectName, newName], existingEnvData)
+    }
+
+    // secrets:
+    const existingSecretsData = queryClient.getQueryData([
+      workspaceId,
+      projectName,
+      envName,
+      'secrets',
+    ])
+
+    if (existingSecretsData) {
+      queryClient.getQueryData([workspaceId, projectName, newName, 'secrets'], existingSecretsData)
+    }
+    // TODO: maybe do other???
+
+    selectedEnvironment?.update({ name: newName })
+    router.push(`/workspace/${workspaceId}/projects/${projectName}/env/${newName}/changelog`)
+  }
+
+  const handleNoChangesToRollback = (isSecrets: boolean) => {
     toast({
       title: 'No changes to rollback',
-      description: 'This is current secrets state',
+      description: isSecrets
+        ? 'This is current secrets state'
+        : 'This is current environment state',
       variant: 'info',
     })
+
     closeDialog()
   }
 
@@ -141,7 +208,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
     }
   }
 
-  const closeDialog = () => setRollbackDialogChangeId(null)
+  const closeDialog = () => setRollbackDialog(null)
 
   if (isLoading || isRefetching) {
     return (
@@ -165,12 +232,12 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
         workspaceId={workspaceId}
         projectName={projectName}
         envName={envName}
-        changeId={rollbackDialogChangeId ?? ''}
-        opened={rollbackDialogChangeId !== null}
-        onClose={() => setRollbackDialogChangeId(null)}
+        changeId={rollbackDialog?.id ?? ''}
+        opened={rollbackDialog !== null}
+        onClose={() => setRollbackDialog(null)}
         onSuccess={(item) => {
           if (item) handleRollbackData(item)
-          if (!item) handleNoChangesToRollback()
+          if (!item) handleNoChangesToRollback(rollbackDialog?.secrets ? true : false)
         }}
       />
       <div className="flex flex-col gap-5 md:gap-5">
@@ -216,7 +283,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
                 createdAt={`${dayjs(val?.createdAt).format('HH:mm')} (${dayjs(
                   val?.createdAt
                 ).fromNow()})`}
-                onRollback={() => setRollbackDialogChangeId(val?.id)}
+                onRollback={() => setRollbackDialog({ id: val?.id, secrets: true })}
                 onValuesLoaded={(values) =>
                   handleFetchedSecretValues({
                     page: Math.ceil((index + 1) / 5) - 1,
@@ -238,7 +305,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
                 createdAt={`${dayjs(val?.createdAt).format('HH:mm')} (${dayjs(
                   val?.createdAt
                 ).fromNow()})`}
-                onRollback={() => setRollbackDialogChangeId(val?.id)}
+                onRollback={() => setRollbackDialog({ id: val?.id, secrets: false })}
               />
             )}
             {/* {index !== 2 && <Separator />} */}
