@@ -28,6 +28,7 @@ import {
   Archive,
   Search,
   Undo,
+  Undo2,
   Save,
   FileText,
   FileJson,
@@ -134,4 +135,5 @@ export const Icons = {
   arrowDown: ArrowDown,
   arrowUp: ArrowUp,
   asterisk: SquareAsterisk,
+  undo2: Undo2,
 }
