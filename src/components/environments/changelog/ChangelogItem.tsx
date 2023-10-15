@@ -24,7 +24,7 @@ const ChangelogItem: React.FC<Props> = ({ createdAt, change, onRollback }) => {
             {change?.action === 'renamed' && (
               <div className="flex gap-2 items-center flex-wrap">
                 <div>
-                  <span>{`Renamed environment from `}</span>
+                  <span>{`Renamed environment type from `}</span>
                   <span className="text-foreground font-semiboldX">{change?.old}</span> to{' '}
                   <span className="text-foreground font-semiboldX">{change?.new}</span>
                 </div>
