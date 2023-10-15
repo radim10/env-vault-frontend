@@ -2,7 +2,11 @@ import sendRequest, { APIError } from '@/api/instance'
 import { EnvChangelogItem, SecretsChange } from '@/types/envChangelog'
 
 // NOTE: errors
-type EnvChangelogErrorCode = 'project_not_found' | 'environment_not_found' | 'change_not_found'
+type EnvChangelogErrorCode =
+  | 'project_not_found'
+  | 'environment_not_found'
+  | 'change_not_found'
+  | 'environment_already_exists'
 
 export type EnvChangelogError<T extends EnvChangelogErrorCode | void> = APIError<T>
 
@@ -14,13 +18,20 @@ export function envChangelogErrorMsgFromCode(
   if (code === 'project_not_found') {
     msg = 'Project not found'
   }
+
   if (code === 'environment_not_found') {
     msg = 'Environment not found'
+  }
+
+  if (code === 'environment_already_exists') {
+    msg = 'Environment with selected name already exists'
   }
 
   if (code === 'workspace_not_found') {
     msg = 'Workspace has been deleted'
   }
+
+  if (msg === '') msg = 'Something went wrong'
 
   return msg
 }
