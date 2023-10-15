@@ -9,6 +9,7 @@ import { SecretsChange } from '@/types/envChangelog'
 import { useGetEnvChangelogItemSecrets } from '@/api/queries/envChangelog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import ChangelogLayout from './ChangelogLayout'
 
 interface Props {
   workspaceId: string
@@ -66,6 +67,115 @@ const ChangelogSecretsItem: React.FC<Props> = ({
       refetch()
     }
   }
+
+  return (
+    <>
+      <ChangelogLayout
+        createdAt={createdAt}
+        title="Modified secrets"
+        rollbackBtn={{ onClick: onRollback, disabled: isFetching }}
+        showBtn={{
+          hidden,
+          loading: isFetching,
+          onClick: toggleHide,
+        }}
+      >
+        <div className="rounded-md border border-input flex flex-col gap-0">
+          {changes?.map(({ secretKey, newValue, oldValue }, index) => (
+            <>
+              <div
+                className={clsx(['w-full bg-red-400X text-sm h-fit py-2 md:py-0 md:h-10'], {
+                  'border-b border-input': index !== changes?.length - 1,
+                })}
+              >
+                <div className="flex flex-col w-full md:flex-row gap-0 md:gap-2 md:items-center h-full">
+                  <div
+                    className={clsx([
+                      'w-full md:w-[37%] xl:w-[35%] h-9 md:h-full flex gap-3.5 pl-3.5 pr-1.5 items-center',
+                    ])}
+                  >
+                    <input
+                      readOnly
+                      className="w-full h-full opacity-100 font-semibold outline-none bg-transparent"
+                      value={secretKey}
+                    />
+                  </div>
+
+                  <div className="flex flex-row gap-3.5 md:gap-0 flex-grow h-full">
+                    {oldValue !== null && (
+                      <div
+                        className={clsx(['w-full h-10 md:h-full flex gap-3.5 items-center'], {
+                          'md:w-2/2 pr-2.5': newValue === null,
+                          'md:w-1/2 pr-1': newValue !== null,
+                        })}
+                      >
+                        <div className="px-2.5 h-full flex justify-center items-center md:bg-red-600/5 md:dark:bg-red-600/10 md:border-red-600/40 md:dark:border-red-600/20 border-r-[1.5px] md:border-x-[1.5px] ">
+                          <Icons.minus className="opacity-70 h-3.5 w-3.5 text-red-600" />
+                        </div>
+
+                        {hidden ? (
+                          <span className="block opacity-85">•••••••••••</span>
+                        ) : (
+                          <input
+                            readOnly
+                            className={clsx(
+                              [
+                                'w-full h-full text-red-600 dark:text-red-600/80 outline-none bg-transparent',
+                              ],
+                              {
+                                'opacity-100 italic placeholder:text-red-600 placeholder:dark:text-red-600/80':
+                                  oldValue === '',
+                              }
+                            )}
+                            placeholder="empty string"
+                            value={oldValue === '' ? undefined : oldValue}
+                          />
+                        )}
+                      </div>
+                    )}
+
+                    {newValue !== null && (
+                      <div
+                        className={clsx(
+                          ['w-full pr-2.5 h-10 md:h-full flex  gap-3.5 items-center'],
+                          {
+                            'md:w-2/2': oldValue === null,
+                            'md:w-1/2 ': oldValue !== null,
+                          }
+                        )}
+                      >
+                        <div className="px-2.5 h-full flex justify-center items-center md:bg-green-600/5 md:dark:bg-green-600/10 md:border-green-600/40 md:dark:border-green-600/20 border-r-[1.5px] md:border-x-[1.5px] ">
+                          <Icons.plus className="opacity-70 h-3.5 w-3.5 text-green-600" />
+                        </div>
+                        {hidden ? (
+                          <span className="block opacity-85">•••••••••••</span>
+                        ) : (
+                          <input
+                            readOnly
+                            className={clsx(
+                              [
+                                'w-full text-green-600 dark:text-green-600/90 outline-none bg-transparent',
+                              ],
+                              {
+                                'opacity-100 italic placeholder:text-green-600 placeholder:dark:text-green-600/80':
+                                  newValue === '',
+                              }
+                            )}
+                            placeholder="empty string"
+                            value={newValue === '' ? undefined : newValue}
+                          />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </>
+          ))}
+        </div>
+      </ChangelogLayout>
+    </>
+  )
 
   return (
     <>
