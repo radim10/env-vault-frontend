@@ -13,10 +13,11 @@ import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
 import DeleteEnvironmentDialog from '../environments/DeleteEnvironmentDialog'
 import { Project } from '@/types/projects'
 import { Secret } from '@/types/secrets'
-import EnvActionsDropdown from './EnvActionsDropdown'
 import LockEnvDialog from '../environments/LockEnvDialog'
 import ChangeEnvironmentTypeDialog from '../environments/ChangeEnvironmentTypeDialog'
 import { Environment, EnvironmentType } from '@/types/environments'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
+import UndoAllChangesDialog from './UndoAllChangesDialog'
 
 interface Props {
   showBtn: boolean
@@ -29,14 +30,15 @@ const SaveSecretsToolbar: React.FC<Props> = ({ showBtn }) => {
 
   const { data: selectedEnv, update: updateSelectedEnv } = useSelectedEnvironmentStore()
 
-  const [dialog, setDialog] = useState<'save' | 'rename' | 'delete' | 'lock' | 'changeType' | null>(
-    null
-  )
+  const [dialog, setDialog] = useState<
+    'save' | 'undo' | 'rename' | 'delete' | 'lock' | 'changeType' | null
+  >(null)
 
-  const { loaded, secrets } = useEditedSecretsStore((state) => {
+  const { loaded, secrets, undoAllChanges } = useEditedSecretsStore((state) => {
     return {
       loaded: state.loaded,
       secrets: state.secrets,
+      undoAllChanges: state.undoAllChanges,
     }
   })
 
@@ -341,6 +343,26 @@ const SaveSecretsToolbar: React.FC<Props> = ({ showBtn }) => {
     router.push(`/workspace/${selectedEnv?.workspaceId}/projects/${selectedEnv?.projectName}`)
   }
 
+  const handleUndoAllSecretsChanges = () => {
+    const secretsData = queryClient.getQueryData<Secret[]>([
+      selectedEnv?.workspaceId,
+      selectedEnv?.projectName,
+      selectedEnv?.name,
+      'secrets',
+    ])
+
+    if (secretsData) {
+      undoAllChanges(secretsData)
+    }
+
+    setDialog(null)
+
+    toast({
+      title: 'All changes have been undone',
+      variant: 'success',
+    })
+  }
+
   if (!selectedEnv) {
     return <></>
   }
@@ -370,6 +392,22 @@ const SaveSecretsToolbar: React.FC<Props> = ({ showBtn }) => {
           )}
         />
       )}
+
+      <UndoAllChangesDialog
+        opened={dialog === 'undo'}
+        changeCount={
+          secrets?.filter(
+            (s) =>
+              s.action !== null ||
+              (s.newDescription && !s.description) ||
+              (s.description && s.newDescription !== s.description && s.newDescription) ||
+              (s.newDescription && s.newDescription?.length === 0 && s.description) ||
+              (s.newDescription?.length === 0 && s.description)
+          )?.length
+        }
+        onClose={() => setDialog(null)}
+        onConfirm={handleUndoAllSecretsChanges}
+      />
 
       <RenameEnvironmentDialog
         opened={dialog === 'rename'}
@@ -427,6 +465,24 @@ const SaveSecretsToolbar: React.FC<Props> = ({ showBtn }) => {
         )}
 
         <div className="flex items-center gap-2">
+          {secrets?.filter(
+            (s) =>
+              s.action !== null ||
+              (!s.description && s.newDescription) ||
+              (s.description && s.newDescription !== s.description && s.newDescription) ||
+              (s.newDescription?.length === 0 && s.description)
+          ).length > 0 && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button variant={'outline'} size={'sm'} onClick={() => setDialog('undo')}>
+                    <Icons.undo className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Undo all changes</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
           {/* {loaded && secrets?.length !== 0 && ( */}
           <Button
             className="gap-2"
