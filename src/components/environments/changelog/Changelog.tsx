@@ -16,6 +16,7 @@ import { EnvChangelogItem, SecretsChange } from '@/types/envChangelog'
 import { useToast } from '@/components/ui/use-toast'
 import Error from '@/components/Error'
 import ChangelogItem from './ChangelogItem'
+import clsx from 'clsx'
 
 dayjs.extend(relativeTime)
 
@@ -175,7 +176,11 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
       <div className="flex flex-col gap-5 md:gap-5">
         {data?.pages?.flat(1)?.map((val, index) => (
           <div>
-            <div className="mb-6">
+            <div
+              className={clsx(['mb-6'], {
+                'mt-4': index,
+              })}
+            >
               {((dayjs(val?.createdAt).hour(12).format('YYYY-MM-DD') !==
                 dayjs(data?.pages?.flat(1)?.[index - 1]?.createdAt)
                   .hour(12)
