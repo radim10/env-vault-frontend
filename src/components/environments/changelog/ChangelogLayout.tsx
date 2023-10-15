@@ -49,13 +49,11 @@ const ChangelogLayout: React.FC<Props> = ({
               <div>
                 <div className="font-bold text-[0.97rem]">dimak00</div>
                 {title && (
-                  <div className="-mt-0.5 text-[0.97rem] text-muted-foreground">
-                    Modified secrets
-                  </div>
+                  <div className="-mt-0.5 text-[0.97rem] text-muted-foregroundX">{title}</div>
                 )}
 
                 {titleComponent && (
-                  <div className="-mt-0.5 text-[0.97rem] text-muted-foreground">
+                  <div className="-mt-0.5 text-[0.97rem] text-muted-foregroundX">
                     {titleComponent}
                   </div>
                 )}
@@ -123,11 +121,11 @@ const ChangelogLayout: React.FC<Props> = ({
 
           <div
             className={clsx({
-              'mt-2.5 -ml-0.5': children !== undefined,
+              'mt-2 -ml-0.5': children !== undefined,
               '-mt-1 -ml-0.5': !children,
             })}
           >
-            <div className="flex items-center text-[0.90rem] opacity-85">
+            <div className="flex items-center text-[0.90rem] opacity-100">
               <span className="block ml-0.5 text-muted-foreground">{createdAt}</span>
             </div>
           </div>
