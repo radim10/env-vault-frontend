@@ -16,7 +16,7 @@ interface Props {
   }
 
   rollbackBtn?: {
-    loading?: boolean
+    disabled?: boolean
     onClick: () => void
   }
   showBtn?: {
@@ -71,11 +71,11 @@ const ChangelogLayout: React.FC<Props> = ({
                     <Button
                       size={'sm'}
                       variant={'ghost'}
-                      disabled={rollbackBtn?.loading}
+                      disabled={rollbackBtn?.disabled}
                       className={clsx([
                         'opacity-80 hover:opacity-100',
                         {
-                          'cursor-default': rollbackBtn?.loading,
+                          'cursor-default': rollbackBtn?.disabled,
                         },
                       ])}
                       onClick={rollbackBtn?.onClick}
@@ -98,7 +98,7 @@ const ChangelogLayout: React.FC<Props> = ({
                         'text-primary hover:text-primary opacity-100 cursor-default hover:bg-transparent':
                           showBtn?.loading,
                       })}
-                      onClick={() => showBtn?.onClick}
+                      onClick={showBtn?.onClick}
                     >
                       {!showBtn?.loading && (
                         <>
@@ -118,7 +118,7 @@ const ChangelogLayout: React.FC<Props> = ({
           </div>
         </div>
         {/* // Secrets changes */}
-        <div className="md:ml-[3.75rem] bg-red-400x mt-0 md:mt-2.5">
+        <div className="md:ml-[3.75rem] bg-red-400x mt-4 md:mt-2.5">
           <div className="">{children && children}</div>
 
           <div className={clsx({ 'mt-3': children !== undefined })}>
