@@ -485,10 +485,16 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                                 'opacity-80': showDescription === true,
                                 'opacity-[65%]': !showDescription,
                                 'hover:text-primary':
-                                  !description && (!newDescription || newDescription?.length === 0),
+                                  (!description &&
+                                    (!newDescription || newDescription?.length === 0)) ||
+                                  (newDescription === description && description?.length !== 0),
                                 'text-primary hover:text-primary':
                                   (description !== undefined && !newDescription) ||
-                                  (showDescription && !newDescription && !description),
+                                  (showDescription && !newDescription && !description) ||
+                                    // NEW condition
+                                  (newDescription === description && newDescription && description && 
+                                    description?.length > 0 &&
+                                    newDescription?.length > 0),
                                 'text-green-600/90 dark:text-green-500/80 opacity-70':
                                   description === undefined &&
                                   newDescription &&
@@ -497,6 +503,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                                 'text-orange-600/90 dark:text-orange-500/80 opacity-70':
                                   description &&
                                   newDescription &&
+                                  description !== newDescription &&
                                   newDescription?.length > 0 &&
                                   action !== SecretAction.Deleted,
                                 'text-red-600/90 dark:text-red-500/80 opacity-70':
@@ -549,6 +556,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                           description &&
                           newDescription &&
                           newDescription?.length > 0 &&
+                          newDescription !== description &&
                           action !== SecretAction.Deleted,
                       })}
                       value={newDescription !== undefined ? newDescription : description}
