@@ -48,7 +48,7 @@ const ChangelogItemSkeleton: React.FC<Props> = ({ count = 1 }) => {
             ))}
           </Skeleton>
 
-          <div className="mt-2.5">
+          <div className="mt-2">
             <Skeleton className="h-6 w-28" />
           </div>
         </div>
