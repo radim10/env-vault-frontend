@@ -121,7 +121,12 @@ const ChangelogLayout: React.FC<Props> = ({
         <div className="md:ml-[3.75rem] bg-red-400x mt-4 md:mt-2.5">
           <div className="">{children && children}</div>
 
-          <div className={clsx({ 'mt-3': children !== undefined })}>
+          <div
+            className={clsx({
+              'mt-2.5 -ml-0.5': children !== undefined,
+              '-mt-1 -ml-0.5': !children,
+            })}
+          >
             <div className="flex items-center text-[0.90rem] opacity-85">
               <span className="block ml-0.5 text-muted-foreground">{createdAt}</span>
             </div>
