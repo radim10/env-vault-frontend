@@ -7,11 +7,10 @@ import EnvTabs from '@/components/environments/EnvTabs'
 import EnvTypeBadge from '@/components/environments/EnvTypeBadge'
 import { Icons } from '@/components/icons'
 import NotFound from '@/components/projects/NotFound'
-import ProjectSkeleton from '@/components/projects/ProjectSkeleton'
 import SaveSecretsToolbar from '@/components/secrects/SaveToolbar'
-import { Badge } from '@/components/ui/badge'
 import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
 import { EnvironmentType } from '@/types/environments'
+import { useQueryClient } from '@tanstack/react-query'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
@@ -25,6 +24,7 @@ export default function EnvLayout({
   children: React.ReactNode
   params: { workspace: string; projectName: string; env: string }
 }) {
+  const queryClient = useQueryClient()
   const { y } = useWindowScroll()
   const selectedEnvironment = useSelectedEnvironmentStore()
   const paramsData = useParams()
@@ -40,6 +40,8 @@ export default function EnvLayout({
       envName: params?.env,
     },
     {
+      enabled:
+        queryClient.getQueryData([params?.workspace, params?.projectName, params?.env]) !== null,
       onSuccess: (data) => {
         selectedEnvironment.set({
           workspaceId: params?.workspace,
@@ -78,7 +80,7 @@ export default function EnvLayout({
           link={`/workspace/${params.workspace}/projects/${params.projectName}`}
           title="Environent not found"
           description="Looks like this environment doesn't exist"
-          btnText="Go to project"
+          btnText="Go to projects"
         />
       )
     } else {
