@@ -33,6 +33,7 @@ export interface EditSecretsActions {
   set: (secrets: StateSecret[]) => void
   add: (arg?: { key: string; value: string }) => void
   undoChanges: (args: { index: number; origItem: Secret }) => void
+  undoAllChanges: (origItems: Secret[]) => void
   toggleVisibility: (index: number) => void
   toggleDescription: (index: number) => void
   toggleDescriptionAll: (hidden: boolean) => void
@@ -101,6 +102,28 @@ export const useEditedSecretsStore = create(
             hidden: state?.secrets?.[index]?.hidden,
             showDescription: state?.secrets?.[index]?.showDescription,
           }
+        })
+      },
+      undoAllChanges: (origItems) => {
+        set((state) => {
+          const newState = origItems?.map((original, index) => {
+            const secretAtIndex = state?.secrets?.[index]
+            if (secretAtIndex) {
+              return {
+                ...original,
+                hidden: secretAtIndex?.hidden,
+                showDescription:
+                  original?.description && secretAtIndex?.showDescription ? true : false,
+                // wokring only if newDescription
+                newDescription: original?.description ?? '',
+                action: null,
+              }
+            } else {
+              return { ...original, hidden: true, action: null }
+            }
+          })
+
+          state.secrets = newState
         })
       },
       toggleVisibility: (index) => {
