@@ -24,9 +24,9 @@ const ChangelogItem: React.FC<Props> = ({ createdAt, change, onRollback }) => {
             {change?.action === 'renamed' && (
               <div className="flex gap-2 items-center flex-wrap">
                 <div>
-                  <span>{`Renamed environment type from `}</span>
-                  <span className="text-foreground font-semiboldX">{change?.old}</span> to{' '}
-                  <span className="text-foreground font-semiboldX">{change?.new}</span>
+                  <span>{`Renamed environment from `}</span>
+                  <span className="font-semiboldX text-primary">{change?.old}</span> to{' '}
+                  <span className="font-semiboldX text-primary">{change?.new}</span>
                 </div>
                 <Icons.pencil className="hidden md:block w-4 h-4 text-foregroundX opacity-80X" />
               </div>
@@ -46,7 +46,7 @@ const ChangelogItem: React.FC<Props> = ({ createdAt, change, onRollback }) => {
 
             {change?.action === 'type' && (
               <div className="flex items-center gap-1.5 flex-wrap">
-                <span>{`Changed environment from `}</span>
+                <span>{`Changed environment type from `}</span>
                 <div className="flex items-center gap-1.5">
                   <span className="">
                     <EnvTypeBadge type={change?.old} className="" />
