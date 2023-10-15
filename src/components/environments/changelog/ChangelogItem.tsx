@@ -22,13 +22,13 @@ const ChangelogItem: React.FC<Props> = ({ createdAt, change, onRollback }) => {
         titleComponent={
           <>
             {change?.action === 'renamed' && (
-              <div className="flex gap-2 items-center">
+              <div className="flex gap-2 items-center flex-wrap">
                 <div>
                   <span>{`Renamed environment from `}</span>
                   <span className="text-foreground font-semiboldX">{change?.old}</span> to{' '}
                   <span className="text-foreground font-semiboldX">{change?.new}</span>
                 </div>
-                <Icons.pencil className="w-4 h-4 text-foregroundX opacity-80X" />
+                <Icons.pencil className="hidden md:block w-4 h-4 text-foregroundX opacity-80X" />
               </div>
             )}
 
@@ -37,15 +37,15 @@ const ChangelogItem: React.FC<Props> = ({ createdAt, change, onRollback }) => {
                 {change?.locked === true ? 'Locked environment' : 'Unlocked environment'}
 
                 {change?.locked ? (
-                  <Icons.lock className="w-4 h-4 text-foreground opacity-80" />
+                  <Icons.lock className="hidden md:block w-4 h-4 text-foreground opacity-80 -mt-0.5" />
                 ) : (
-                  <Icons.unlock className="w-4 h-4 text-foreground opacity-80" />
+                  <Icons.unlock className="hidden md:block w-4 h-4 text-foreground opacity-80 -mt-0.5" />
                 )}
               </div>
             )}
 
             {change?.action === 'type' && (
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
                 <span>{`Changed environment from `}</span>
                 <div className="flex items-center gap-1.5">
                   <span className="">
