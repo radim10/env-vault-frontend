@@ -16,8 +16,8 @@ const ChangelogItem: React.FC<Props> = ({ createdAt, change, onRollback }) => {
       <ChangelogLayout
         createdAt={createdAt}
         rollbackBtn={{
-          loading: false,
-          onClick: () => {},
+          disabled: false,
+          onClick: onRollback,
         }}
         titleComponent={
           <>
