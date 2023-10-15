@@ -238,7 +238,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
                 createdAt={`${dayjs(val?.createdAt).format('HH:mm')} (${dayjs(
                   val?.createdAt
                 ).fromNow()})`}
-                onRollback={() => {}}
+                onRollback={() => setRollbackDialogChangeId(val?.id)}
               />
             )}
             {/* {index !== 2 && <Separator />} */}
