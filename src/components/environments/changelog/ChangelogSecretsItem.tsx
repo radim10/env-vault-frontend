@@ -72,7 +72,14 @@ const ChangelogSecretsItem: React.FC<Props> = ({
     <>
       <ChangelogLayout
         createdAt={createdAt}
-        title="Modified secrets"
+        titleComponent={
+          <div className="flex gap-2 items-center flex-wrap">
+            <div>
+              <span>Modified secrets</span>
+            </div>
+            <Icons.asterisk className="hidden md:block w-4 h-4 text-foreground opacity-80 -mt-0.5" />
+          </div>
+        }
         rollbackBtn={{ onClick: onRollback, disabled: isFetching }}
         showBtn={{
           hidden,
