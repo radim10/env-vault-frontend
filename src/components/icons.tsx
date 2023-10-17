@@ -65,6 +65,7 @@ import {
   Minus,
   ArrowDown,
   ArrowUp,
+  CurlyBraces,
 } from 'lucide-react'
 
 export const Icons = {
@@ -136,4 +137,5 @@ export const Icons = {
   arrowUp: ArrowUp,
   asterisk: SquareAsterisk,
   undo2: Undo2,
+  curlyBraces: CurlyBraces,
 }
