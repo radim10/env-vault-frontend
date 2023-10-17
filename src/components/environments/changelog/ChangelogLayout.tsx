@@ -126,7 +126,8 @@ const ChangelogLayout: React.FC<Props> = ({
         {/* // Secrets changes */}
         <div
           className={clsx(['md:ml-[3.75rem] bg-red-400x mt-4'], {
-            'md:mt-2.5': true,
+            'md:mt-2.5': children,
+            'md:mt-0': !children,
           })}
         >
           <div className="">{children && children}</div>
@@ -142,7 +143,7 @@ const ChangelogLayout: React.FC<Props> = ({
             </div>
             {!user && (
               <>
-                <div className="bg-muted-foreground h-[3.5px] w-[3.5px] rounded-full opacity-70"/>
+                <div className="bg-muted-foreground h-[3.5px] w-[3.5px] rounded-full opacity-70" />
                 <div className="">
                   <span>sdk</span>
                 </div>
