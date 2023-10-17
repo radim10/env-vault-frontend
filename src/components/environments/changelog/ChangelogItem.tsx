@@ -1,11 +1,16 @@
 import React from 'react'
 import ChangelogLayout from './ChangelogLayout'
-import { EnvChange, EnvTypeChange, LockedEnvChange, RenamedEnvChange } from '@/types/envChangelog'
+import {
+  CreatedEnvChange,
+  EnvTypeChange,
+  LockedEnvChange,
+  RenamedEnvChange,
+} from '@/types/envChangelog'
 import EnvTypeBadge from '../EnvTypeBadge'
 import { Icons } from '@/components/icons'
 
 interface Props {
-  change: RenamedEnvChange | LockedEnvChange | EnvTypeChange
+  change: CreatedEnvChange | RenamedEnvChange | LockedEnvChange | EnvTypeChange
   createdAt: string
   user?: {
     name: string
@@ -18,11 +23,16 @@ const ChangelogItem: React.FC<Props> = ({ createdAt, user, change, onRollback })
   return (
     <div>
       <ChangelogLayout
+        user={user}
         createdAt={createdAt}
-        rollbackBtn={{
-          disabled: false,
-          onClick: onRollback,
-        }}
+        rollbackBtn={
+          change?.action !== 'created'
+            ? {
+              disabled: false,
+              onClick: onRollback,
+            }
+            : undefined
+        }
         titleComponent={
           <>
             {change?.action === 'renamed' && (
@@ -34,6 +44,16 @@ const ChangelogItem: React.FC<Props> = ({ createdAt, user, change, onRollback })
                   <span className="font-semiboldX text-primary">{change?.new}</span>
                 </div>
                 <Icons.pencil className="hidden md:block w-3.5 h-3.5 text-foregroundX opacity-80 -mt-0.5" />
+              </div>
+            )}
+
+            {change?.action === 'created' && (
+              <div className="flex gap-2 items-center flex-wrap">
+                <div>
+                  {user && <span>{`Created environment `}</span>}
+                  {!user && <span>{`Environment created `}</span>}
+                </div>
+                <Icons.plusCircle className="hidden md:block w-3.5 h-3.5 text-foregroundX opacity-80" />
               </div>
             )}
 
