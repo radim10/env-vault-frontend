@@ -88,7 +88,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
 
       updatedData.pages[0] = updatedPage
 
-      if (newItem?.secretsChanges) {
+      if (newItem?.change?.action === 'secrets') {
         queryClient.setQueryData(key, updatedData)
       }
 
@@ -194,7 +194,8 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
       const itemIndex = updatedPage?.findIndex((val) => val?.id === changeId)
 
       if (itemIndex === -1) return
-      const updatedItem = { ...item, secretsChanges: secrets }
+      // const updatedItem = { ...item, secretsChanges: secrets }
+      const updatedItem = { ...item, change: { ...item.change, data: secrets } }
 
       console.log('Updated item:\n', updatedItem)
       updatedPage[itemIndex] = updatedItem
@@ -265,7 +266,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
               )}
             </div>
 
-            {val?.secretsChanges && (
+            {val?.change?.action === 'secrets' && (
               <ChangelogSecretsItem
                 key={val?.id}
                 workspaceId={workspaceId}
@@ -277,7 +278,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
                 }
                 changes={
                   queryClient?.getQueryData(['changelog-secrets', val?.id]) ??
-                  val?.secretsChanges ??
+                  val?.change?.data ??
                   []
                 }
                 createdAt={`${dayjs(val?.createdAt).format('HH:mm')} (${dayjs(
@@ -299,7 +300,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
                 }}
               />
             )}
-            {val?.change && (
+            {val?.change?.action !== 'secrets' && (
               <ChangelogItem
                 change={val.change}
                 createdAt={`${dayjs(val?.createdAt).format('HH:mm')} (${dayjs(
