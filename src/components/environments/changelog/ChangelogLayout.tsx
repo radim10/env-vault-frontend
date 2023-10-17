@@ -39,29 +39,34 @@ const ChangelogLayout: React.FC<Props> = ({
     <div>
       <div>
         <div className="w-full flex justify-between items-center gap-3">
-          <div className="flex flex-row gap-5 bg-red-400X items-center">
+          <div className="flex flex-col md:flex-row gap-2 md:gap-5 bg-red-400X md:items-center">
             {user && (
-              <Avatar className="w-10 h-10">
-                <AvatarImage src={user?.avatarUrl as any} />
-                <AvatarFallback>{user?.name?.charAt(0)?.toUpperCase()}</AvatarFallback>
-              </Avatar>
+              <div className="flex md:block gap-3 items-center">
+                <Avatar className="w-10 h-10">
+                  <AvatarImage src={user?.avatarUrl as any} />
+                  <AvatarFallback>{user?.name?.charAt(0)?.toUpperCase()}</AvatarFallback>
+                </Avatar>
+                {user && <div className="font-bold text-[0.97rem] block md:hidden">dimak00</div>}
+              </div>
             )}
             {!user && (
-              <div className="w-10 h-10 flex justify-center items-center border-muted border-2 rounded-full">
-                <Icons.curlyBraces className="h-4 w-4 opacity-80" />
+              <div className="bg-red-400X">
+                <div className="w-10 h-10 flex justify-center items-center border-muted border-2 rounded-full">
+                  <Icons.curlyBraces className="h-4 w-4 opacity-80" />
+                </div>
               </div>
             )}
 
             <div className="flex flex-col gap-0">
               <div>
-                {user && <div className="font-bold text-[0.97rem]">dimak00</div>}
+                {user && <div className="font-bold text-[0.97rem] hidden md:block">dimak00</div>}
                 {/* {!user && <div className="font-bold text-[1.97rem] opacity-70">-------</div>} */}
                 {title && (
                   <div className="-mt-0.5 text-[0.97rem] text-muted-foregroundX">{title}</div>
                 )}
 
                 {titleComponent && (
-                  <div className="-mt-0.5 text-[0.97rem] text-muted-foregroundX">
+                  <div className="mt-2 md:-mt-0.5 text-[0.97rem] text-muted-foregroundX">
                     {titleComponent}
                   </div>
                 )}
@@ -126,8 +131,8 @@ const ChangelogLayout: React.FC<Props> = ({
         {/* // Secrets changes */}
         <div
           className={clsx(['md:ml-[3.75rem] bg-red-400x mt-4'], {
-            'md:mt-2.5': children,
-            'md:mt-0': !children,
+            'md:mt-2.5': !(!children || !user) || user,
+            'md:mt-0': !children || !user,
           })}
         >
           <div className="">{children && children}</div>
