@@ -20,6 +20,10 @@ interface Props {
   valuesLoaded: boolean
 
   //
+  user?: {
+    name: string
+    avatarUrl: string | null
+  }
   changes: SecretsChange[]
   createdAt: string
   onRollback: () => void
@@ -34,6 +38,7 @@ const ChangelogSecretsItem: React.FC<Props> = ({
   changeId,
   valuesLoaded,
 
+  user,
   changes,
   createdAt,
   onError,
@@ -73,10 +78,11 @@ const ChangelogSecretsItem: React.FC<Props> = ({
     <>
       <ChangelogLayout
         createdAt={createdAt}
+        user={user}
         titleComponent={
           <div className="flex gap-2 items-center flex-wrap">
             <div>
-              <span>Modified secrets</span>
+              {user ? <span>Modified secrets</span> : <span>Secrets have been modified</span>}
             </div>
             <Icons.asterisk className="hidden md:block w-4 h-4 text-foreground opacity-80" />
           </div>
