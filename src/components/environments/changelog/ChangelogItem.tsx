@@ -1,11 +1,11 @@
 import React from 'react'
 import ChangelogLayout from './ChangelogLayout'
-import { EnvChange } from '@/types/envChangelog'
+import { EnvChange, EnvTypeChange, LockedEnvChange, RenamedEnvChange } from '@/types/envChangelog'
 import EnvTypeBadge from '../EnvTypeBadge'
 import { Icons } from '@/components/icons'
 
 interface Props {
-  change: EnvChange
+  change: RenamedEnvChange | LockedEnvChange | EnvTypeChange
   createdAt: string
   onRollback: () => void
 }
