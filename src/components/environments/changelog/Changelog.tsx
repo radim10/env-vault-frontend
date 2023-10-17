@@ -272,6 +272,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
                 workspaceId={workspaceId}
                 projectName={projectName}
                 envName={envName}
+                user={val?.user}
                 changeId={val?.id}
                 valuesLoaded={
                   queryClient?.getQueryData(['changelog-secrets', val?.id]) !== undefined
@@ -302,6 +303,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
             )}
             {val?.change?.action !== 'secrets' && (
               <ChangelogItem
+                user={val?.user}
                 change={val.change}
                 createdAt={`${dayjs(val?.createdAt).format('HH:mm')} (${dayjs(
                   val?.createdAt
