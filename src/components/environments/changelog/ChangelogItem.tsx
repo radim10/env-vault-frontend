@@ -7,10 +7,14 @@ import { Icons } from '@/components/icons'
 interface Props {
   change: RenamedEnvChange | LockedEnvChange | EnvTypeChange
   createdAt: string
+  user?: {
+    name: string
+    avatarUrl: string | null
+  }
   onRollback: () => void
 }
 
-const ChangelogItem: React.FC<Props> = ({ createdAt, change, onRollback }) => {
+const ChangelogItem: React.FC<Props> = ({ createdAt, user, change, onRollback }) => {
   return (
     <div>
       <ChangelogLayout
@@ -24,7 +28,8 @@ const ChangelogItem: React.FC<Props> = ({ createdAt, change, onRollback }) => {
             {change?.action === 'renamed' && (
               <div className="flex gap-2 items-center flex-wrap">
                 <div>
-                  <span>{`Renamed environment from `}</span>
+                  {user && <span>{`Renamed environment from `}</span>}
+                  {!user && <span>{`Environment renamed from `}</span>}
                   <span className="font-semiboldX text-primary">{change?.old}</span> to{' '}
                   <span className="font-semiboldX text-primary">{change?.new}</span>
                 </div>
@@ -34,7 +39,12 @@ const ChangelogItem: React.FC<Props> = ({ createdAt, change, onRollback }) => {
 
             {change?.action === 'lock' && (
               <div className="flex gap-2 items-center">
-                {change?.locked === true ? 'Locked environment' : 'Unlocked environment'}
+                {user && (
+                  <>{change?.locked === true ? 'Locked environment' : 'Unlocked environment'}</>
+                )}
+                {!user && (
+                  <>{change?.locked === true ? 'Environment locked' : 'Environment unlocked'}</>
+                )}
 
                 {change?.locked ? (
                   <Icons.lock className="hidden md:block w-4 h-4 text-foreground opacity-80 -mt-0.5" />
@@ -46,7 +56,8 @@ const ChangelogItem: React.FC<Props> = ({ createdAt, change, onRollback }) => {
 
             {change?.action === 'type' && (
               <div className="flex items-center gap-1.5 flex-wrap">
-                <span>{`Changed environment type from `}</span>
+                {user && <span>{`Changed environment type from `}</span>}
+                {!user && <span>{`Environment type changed from `}</span>}
                 <div className="flex items-center gap-1.5">
                   <span className="">
                     <EnvTypeBadge type={change?.old} className="" />
