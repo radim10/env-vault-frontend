@@ -211,7 +211,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
 
   const closeDialog = () => setRollbackDialog(null)
 
-  if (isLoading || isRefetching) {
+  if (isLoading) {
     return (
       <>
         <Skeleton className="h-7 w-28 mb-6" />
@@ -255,15 +255,15 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
                   .format('YYYY-MM-DD') &&
                 index > 0) ||
                 index === 0) && (
-                <TypographyH4>
-                  {dayjs(val?.createdAt).hour(12).format('YYYY-MM-DD') ===
-                  dayjs().format('YYYY-MM-DD')
-                    ? 'Today'
-                    : dayjs(val?.createdAt)?.year() === dayjs().year()
-                    ? dayjs(val?.createdAt).hour(12).format('MMMM DD,  dd')
-                    : dayjs(val?.createdAt).hour(12).format('YYYY  MMM DD,  dd')}
-                </TypographyH4>
-              )}
+                  <TypographyH4>
+                    {dayjs(val?.createdAt).hour(12).format('YYYY-MM-DD') ===
+                      dayjs().format('YYYY-MM-DD')
+                      ? 'Today'
+                      : dayjs(val?.createdAt)?.year() === dayjs().year()
+                        ? dayjs(val?.createdAt).hour(12).format('MMMM DD,  dd')
+                        : dayjs(val?.createdAt).hour(12).format('YYYY  MMM DD,  dd')}
+                  </TypographyH4>
+                )}
             </div>
 
             {val?.change?.action === 'secrets' && (
