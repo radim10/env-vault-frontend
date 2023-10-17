@@ -73,7 +73,7 @@ const ChangelogLayout: React.FC<Props> = ({
             <TooltipProvider>
               {rollbackBtn && (
                 <Tooltip>
-                  <TooltipTrigger disabled>
+                  <TooltipTrigger>
                     <Button
                       size={'sm'}
                       variant={'ghost'}
@@ -95,7 +95,7 @@ const ChangelogLayout: React.FC<Props> = ({
 
               {showBtn && (
                 <Tooltip>
-                  <TooltipTrigger disabled={true}>
+                  <TooltipTrigger disabled={false}>
                     <Button
                       size={'sm'}
                       variant={'ghost'}
