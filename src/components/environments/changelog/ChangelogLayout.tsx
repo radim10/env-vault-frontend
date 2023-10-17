@@ -12,7 +12,7 @@ interface Props {
 
   user?: {
     name: string
-    avatar: string
+    avatarUrl: string | null
   }
 
   rollbackBtn?: {
@@ -40,14 +40,22 @@ const ChangelogLayout: React.FC<Props> = ({
       <div>
         <div className="w-full flex justify-between items-center gap-3">
           <div className="flex flex-row gap-5 bg-red-400X items-center">
-            <Avatar className="w-10 h-10">
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
+            {user && (
+              <Avatar className="w-10 h-10">
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+            )}
+            {!user && (
+              <div className="w-10 h-10 flex justify-center items-center border-muted border-2 rounded-full">
+                <Icons.curlyBraces className="h-4 w-4 opacity-80" />
+              </div>
+            )}
 
             <div className="flex flex-col gap-0">
               <div>
-                <div className="font-bold text-[0.97rem]">dimak00</div>
+                {user && <div className="font-bold text-[0.97rem]">dimak00</div>}
+                {/* {!user && <div className="font-bold text-[1.97rem] opacity-70">-------</div>} */}
                 {title && (
                   <div className="-mt-0.5 text-[0.97rem] text-muted-foregroundX">{title}</div>
                 )}
@@ -116,11 +124,15 @@ const ChangelogLayout: React.FC<Props> = ({
           </div>
         </div>
         {/* // Secrets changes */}
-        <div className="md:ml-[3.75rem] bg-red-400x mt-4 md:mt-2.5">
+        <div
+          className={clsx(['md:ml-[3.75rem] bg-red-400x mt-4'], {
+            'md:mt-2.5': true,
+          })}
+        >
           <div className="">{children && children}</div>
 
           <div
-            className={clsx({
+            className={clsx(['flex items-center gap-2'], {
               'mt-2 -ml-0.5': children !== undefined,
               '-mt-1 -ml-0.5': !children,
             })}
@@ -128,6 +140,11 @@ const ChangelogLayout: React.FC<Props> = ({
             <div className="flex items-center text-[0.90rem] opacity-100">
               <span className="block ml-0.5 text-muted-foreground">{createdAt}</span>
             </div>
+            {!user && (
+              <div className="flex items-center text-[0.90rem] opacity-100">
+                <span className="block ml-0.5 text-muted-foreground"> - SDK</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
