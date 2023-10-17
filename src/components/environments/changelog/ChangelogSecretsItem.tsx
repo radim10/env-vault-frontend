@@ -10,6 +10,7 @@ import { useGetEnvChangelogItemSecrets } from '@/api/queries/envChangelog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import ChangelogLayout from './ChangelogLayout'
+import { Separator } from '@/components/ui/separator'
 
 interface Props {
   workspaceId: string
@@ -80,7 +81,10 @@ const ChangelogSecretsItem: React.FC<Props> = ({
             <Icons.asterisk className="hidden md:block w-4 h-4 text-foreground opacity-80" />
           </div>
         }
-        rollbackBtn={{ onClick: onRollback, disabled: isFetching }}
+        rollbackBtn={{
+          onClick: onRollback,
+          disabled: isFetching,
+        }}
         showBtn={{
           hidden,
           loading: isFetching,
@@ -88,97 +92,150 @@ const ChangelogSecretsItem: React.FC<Props> = ({
         }}
       >
         <div className="rounded-md border border-input flex flex-col gap-0">
-          {changes?.map(({ secretKey, newValue, oldValue }, index) => (
-            <>
-              <div
-                className={clsx(['w-full bg-red-400X text-sm h-fit py-2 md:py-0 md:h-10'], {
-                  'border-b border-input': index !== changes?.length - 1,
-                })}
-              >
-                <div className="flex flex-col w-full md:flex-row gap-0 md:gap-2 md:items-center h-full">
-                  <div
-                    className={clsx([
-                      'w-full md:w-[37%] xl:w-[35%] h-9 md:h-full flex gap-3.5 pl-3.5 pr-1.5 items-center',
-                    ])}
-                  >
-                    <input
-                      readOnly
-                      className="w-full h-full opacity-100 font-semibold outline-none bg-transparent"
-                      value={secretKey}
-                    />
-                  </div>
+          {changes?.map(
+            ({ key: secretKey, new: newValue, old: oldValue, newKey, value }, index) => (
+              <>
+                <div
+                  className={clsx(['w-full bg-red-400X text-sm h-fit py-2 md:py-0 md:h-10'], {
+                    'border-b border-input': index !== changes?.length - 1,
+                  })}
+                >
+                  <div className="flex flex-col w-full md:flex-row gap-0 md:gap-2 md:items-center h-full">
+                    <div
+                      className={clsx([
+                        'w-full h-9 md:h-full  flex gap-3.5 pl-3.5  pr-1.5 items-center bg-cyan-50X',
+                        {
+                          'md:w-[37%] xl:w-[35%] bglblack':
+                            (oldValue !== undefined || newValue !== undefined) &&
+                            newKey === undefined &&
+                            value === undefined,
+                          'w-full md:w-[50%] bg-sky-200X':
+                            newKey !== undefined ||
+                            (value !== undefined &&
+                              (newValue !== undefined || oldValue !== undefined)),
+                        },
+                      ])}
+                    >
+                      <input
+                        readOnly
+                        className="w-full h-full opacity-100 font-semibold outline-none bg-transparent"
+                        value={secretKey}
+                      />
 
-                  <div className="flex flex-row gap-3.5 md:gap-0 flex-grow h-full">
-                    {oldValue !== null && (
-                      <div
-                        className={clsx(['w-full h-10 md:h-full flex gap-3.5 items-center'], {
-                          'md:w-2/2 pr-2.5': newValue === null,
-                          'md:w-1/2 pr-2.5': newValue !== null,
-                        })}
-                      >
-                        <div className="px-2.5 h-full flex justify-center items-center md:bg-red-600/5 md:dark:bg-red-600/10 md:border-red-600/40 md:dark:border-red-600/20 border-r-[1.5px] md:border-x-[1.5px] ">
-                          <Icons.minus className="opacity-70 h-3.5 w-3.5 text-red-600" />
+                      {newKey && (
+                        <div className="px-2.5 h-full flex justify-center items-center md:bg-orange-600/5 md:dark:bg-orange-600/10 md:border-orange-600/40 md:dark:border-orange-600/20 border-r-[1.5px] md:border-x-[1.5px] ">
+                          <div className="flex flex-col justify-center items-center">
+                            <Icons.plus className="opacity-70 h-3.5 w-3.5 text-orange-600" />
+                            <Icons.minus className="opacity-70 h-3.5 w-3.5 text-orange-600" />
+                          </div>
                         </div>
+                      )}
+                      {newKey && (
+                        <input
+                          readOnly
+                          className="w-full h-full opacity-100 font-semibold outline-none bg-transparent"
+                          value={newKey}
+                        />
+                      )}
+                    </div>
 
-                        {hidden ? (
-                          <span className="block opacity-85">•••••••••••</span>
-                        ) : (
-                          <input
-                            readOnly
-                            className={clsx(
-                              [
-                                'w-full h-full text-red-600 dark:text-red-600/80 outline-none bg-transparent',
-                              ],
-                              {
-                                'opacity-100 italic placeholder:text-red-600 placeholder:dark:text-red-600/80':
-                                  oldValue === '',
-                              }
-                            )}
-                            placeholder="empty string"
-                            value={oldValue === '' ? undefined : oldValue}
-                          />
-                        )}
-                      </div>
-                    )}
-
-                    {newValue !== null && (
+                    {newKey !== undefined && value !== undefined && (
                       <div
                         className={clsx(
                           ['w-full pr-2.5 h-10 md:h-full flex  gap-3.5 items-center'],
                           {
-                            'md:w-2/2': oldValue === null,
-                            'md:w-1/2 ': oldValue !== null,
+                            'md:w-1/2': true,
                           }
                         )}
                       >
-                        <div className="px-2.5 h-full flex justify-center items-center md:bg-green-600/5 md:dark:bg-green-600/10 md:border-green-600/40 md:dark:border-green-600/20 border-r-[1.5px] md:border-x-[1.5px] ">
-                          <Icons.plus className="opacity-70 h-3.5 w-3.5 text-green-600" />
-                        </div>
+                        <div className="px-0.5 h-full flex justify-center items-center  border-l-[1.5px] md:border-l-[1.5px] "></div>
                         {hidden ? (
                           <span className="block opacity-85">•••••••••••</span>
                         ) : (
                           <input
                             readOnly
-                            className={clsx(
-                              [
-                                'w-full text-green-600 dark:text-green-600/90 outline-none bg-transparent',
-                              ],
-                              {
-                                'opacity-100 italic placeholder:text-green-600 placeholder:dark:text-green-600/80':
-                                  newValue === '',
-                              }
-                            )}
+                            className={clsx(['w-full outline-none bg-transparent opacity-100'], {
+                              'italic ': value === '',
+                            })}
                             placeholder="empty string"
-                            value={newValue === '' ? undefined : newValue}
+                            value={value === '' ? undefined : value}
                           />
                         )}
                       </div>
                     )}
+
+                    <div className="flex flex-row gap-3.5 md:gap-0 flex-grow h-full">
+                      {oldValue !== undefined && (
+                        <div
+                          className={clsx(['w-full h-10 md:h-full flex gap-3.5 items-center'], {
+                            'md:w-2/2 pr-2.5': newValue === undefined,
+                            'md:w-1/2 pr-2.5': newValue !== undefined,
+                          })}
+                        >
+                          <div className="px-2.5 h-full flex justify-center items-center md:bg-red-600/5 md:dark:bg-red-600/10 md:border-red-600/40 md:dark:border-red-600/20 border-r-[1.5px] md:border-x-[1.5px] ">
+                            <Icons.minus className="opacity-70 h-3.5 w-3.5 text-red-600" />
+                          </div>
+
+                          {hidden ? (
+                            <span className="block opacity-85">•••••••••••</span>
+                          ) : (
+                            <input
+                              readOnly
+                              className={clsx(
+                                [
+                                  'w-full h-full text-red-600 dark:text-red-600/80 outline-none bg-transparent',
+                                ],
+                                {
+                                  'opacity-100 italic placeholder:text-red-600 placeholder:dark:text-red-600/80':
+                                    oldValue === '',
+                                }
+                              )}
+                              placeholder="empty string"
+                              value={oldValue === '' ? undefined : oldValue}
+                            />
+                          )}
+                        </div>
+                      )}
+
+                      {newValue !== undefined && (
+                        <div
+                          className={clsx(
+                            ['w-full pr-2.5 h-10 md:h-full flex  gap-3.5 items-center'],
+                            {
+                              'md:w-2/2': oldValue === undefined,
+                              'md:w-1/2 ': oldValue !== undefined,
+                            }
+                          )}
+                        >
+                          <div className="px-2.5 h-full flex justify-center items-center md:bg-green-600/5 md:dark:bg-green-600/10 md:border-green-600/40 md:dark:border-green-600/20 border-r-[1.5px] md:border-x-[1.5px] ">
+                            <Icons.plus className="opacity-70 h-3.5 w-3.5 text-green-600" />
+                          </div>
+                          {hidden ? (
+                            <span className="block opacity-85">•••••••••••</span>
+                          ) : (
+                            <input
+                              readOnly
+                              className={clsx(
+                                [
+                                  'w-full text-green-600 dark:text-green-600/90 outline-none bg-transparent',
+                                ],
+                                {
+                                  'opacity-100 italic placeholder:text-green-600 placeholder:dark:text-green-600/80':
+                                    newValue === '',
+                                }
+                              )}
+                              placeholder="empty string"
+                              value={newValue === '' ? undefined : newValue}
+                            />
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </>
-          ))}
+              </>
+            )
+          )}
         </div>
       </ChangelogLayout>
     </>
@@ -255,7 +312,7 @@ const ChangelogSecretsItem: React.FC<Props> = ({
         {/* // Secrets changes */}
         <div className="md:ml-[3.75rem] bg-red-400x mt-4 md:mt-2.5">
           <div className="rounded-md border border-input flex flex-col gap-0">
-            {changes?.map(({ secretKey, newValue, oldValue }, index) => (
+            {changes?.map(({ key: secretKey, new: newValue, old: oldValue }, index) => (
               <>
                 <div
                   className={clsx(['w-full bg-red-400X text-sm h-fit py-2 md:py-0 md:h-10'], {
