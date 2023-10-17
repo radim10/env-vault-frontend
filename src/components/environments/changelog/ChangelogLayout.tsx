@@ -42,8 +42,8 @@ const ChangelogLayout: React.FC<Props> = ({
           <div className="flex flex-row gap-5 bg-red-400X items-center">
             {user && (
               <Avatar className="w-10 h-10">
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarImage src={user?.avatarUrl as any} />
+                <AvatarFallback>{user?.name?.charAt(0)?.toUpperCase()}</AvatarFallback>
               </Avatar>
             )}
             {!user && (
@@ -132,18 +132,21 @@ const ChangelogLayout: React.FC<Props> = ({
           <div className="">{children && children}</div>
 
           <div
-            className={clsx(['flex items-center gap-2'], {
+            className={clsx(['flex items-center gap-2 text-muted-foreground text-[0.90rem]'], {
               'mt-2 -ml-0.5': children !== undefined,
               '-mt-1 -ml-0.5': !children,
             })}
           >
-            <div className="flex items-center text-[0.90rem] opacity-100">
-              <span className="block ml-0.5 text-muted-foreground">{createdAt}</span>
+            <div className="">
+              <span className="block ml-0.5">{createdAt}</span>
             </div>
             {!user && (
-              <div className="flex items-center text-[0.90rem] opacity-100">
-                <span className="block ml-0.5 text-muted-foreground"> - SDK</span>
-              </div>
+              <>
+                <div className="bg-muted-foreground h-[3.5px] w-[3.5px] rounded-full opacity-70"/>
+                <div className="">
+                  <span>sdk</span>
+                </div>
+              </>
             )}
           </div>
         </div>
