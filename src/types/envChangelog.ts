@@ -28,7 +28,12 @@ export interface EnvChangelogItem {
   // TODO: user
 }
 
-export type EnvChange = SecretsEnvChage | RenamedEnvChange | LockedEnvChange | EnvTypeChange
+export type EnvChange =
+  | SecretsEnvChage
+  | CreatedEnvChange
+  | RenamedEnvChange
+  | LockedEnvChange
+  | EnvTypeChange
 
 export type SecretsEnvChage = {
   action: 'secrets'
@@ -42,6 +47,10 @@ export interface SecretsChange {
   // only renamed
   newKey?: string
   value?: string
+}
+
+export type CreatedEnvChange = {
+  action: 'created'
 }
 
 export type RenamedEnvChange = {
