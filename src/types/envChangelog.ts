@@ -21,6 +21,10 @@ export interface EnvChangelogItem {
   id: string
   createdAt: string
   change: EnvChange
+  user?: {
+    name: string
+    avatarUrl: string | null
+  }
   // TODO: user
 }
 
