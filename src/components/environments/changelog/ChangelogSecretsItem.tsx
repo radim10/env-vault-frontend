@@ -20,6 +20,7 @@ interface Props {
   valuesLoaded: boolean
 
   //
+  id: string
   user?: {
     name: string
     avatarUrl: string | null
@@ -38,6 +39,7 @@ const ChangelogSecretsItem: React.FC<Props> = ({
   changeId,
   valuesLoaded,
 
+  id,
   user,
   changes,
   createdAt,
@@ -77,6 +79,7 @@ const ChangelogSecretsItem: React.FC<Props> = ({
   return (
     <>
       <ChangelogLayout
+        id={id}
         createdAt={createdAt}
         user={user}
         titleComponent={

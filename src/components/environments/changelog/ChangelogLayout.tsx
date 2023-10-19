@@ -3,8 +3,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import clsx from 'clsx'
+import { useState } from 'react'
+import { useDebounce } from 'react-use'
 
 interface Props {
+  id?: string
   createdAt: string
   children?: React.ReactNode
   titleComponent?: React.ReactNode
@@ -27,6 +30,7 @@ interface Props {
 }
 
 const ChangelogLayout: React.FC<Props> = ({
+  id,
   createdAt,
   user,
   title,
@@ -35,6 +39,19 @@ const ChangelogLayout: React.FC<Props> = ({
   rollbackBtn,
   showBtn,
 }) => {
+  const [idCopied ,setIdCopied] = useState(false)
+
+  const handleCopyId = (id: string)=>{
+    navigator.clipboard.writeText(id)
+    setIdCopied(true)
+  }
+
+  useDebounce(()=>{
+    if (idCopied) setIdCopied(false)
+    
+  },3000, [idCopied])
+
+
   return (
     <div>
       <div>
@@ -153,6 +170,30 @@ const ChangelogLayout: React.FC<Props> = ({
                   <span>sdk</span>
                 </div>
               </>
+            )}
+
+            {id && (
+              <div className="hidden md:flex md:gap-2 md:items-center">
+                <div className="bg-muted-foreground h-[3.5px] w-[3.5px] rounded-full opacity-70" />
+                <div className="">
+                  {!idCopied ?
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <button onClick={()=>handleCopyId(id)}> {`${id.slice(0, 14)}...`}</button>
+                      </TooltipTrigger>
+
+                      <TooltipContent >Copy ID (for cli usage)</TooltipContent>
+                      </Tooltip>
+                  </TooltipProvider>
+                  :
+                    <div className='flex items-center gap-2 text-green-500 dark:text-green-600'>
+                    <Icons.check className="h-3.5 w-3.5 " />
+                      <span>Id copied</span>
+                    </div>
+                  }
+                </div>
+              </div>
             )}
           </div>
         </div>
