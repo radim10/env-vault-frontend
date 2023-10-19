@@ -190,7 +190,7 @@ const ChangelogLayout: React.FC<Props> = ({
                   :
                     <div className='flex items-center gap-2 text-green-500 dark:text-green-600'>
                     <Icons.check className="h-3.5 w-3.5 " />
-                      <span>Id copied</span>
+                      <span>Copied to clipboard</span>
                     </div>
                   }
                 </div>
