@@ -32,6 +32,7 @@ export type EnvChange =
   | SecretsEnvChage
   | CreatedEnvChange
   | RenamedEnvChange
+  | UpdatedEnvDescription
   | LockedEnvChange
   | EnvTypeChange
 
