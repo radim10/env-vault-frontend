@@ -26,7 +26,6 @@ const Sidebar = () => {
   const [opened, setOpened] = React.useState(false)
   const pathname = usePathname()
   const params = useParams()
-  console.log(params)
 
   const toggle = () => setOpened(!opened)
 
