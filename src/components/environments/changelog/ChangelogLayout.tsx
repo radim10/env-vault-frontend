@@ -39,18 +39,20 @@ const ChangelogLayout: React.FC<Props> = ({
   rollbackBtn,
   showBtn,
 }) => {
-  const [idCopied ,setIdCopied] = useState(false)
+  const [idCopied, setIdCopied] = useState(false)
 
-  const handleCopyId = (id: string)=>{
+  const handleCopyId = (id: string) => {
     navigator.clipboard.writeText(id)
     setIdCopied(true)
   }
 
-  useDebounce(()=>{
-    if (idCopied) setIdCopied(false)
-    
-  },3000, [idCopied])
-
+  useDebounce(
+    () => {
+      if (idCopied) setIdCopied(false)
+    },
+    3000,
+    [idCopied]
+  )
 
   return (
     <div>
@@ -150,14 +152,14 @@ const ChangelogLayout: React.FC<Props> = ({
           className={clsx(['md:ml-[3.75rem] bg-red-400x mt-4'], {
             // 'md:mt-2.5': !(!children || !user) || user,
             'md:mt-2.5': children || user,
-             'md:mt-1': !children && !user,
+            'md:mt-1': !children && !user,
           })}
         >
           <div className="">{children && children}</div>
 
           <div
             className={clsx(['flex items-center gap-2 text-muted-foreground text-[0.90rem]'], {
-              'mt-2.5 -ml-0.5': children !== undefined,
+              'mt-[0.6rem] -ml-0.5': children !== undefined,
               '-mt-1 -ml-0.5': !children,
             })}
           >
@@ -177,23 +179,23 @@ const ChangelogLayout: React.FC<Props> = ({
               <div className="hidden md:flex md:gap-2 md:items-center">
                 <div className="bg-muted-foreground h-[3.5px] w-[3.5px] rounded-full opacity-70" />
                 <div className="">
-                  {!idCopied ?
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        {/* <button onClick={()=>handleCopyId(id)}> {`${id.slice(0, 14)}...`}</button> */}
-                        <button onClick={()=>handleCopyId(id)}>{id}</button>
-                      </TooltipTrigger>
+                  {!idCopied ? (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          {/* <button onClick={()=>handleCopyId(id)}> {`${id.slice(0, 14)}...`}</button> */}
+                          <button onClick={() => handleCopyId(id)}>{id}</button>
+                        </TooltipTrigger>
 
-                      <TooltipContent >Copy ID (for cli usage)</TooltipContent>
+                        <TooltipContent>Copy ID (for cli usage)</TooltipContent>
                       </Tooltip>
-                  </TooltipProvider>
-                  :
-                    <div className='flex items-center gap-2 text-green-500 dark:text-green-600'>
-                    <Icons.check className="h-3.5 w-3.5 " />
+                    </TooltipProvider>
+                  ) : (
+                    <div className="flex items-center gap-2 text-green-500 dark:text-green-600">
+                      <Icons.check className="h-3.5 w-3.5 " />
                       <span>Copied to clipboard</span>
                     </div>
-                  }
+                  )}
                 </div>
               </div>
             )}
