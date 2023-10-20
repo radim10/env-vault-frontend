@@ -1,25 +1,12 @@
-import { Metadata, ResolvingMetadata } from 'next'
+import { redirect } from 'next/navigation'
 
-// TODO: load project SSR?
-//
-
-export function generateMetadata(
-  { params, searchParams }: any,
-  parent: ResolvingMetadata
-): Metadata {
-  // read route params
-  const projectName = params.projectName
-
-  return {
-    title: projectName,
-  }
-}
-//
 export default function ProjectPage({
   params,
 }: {
   params: { workspace: string; projectName: string }
 }) {
+  redirect(`/workspace/${params.workspace}/projects/${params.projectName}/environments`)
+
   return (
     <>
       {/* <ProjectEnvironmentList workspaceId={params.workspace} projectName={params.projectName} /> */}
