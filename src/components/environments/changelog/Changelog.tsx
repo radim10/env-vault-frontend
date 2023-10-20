@@ -221,7 +221,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
 
   const handleNoChangesToRollback = (isSecrets: boolean) => {
     toast({
-      title: 'No changes to rollback',
+      title: 'No changes to revert',
       description: isSecrets
         ? 'This is current secrets state'
         : 'This is current environment state',
