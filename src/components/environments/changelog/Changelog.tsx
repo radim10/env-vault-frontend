@@ -215,7 +215,14 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
     // TODO: maybe do other???
 
     selectedEnvironment?.update({ name: newName })
-    router.push(`/workspace/${workspaceId}/projects/${projectName}/env/${newName}/changelog`)
+
+    if (selectedEnvironment?.changelogFilter === null) {
+      router.push(`/workspace/${workspaceId}/projects/${projectName}/env/${newName}/changelog`)
+    } else {
+      router.push(
+        `/workspace/${workspaceId}/projects/${projectName}/env/${newName}/changelog?only-secrets=true`
+      )
+    }
   }
 
   const handleNoChangesToRollback = (isSecrets: boolean) => {
