@@ -1,5 +1,6 @@
 import sendRequest, { APIError } from '@/api/instance'
 import { Environment, EnvironmentType } from '@/types/environments'
+import { ListEnvironment } from '@/types/projects'
 
 // NOTE: errors
 type EnvErrorCode =
@@ -48,6 +49,21 @@ export async function getEnvironment(args: {
     method: 'GET',
     basePath: 'workspaces',
     path: `${workspaceId}/projects/${projectName}/environments/${envName}`,
+  })
+  return await response
+}
+
+// get multiuple environments
+export type GetEnvironmentsError = EnvError<'project_not_found'>
+export type GetEnvironmentsData = ListEnvironment[]
+
+export async function getEnvironments(args: { workspaceId: string; projectName: string }) {
+  const { workspaceId } = args
+
+  const response = sendRequest<GetEnvironmentsData>({
+    method: 'GET',
+    basePath: 'workspaces',
+    path: `${workspaceId}/projects/${args.projectName}/environments`,
   })
   return await response
 }
@@ -115,9 +131,8 @@ export async function lockEnvironment(args: {
   const response = sendRequest<LockEnvironmentResData>({
     method: 'PATCH',
     basePath: 'workspaces',
-    path: `${workspaceId}/projects/${projectName}/environments/${envName}/${
-      lock ? 'lock' : 'unlock'
-    }`,
+    path: `${workspaceId}/projects/${projectName}/environments/${envName}/${lock ? 'lock' : 'unlock'
+      }`,
   })
   return await response
 }
