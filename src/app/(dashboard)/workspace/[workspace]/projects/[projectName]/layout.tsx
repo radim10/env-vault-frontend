@@ -8,6 +8,7 @@ import Link from 'next/link'
 import NotFound from '@/components/projects/NotFound'
 import Error from '@/components/Error'
 import { useParams } from 'next/navigation'
+import ProjectSkeleton from '@/components/projects/ProjectSkeleton'
 
 function ProjectLayout({
   children,
@@ -45,8 +46,7 @@ function ProjectLayout({
   }
 
   if (isLoading) {
-    return <>Loading projects</>
-    // return <ProjectSkeleton grouped={false} />
+    return <ProjectSkeleton />
   }
 
   if (error) {

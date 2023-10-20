@@ -1,30 +1,64 @@
 import React from 'react'
 import { Skeleton } from '../ui/skeleton'
+import clsx from 'clsx'
 
 interface Props {
   grouped: boolean
 }
 
-const ProjectSkeleton: React.FC<Props> = ({ grouped }) => {
+// const ProjectSkeleton: React.FC<Props> = ({ grouped }) => {
+//   return (
+//     <div className="px-6 lg:px-10">
+//       <div className="flex justify-between items-center mt-0">
+//         <div className="flex gap-2 items-center">
+//           <div className="font-semibold ">
+//             <Skeleton className="h-8 w-44 md:w-64 " />
+//           </div>
+//         </div>
+//         {/* // FLEX END */}
+//         <div>
+//           <Skeleton className="w-[47px] h-[40px]" />
+//         </div>
+//       </div>
+//
+//       {/* // */}
+//       <div className="mt-6">
+//         <EnvironmentListSkeleton grouped={grouped} />
+//       </div>
+//     </div>
+//   )
+// }
+//
+const ProjectSkeleton: React.FC = () => {
   return (
-    <div className="px-6 lg:px-10">
-      <div className="flex justify-between items-center mt-0">
-        <div className="flex gap-2 items-center">
-          <div className="font-semibold ">
-            <Skeleton className="h-8 w-44 md:w-64 " />
+    <>
+      <div className="px-6 lg:px-10">
+        <div className="flex justify-between items-center mt-0">
+          <div className="flex gap-2 items-center">
+            <div className="font-semibold ">
+              <Skeleton className="h-8 w-44 md:w-64 " />
+            </div>
           </div>
         </div>
-        {/* // FLEX END */}
-        <div>
-          <Skeleton className="w-[47px] h-[40px]" />
-        </div>
       </div>
-
-      {/* // */}
-      <div className="mt-6">
-        <EnvironmentListSkeleton grouped={grouped} />
+      <div
+        className={clsx(
+          ['flex flex-row gap-2 md:gap-5 border-b-[1px] pb-[0.9rem] lg:px-12  pl-[2rem] md:pl-0'],
+          {
+            'mt-8': true,
+          }
+        )}
+      >
+        {Array.from({ length: 3 }).map((_, index) => (
+          <Skeleton
+            className={clsx(['h-6'], {
+              'w-24': index == 0,
+              'w-20': index !== 0,
+            })}
+          />
+        ))}
       </div>
-    </div>
+    </>
   )
 }
 
@@ -59,5 +93,5 @@ const EnvironmentListSkeleton = ({ grouped }: { grouped: boolean }) => {
     </>
   )
 }
-export {  EnvironmentListSkeleton }
+export { EnvironmentListSkeleton }
 export default ProjectSkeleton
