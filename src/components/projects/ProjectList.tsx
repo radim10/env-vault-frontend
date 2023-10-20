@@ -130,7 +130,7 @@ const ProjectList: React.FC<Props> = ({ workspace, sort, search, setLoaded }) =>
         {(!search ? data : data?.filter(({ name }) => name.includes(search?.toLowerCase())))?.map(
           ({ description, name, environmentCount }) => (
             <Link
-              href={`/workspace/${workspace}/projects/${name}`}
+              href={`/workspace/${workspace}/projects/${name}/environments`}
               className="cursor-pointer h-[8.2rem] border-2 dark:border-gray-800 transition hover:dark:shadow-xl hover:shadow-xl hover:shadow-primary/20 hover:dark:shadow-primary/20 rounded-md hover:dark:border-primary hover:border-primary hover:scale-[103%] ease duration-200"
             >
               <div className="px-4 py-3 h-full">
