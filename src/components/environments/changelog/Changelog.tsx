@@ -2,8 +2,8 @@
 
 import clsx from 'clsx'
 import dayjs from 'dayjs'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useCallback, useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import TypographyH4 from '@/components/typography/TypographyH4'
 import ChangelogSecretsItem from './ChangelogSecretsItem'
@@ -19,6 +19,7 @@ import { useToast } from '@/components/ui/use-toast'
 import Error from '@/components/Error'
 import ChangelogItem from './ChangelogItem'
 import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
+import { useUpdateEffect } from 'react-use'
 
 dayjs.extend(relativeTime)
 
@@ -30,6 +31,9 @@ interface Props {
 
 const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
   const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const selectedEnvironment = useSelectedEnvironmentStore()
@@ -39,18 +43,56 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
     null
   )
 
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams)
+      params.set(name, value)
+
+      return params.toString()
+    },
+    [searchParams]
+  )
+
+  useUpdateEffect(() => {
+    if (
+      searchParams.get('only-secrets') === 'true' &&
+      selectedEnvironment?.changelogFilter !== 'secrets'
+    ) {
+      selectedEnvironment.setChangelogFilter('secrets')
+    }
+
+    if (
+      searchParams.get('only-secrets') !== 'false' &&
+      selectedEnvironment?.changelogFilter === 'secrets'
+    ) {
+      selectedEnvironment.setChangelogFilter(null)
+    }
+  }, [searchParams])
+
   const { data, error, isFetching, isFetchingNextPage, fetchNextPage, isRefetching, isLoading } =
     useInfiniteQuery(
-      ['changelog', workspaceId, projectName, envName],
+      [
+        'changelog',
+        workspaceId,
+        projectName,
+        envName,
+        searchParams?.get('only-secrets') === 'true' ? 'only-secrets' : null,
+      ],
       async ({ pageParam = undefined }) => {
+        const onlySecrets = searchParams.get('only-secrets') === 'true'
+
         const res = await getEnvChangelogItems({
           workspaceId,
           projectName,
           envName,
-          params: pageParam && {
-            date: pageParam?.date,
-            id: pageParam?.id,
-          },
+          params:
+            pageParam || onlySecrets
+              ? {
+                date: pageParam?.date ?? undefined,
+                id: pageParam?.id ?? undefined,
+                'only-secrets': onlySecrets ?? undefined,
+              }
+              : undefined,
         })
 
         setHasMore(res?.hasMore ?? false)
@@ -214,10 +256,15 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
   if (isLoading) {
     return (
       <>
-        <Skeleton className="h-7 w-28 mb-6" />
-        <div className="flex flex-col gap-11 md:gap-11">
-          <ChangelogItemSkeleton />
-          <ChangelogItemSkeleton />
+        <div className="flex justify-end mb-0">
+          <Skeleton className="h-9 w-32 " />
+        </div>
+        <div>
+          <Skeleton className="h-7 w-28 mb-6" />
+          <div className="flex flex-col gap-11 md:gap-11">
+            <ChangelogItemSkeleton />
+            <ChangelogItemSkeleton />
+          </div>
         </div>
       </>
     )
@@ -241,84 +288,116 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
           if (!item) handleNoChangesToRollback(rollbackDialog?.secrets ? true : false)
         }}
       />
-      <div className="flex flex-col gap-5 md:gap-5">
-        {data?.pages?.flat(1)?.map((val, index) => (
-          <div>
-            <div
-              className={clsx(['mb-6'], {
-                'mt-4': index,
-              })}
-            >
-              {((dayjs(val?.createdAt).hour(12).format('YYYY-MM-DD') !==
-                dayjs(data?.pages?.flat(1)?.[index - 1]?.createdAt)
-                  .hour(12)
-                  .format('YYYY-MM-DD') &&
-                index > 0) ||
-                index === 0) && (
-                  <TypographyH4>
-                    {dayjs(val?.createdAt).hour(12).format('YYYY-MM-DD') ===
-                      dayjs().format('YYYY-MM-DD')
-                      ? 'Today'
-                      : dayjs(val?.createdAt)?.year() === dayjs().year()
-                        ? dayjs(val?.createdAt).hour(12).format('MMMM DD,  dd')
-                        : dayjs(val?.createdAt).hour(12).format('YYYY  MMM DD,  dd')}
-                  </TypographyH4>
-                )}
-            </div>
+      <div className="">
+        <div className="flex w-fill justify-end items-center">
+          <Button
+            size={'sm'}
+            variant={searchParams.get('only-secrets') === 'true' ? 'secondary' : 'outline'}
+            className={clsx(['gap-2'], {
+              'text-primary': searchParams.get('only-secrets') === 'true',
+              'hover:text-primary hover:border-primary hover:bg-transparent':
+                searchParams.get('only-secrets') !== 'true',
+            })}
+            onClick={() => {
+              const onlySecrets = searchParams.get('only-secrets') === 'true'
 
-            {val?.change?.action === 'secrets' && (
-              <ChangelogSecretsItem
-                id={val?.id}
-                key={val?.id}
-                workspaceId={workspaceId}
-                projectName={projectName}
-                envName={envName}
-                user={val?.user}
-                changeId={val?.id}
-                valuesLoaded={
-                  queryClient?.getQueryData(['changelog-secrets', val?.id]) !== undefined
-                }
-                changes={
-                  queryClient?.getQueryData(['changelog-secrets', val?.id]) ??
-                  val?.change?.data ??
-                  []
-                }
-                createdAt={`${dayjs(val?.createdAt).format('HH:mm')} (${dayjs(
-                  val?.createdAt
-                ).fromNow()})`}
-                onRollback={() => setRollbackDialog({ id: val?.id, secrets: true })}
-                onValuesLoaded={(values) =>
-                  handleFetchedSecretValues({
-                    page: Math.ceil((index + 1) / 5) - 1,
-                    changeId: val?.id,
-                    secrets: values,
-                  })
-                }
-                onError={() => {
-                  toast({
-                    title: 'Something went wrong',
-                    variant: 'destructive',
-                  })
-                }}
-              />
-            )}
-            {val?.change?.action !== 'secrets' && (
-              <ChangelogItem
-                user={val?.user}
-                change={val.change}
-                id={val?.change?.action !== 'created' ? val?.id : undefined}
-                createdAt={`${dayjs(val?.createdAt).format('HH:mm')} (${dayjs(
-                  val?.createdAt
-                ).fromNow()})`}
-                onRollback={() => setRollbackDialog({ id: val?.id, secrets: false })}
-              />
-            )}
-            {/* {index !== 2 && <Separator />} */}
-          </div>
-        ))}
+              if (onlySecrets) {
+                router.push(pathname)
+              } else {
+                router.push(pathname + '?' + createQueryString('only-secrets', 'true'))
+              }
+            }}
+          >
+            <Icons.squareAsterisk className="h-4 w-4" />
+            <span>Only secrets</span>
+          </Button>
+        </div>
+        {/* //List */}
+        <div className="flex flex-col gap-5 md:gap-4">
+          {data?.pages?.flat(1)?.map((val, index) => (
+            <div>
+              <div
+                className={clsx(['mb-6'], {
+                  'mt-2': index,
+                })}
+              >
+                {((dayjs(val?.createdAt).hour(12).format('YYYY-MM-DD') !==
+                  dayjs(data?.pages?.flat(1)?.[index - 1]?.createdAt)
+                    .hour(12)
+                    .format('YYYY-MM-DD') &&
+                  index > 0) ||
+                  index === 0) && (
+                    <div
+                      className={clsx({
+                        'mt-8': index,
+                      })}
+                    >
+                      <TypographyH4>
+                        {dayjs(val?.createdAt).hour(12).format('YYYY-MM-DD') ===
+                          dayjs().format('YYYY-MM-DD')
+                          ? 'Today'
+                          : dayjs(val?.createdAt)?.year() === dayjs().year()
+                            ? dayjs(val?.createdAt).hour(12).format('MMMM DD,  dd')
+                            : dayjs(val?.createdAt).hour(12).format('YYYY  MMM DD,  dd')}
+                      </TypographyH4>
+                    </div>
+                  )}
+              </div>
+
+              {val?.change?.action === 'secrets' && (
+                <ChangelogSecretsItem
+                  id={val?.id}
+                  key={val?.id}
+                  workspaceId={workspaceId}
+                  projectName={projectName}
+                  envName={envName}
+                  user={val?.user}
+                  changeId={val?.id}
+                  valuesLoaded={
+                    queryClient?.getQueryData(['changelog-secrets', val?.id]) !== undefined
+                  }
+                  changes={
+                    queryClient?.getQueryData(['changelog-secrets', val?.id]) ??
+                    val?.change?.data ??
+                    []
+                  }
+                  createdAt={`${dayjs(val?.createdAt).format('HH:mm')} (${dayjs(
+                    val?.createdAt
+                  ).fromNow()})`}
+                  onRollback={() => setRollbackDialog({ id: val?.id, secrets: true })}
+                  onValuesLoaded={(values) =>
+                    handleFetchedSecretValues({
+                      page: Math.ceil((index + 1) / 5) - 1,
+                      changeId: val?.id,
+                      secrets: values,
+                    })
+                  }
+                  onError={() => {
+                    toast({
+                      title: 'Something went wrong',
+                      variant: 'destructive',
+                    })
+                  }}
+                />
+              )}
+              {val?.change?.action !== 'secrets' && (
+                <ChangelogItem
+                  user={val?.user}
+                  change={val.change}
+                  id={val?.change?.action !== 'created' ? val?.id : undefined}
+                  createdAt={`${dayjs(val?.createdAt).format('HH:mm')} (${dayjs(
+                    val?.createdAt
+                  ).fromNow()})`}
+                  onRollback={() => setRollbackDialog({ id: val?.id, secrets: false })}
+                />
+              )}
+              {/* {index !== 2 && <Separator />} */}
+            </div>
+          ))}
+        </div>
 
         {isFetchingNextPage && (
-          <div className="mt-6">
+          <div className="mt-10">
             <ChangelogItemSkeleton count={1} />
           </div>
         )}
