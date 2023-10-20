@@ -1,4 +1,3 @@
-import ProjectRoot from '@/components/projects/ProjectRoot'
 import { Metadata, ResolvingMetadata } from 'next'
 
 // TODO: load project SSR?
@@ -23,7 +22,7 @@ export default function ProjectPage({
 }) {
   return (
     <>
-      <ProjectRoot workspaceId={params.workspace} projectName={params.projectName} />
+      {/* <ProjectEnvironmentList workspaceId={params.workspace} projectName={params.projectName} /> */}
     </>
   )
 }
