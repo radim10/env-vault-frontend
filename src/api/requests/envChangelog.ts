@@ -59,6 +59,7 @@ export async function getEnvChangelogItems(args: {
   params?: {
     id: string
     date: string
+    ['only-secrets']?: boolean
   }
 }) {
   const { workspaceId, projectName, envName, params } = args
