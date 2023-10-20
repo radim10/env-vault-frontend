@@ -181,7 +181,8 @@ const ChangelogLayout: React.FC<Props> = ({
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>
-                        <button onClick={()=>handleCopyId(id)}> {`${id.slice(0, 14)}...`}</button>
+                        {/* <button onClick={()=>handleCopyId(id)}> {`${id.slice(0, 14)}...`}</button> */}
+                        <button onClick={()=>handleCopyId(id)}>{id}</button>
                       </TooltipTrigger>
 
                       <TooltipContent >Copy ID (for cli usage)</TooltipContent>
