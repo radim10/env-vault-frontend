@@ -59,5 +59,5 @@ const EnvironmentListSkeleton = ({ grouped }: { grouped: boolean }) => {
     </>
   )
 }
-
+export {  EnvironmentListSkeleton }
 export default ProjectSkeleton
