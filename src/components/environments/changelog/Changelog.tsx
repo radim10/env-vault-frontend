@@ -406,7 +406,11 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
                 <ChangelogItem
                   user={val?.user}
                   change={val.change}
-                  id={val?.change?.action !== 'created' ? val?.id : undefined}
+                  id={
+                    val?.change?.action !== 'created' && val?.change?.action !== 'description'
+                      ? val?.id
+                      : undefined
+                  }
                   createdAt={`${dayjs(val?.createdAt).format('HH:mm')} (${dayjs(
                     val?.createdAt
                   ).fromNow()})`}

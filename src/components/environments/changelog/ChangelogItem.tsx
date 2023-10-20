@@ -34,7 +34,7 @@ const ChangelogItem: React.FC<Props> = ({ id, createdAt, user, change, onRollbac
         user={user}
         createdAt={createdAt}
         rollbackBtn={
-          change?.action !== 'created'
+          change?.action !== 'created' && change?.action !== 'description'
             ? {
               disabled: false,
               onClick: onRollback,
