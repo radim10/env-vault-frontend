@@ -30,27 +30,27 @@ const generalItems: Array<{
   label: string
   icon: LucideIcon
 }> = [
-  {
-    icon: Icons.clock4,
-    label: 'Created at',
-  },
-  {
-    icon: Icons.user,
-    label: 'Created by',
-  },
-  {
-    icon: Icons.fileText,
-    label: 'Name',
-  },
-  {
-    icon: Icons.tag,
-    label: 'Type',
-  },
-  {
-    icon: Icons.fileLock2,
-    label: 'Lock status',
-  },
-]
+    {
+      icon: Icons.clock4,
+      label: 'Created at',
+    },
+    {
+      icon: Icons.user,
+      label: 'Created by',
+    },
+    {
+      icon: Icons.fileText,
+      label: 'Name',
+    },
+    {
+      icon: Icons.tag,
+      label: 'Type',
+    },
+    {
+      icon: Icons.fileLock2,
+      label: 'Lock status',
+    },
+  ]
 
 export const EnvSettings = (props: {}) => {
   const queryClient = useQueryClient()
@@ -325,6 +325,15 @@ export const EnvSettings = (props: {}) => {
               },
               component: <div className="flex items-center gap-2">{selectedEnv?.name ?? ''}</div>,
             },
+            // {
+            //   icon: Icons.penSquare,
+            //   label: 'Description',
+            //   editBtn: {
+            //     disabled: selectedEnv?.locked,
+            //     onClick: () => setDialog('rename'),
+            //   },
+            //   component: <div className="flex items-center gap-2">{selectedEnv?.description ?? ''}</div>,
+            // },
             {
               icon: Icons.tag,
               label: 'Type',
