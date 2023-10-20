@@ -2,7 +2,7 @@
 
 import clsx from 'clsx'
 import dayjs from 'dayjs'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import TypographyH4 from '@/components/typography/TypographyH4'
@@ -19,7 +19,6 @@ import { useToast } from '@/components/ui/use-toast'
 import Error from '@/components/Error'
 import ChangelogItem from './ChangelogItem'
 import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
-import { useUpdateEffect } from 'react-use'
 
 dayjs.extend(relativeTime)
 
@@ -53,7 +52,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
     [searchParams]
   )
 
-  useUpdateEffect(() => {
+  useEffect(() => {
     if (
       searchParams.get('only-secrets') === 'true' &&
       selectedEnvironment?.changelogFilter !== 'secrets'
