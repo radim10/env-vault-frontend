@@ -29,7 +29,7 @@ export default function EnvLayout({
   const selectedEnvironment = useSelectedEnvironmentStore()
   const paramsData = useParams()
 
-  useMount(() => {})
+  useMount(() => { })
 
   useUnmount(() => selectedEnvironment.reset())
 
@@ -110,7 +110,7 @@ export default function EnvLayout({
         <div className="flex md:flex-row flex-col gap-2 md:items-center ">
           <div className="flex md:gap-2 items-center flex-wrap">
             <Link
-              href={`/workspace/${params?.workspace}/projects/${params?.projectName}`}
+              href={`/workspace/${params?.workspace}/projects/${params?.projectName}/environments`}
               className="text-primary hover:text-primary hover:underline underline-offset-[6px] hover:decoration-2"
             >
               <div className="font-semibold text-2xl">{params?.projectName}</div>
