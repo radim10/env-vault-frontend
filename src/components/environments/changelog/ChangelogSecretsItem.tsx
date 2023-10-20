@@ -10,7 +10,6 @@ import { useGetEnvChangelogItemSecrets } from '@/api/queries/envChangelog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import ChangelogLayout from './ChangelogLayout'
-import { Separator } from '@/components/ui/separator'
 
 interface Props {
   workspaceId: string
