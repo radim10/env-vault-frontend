@@ -222,7 +222,14 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
   }) => {
     const { page, changeId, secrets } = args
 
-    const key = ['changelog', workspaceId, projectName, envName]
+    const key = [
+      'changelog',
+      workspaceId,
+      projectName,
+      envName,
+
+      searchParams?.get('only-secrets') === 'true' ? 'only-secrets' : null,
+    ]
     const existingData = queryClient?.getQueryData<{ pages: Array<EnvChangelogItem[]> }>(key)
 
     if (existingData) {
