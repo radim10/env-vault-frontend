@@ -59,6 +59,10 @@ export type RenamedEnvChange = {
   old: string
 }
 
+export type UpdatedEnvDescription = {
+  action: 'description'
+}
+
 export type LockedEnvChange = {
   action: 'lock'
   locked: boolean
