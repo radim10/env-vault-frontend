@@ -157,7 +157,7 @@ const ChangelogLayout: React.FC<Props> = ({
 
           <div
             className={clsx(['flex items-center gap-2 text-muted-foreground text-[0.90rem]'], {
-              'mt-2 -ml-0.5': children !== undefined,
+              'mt-2.5 -ml-0.5': children !== undefined,
               '-mt-1 -ml-0.5': !children,
             })}
           >
