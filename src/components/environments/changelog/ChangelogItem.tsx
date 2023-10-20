@@ -5,14 +5,20 @@ import {
   EnvTypeChange,
   LockedEnvChange,
   RenamedEnvChange,
+  UpdatedEnvDescription,
 } from '@/types/envChangelog'
 import EnvTypeBadge from '../EnvTypeBadge'
 import { Icons } from '@/components/icons'
 
 interface Props {
-  change: CreatedEnvChange | RenamedEnvChange | LockedEnvChange | EnvTypeChange
+  change:
+  | CreatedEnvChange
+  | RenamedEnvChange
+  | UpdatedEnvDescription
+  | LockedEnvChange
+  | EnvTypeChange
   createdAt: string
-  id?: string,
+  id?: string
   user?: {
     name: string
     avatarUrl: string | null
@@ -56,6 +62,16 @@ const ChangelogItem: React.FC<Props> = ({ id, createdAt, user, change, onRollbac
                   {!user && <span>{`Environment created `}</span>}
                 </div>
                 <Icons.plusCircle className="hidden md:block w-3.5 h-3.5 text-foregroundX opacity-80" />
+              </div>
+            )}
+
+            {change?.action === 'description' && (
+              <div className="flex gap-2 items-center flex-wrap">
+                <div>
+                  {user && <span>{`Updated environment description `}</span>}
+                  {!user && <span>{`Environment description updated `}</span>}
+                </div>
+                <Icons.penSquare className="hidden md:block w-3.5 h-3.5 -mt-0.5 text-foregroundX opacity-80" />
               </div>
             )}
 
