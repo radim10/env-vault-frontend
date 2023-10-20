@@ -9,7 +9,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { useUpdateEffect } from 'react-use'
 import { Icons } from '@/components/icons'
-import { useRollbackEnvChange } from '@/api/mutations/envChangelog'
+import { useRevertEnvChange } from '@/api/mutations/envChangelog'
 import { envChangelogErrorMsgFromCode } from '@/api/requests/envChangelog'
 import { EnvChangelogItem } from '@/types/envChangelog'
 
@@ -25,7 +25,7 @@ interface Props {
   onSuccess: (item?: EnvChangelogItem) => void
 }
 
-const RollbackDialog: React.FC<Props> = ({
+const RevertChangeDialog: React.FC<Props> = ({
   workspaceId,
   projectName,
   envName,
@@ -39,7 +39,7 @@ const RollbackDialog: React.FC<Props> = ({
     isLoading,
     error,
     reset,
-  } = useRollbackEnvChange({
+  } = useRevertEnvChange({
     onSuccess,
   })
 
@@ -71,8 +71,11 @@ const RollbackDialog: React.FC<Props> = ({
           </DialogHeader>
 
           {error && (
-            <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mt-0">
-              <Icons.xCircle className="h-4 w-4" />
+            <div className="text-red-600 text-[0.92rem] flex items-start gap-2 mt-0">
+              <div>
+                <Icons.xCircle className="h-4 w-4 mt-1" />
+              </div>
+
               {error?.code ? envChangelogErrorMsgFromCode(error?.code) : 'Something went wrong'}
             </div>
           )}
@@ -81,6 +84,7 @@ const RollbackDialog: React.FC<Props> = ({
             <Button
               type="submit"
               className="w-full gap-2"
+              disabled={error && error?.code !== undefined ? true : false}
               loading={isLoading}
               onClick={() => {
                 rollback({ workspaceId, projectName, envName, changeId })
@@ -96,4 +100,4 @@ const RollbackDialog: React.FC<Props> = ({
   )
 }
 
-export default RollbackDialog
+export default RevertChangeDialog

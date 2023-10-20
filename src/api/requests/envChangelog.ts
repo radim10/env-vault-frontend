@@ -7,6 +7,7 @@ type EnvChangelogErrorCode =
   | 'environment_not_found'
   | 'change_not_found'
   | 'environment_already_exists'
+  | 'environment_locked'
 
 export type EnvChangelogError<T extends EnvChangelogErrorCode | void> = APIError<T>
 
@@ -25,6 +26,11 @@ export function envChangelogErrorMsgFromCode(
 
   if (code === 'environment_already_exists') {
     msg = 'Environment with selected name already exists'
+  }
+
+  if (code === 'environment_locked') {
+    msg =
+      'Environment is locked. This particual revert action is allowed only for unlocked environments.'
   }
 
   if (code === 'workspace_not_found') {
@@ -91,25 +97,26 @@ export async function getEnvChangelogItemSecrets(args: GetEnvChangelogItemSecret
 }
 
 // rollback
-export type RollbackEnvChangelogError = EnvChangelogError<
-  'project_not_found' | 'environment_not_found' | 'change_not_found'
+export type RevertEnvChangelogError = EnvChangelogError<
+  'project_not_found' | 'environment_not_found' | 'change_not_found' | 'environment_locked'
 >
-export type RollbackEnvChangelogResData = EnvChangelogItem | undefined
+export type RevertEnvChangelogResData = EnvChangelogItem | undefined
 
-export type RollbackEnvChangeReqArgs = {
+export type RevertEnvChangeReqArgs = {
   workspaceId: string
   projectName: string
   envName: string
   changeId: string
 }
 
-export async function rollbackEnvChangelog(args: RollbackEnvChangeReqArgs) {
+export async function revertEnvChange(args: RevertEnvChangeReqArgs) {
   const { workspaceId, projectName, envName, changeId } = args
 
-  const response = sendRequest<RollbackEnvChangelogResData>({
+  const response = sendRequest<RevertEnvChangelogResData>({
     method: 'POST',
     basePath: 'workspaces',
-    path: `${workspaceId}/projects/${projectName}/environments/${envName}/changelog/${changeId}/rollback`,
+    // path: `${workspaceId}/projects/${projectName}/environments/${envName}/changelog/${changeId}/rollback`,
+    path: `${workspaceId}/projects/${projectName}/environments/${envName}/changelog/${changeId}/revert`,
   })
   return await response
 }

@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
 import ChangelogItemSkeleton from './ChangelogItemSkeleton'
 import { Skeleton } from '@/components/ui/skeleton'
-import RollbackDialog from './RollbackDialog'
+import RevertChangeDialog from './RevertChangeDialog'
 import { EnvChangelogItem, SecretsChange } from '@/types/envChangelog'
 import { useToast } from '@/components/ui/use-toast'
 import Error from '@/components/Error'
@@ -229,7 +229,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
 
   return (
     <>
-      <RollbackDialog
+      <RevertChangeDialog
         workspaceId={workspaceId}
         projectName={projectName}
         envName={envName}

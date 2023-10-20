@@ -1,17 +1,17 @@
 import { useMutation } from '@tanstack/react-query'
 import {
-  RollbackEnvChangeReqArgs,
-  RollbackEnvChangelogError,
-  RollbackEnvChangelogResData,
-  rollbackEnvChangelog,
+  RevertEnvChangeReqArgs,
+  RevertEnvChangelogError,
+  RevertEnvChangelogResData,
+  revertEnvChange,
 } from '../requests/envChangelog'
 import { MutOpt } from './mutOpt'
 
 // create
-type RollbackEnvChangeVariables = RollbackEnvChangeReqArgs
+type RevertEnvChangeVariables = RevertEnvChangeReqArgs
 
-export const useRollbackEnvChange = (opt?: MutOpt<RollbackEnvChangelogResData>) =>
-  useMutation<RollbackEnvChangelogResData, RollbackEnvChangelogError, RollbackEnvChangeVariables>(
-    rollbackEnvChangelog,
+export const useRevertEnvChange = (opt?: MutOpt<RevertEnvChangelogResData>) =>
+  useMutation<RevertEnvChangelogResData, RevertEnvChangelogError, RevertEnvChangeVariables>(
+    revertEnvChange,
     opt
   )
