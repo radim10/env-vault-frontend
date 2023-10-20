@@ -15,11 +15,13 @@ export interface SelectedEnvironment {
 
 export interface SelectedEnvironmentState {
   data: SelectedEnvironment | null
+  changelogFilter: 'secrets' | null
 }
 
 interface SelectedEnvironmentActions {
   set: (env: SelectedEnvironment) => void
   update: (locked: Partial<{ name: string; locked: boolean; type: EnvironmentType }>) => void
+  setChangelogFilter: (envChangelogFilter: 'secrets' | null) => void
   reset: () => void
 }
 
@@ -27,7 +29,13 @@ export const useSelectedEnvironmentStore = create(
   devtools(
     immer<SelectedEnvironmentState & SelectedEnvironmentActions>((set) => ({
       data: null,
+      changelogFilter: null,
       set: (env) => set({ data: env }),
+      setChangelogFilter: (changelogFilter) => {
+        set((state) => {
+          state.changelogFilter = changelogFilter
+        })
+      },
       update: ({ name, locked, type }) => {
         set((state) => {
           if (state.data) {
