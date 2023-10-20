@@ -141,8 +141,12 @@ const ProjectRoot: React.FC<Props> = ({ workspaceId, projectName }) => {
     }
   }
 
+  if (!project) {
+    return ''
+  }
+
   if (isLoading || !environments) {
-    return <ProjectSkeleton grouped={false} />
+    // return <ProjectSkeleton grouped={false} />
     // return <ProjectSkeleton grouped={groupBy !== null ? true : false} />
   }
 
