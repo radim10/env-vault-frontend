@@ -157,7 +157,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
     closeDialog()
 
     toast({
-      title: 'Rollback has been completed',
+      title: 'Revert has been completed',
       variant: 'success',
     })
   }
@@ -227,7 +227,6 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
       workspaceId,
       projectName,
       envName,
-
       searchParams?.get('only-secrets') === 'true' ? 'only-secrets' : null,
     ]
     const existingData = queryClient?.getQueryData<{ pages: Array<EnvChangelogItem[]> }>(key)
