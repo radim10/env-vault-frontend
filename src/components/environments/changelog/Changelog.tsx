@@ -118,7 +118,13 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
     )
 
   const handleRollbackData = (newItem: EnvChangelogItem) => {
-    const key = ['changelog', workspaceId, projectName, envName]
+    const key = [
+      'changelog',
+      workspaceId,
+      projectName,
+      envName,
+      searchParams?.get('only-secrets') === 'true' ? 'only-secrets' : null,
+    ]
     const existingData = queryClient?.getQueryData<{ pages: Array<EnvChangelogItem[]> }>(key)
 
     if (existingData) {
@@ -163,7 +169,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
   }
 
   const handleRenameRollback = (args: {
-    changelogKey: string[]
+    changelogKey: Array<string | null>
     newName: string
     updatedData: {
       pages: Array<EnvChangelogItem[]>
@@ -171,7 +177,16 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
   }) => {
     const { changelogKey, updatedData, newName } = args
 
-    queryClient.setQueryData(['changelog', workspaceId, projectName, newName], updatedData)
+    queryClient.setQueryData(
+      [
+        'changelog',
+        workspaceId,
+        projectName,
+        newName,
+        searchParams?.get('only-secrets') === 'true' ? 'only-secrets' : null,
+      ],
+      updatedData
+    )
     queryClient.setQueryData(changelogKey, null)
 
     // update env cache
