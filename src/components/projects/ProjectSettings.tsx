@@ -128,10 +128,12 @@ const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
                     queryClient.getQueryData<Project>(['project', workspaceId, projectName])
                       ?.createdAt
                   ).format('YYYY-MM-DD HH:mm')}{' '}
-                  ({dayjs(
+                  (
+                  {dayjs(
                     queryClient.getQueryData<Project>(['project', workspaceId, projectName])
                       ?.createdAt
-                  ).fromNow()})
+                  ).fromNow()}
+                  )
                 </>
               ),
             },
