@@ -124,7 +124,14 @@ const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
               label: 'Created at',
               component: (
                 <>
-                  {dayjs().format('YYYY-MM-DD HH:mm')} ({dayjs().fromNow()})
+                  {dayjs(
+                    queryClient.getQueryData<Project>(['project', workspaceId, projectName])
+                      ?.createdAt
+                  ).format('YYYY-MM-DD HH:mm')}{' '}
+                  ({dayjs(
+                    queryClient.getQueryData<Project>(['project', workspaceId, projectName])
+                      ?.createdAt
+                  ).fromNow()})
                 </>
               ),
             },
