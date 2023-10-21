@@ -99,7 +99,7 @@ const UpdateProjectDialog: React.FC<Props> = ({
       >
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Rename project</DialogTitle>
+            <DialogTitle>Update project</DialogTitle>
             <DialogDescription>Update your project's name or description</DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4 py-4 text-lg">
