@@ -1,15 +1,12 @@
 'use client'
 
 import { Icons } from '@/components/icons'
-import TypographyH4 from '@/components/typography/TypographyH4'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
 import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
 import { useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import React, { useState } from 'react'
 import RenameEnvironmentDialog from '../RenameEnvironmentDialog'
-import { Project } from '@/types/projects'
+import { ListEnvironment } from '@/types/projects'
 import { Secret } from '@/types/secrets'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/ui/use-toast'
@@ -52,7 +49,7 @@ const generalItems: Array<{
     },
   ]
 
-export const EnvSettings = (props: {}) => {
+export const EnvSettings = () => {
   const queryClient = useQueryClient()
   const router = useRouter()
   const { toast } = useToast()
@@ -67,14 +64,11 @@ export const EnvSettings = (props: {}) => {
     // TODO: update single item (check if env exists)
 
     // update list
-    const projectData = queryClient.getQueryData<Project>([
-      'project',
-      selectedEnv?.workspaceId,
-      selectedEnv?.projectName,
-    ])
+    const queryKey = [selectedEnv?.workspaceId, selectedEnv?.projectName, 'environments']
+    const envListData = queryClient.getQueryData<ListEnvironment[]>(queryKey)
 
-    if (projectData) {
-      const environments = [...projectData?.environments]
+    if (envListData) {
+      const environments = [...envListData]
       const prevName = selectedEnv?.name
 
       const updatedEnvIndex = environments?.findIndex((e) => e.name === prevName)
@@ -82,13 +76,32 @@ export const EnvSettings = (props: {}) => {
       if (updatedEnvIndex !== -1) {
         const updated = environments?.[updatedEnvIndex]
         environments[updatedEnvIndex] = { ...updated, name: newName }
-
-        queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
-          ...projectData,
-          environments,
-        })
+        queryClient.setQueryData(queryKey, environments)
       }
     }
+
+    // const projectData = queryClient.getQueryData<Project>([
+    //   'project',
+    //   selectedEnv?.workspaceId,
+    //   selectedEnv?.projectName,
+    // ])
+    //
+    // if (projectData) {
+    //   const environments = [...projectData?.environments]
+    //   const prevName = selectedEnv?.name
+    //
+    //   const updatedEnvIndex = environments?.findIndex((e) => e.name === prevName)
+    //
+    //   if (updatedEnvIndex !== -1) {
+    //     const updated = environments?.[updatedEnvIndex]
+    //     environments[updatedEnvIndex] = { ...updated, name: newName }
+    //
+    //     queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
+    //       ...projectData,
+    //       environments,
+    //     })
+    //   }
+    // }
 
     // updated secrets under new name
     const secretsData = queryClient.getQueryData<Secret[]>([
@@ -119,24 +132,39 @@ export const EnvSettings = (props: {}) => {
   const handleDeletedEnv = () => {
     setDialog(null)
 
-    // update cache
-    // TODO: update single item (check if env exists)
-    const projectData = queryClient.getQueryData<Project>([
-      'project',
-      selectedEnv?.workspaceId,
-      selectedEnv?.projectName,
-    ])
+    const key = [selectedEnv?.workspaceId, selectedEnv?.projectName, 'environments']
+    const data = queryClient.getQueryData<ListEnvironment[]>(key)
 
-    if (projectData) {
-      const environments = projectData?.environments
+    if (data) {
+      const environments = [...data]
       const updatedEnvironments = environments?.filter((val) => val?.name !== selectedEnv?.name)
-
-      queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
-        ...projectData,
-        environments: updatedEnvironments,
-      })
+      queryClient.setQueryData(key, updatedEnvironments)
     }
 
+    const singleEnvKey = [selectedEnv?.workspaceId, selectedEnv?.projectName, selectedEnv?.name]
+    const singleEnvData = queryClient.getQueryData<Environment>(singleEnvKey)
+
+    if (singleEnvData) {
+      queryClient.setQueryData(singleEnvKey, null)
+    }
+
+    // TODO: update single item (check if env exists)
+    // const projectData = queryClient.getQueryData<Project>([
+    //   'project',
+    //   selectedEnv?.workspaceId,
+    //   selectedEnv?.projectName,
+    // ])
+    //
+    // if (projectData) {
+    //   const environments = projectData?.environments
+    //   const updatedEnvironments = environments?.filter((val) => val?.name !== selectedEnv?.name)
+    //
+    //   queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
+    //     ...projectData,
+    //     environments: updatedEnvironments,
+    //   })
+    // }
+    //
     toast({
       title: 'Environment has been deleted',
       variant: 'success',
@@ -148,14 +176,14 @@ export const EnvSettings = (props: {}) => {
   const handleLockChange = (locked: boolean) => {
     setDialog(null)
 
-    const projectData = queryClient.getQueryData<Project>([
-      'project',
+    const envListData = queryClient.getQueryData<ListEnvironment[]>([
       selectedEnv?.workspaceId,
       selectedEnv?.projectName,
+      'environments',
     ])
 
-    if (projectData) {
-      const environments = [...projectData?.environments]
+    if (envListData) {
+      const environments = [...envListData]
       const prevName = selectedEnv?.name
 
       const updatedEnvIndex = environments?.findIndex((e) => e.name === prevName)
@@ -165,10 +193,10 @@ export const EnvSettings = (props: {}) => {
 
         environments[updatedEnvIndex] = { ...updated, locked }
 
-        queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
-          ...projectData,
-          environments,
-        })
+        queryClient.setQueryData(
+          [selectedEnv?.workspaceId, selectedEnv?.projectName, 'environments'],
+          environments
+        )
       }
     }
 
@@ -199,27 +227,26 @@ export const EnvSettings = (props: {}) => {
   const handleTypeChange = (type: EnvironmentType) => {
     setDialog(null)
 
-    const projectData = queryClient.getQueryData<Project>([
-      'project',
+    const envListData = queryClient.getQueryData<ListEnvironment[]>([
       selectedEnv?.workspaceId,
       selectedEnv?.projectName,
+      'environments',
     ])
 
-    if (projectData) {
-      const environments = [...projectData?.environments]
+    if (envListData) {
+      const updatedEnvList = [...envListData]
       const name = selectedEnv?.name
 
-      const updatedEnvIndex = environments?.findIndex((e) => e.name === name)
+      const updatedEnvIndex = updatedEnvList?.findIndex((e) => e.name === name)
 
       if (updatedEnvIndex !== -1) {
-        const updated = environments?.[updatedEnvIndex]
+        const updated = updatedEnvList?.[updatedEnvIndex]
+        updatedEnvList[updatedEnvIndex] = { ...updated, type }
 
-        environments[updatedEnvIndex] = { ...updated, type }
-
-        queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
-          ...projectData,
-          environments,
-        })
+        queryClient.setQueryData(
+          [selectedEnv?.workspaceId, selectedEnv?.projectName, 'environments'],
+          updatedEnvList
+        )
       }
     }
 
