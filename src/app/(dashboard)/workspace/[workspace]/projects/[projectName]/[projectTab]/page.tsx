@@ -1,4 +1,5 @@
 import EnvironmentList from '@/components/projects/EnvironmentList'
+import ProjectSettings from '@/components/projects/ProjectSettings'
 import { Metadata, ResolvingMetadata } from 'next'
 import { redirect } from 'next/navigation'
 
@@ -32,6 +33,12 @@ export default function ProjectPage({
     <>
       {params?.projectTab === 'environments' && (
         <EnvironmentList workspaceId={params.workspace} projectName={params.projectName} />
+      )}
+
+      {params?.projectTab === 'settings' && (
+        <div className="mt-4 px-6 lg:px-10">
+          <ProjectSettings workspaceId={params.workspace} projectName={params.projectName} />
+        </div>
       )}
     </>
   )
