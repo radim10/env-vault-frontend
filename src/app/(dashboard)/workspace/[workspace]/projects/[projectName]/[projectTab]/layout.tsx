@@ -21,7 +21,6 @@ function ProjectLayout({
   const paramValues = useParams<{
     workspace: string
     projectName: string
-    env?: string
     projectTab: string
   }>()
 
@@ -36,15 +35,9 @@ function ProjectLayout({
     },
     {
       enabled:
-        !paramValues?.env &&
         queryClient.getQueryData(['project', params?.workspace, params?.projectName]) !== null,
     }
   )
-
-  if (paramValues?.env) {
-    return <>{children}</>
-  }
-
   if (isLoading) {
     return <ProjectSkeleton />
   }
