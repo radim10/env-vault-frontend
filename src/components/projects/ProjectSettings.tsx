@@ -158,14 +158,23 @@ const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
                 disabled: false,
                 onClick: () => setDialog('edit'),
               },
-              fullComponent: (
-                <>
-                  {
-                    queryClient.getQueryData<Project>(['project', workspaceId, projectName])
-                      ?.description
-                  }
-                </>
-              ),
+
+              component:
+                queryClient.getQueryData<Project>(['project', workspaceId, projectName])
+                  ?.description === null ? (
+                  <></>
+                ) : undefined,
+
+              fullComponent:
+                queryClient.getQueryData<Project>(['project', workspaceId, projectName])
+                  ?.description !== null ? (
+                  <>
+                    {
+                      queryClient.getQueryData<Project>(['project', workspaceId, projectName])
+                        ?.description
+                    }
+                  </>
+                ) : undefined,
             },
           ]}
         />
