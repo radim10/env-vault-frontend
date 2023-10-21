@@ -8,14 +8,9 @@ import { SecretAction, useEditedSecretsStore } from '@/stores/secrets'
 import { useQueryClient } from '@tanstack/react-query'
 import { useToast } from '../ui/use-toast'
 import SaveConfirmDialog from './SaveConfirmDialog'
-import RenameEnvironmentDialog from '../environments/RenameEnvironmentDialog'
 import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
-import DeleteEnvironmentDialog from '../environments/DeleteEnvironmentDialog'
-import { Project } from '@/types/projects'
+import { ListEnvironment } from '@/types/projects'
 import { Secret } from '@/types/secrets'
-import LockEnvDialog from '../environments/LockEnvDialog'
-import ChangeEnvironmentTypeDialog from '../environments/ChangeEnvironmentTypeDialog'
-import { Environment, EnvironmentType } from '@/types/environments'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 import UndoAllChangesDialog from './UndoAllChangesDialog'
 
@@ -28,7 +23,7 @@ const SaveSecretsToolbar: React.FC<Props> = ({ showBtn }) => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
-  const { data: selectedEnv, update: updateSelectedEnv } = useSelectedEnvironmentStore()
+  const { data: selectedEnv } = useSelectedEnvironmentStore()
 
   const [dialog, setDialog] = useState<
     'save' | 'undo' | 'rename' | 'delete' | 'lock' | 'changeType' | null
@@ -168,26 +163,26 @@ const SaveSecretsToolbar: React.FC<Props> = ({ showBtn }) => {
     // TODO: update single item (check if env exists)
 
     // update list
-    const projectData = queryClient.getQueryData<Project>([
-      'project',
+    const envListData = queryClient.getQueryData<ListEnvironment[]>([
       selectedEnv?.workspaceId,
       selectedEnv?.projectName,
+      'environments',
     ])
 
-    if (projectData) {
-      const environments = [...projectData?.environments]
+    if (envListData) {
+      const updatedEnvList = [...envListData]
       const prevName = selectedEnv?.name
 
-      const updatedEnvIndex = environments?.findIndex((e) => e.name === prevName)
+      const updatedEnvIndex = updatedEnvList?.findIndex((e) => e.name === prevName)
 
       if (updatedEnvIndex !== -1) {
-        const updated = environments?.[updatedEnvIndex]
-        environments[updatedEnvIndex] = { ...updated, name: newName }
+        const updated = updatedEnvList?.[updatedEnvIndex]
+        updatedEnvList[updatedEnvIndex] = { ...updated, name: newName }
 
-        queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
-          ...projectData,
-          environments,
-        })
+        queryClient.setQueryData(
+          [selectedEnv?.workspaceId, selectedEnv?.projectName, 'environments'],
+          updatedEnvList
+        )
       }
     }
 
@@ -216,132 +211,132 @@ const SaveSecretsToolbar: React.FC<Props> = ({ showBtn }) => {
       `/workspace/${selectedEnv?.workspaceId}/projects/${selectedEnv?.projectName}/env/${newName}`
     )
   }
-
-  const handleLockChange = (locked: boolean) => {
-    setDialog(null)
-
-    const projectData = queryClient.getQueryData<Project>([
-      'project',
-      selectedEnv?.workspaceId,
-      selectedEnv?.projectName,
-    ])
-
-    if (projectData) {
-      const environments = [...projectData?.environments]
-      const prevName = selectedEnv?.name
-
-      const updatedEnvIndex = environments?.findIndex((e) => e.name === prevName)
-
-      if (updatedEnvIndex !== -1) {
-        const updated = environments?.[updatedEnvIndex]
-
-        environments[updatedEnvIndex] = { ...updated, locked }
-
-        queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
-          ...projectData,
-          environments,
-        })
-      }
-    }
-
-    const environmentData = queryClient.getQueryData<Environment>([
-      selectedEnv?.workspaceId,
-      selectedEnv?.projectName,
-      selectedEnv?.name,
-    ])
-
-    if (environmentData) {
-      queryClient.setQueryData(
-        [selectedEnv?.workspaceId, selectedEnv?.projectName, selectedEnv?.name],
-        {
-          ...environmentData,
-          locked,
-        }
-      )
-    }
-
-    updateSelectedEnv({ locked })
-
-    toast({
-      title: `Environment has been ${locked ? 'locked' : 'unlocked'}`,
-      variant: 'success',
-    })
-  }
-
-  const handleTypeChange = (type: EnvironmentType) => {
-    setDialog(null)
-
-    const projectData = queryClient.getQueryData<Project>([
-      'project',
-      selectedEnv?.workspaceId,
-      selectedEnv?.projectName,
-    ])
-
-    if (projectData) {
-      const environments = [...projectData?.environments]
-      const name = selectedEnv?.name
-
-      const updatedEnvIndex = environments?.findIndex((e) => e.name === name)
-
-      if (updatedEnvIndex !== -1) {
-        const updated = environments?.[updatedEnvIndex]
-
-        environments[updatedEnvIndex] = { ...updated, type }
-
-        queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
-          ...projectData,
-          environments,
-        })
-      }
-    }
-
-    const environmentData = queryClient.getQueryData<Environment>([
-      selectedEnv?.workspaceId,
-      selectedEnv?.projectName,
-      selectedEnv?.name,
-    ])
-
-    if (environmentData) {
-      queryClient.setQueryData(
-        [selectedEnv?.workspaceId, selectedEnv?.projectName, selectedEnv?.name],
-        {
-          ...environmentData,
-          type,
-        }
-      )
-    }
-
-    toast({
-      title: 'Environment type has been changed',
-      variant: 'success',
-    })
-
-    updateSelectedEnv({ type })
-  }
-
-  const handleDeletedEnv = () => {
-    setDialog(null)
-
-    // update cache
-    // TODO: update single item (check if env exists)
-    const projectData = queryClient.getQueryData<Project>([
-      'project',
-      selectedEnv?.workspaceId,
-      selectedEnv?.projectName,
-    ])
-
-    if (projectData) {
-      const environments = projectData?.environments
-      const updatedEnvironments = environments?.filter((val) => val?.name !== selectedEnv?.name)
-
-      queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
-        ...projectData,
-        environments: updatedEnvironments,
-      })
-    }
-
-    router.push(`/workspace/${selectedEnv?.workspaceId}/projects/${selectedEnv?.projectName}`)
-  }
+  //
+  // const handleLockChange = (locked: boolean) => {
+  //   setDialog(null)
+  //
+  //   const projectData = queryClient.getQueryData<Project>([
+  //     'project',
+  //     selectedEnv?.workspaceId,
+  //     selectedEnv?.projectName,
+  //   ])
+  //
+  //   if (projectData) {
+  //     const environments = [...projectData?.environments]
+  //     const prevName = selectedEnv?.name
+  //
+  //     const updatedEnvIndex = environments?.findIndex((e) => e.name === prevName)
+  //
+  //     if (updatedEnvIndex !== -1) {
+  //       const updated = environments?.[updatedEnvIndex]
+  //
+  //       environments[updatedEnvIndex] = { ...updated, locked }
+  //
+  //       queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
+  //         ...projectData,
+  //         environments,
+  //       })
+  //     }
+  //   }
+  //
+  //   const environmentData = queryClient.getQueryData<Environment>([
+  //     selectedEnv?.workspaceId,
+  //     selectedEnv?.projectName,
+  //     selectedEnv?.name,
+  //   ])
+  //
+  //   if (environmentData) {
+  //     queryClient.setQueryData(
+  //       [selectedEnv?.workspaceId, selectedEnv?.projectName, selectedEnv?.name],
+  //       {
+  //         ...environmentData,
+  //         locked,
+  //       }
+  //     )
+  //   }
+  //
+  //   updateSelectedEnv({ locked })
+  //
+  //   toast({
+  //     title: `Environment has been ${locked ? 'locked' : 'unlocked'}`,
+  //     variant: 'success',
+  //   })
+  // }
+  //
+  // const handleTypeChange = (type: EnvironmentType) => {
+  //   setDialog(null)
+  //
+  //   const projectData = queryClient.getQueryData<Project>([
+  //     'project',
+  //     selectedEnv?.workspaceId,
+  //     selectedEnv?.projectName,
+  //   ])
+  //
+  //   if (projectData) {
+  //     const environments = [...projectData?.environments]
+  //     const name = selectedEnv?.name
+  //
+  //     const updatedEnvIndex = environments?.findIndex((e) => e.name === name)
+  //
+  //     if (updatedEnvIndex !== -1) {
+  //       const updated = environments?.[updatedEnvIndex]
+  //
+  //       environments[updatedEnvIndex] = { ...updated, type }
+  //
+  //       queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
+  //         ...projectData,
+  //         environments,
+  //       })
+  //     }
+  //   }
+  //
+  //   const environmentData = queryClient.getQueryData<Environment>([
+  //     selectedEnv?.workspaceId,
+  //     selectedEnv?.projectName,
+  //     selectedEnv?.name,
+  //   ])
+  //
+  //   if (environmentData) {
+  //     queryClient.setQueryData(
+  //       [selectedEnv?.workspaceId, selectedEnv?.projectName, selectedEnv?.name],
+  //       {
+  //         ...environmentData,
+  //         type,
+  //       }
+  //     )
+  //   }
+  //
+  //   toast({
+  //     title: 'Environment type has been changed',
+  //     variant: 'success',
+  //   })
+  //
+  //   updateSelectedEnv({ type })
+  // }
+  //
+  // const handleDeletedEnv = () => {
+  //   setDialog(null)
+  //
+  //   // update cache
+  //   // TODO: update single item (check if env exists)
+  //   const projectData = queryClient.getQueryData<Project>([
+  //     'project',
+  //     selectedEnv?.workspaceId,
+  //     selectedEnv?.projectName,
+  //   ])
+  //
+  //   if (projectData) {
+  //     const environments = projectData?.environments
+  //     const updatedEnvironments = environments?.filter((val) => val?.name !== selectedEnv?.name)
+  //
+  //     queryClient.setQueryData(['project', selectedEnv?.workspaceId, selectedEnv?.projectName], {
+  //       ...projectData,
+  //       environments: updatedEnvironments,
+  //     })
+  //   }
+  //
+  //   router.push(`/workspace/${selectedEnv?.workspaceId}/projects/${selectedEnv?.projectName}`)
+  // }
 
   const handleUndoAllSecretsChanges = () => {
     const secretsData = queryClient.getQueryData<Secret[]>([
@@ -409,44 +404,6 @@ const SaveSecretsToolbar: React.FC<Props> = ({ showBtn }) => {
         onConfirm={handleUndoAllSecretsChanges}
       />
 
-      <RenameEnvironmentDialog
-        opened={dialog === 'rename'}
-        workspaceId={selectedEnv.workspaceId}
-        projectName={selectedEnv.projectName}
-        envName={selectedEnv.name}
-        onClose={() => setDialog(null)}
-        onSuccess={handleRenamedEnv}
-      />
-
-      <DeleteEnvironmentDialog
-        opened={dialog === 'delete'}
-        workspaceId={selectedEnv.workspaceId}
-        projectName={selectedEnv.projectName}
-        envName={selectedEnv.name}
-        onClose={() => setDialog(null)}
-        onSuccess={handleDeletedEnv}
-      />
-
-      <LockEnvDialog
-        opened={dialog === 'lock'}
-        workspaceId={selectedEnv.workspaceId}
-        projectName={selectedEnv.projectName}
-        envName={selectedEnv.name}
-        lock={!selectedEnv.locked}
-        onClose={() => setDialog(null)}
-        onSuccess={() => handleLockChange(!selectedEnv.locked)}
-      />
-
-      <ChangeEnvironmentTypeDialog
-        type={selectedEnv.type}
-        opened={dialog === 'changeType'}
-        workspaceId={selectedEnv.workspaceId}
-        projectName={selectedEnv.projectName}
-        envName={selectedEnv.name}
-        onClose={() => setDialog(null)}
-        onSuccess={handleTypeChange}
-      />
-
       <div className="flex items-center gap-3 lg:gap-5 -mt-1">
         {loaded && (
           <>
@@ -457,10 +414,10 @@ const SaveSecretsToolbar: React.FC<Props> = ({ showBtn }) => {
                 (s.description && s.newDescription !== s.description && s.newDescription) ||
                 (s.newDescription?.length === 0 && s.description)
             ).length > 0 && (
-              <div className="text-[0.92rem] text-yellow-500 dark:text-yellow-600 font-medium">
-                {getChangesText()}
-              </div>
-            )}
+                <div className="text-[0.92rem] text-yellow-500 dark:text-yellow-600 font-medium">
+                  {getChangesText()}
+                </div>
+              )}
           </>
         )}
 
@@ -472,17 +429,17 @@ const SaveSecretsToolbar: React.FC<Props> = ({ showBtn }) => {
               (s.description && s.newDescription !== s.description && s.newDescription) ||
               (s.newDescription?.length === 0 && s.description)
           ).length > 0 && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button variant={'outline'} size={'sm'} onClick={() => setDialog('undo')}>
-                    <Icons.undo className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Undo all changes</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant={'outline'} size={'sm'} onClick={() => setDialog('undo')}>
+                      <Icons.undo className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Undo all changes</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           {/* {loaded && secrets?.length !== 0 && ( */}
           <Button
             className="gap-2"
