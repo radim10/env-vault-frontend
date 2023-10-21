@@ -1,11 +1,10 @@
 import { Environment } from './environments'
 
 export interface Project {
-  // id: string // ??
   createdAt: string
   description: string | null
   name: string
-  environments: ListEnvironment[]
+  // environments: ListEnvironment[]
 }
 
 export type ListEnvironment = Environment & { secretsCount: number }
