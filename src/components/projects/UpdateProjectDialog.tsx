@@ -42,7 +42,7 @@ const UpdateProjectDialog: React.FC<Props> = ({
   const [description, setDescription] = useState('')
   const [name, setName] = useState('')
 
-  const { mutate: updateProject, isLoading, error } = useUpdateProject()
+  const { mutate: updateProject, isLoading, error, reset } = useUpdateProject()
 
   useUpdateEffect(() => {
     setName(prevName)
@@ -86,6 +86,14 @@ const UpdateProjectDialog: React.FC<Props> = ({
     if (isLoading) return
     onClose()
   }
+
+  useUpdateEffect(() => {
+    if (!opened) {
+      setTimeout(() => {
+        reset()
+      }, 150)
+    }
+  }, [opened])
 
   return (
     <div>
