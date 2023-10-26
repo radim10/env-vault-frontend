@@ -3,7 +3,7 @@
 import { useGetWorkspaceUsers } from '@/api/queries/users'
 import { columns } from './table/Columns'
 import UsersDataTable from './table/DataTable'
-import { WorkspaceUser, WorkspaceUserRole } from '@/types/users'
+import TableToolbar from './TableToolbar'
 
 interface Props {
   workspaceId: string
@@ -31,7 +31,8 @@ const WorkspaceUsers: React.FC<Props> = ({ workspaceId }) => {
   return (
     <div>
       {/* <UsersDataTable columns={columns as any} data={dummyData} /> */}
-      <UsersDataTable columns={columns as any} data={data ?? []} />
+      <TableToolbar userCount={data?.totalCount ?? 0} />
+      <UsersDataTable columns={columns as any} data={data?.data ?? []} />
     </div>
   )
 }
