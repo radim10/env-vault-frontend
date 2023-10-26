@@ -1,5 +1,5 @@
 import sendRequest, { APIError } from '../instance'
-import { User } from '@/types/users'
+import { User, WorkspaceUser } from '@/types/users'
 
 type UsersErrorCode = 'workspace_not_found'
 export type UsersError<T extends UsersErrorCode | void> = APIError<T>
@@ -16,7 +16,7 @@ export function workspacesErrorMsgFromCode(code: UsersErrorCode): string {
 
 // NOTE: requests
 export type GetWorkspaceUsersError = UsersError<undefined>
-export type GetWorkspaceUsersData = User[]
+export type GetWorkspaceUsersData = WorkspaceUser[]
 
 export async function getWorkspaceUsers(id: string) {
   const response = sendRequest<GetWorkspaceUsersData>({
