@@ -1,7 +1,7 @@
 'use client'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { User } from '@/types/users'
+import { User, WorkspaceUser, WorkspaceUserRole } from '@/types/users'
 import { ColumnDef } from '@tanstack/react-table'
 import { MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -20,13 +20,10 @@ import UserRoleBadge from '../UserRoleBadge'
 
 dayjs.extend(relativeTime)
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<WorkspaceUser>[] = [
   {
     accessorKey: 'avatarUrl',
-    header: ({ column }) => <></>,
+    header: (_) => <></>,
     cell: ({ row }) => {
       return (
         <Avatar className="w-10 h-10">
@@ -49,7 +46,7 @@ export const columns: ColumnDef<User>[] = [
           {column.getIsSorted() && (
             <>
               {column.getIsSorted() === 'asc' ? (
-                <Icons.arrowUpDown className="ml-2 h-4 w-4" />
+                <Icons.arrowUp className="ml-2 h-4 w-4" />
               ) : (
                 <Icons.arrowDown className="ml-2 h-4 w-4" />
               )}
@@ -95,23 +92,45 @@ export const columns: ColumnDef<User>[] = [
 
   {
     accessorKey: 'role',
-    header: () => <div className="text-start ml-2">Role</div>,
+    // sortingFn: (a, b) => {
+    //   return a.getValue('role').localeCompare(b.getValue('role'))
+    // },
+    header: ({ column }) => {
+      return (
+        <button
+          className="flex items-center gap-1"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Role
+          {column.getIsSorted() && (
+            <>
+              {column.getIsSorted() === 'asc' ? (
+                <Icons.arrowUp className="ml-2 h-4 w-4" />
+              ) : (
+                <Icons.arrowDown className="ml-2 h-4 w-4" />
+              )}
+            </>
+          )}
+        </button>
+      )
+    },
     cell: ({ row }) => {
-      const name = row.getValue('name') as string
+      const role = row.getValue('role') as WorkspaceUserRole
 
       return (
         <div>
-          <UserRoleBadge role="admin" />
+          <UserRoleBadge role={role} />
         </div>
       )
     },
   },
 
   {
-    id: 'joined',
+    accessorKey: 'joinedAt',
     header: () => <div className="text-left">Joined</div>,
     cell: ({ row }) => {
-      const relativeDate = dayjs().fromNow()
+      const date = row.getValue('joinedAt') as string
+      const relativeDate = dayjs(date).fromNow()
 
       return <div>{relativeDate}</div>
     },
