@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
+import clsx from 'clsx'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -48,9 +49,16 @@ function UsersDataTable<TData, TValue>({ columns, data }: DataTableProps<TData, 
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map((header, index) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      className={clsx({
+                        'bg-red-500X  w-8': index === 0,
+                        'md:w-[27%]': index === 2 || index === 1,
+                        'md:w-36 bg-red-300X': index === 3,
+                      })}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(header.column.columnDef.header, header.getContext())}
@@ -64,8 +72,13 @@ function UsersDataTable<TData, TValue>({ columns, data }: DataTableProps<TData, 
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                  {row.getVisibleCells().map((cell, index) => (
+                    <TableCell
+                      key={cell.id}
+                      className={clsx(['py-2 md:py-3'], {
+                        'pr-0': index === 0,
+                      })}
+                    >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
