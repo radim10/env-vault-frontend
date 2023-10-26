@@ -25,14 +25,13 @@ import clsx from 'clsx'
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
-  pages?: number
 }
 
-function UsersDataTable<TData, TValue>({ columns, data, pages }: DataTableProps<TData, TValue>) {
+function UsersDataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
 
   const table = useReactTable({
-    pageCount: pages ?? undefined,
+    pageCount: 1 ?? undefined,
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
@@ -96,23 +95,28 @@ function UsersDataTable<TData, TValue>({ columns, data, pages }: DataTableProps<
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
+      <div className="flex justify-end items-center gap-4">
+        <div className="text-muted-foreground text-sm">Pages: {Math.ceil(2 / 5)}/1</div>
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            className="px-5"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   )
