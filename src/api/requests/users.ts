@@ -16,7 +16,7 @@ export function workspacesErrorMsgFromCode(code: UsersErrorCode): string {
 
 // NOTE: requests
 export type GetWorkspaceUsersError = UsersError<undefined>
-export type GetWorkspaceUsersData = User
+export type GetWorkspaceUsersData = User[]
 
 export async function getWorkspaceUsers(id: string) {
   const response = sendRequest<GetWorkspaceUsersData>({
