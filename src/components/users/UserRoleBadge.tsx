@@ -3,10 +3,11 @@ import { cn } from '@/lib/utils'
 import { Badge } from '../ui/badge'
 import { EnvironmentType } from '@/types/environments'
 import clsx from 'clsx'
+import { WorkspaceUserRole } from '@/types/users'
 
 interface Props {
   className?: string
-  role: 'admin' | 'member' | 'owner'
+  role: WorkspaceUserRole
 }
 
 const UserRoleBadge: React.FC<Props> = ({ className, role }) => {
