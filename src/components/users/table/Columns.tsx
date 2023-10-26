@@ -26,10 +26,7 @@ dayjs.extend(relativeTime)
 export const columns: ColumnDef<User>[] = [
   {
     accessorKey: 'avatarUrl',
-    header: ({ column }) => {
-      
-      return <></>
-    },
+    header: ({ column }) => <></>,
     cell: ({ row }) => {
       return (
         <Avatar className="w-10 h-10">
@@ -102,7 +99,11 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const name = row.getValue('name') as string
 
-      return <div><UserRoleBadge role='admin'/></div>
+      return (
+        <div>
+          <UserRoleBadge role="admin" />
+        </div>
+      )
     },
   },
 
