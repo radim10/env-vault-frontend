@@ -25,12 +25,14 @@ import clsx from 'clsx'
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  pages?: number
 }
 
-function UsersDataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+function UsersDataTable<TData, TValue>({ columns, data, pages }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
 
   const table = useReactTable({
+    pageCount: pages ?? undefined,
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
