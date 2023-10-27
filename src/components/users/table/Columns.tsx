@@ -84,8 +84,7 @@ export const columns: ColumnDef<WorkspaceUser>[] = [
       )
     },
     cell: ({ row }) => {
-      // const email = row.getValue('name') as string
-      const email = 'email@example.com'
+      const email = row.getValue('email') as string
       return <div className="text-left">{email}</div>
     },
   },
