@@ -127,7 +127,25 @@ export const columns: ColumnDef<WorkspaceUser>[] = [
 
   {
     accessorKey: 'joinedAt',
-    header: () => <div className="text-left">Joined</div>,
+    header: ({ column }) => {
+      return (
+        <button
+          className="flex items-center gap-1"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Joined
+          {column.getIsSorted() && (
+            <>
+              {column.getIsSorted() === 'asc' ? (
+                <Icons.arrowUp className="ml-2 h-4 w-4" />
+              ) : (
+                <Icons.arrowDown className="ml-2 h-4 w-4" />
+              )}
+            </>
+          )}
+        </button>
+      )
+    },
     cell: ({ row }) => {
       const date = row.getValue('joinedAt') as string
       const relativeDate = dayjs(date).fromNow()
