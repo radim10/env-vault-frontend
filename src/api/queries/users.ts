@@ -1,14 +1,21 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query'
-import { GetWorkspaceUsersData, GetWorkspaceUsersError, getWorkspaceUsers } from '../requests/users'
+import {
+  GetWorkspaceUsersArgs,
+  GetWorkspaceUsersData,
+  GetWorkspaceUsersError,
+  getWorkspaceUsers,
+} from '../requests/users'
+
+type UseGetWorkspaceUsersArgs = GetWorkspaceUsersArgs
 
 export const useGetWorkspaceUsers = (
-  workspaceId: string,
+  args: UseGetWorkspaceUsersArgs,
   opt?: UseQueryOptions<GetWorkspaceUsersData, GetWorkspaceUsersError>
 ) =>
   useQuery<GetWorkspaceUsersData, GetWorkspaceUsersError>(
-    ['workspace', workspaceId, 'users'],
+    ['workspace', args.workspaceId, 'users', args.page, args.sort, args.desc],
     () => {
-      return getWorkspaceUsers(workspaceId)
+      return getWorkspaceUsers(args)
     },
     opt
   )
