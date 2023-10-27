@@ -25,6 +25,7 @@ import { useGetWorkspaceUsers } from '@/api/queries/users'
 import { WorkspaceUser } from '@/types/users'
 import { Skeleton } from '@/components/ui/skeleton'
 import TableToolbar from '../TableToolbar'
+import { useDebounce, useUpdateEffect } from 'react-use'
 
 interface DataTableProps {
   workspaceId: string
@@ -34,6 +35,7 @@ interface DataTableProps {
 function UsersDataTable({ columns, workspaceId }: DataTableProps) {
   // const [pagesLoaded, setPagesLoaded] = useState<number[]>([])
   const [totalCount, setTotalCount] = useState<number>(0)
+  const [totalSearchCount, setTotalSearchCount] = useState<number>(0)
 
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -50,30 +52,78 @@ function UsersDataTable({ columns, workspaceId }: DataTableProps) {
 
   const defaultData = useMemo(() => [], [])
 
-  const [sorting, setSorting] = useState<SortingState>([])
+  const [sorting, setSorting] = useState<SortingState>([
+    {
+      id: 'name',
+      desc: false,
+    },
+  ])
+
+  const [search, setSearch] = useState('')
+  const [searchActive, setSearchActive] = useState(false)
+  const [searchLoading, setSearchLoading] = useState(false)
 
   const fetchDataOptions = {
     page: pageIndex,
     sort: (sorting?.[0]?.id === 'joinedAt' ? 'joined' : sorting?.[0]?.id) as any,
     desc: sorting?.[0]?.desc ?? undefined,
+    search: search?.trim()?.length > 1 ? search : undefined,
   }
 
-  const { data, isLoading, isFetching } = useGetWorkspaceUsers(
+  const { data, isLoading, isFetching, refetch, isRefetching } = useGetWorkspaceUsers(
     { workspaceId, ...fetchDataOptions },
     {
       keepPreviousData: false,
+      enabled: !searchActive,
       staleTime: Infinity,
       onSuccess: (data) => {
-        if (totalCount !== data?.totalCount) {
-          setTotalCount(data?.totalCount)
+        setSearchLoading(false)
+
+        if (search?.trim()?.length < 2) {
+          if (totalCount !== data?.totalCount) {
+            setTotalCount(data?.totalCount)
+          }
+        } else {
+          setTotalSearchCount(data?.totalCount)
         }
       },
-      //   onSuccess: () =>
-      //     setPagesLoaded((prev) => {
-      //       const unique = [...prev, pageIndex]
-      //       return Array.from(new Set(unique))
-      //     }),
     }
+  )
+
+  useUpdateEffect(() => {
+    if (search?.length === 0) {
+      setSearchActive(false)
+    } else {
+      setSearchActive(true)
+    }
+
+    if (search?.trim()?.length > 1) {
+      setSearchLoading(true)
+    } else {
+      setSearchLoading(false)
+    }
+  }, [search])
+
+  useUpdateEffect(() => {
+    refetch()
+  }, [sorting])
+
+  useUpdateEffect(() => {
+    if (search?.trim()?.length > 1) refetch()
+  }, [pagination?.pageIndex])
+
+  useDebounce(
+    () => {
+      if (search?.trim()?.length > 1) {
+        if (pagination?.pageIndex === 0) {
+          refetch()
+        } else {
+          setPagination({ pageSize: 5, pageIndex: 0 })
+        }
+      }
+    },
+    500,
+    [search]
   )
 
   // useUpdateEffect(() => {
@@ -87,19 +137,29 @@ function UsersDataTable({ columns, workspaceId }: DataTableProps) {
   // }, [pageIndex, sorting])
 
   const table = useReactTable({
-    pageCount: totalCount ? Math.ceil(totalCount / 5) : undefined,
+    pageCount:
+      search?.trim()?.length > 1
+        ? Math.ceil(totalSearchCount / 5)
+        : totalCount
+          ? Math.ceil(totalCount / 5)
+          : undefined,
     data: data?.data ?? defaultData,
     columns,
     getCoreRowModel: getCoreRowModel(),
 
     // getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
-    onPaginationChange: setPagination,
     // getSortedRowModel: getSortedRowModel(),
+    onSortingChange: (sorting) => {
+      if (searchActive) {
+        if (totalSearchCount > 1) setSorting(sorting)
+      } else setSorting(sorting)
+    },
+    onPaginationChange: setPagination,
     manualPagination: true,
     manualSorting: true,
     debugTable: true,
-    enableSorting: !isFetching,
+    enableSorting:
+      !isFetching || (search?.trim().length > 1 ? totalSearchCount > 1 : totalCount > 1),
     state: {
       sorting,
       pagination,
@@ -108,8 +168,7 @@ function UsersDataTable({ columns, workspaceId }: DataTableProps) {
 
   return (
     <div>
-      <TableToolbar userCount={totalCount} />
-
+      <TableToolbar userCount={totalCount} search={search} onSearch={setSearch} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -119,10 +178,12 @@ function UsersDataTable({ columns, workspaceId }: DataTableProps) {
                   return (
                     <TableHead
                       key={header.id}
-                      className={clsx({
+                      className={clsx([''], {
                         'bg-red-500X  w-8': index === 0,
                         'md:w-[27%]': index === 2 || index === 1,
                         'md:w-36 2xl:w-56 bg-red-300X': index === 3,
+                        'pl-7 bg-red-400X':
+                          table.getRowModel().rows?.length === 0 && !searchLoading && !isLoading,
                       })}
                     >
                       {header.isPlaceholder
@@ -135,7 +196,7 @@ function UsersDataTable({ columns, workspaceId }: DataTableProps) {
             ))}
           </TableHeader>
           <TableBody>
-            {isLoading && (
+            {isLoading || searchLoading ? (
               <>
                 {Array.from({ length: 5 }).map((row) => (
                   <TableRow className="h-16 w-full bg-red-400X hover:bg-transparent">
@@ -157,8 +218,7 @@ function UsersDataTable({ columns, workspaceId }: DataTableProps) {
                   </TableRow>
                 ))}
               </>
-            )}
-            {!isLoading && (
+            ) : (
               <>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
@@ -178,17 +238,9 @@ function UsersDataTable({ columns, workspaceId }: DataTableProps) {
                 ) : (
                   <>
                     {!isLoading && (
-                      <TableRow>
+                      <TableRow className="hover:bg-transparent">
                         <TableCell colSpan={columns.length} className="h-24 text-center">
-                          No results.
-                        </TableCell>
-                      </TableRow>
-                    )}
-
-                    {isLoading && (
-                      <TableRow>
-                        <TableCell colSpan={columns.length} className="h-24 text-center">
-                          Loading
+                          No results
                         </TableCell>
                       </TableRow>
                     )}
@@ -201,7 +253,7 @@ function UsersDataTable({ columns, workspaceId }: DataTableProps) {
       </div>
       <div className="flex justify-end items-center gap-4">
         {/* <div className="text-muted-foreground text-sm">Pages: {Math.ceil(2 / 5)}/1</div> */}
-        {table.getPageCount() !== 0 && (
+        {(search?.trim()?.length > 1 ? totalSearchCount !== 0 : totalCount !== 0) && (
           <span className="flex items-center gap-1 text-sm text-muted-foreground">
             <div>Page</div>
             <span className="">
