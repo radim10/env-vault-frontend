@@ -13,7 +13,7 @@ export const useGetWorkspaceUsers = (
   opt?: UseQueryOptions<GetWorkspaceUsersData, GetWorkspaceUsersError>
 ) =>
   useQuery<GetWorkspaceUsersData, GetWorkspaceUsersError>(
-    ['workspace', args.workspaceId, 'users', args.page, args.sort, args.desc],
+    ['workspace', args.workspaceId, 'users', args.page, args.sort, args.desc, args.search],
     () => {
       return getWorkspaceUsers(args)
     },

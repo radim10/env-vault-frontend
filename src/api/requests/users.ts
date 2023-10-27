@@ -23,10 +23,11 @@ export type GetWorkspaceUsersArgs = {
   page?: number
   sort?: 'name' | 'email' | 'joined' | 'role'
   desc?: boolean
+  search?: string
 }
 
 export async function getWorkspaceUsers(args: GetWorkspaceUsersArgs) {
-  const { workspaceId, page = 0, sort, desc } = args
+  const { workspaceId, page = 0, sort, desc, search } = args
 
   const response = sendRequest<GetWorkspaceUsersData>({
     method: 'GET',
@@ -36,6 +37,7 @@ export async function getWorkspaceUsers(args: GetWorkspaceUsersArgs) {
       page,
       sort,
       desc,
+      search,
     },
   })
 
