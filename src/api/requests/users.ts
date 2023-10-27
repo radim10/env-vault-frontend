@@ -16,13 +16,28 @@ export function workspacesErrorMsgFromCode(code: UsersErrorCode): string {
 
 // NOTE: requests
 export type GetWorkspaceUsersError = UsersError<undefined>
-export type GetWorkspaceUsersData = { data: WorkspaceUser[]; totalCount?: number }
+export type GetWorkspaceUsersData = { data: WorkspaceUser[]; totalCount: number }
 
-export async function getWorkspaceUsers(id: string) {
+export type GetWorkspaceUsersArgs = {
+  workspaceId: string
+  page?: number
+  sort?: 'name' | 'email' | 'joined' | 'role'
+  desc?: boolean
+}
+
+export async function getWorkspaceUsers(args: GetWorkspaceUsersArgs) {
+  const { workspaceId, page = 0, sort, desc } = args
+
   const response = sendRequest<GetWorkspaceUsersData>({
     method: 'GET',
     basePath: `workspaces`,
-    path: `${id}/users`,
+    path: `${workspaceId}/users`,
+    params: {
+      page,
+      sort,
+      desc,
+    },
   })
+
   return await response
 }
