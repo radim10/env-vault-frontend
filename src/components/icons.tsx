@@ -69,6 +69,8 @@ import {
   PlusCircle,
   ArrowUpDown,
   ChevronLeft,
+  ChevronsLeft,
+  ChevronsRight,
 } from 'lucide-react'
 
 export const Icons = {
@@ -144,4 +146,6 @@ export const Icons = {
   plusCircle: PlusCircle,
   arrowUpDown: ArrowUpDown,
   chevronLeft: ChevronLeft,
+  chevronsLeft: ChevronsLeft,
+  chevronsRight: ChevronsRight,
 }
