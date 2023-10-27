@@ -10,7 +10,7 @@ interface Props {
 }
 
 const WorkspaceUsers: React.FC<Props> = ({ workspaceId }) => {
-  const { data } = useGetWorkspaceUsers(workspaceId)
+  // const { data } = useGetWorkspaceUsers(workspaceId)
 
   // const dummyData: WorkspaceUser[] = [
   //   {
@@ -31,8 +31,8 @@ const WorkspaceUsers: React.FC<Props> = ({ workspaceId }) => {
   return (
     <div>
       {/* <UsersDataTable columns={columns as any} data={dummyData} /> */}
-      <TableToolbar userCount={data?.totalCount ?? 0} />
-      <UsersDataTable columns={columns as any} data={data?.data ?? []} />
+      {/* <TableToolbar userCount={data?.totalCount ?? 0} /> */}
+      <UsersDataTable columns={columns as any} workspaceId={workspaceId} />
     </div>
   )
 }
