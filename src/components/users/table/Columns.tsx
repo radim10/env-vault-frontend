@@ -168,15 +168,15 @@ export const columns: ColumnDef<WorkspaceUser>[] = [
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[150px]">
+            <DropdownMenuContent align="end" className="w-[160px] ">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               {/* <DropdownMenuSeparator /> */}
               {role !== WorkspaceUserRole.OWNER && (
                 <DropdownMenuItem
                   onClick={() => {
-                    meta.deleteUser({name: row.original.name, id: row.original.id})
+                    meta.deleteUser({ name: row.original.name, id: row.original.id })
                   }}
-                  className="flex gap-2 items-center dark:hover:text-red-500 dark:text-red-500 text-red-600 hover:text-red-600"
+                  className="px-3.5 py-2 flex gap-2 items-center dark:hover:text-red-500 dark:text-red-500 text-red-600 hover:text-red-600"
                 >
                   <Icons.trash className="h-4 w-4 " />
                   <span className="">Delete</span>
@@ -184,8 +184,18 @@ export const columns: ColumnDef<WorkspaceUser>[] = [
               )}
 
               {role !== WorkspaceUserRole.OWNER && (
-                <DropdownMenuItem>
-                  <span className="">Change role</span>
+                <DropdownMenuItem
+                  onClick={() => {
+                    meta.updateRole({
+                      name: row.original.name,
+                      id: row.original.id,
+                      role: row.original.role,
+                    })
+                  }}
+                  className="flex px-3.5 py-2 gap-2 items-center"
+                >
+                  <Icons.penSquare className="h-4 w-4 " />
+                  <span className="">Chage role</span>
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>
