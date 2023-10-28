@@ -16,7 +16,7 @@ interface Props {
 const TableToolbar: React.FC<Props> = ({ userCount, search, isSearchCount, loading, onSearch }) => {
   return (
     <div>
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex md:items-center justify-between mb-3 md:flex-row flex-col gap-3 md:gap-0">
         <div className="">
           {userCount === null ? (
             <>
@@ -29,8 +29,8 @@ const TableToolbar: React.FC<Props> = ({ userCount, search, isSearchCount, loadi
           )}
         </div>
 
-        <div className="flex items-center w-fit justify-end gap-3">
-          <div className="relative md:w-[12rem] lg:w-[16rem]">
+        <div className="flex items-center w-full md:w-fit justify-end gap-3">
+          <div className="relative w-full md:w-[12rem] lg:w-[16rem]">
             <Icons.search className="h-4 w-4 pointer-events-none absolute top-1/2 transform -translate-y-1/2 left-3" />
             {search?.length > 0 && (
               <button
@@ -52,7 +52,7 @@ const TableToolbar: React.FC<Props> = ({ userCount, search, isSearchCount, loadi
 
           <Button size={'sm'}>
             <Icons.plus />
-            Add user
+            <span className="md:block hidden">Add user</span>
           </Button>
         </div>
       </div>
