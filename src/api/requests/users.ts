@@ -1,14 +1,18 @@
 import sendRequest, { APIError } from '../instance'
 import { User, WorkspaceUser } from '@/types/users'
 
-type UsersErrorCode = 'workspace_not_found'
+type UsersErrorCode = 'workspace_not_found' | 'user_not_found'
 export type UsersError<T extends UsersErrorCode | void> = APIError<T>
 
-export function workspacesErrorMsgFromCode(code: UsersErrorCode): string {
+export function usersErrorMsgFromCode(code: UsersErrorCode): string {
   let msg = ''
 
   if (code === 'workspace_not_found') {
     msg = 'Workspace has been deleted'
+  }
+
+  if (code === 'user_not_found') {
+    msg = 'User not found in current workspace'
   }
 
   return msg
@@ -39,6 +43,26 @@ export async function getWorkspaceUsers(args: GetWorkspaceUsersArgs) {
       desc,
       search,
     },
+  })
+
+  return await response
+}
+
+// delete workspace user
+export type DeleteWorkspaceUserError = UsersError<'user_not_found'>
+
+export type DeleteWorkspaceUserArgs = {
+  workspaceId: string
+  userId: string
+}
+
+export async function deleteWorkspaceUser(args: DeleteWorkspaceUserArgs) {
+  const { workspaceId, userId } = args
+
+  const response = sendRequest<undefined>({
+    method: 'DELETE',
+    basePath: `workspaces`,
+    path: `${workspaceId}/users/${userId}`,
   })
 
   return await response
