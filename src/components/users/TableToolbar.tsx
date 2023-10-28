@@ -3,19 +3,30 @@
 import { Icons } from '../icons'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
+import { Skeleton } from '../ui/skeleton'
 
 interface Props {
-  userCount: number
+  userCount: number | null
+  isSearchCount?: boolean
+  loading: boolean
   search: string
   onSearch: (search: string) => void
 }
 
-const TableToolbar: React.FC<Props> = ({ userCount, search, onSearch }) => {
+const TableToolbar: React.FC<Props> = ({ userCount, search, isSearchCount, loading, onSearch }) => {
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
         <div className="">
-          <div className="text-muted-foreground font-medium">Total users: {userCount}</div>
+          {userCount === null ? (
+            <>
+              <Skeleton className="h-6 w-32" />
+            </>
+          ) : (
+            <div className="text-muted-foreground font-medium">
+              {!isSearchCount ? 'Total users' : 'Found users'}: {userCount}
+            </div>
+          )}
         </div>
 
         <div className="flex items-center w-fit justify-end gap-3">
@@ -31,6 +42,7 @@ const TableToolbar: React.FC<Props> = ({ userCount, search, onSearch }) => {
             )}
 
             <Input
+              // readOnly={loading}
               placeholder="Search by name or email"
               className="pl-10 pr-10 -mr-10"
               value={search ?? undefined}
