@@ -26,13 +26,18 @@ import { WorkspaceUser } from '@/types/users'
 import { Skeleton } from '@/components/ui/skeleton'
 import TableToolbar from '../TableToolbar'
 import { useDebounce, useUpdateEffect } from 'react-use'
+import DeleteWorkspaceUserDialog from '../DeleteUserDialog'
+import { QueryClient } from '@tanstack/react-query'
+import { useToast } from '@/components/ui/use-toast'
 
 interface DataTableProps {
   workspaceId: string
   columns: ColumnDef<WorkspaceUser>[]
+  queryClient: QueryClient
 }
 
-function UsersDataTable({ columns, workspaceId }: DataTableProps) {
+function UsersDataTable({ columns, workspaceId, queryClient }: DataTableProps) {
+  const { toast } = useToast()
   // const [pagesLoaded, setPagesLoaded] = useState<number[]>([])
   const [totalCount, setTotalCount] = useState<number>(0)
   const [totalSearchCount, setTotalSearchCount] = useState<number>(0)
@@ -75,7 +80,8 @@ function UsersDataTable({ columns, workspaceId }: DataTableProps) {
     {
       keepPreviousData: false,
       enabled: !searchActive,
-      staleTime: Infinity,
+      // leave it here???
+      // staleTime: Infinity,
       onSuccess: (data) => {
         setSearchLoading(false)
 
@@ -135,6 +141,59 @@ function UsersDataTable({ columns, workspaceId }: DataTableProps) {
   // useUpdateEffect(() => {
   //   refetch()
   // }, [pageIndex, sorting])
+  //
+  const [deleteUserDialog, setDeleteUserDialog] = useState<{
+    id: string
+    name: string
+  } | null>(null)
+
+  const handleDeleteUser = (args: { id: string; name: string }) => {
+    setDeleteUserDialog(args)
+  }
+
+  const handleDeletedUser = (userId: string) => {
+    const currentKey = [
+      'workspace',
+      workspaceId,
+      'users',
+      fetchDataOptions.page,
+      fetchDataOptions.sort,
+      fetchDataOptions.desc,
+      fetchDataOptions.search,
+    ]
+
+    const data = queryClient.getQueryData<{ data: WorkspaceUser[]; totalCount: number }>(currentKey)
+
+    if (data) {
+      const newUsers = [...data.data].filter((item) => item.id !== userId)
+      queryClient.setQueryData(currentKey, {
+        ...data,
+        data: newUsers,
+      })
+
+      if (newUsers?.length === 0)
+        setPagination({ ...pagination, pageIndex: pagination.pageIndex - 1 })
+    }
+
+    queryClient.invalidateQueries(['workspace', workspaceId, 'users'], { exact: false })
+
+    setTotalCount(totalCount - 1)
+    closeDialog()
+
+    toast({
+      title: 'User has been deleted',
+      variant: 'success',
+    })
+  }
+
+  const closeDialog = () => {
+    if (!deleteUserDialog) return
+
+    setDeleteUserDialog({ ...deleteUserDialog, id: '' })
+    setTimeout(() => {
+      setDeleteUserDialog(null)
+    }, 150)
+  }
 
   const table = useReactTable({
     pageCount:
@@ -145,6 +204,10 @@ function UsersDataTable({ columns, workspaceId }: DataTableProps) {
           : undefined,
     data: data?.data ?? defaultData,
     columns,
+
+    meta: {
+      deleteUser: handleDeleteUser,
+    },
     getCoreRowModel: getCoreRowModel(),
 
     // getPaginationRowModel: getPaginationRowModel(),
@@ -168,6 +231,16 @@ function UsersDataTable({ columns, workspaceId }: DataTableProps) {
 
   return (
     <div>
+      {deleteUserDialog && (
+        <DeleteWorkspaceUserDialog
+          workspaceId={workspaceId}
+          opened={deleteUserDialog?.id !== ''}
+          user={deleteUserDialog}
+          onClose={closeDialog}
+          onSuccess={() => handleDeletedUser(deleteUserDialog.id)}
+        />
+      )}
+
       <TableToolbar
         userCount={
           !totalCount || searchLoading
