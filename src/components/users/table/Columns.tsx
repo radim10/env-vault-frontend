@@ -155,8 +155,9 @@ export const columns: ColumnDef<WorkspaceUser>[] = [
 
   {
     id: 'actions',
-    cell: ({ row }) => {
-      const payment = row.original
+    cell: ({ row, table }) => {
+      const role = row.getValue('role') as WorkspaceUserRole
+      const meta = table.options.meta as any
 
       return (
         <div className="w-full flex justify-end items-center pr-2">
@@ -167,14 +168,26 @@ export const columns: ColumnDef<WorkspaceUser>[] = [
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="w-[150px]">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.id)}>
-                Copy payment ID
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>View customer</DropdownMenuItem>
-              <DropdownMenuItem>View payment details</DropdownMenuItem>
+              {/* <DropdownMenuSeparator /> */}
+              {role !== WorkspaceUserRole.OWNER && (
+                <DropdownMenuItem
+                  onClick={() => {
+                    meta.deleteUser({name: row.original.name, id: row.original.id})
+                  }}
+                  className="flex gap-2 items-center dark:hover:text-red-500 dark:text-red-500 text-red-600 hover:text-red-600"
+                >
+                  <Icons.trash className="h-4 w-4 " />
+                  <span className="">Delete</span>
+                </DropdownMenuItem>
+              )}
+
+              {role !== WorkspaceUserRole.OWNER && (
+                <DropdownMenuItem>
+                  <span className="">Change role</span>
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
