@@ -22,13 +22,14 @@ import {
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
 import { useGetWorkspaceUsers } from '@/api/queries/users'
-import { WorkspaceUser } from '@/types/users'
+import { WorkspaceUser, WorkspaceUserRole } from '@/types/users'
 import { Skeleton } from '@/components/ui/skeleton'
 import TableToolbar from '../TableToolbar'
 import { useDebounce, useUpdateEffect } from 'react-use'
 import DeleteWorkspaceUserDialog from '../DeleteUserDialog'
 import { QueryClient } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/use-toast'
+import UpdateWorkspaceUserRoleDialog from '../UpdateUserRoleDialog'
 
 interface DataTableProps {
   workspaceId: string
@@ -74,6 +75,16 @@ function UsersDataTable({ columns, workspaceId, queryClient }: DataTableProps) {
     desc: sorting?.[0]?.desc ?? undefined,
     search: search?.trim()?.length > 1 ? search : undefined,
   }
+
+  const getCurrentKey = () => [
+    'workspace',
+    workspaceId,
+    'users',
+    fetchDataOptions.page,
+    fetchDataOptions.sort,
+    fetchDataOptions.desc,
+    fetchDataOptions.search,
+  ]
 
   const { data, isLoading, isFetching, refetch, isRefetching } = useGetWorkspaceUsers(
     { workspaceId, ...fetchDataOptions },
@@ -152,16 +163,7 @@ function UsersDataTable({ columns, workspaceId, queryClient }: DataTableProps) {
   }
 
   const handleDeletedUser = (userId: string) => {
-    const currentKey = [
-      'workspace',
-      workspaceId,
-      'users',
-      fetchDataOptions.page,
-      fetchDataOptions.sort,
-      fetchDataOptions.desc,
-      fetchDataOptions.search,
-    ]
-
+    const currentKey = getCurrentKey()
     const data = queryClient.getQueryData<{ data: WorkspaceUser[]; totalCount: number }>(currentKey)
 
     if (data) {
@@ -178,7 +180,7 @@ function UsersDataTable({ columns, workspaceId, queryClient }: DataTableProps) {
     queryClient.invalidateQueries(['workspace', workspaceId, 'users'], { exact: false })
 
     setTotalCount(totalCount - 1)
-    closeDialog()
+    closeDeleteDialog()
 
     toast({
       title: 'User has been deleted',
@@ -186,12 +188,58 @@ function UsersDataTable({ columns, workspaceId, queryClient }: DataTableProps) {
     })
   }
 
-  const closeDialog = () => {
+  const closeDeleteDialog = () => {
     if (!deleteUserDialog) return
 
     setDeleteUserDialog({ ...deleteUserDialog, id: '' })
     setTimeout(() => {
       setDeleteUserDialog(null)
+    }, 150)
+  }
+
+  const [roleDialog, setRoleDialog] = useState<{
+    id: string
+    name: string
+    role: WorkspaceUserRole
+  } | null>(null)
+
+  const handleUpdateUserRole = (args: { id: string; name: string; role: WorkspaceUserRole }) => {
+    setRoleDialog(args)
+  }
+
+  const handleUpdatedUser = (userId: string, newRole: WorkspaceUserRole) => {
+    const currentKey = getCurrentKey()
+    const data = queryClient.getQueryData<{ data: WorkspaceUser[]; totalCount: number }>(currentKey)
+
+    if (data) {
+      const newUsers = [...data.data]
+      const updatedUserIndex = newUsers.findIndex((item) => item.id === userId)
+
+      if (updatedUserIndex !== -1) {
+        const updatedUser = newUsers[updatedUserIndex]
+        newUsers[updatedUserIndex] = { ...updatedUser, role: newRole }
+
+        queryClient.setQueryData(currentKey, {
+          ...data,
+          data: newUsers,
+        })
+      }
+    }
+
+    closeRoleDialog()
+
+    toast({
+      title: 'User role has been updated',
+      variant: 'success',
+    })
+  }
+
+  const closeRoleDialog = () => {
+    if (!roleDialog) return
+
+    setRoleDialog({ ...roleDialog, id: '' })
+    setTimeout(() => {
+      setRoleDialog(null)
     }, 150)
   }
 
@@ -204,12 +252,11 @@ function UsersDataTable({ columns, workspaceId, queryClient }: DataTableProps) {
           : undefined,
     data: data?.data ?? defaultData,
     columns,
-
     meta: {
       deleteUser: handleDeleteUser,
+      updateRole: handleUpdateUserRole,
     },
     getCoreRowModel: getCoreRowModel(),
-
     // getPaginationRowModel: getPaginationRowModel(),
     // getSortedRowModel: getSortedRowModel(),
     onSortingChange: (sorting) => {
@@ -236,8 +283,17 @@ function UsersDataTable({ columns, workspaceId, queryClient }: DataTableProps) {
           workspaceId={workspaceId}
           opened={deleteUserDialog?.id !== ''}
           user={deleteUserDialog}
-          onClose={closeDialog}
+          onClose={closeDeleteDialog}
           onSuccess={() => handleDeletedUser(deleteUserDialog.id)}
+        />
+      )}
+      {roleDialog && (
+        <UpdateWorkspaceUserRoleDialog
+          user={roleDialog}
+          opened={roleDialog?.id !== ''}
+          workspaceId={workspaceId}
+          onClose={closeRoleDialog}
+          onSuccess={(newRole) => handleUpdatedUser(roleDialog.id, newRole)}
         />
       )}
 
