@@ -4,12 +4,14 @@ import { useGetWorkspaceUsers } from '@/api/queries/users'
 import { columns } from './table/Columns'
 import UsersDataTable from './table/DataTable'
 import TableToolbar from './TableToolbar'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface Props {
   workspaceId: string
 }
 
 const WorkspaceUsers: React.FC<Props> = ({ workspaceId }) => {
+  const queryClient = useQueryClient()
   // const { data } = useGetWorkspaceUsers(workspaceId)
 
   // const dummyData: WorkspaceUser[] = [
@@ -32,7 +34,11 @@ const WorkspaceUsers: React.FC<Props> = ({ workspaceId }) => {
     <div>
       {/* <UsersDataTable columns={columns as any} data={dummyData} /> */}
       {/* <TableToolbar userCount={data?.totalCount ?? 0} /> */}
-      <UsersDataTable columns={columns as any} workspaceId={workspaceId} />
+      <UsersDataTable
+        columns={columns as any}
+        workspaceId={workspaceId}
+        queryClient={queryClient}
+      />
     </div>
   )
 }
