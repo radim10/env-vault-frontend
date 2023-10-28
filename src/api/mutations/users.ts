@@ -1,8 +1,25 @@
 import { MutOpt } from './mutOpt'
 import { useMutation } from '@tanstack/react-query'
-import { DeleteWorkspaceUserError, deleteWorkspaceUser } from '../requests/users'
+import {
+  DeleteWorkspaceUserError,
+  UpdateWorkspaceUserRoleArgs,
+  UpdateWorkspaceUserRoleError,
+  UpdateWorkspaceUserRoleResData,
+  deleteWorkspaceUser,
+  updateWorkspaceUserRole,
+} from '../requests/users'
 
-// update
+// update role
+type UpdateWorkspaceUserRoleVariables = UpdateWorkspaceUserRoleArgs
+
+export const useUpdateWorkspaceUserRole = (opt?: MutOpt<UpdateWorkspaceUserRoleResData>) =>
+  useMutation<
+    UpdateWorkspaceUserRoleResData,
+    UpdateWorkspaceUserRoleError,
+    UpdateWorkspaceUserRoleVariables
+  >(updateWorkspaceUserRole, opt)
+
+// delete
 type DeleteWorkspaceUserVariables = {
   workspaceId: string
   userId: string
