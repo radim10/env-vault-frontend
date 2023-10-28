@@ -168,7 +168,19 @@ function UsersDataTable({ columns, workspaceId }: DataTableProps) {
 
   return (
     <div>
-      <TableToolbar userCount={totalCount} search={search} onSearch={setSearch} />
+      <TableToolbar
+        userCount={
+          !totalCount || searchLoading
+            ? null
+            : search?.trim()?.length > 1
+              ? totalSearchCount
+              : totalCount
+        }
+        isSearchCount={search?.trim()?.length > 1}
+        search={search}
+        loading={isLoading}
+        onSearch={setSearch}
+      />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
