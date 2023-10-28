@@ -8,9 +8,9 @@ export interface User {
 }
 
 export enum WorkspaceUserRole {
-  ADMIN = 'admin',
-  MEMBER = 'member',
-  OWNER = 'owner',
+  MEMBER = 'MEMBER',
+  ADMIN = 'ADMIN',
+  OWNER = 'OWNER',
 }
 
 export type WorkspaceUser = User & { role: WorkspaceUserRole; joinedAt: Date }
