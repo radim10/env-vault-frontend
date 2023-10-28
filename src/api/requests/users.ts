@@ -1,5 +1,5 @@
 import sendRequest, { APIError } from '../instance'
-import { User, WorkspaceUser } from '@/types/users'
+import { User, WorkspaceUser, WorkspaceUserRole } from '@/types/users'
 
 type UsersErrorCode = 'workspace_not_found' | 'user_not_found'
 export type UsersError<T extends UsersErrorCode | void> = APIError<T>
@@ -43,6 +43,29 @@ export async function getWorkspaceUsers(args: GetWorkspaceUsersArgs) {
       desc,
       search,
     },
+  })
+
+  return await response
+}
+
+export type UpdateWorkspaceUserRoleError = UsersError<'user_not_found'>
+export type UpdateWorkspaceUserRoleData = { role: WorkspaceUserRole }
+export type UpdateWorkspaceUserRoleResData = undefined
+
+export type UpdateWorkspaceUserRoleArgs = {
+  workspaceId: string
+  userId: string
+  role: WorkspaceUserRole
+}
+
+export async function updateWorkspaceUserRole(args: UpdateWorkspaceUserRoleArgs) {
+  const { workspaceId, userId, role } = args
+
+  const response = sendRequest<UpdateWorkspaceUserRoleResData>({
+    method: 'PATCH',
+    basePath: `workspaces`,
+    path: `${workspaceId}/users/${userId}`,
+    body: { role },
   })
 
   return await response
