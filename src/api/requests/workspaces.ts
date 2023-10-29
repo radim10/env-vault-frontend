@@ -1,4 +1,4 @@
-import { Workspace } from '@/types/workspaces'
+import { Workspace, WorkspaceInvitationLinks } from '@/types/workspaces'
 import sendRequest, { APIError } from '../instance'
 
 type WorkspacesErrorCode = 'workspace_not_found'
@@ -23,6 +23,18 @@ export async function getWorkspace(id: string) {
     method: 'GET',
     basePath: 'workspaces',
     path: `${id}`,
+  })
+  return await response
+}
+
+export type GetWorkspaceInvitationLinksError = WorkspacesError<'workspace_not_found'>
+export type GetWorkspaceInvitationLinksData = WorkspaceInvitationLinks
+
+export async function getWorkspaceInvitation(workspaceId: string) {
+  const response = sendRequest<GetWorkspaceInvitationLinksData>({
+    method: 'GET',
+    basePath: 'workspaces',
+    path: `${workspaceId}/invitation`,
   })
   return await response
 }
