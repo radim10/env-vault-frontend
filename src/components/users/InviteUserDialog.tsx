@@ -14,6 +14,8 @@ import { Icons } from '../icons'
 import clsx from 'clsx'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
+import { useGetWorkspaceInvitationLinks } from '@/api/queries/workspaces'
+import { Skeleton } from '../ui/skeleton'
 
 interface Props {
   opened: boolean
@@ -32,6 +34,11 @@ const InviteUserDialog: React.FC<Props> = ({ workspaceId, opened, onClose, onSuc
   const [tab, setTab] = useState<'link' | 'email'>('link')
   const [copied, setCopied] = useState(false)
 
+  const [confirmGenerate, setConfirmGenerate] = useState(false)
+  const [generated, setGenerated] = useState(false)
+
+  const [linkType, setLinkType] = useState<WorkspaceUserRole>(WorkspaceUserRole.MEMBER)
+
   useDebounce(
     () => {
       if (copied) {
@@ -42,10 +49,38 @@ const InviteUserDialog: React.FC<Props> = ({ workspaceId, opened, onClose, onSuc
     [copied]
   )
 
+  useDebounce(
+    () => {
+      if (confirmGenerate) {
+        setConfirmGenerate(false)
+      }
+    },
+    3000,
+    [confirmGenerate]
+  )
+
+  useDebounce(
+    () => {
+      if (generated) {
+        setGenerated(false)
+      }
+    },
+    3000,
+    [generated]
+  )
+
+  const {
+    data: workspaceInvitations,
+    isLoading,
+    error,
+  } = useGetWorkspaceInvitationLinks(workspaceId)
+
   const handleCopy = () => {
     navigator.clipboard.writeText('link')
     setCopied(true)
   }
+
+  const handleTypeChange = (type: WorkspaceUserRole) => setLinkType(type)
 
   // const {
   //   mutate: updateUserRole,
@@ -113,10 +148,21 @@ const InviteUserDialog: React.FC<Props> = ({ workspaceId, opened, onClose, onSuc
 
           <>
             {tab === 'link' ? (
-              <>
+              <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
-                  <Input readOnly value="https://google.com" placeholder="https://google.com" />
-                  <Button variant="outline" onClick={handleCopy}>
+                  {isLoading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Input
+                      readOnly
+                      value={
+                        linkType === WorkspaceUserRole.MEMBER
+                          ? workspaceInvitations?.member
+                          : workspaceInvitations?.admin
+                      }
+                    />
+                  )}
+                  <Button variant="outline" onClick={handleCopy} disabled={isLoading}>
                     {copied ? (
                       <Icons.check className="h-4 w-4 text-green-500 dark:text-green-600" />
                     ) : (
@@ -124,7 +170,46 @@ const InviteUserDialog: React.FC<Props> = ({ workspaceId, opened, onClose, onSuc
                     )}
                   </Button>
                 </div>
-              </>
+
+                <Button
+                  variant="outline"
+                  disabled={isLoading}
+                  className={clsx(['w-full gap-2'], {
+                    'text-orange-600 dark:text-orange-600 hover:text-orange-600 dark:hover:text-orange-600':
+                      confirmGenerate && !generated,
+                    'text-green-500 dark:text-green-600 hover:text-green-500 dark:hover:text-green-600 cursor-not-allowed hover:bg-transparent dark:hover:bg-transparent':
+                      generated,
+                  })}
+                  onClick={() => {
+                    if (generated) return
+
+                    if (!confirmGenerate) {
+                      setConfirmGenerate(true)
+                    } else setGenerated(true)
+                  }}
+                >
+                  {generated ? (
+                    <>
+                      <Icons.check className="h-4 w-4 text-green-500 dark:text-green-600" />
+                      New link generated
+                    </>
+                  ) : (
+                    <>
+                      {confirmGenerate ? (
+                        <>
+                          <Icons.alertCircle className="h-4 w-4" />
+                          Confirm generate
+                        </>
+                      ) : (
+                        <>
+                          <Icons.refresh className="h-4 w-4" />
+                          Generate
+                        </>
+                      )}
+                    </>
+                  )}
+                </Button>
+              </div>
             ) : (
               <>
                 <div className="flex items-center gap-2">
@@ -145,11 +230,16 @@ const InviteUserDialog: React.FC<Props> = ({ workspaceId, opened, onClose, onSuc
               <div className="font-semibold mb-3 md:mb-4">Role</div>
 
               <div className="md:px-2">
-                <RadioGroup defaultValue="option-one" className="flex flex-col gap-6">
+                <RadioGroup
+                  defaultValue="option-one"
+                  className="flex flex-col gap-6"
+                  value={linkType}
+                  onValueChange={(e) => handleTypeChange(e as WorkspaceUserRole)}
+                >
                   {/* // */}
 
                   <div className="flex items-start gap-4">
-                    <RadioGroupItem value="member" id="member" />
+                    <RadioGroupItem value="MEMBER" id="member" />
                     <Label
                       htmlFor="member"
                       className="font-normal h-fit w-fit text-md -mt-1.5 block"
@@ -167,7 +257,7 @@ const InviteUserDialog: React.FC<Props> = ({ workspaceId, opened, onClose, onSuc
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <RadioGroupItem value="admin" id="admin" />
+                    <RadioGroupItem value="ADMIN" id="admin" />
                     <Label
                       htmlFor="admin"
                       className="font-normal h-fit w-fit text-md -mt-1.5 block"
