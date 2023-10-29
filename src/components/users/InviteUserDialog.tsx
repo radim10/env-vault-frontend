@@ -18,14 +18,17 @@ import { useGenerateWorkspaceInvitationLink } from '@/api/mutations/workspaces'
 import { QueryClient } from '@tanstack/react-query'
 import { WorkspaceInvitationLinks } from '@/types/workspaces'
 import { Tabs, TabsList, TabsTrigger } from '../ui/tabs'
+import { useCheckWorkspaceUserEmail } from '@/api/queries/users'
 
 interface Props {
   queryClient: QueryClient
   opened: boolean
   workspaceId: string
   onClose: () => void
-  onSuccess: (type: WorkspaceUserRole) => void
+  onEmailInvite: (type: WorkspaceUserRole) => void
 }
+
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
 const tabs = [
   { text: 'Link', value: 'link', icon: Icons.link },
@@ -37,7 +40,7 @@ const InviteUserDialog: React.FC<Props> = ({
   workspaceId,
   opened,
   onClose,
-  onSuccess,
+  onEmailInvite,
 }) => {
   const [email, setEmail] = useState('')
   const [tab, setTab] = useState<'link' | 'email'>('link')
@@ -46,7 +49,9 @@ const InviteUserDialog: React.FC<Props> = ({
   const [confirmGenerate, setConfirmGenerate] = useState(false)
   const [generated, setGenerated] = useState(false)
 
-  const [linkType, setLinkType] = useState<WorkspaceUserRole>(WorkspaceUserRole.MEMBER)
+  const [loadingEmail, setLoadingEmail] = useState(false)
+
+  const [role, setRole] = useState<WorkspaceUserRole>(WorkspaceUserRole.MEMBER)
 
   useDebounce(
     () => {
@@ -78,6 +83,32 @@ const InviteUserDialog: React.FC<Props> = ({
     [generated]
   )
 
+  useDebounce(
+    () => {
+      const valid = emailRegex.test(email)
+      console.log('valid', valid)
+
+      if (valid) {
+        setLoadingEmail(true)
+        removeCheckEmail()
+        checkEmail()
+      } else {
+        setLoadingEmail(false)
+        removeCheckEmail()
+      }
+    },
+    500,
+    [email]
+  )
+
+  useUpdateEffect(() => {
+    if (!opened) {
+      setTimeout(() => {
+        resetState()
+      }, 200)
+    }
+  }, [opened])
+
   const {
     data: workspaceInvitations,
     isLoading: invitationLinksLoading,
@@ -107,6 +138,25 @@ const InviteUserDialog: React.FC<Props> = ({
     },
   })
 
+  const {
+    data: checkEmailData,
+    error: checkEmailError,
+    refetch: checkEmail,
+    remove: removeCheckEmail,
+  } = useCheckWorkspaceUserEmail(
+    {
+      workspaceId,
+      email,
+    },
+    {
+      enabled: false,
+      staleTime: 1,
+      cacheTime: 1,
+      onSuccess: () => setLoadingEmail(false),
+      onError: () => setLoadingEmail(false),
+    }
+  )
+
   const handleGenerateLink = (type: WorkspaceUserRole) => {
     generateLink({
       workspaceId,
@@ -119,7 +169,18 @@ const InviteUserDialog: React.FC<Props> = ({
     setCopied(true)
   }
 
-  const handleTypeChange = (type: WorkspaceUserRole) => setLinkType(type)
+  const handleTypeChange = (type: WorkspaceUserRole) => setRole(type)
+
+  const resetState = () => {
+    setEmail('')
+    setCopied(false)
+    setConfirmGenerate(false)
+    setLoadingEmail(false)
+    setGenerated(false)
+    resetGenereteMutation()
+    setRole(WorkspaceUserRole.MEMBER)
+    removeCheckEmail()
+  }
 
   // const {
   //   mutate: updateUserRole,
@@ -149,7 +210,12 @@ const InviteUserDialog: React.FC<Props> = ({
               text: 'Send',
               variant: 'default',
               icon: Icons.sendHorizontal,
-              disabled: false,
+              className: 'px-5',
+              disabled:
+                loadingEmail ||
+                checkEmailError === undefined ||
+                !emailRegex.test(email) ||
+                checkEmailData?.exists === true,
             }
             : undefined
         }
@@ -165,7 +231,7 @@ const InviteUserDialog: React.FC<Props> = ({
         onClose={onClose}
         className="md:max-w-[500px]"
       >
-        <div className="flex flex-col gap-6 pb-6 mt-0">
+        <div className="flex flex-col gap-6 pb-6 mt-1.5">
           {/* <div className="flex flex-row gap-3 md:gap-4 items-center w-full justify-center"> */}
           {/*   {tabs.map((item) => ( */}
           {/*     <button */}
@@ -209,7 +275,7 @@ const InviteUserDialog: React.FC<Props> = ({
                         <>
                           {/* // TODO: error */}
                           <div className="w-full h-10 flex justify-start items-center">
-                            <div className="text-red-600 text-[0.92rem] py-2 flex items-center gap-2 mt-0">
+                            <div className="text-red-600 text-[0.90rem] py-2 flex items-center gap-2 mt-0">
                               <Icons.xCircle className="h-4 w-4" />
                               Something went wrong
                             </div>
@@ -218,9 +284,10 @@ const InviteUserDialog: React.FC<Props> = ({
                       )}
                       {!getInvitationsError && (
                         <Input
+                          autoFocus={false}
                           readOnly
                           value={
-                            linkType === WorkspaceUserRole.MEMBER
+                            role === WorkspaceUserRole.MEMBER
                               ? workspaceInvitations?.member
                               : workspaceInvitations?.admin
                           }
@@ -232,7 +299,7 @@ const InviteUserDialog: React.FC<Props> = ({
                     variant="outline"
                     onClick={() => {
                       const value =
-                        linkType === WorkspaceUserRole.MEMBER
+                        role === WorkspaceUserRole.MEMBER
                           ? workspaceInvitations?.member
                           : workspaceInvitations?.admin
 
@@ -268,7 +335,7 @@ const InviteUserDialog: React.FC<Props> = ({
                     resetGenereteMutation()
                     if (!confirmGenerate && !generateLinkError) {
                       setConfirmGenerate(true)
-                    } else handleGenerateLink(linkType)
+                    } else handleGenerateLink(role)
                   }}
                 >
                   {generateLinkError && (
@@ -311,19 +378,53 @@ const InviteUserDialog: React.FC<Props> = ({
                 </Button>
               </div>
             ) : (
-              <>
+              <div>
                 <div className="flex items-center gap-2">
                   <div className="relative w-full">
-                    <Icons.search className="h-4 w-4 pointer-events-none absolute top-1/2 transform -translate-y-1/2 right-4" />
+                    {loadingEmail && (
+                      <div className="pointer-events-none absolute top-1/2 transform -translate-y-1/2 right-4">
+                        <Icons.loader2 className="animate-spin h-4 w-4 text-primary" />
+                      </div>
+                    )}
+                    {!loadingEmail && checkEmailData && checkEmailData?.exists !== true && (
+                      <div className="pointer-events-none absolute top-1/2 transform -translate-y-1/2 right-4">
+                        <Icons.checkCircle2 className="h-4 w-4 text-green-500 dark:text-green-600" />
+                      </div>
+                    )}
                     <Input
+                      autoFocus={false}
                       placeholder="Type user email"
                       className="pr-10"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        const value = e?.target?.value
+                        setEmail(value)
+
+                        if (emailRegex.test(value)) setLoadingEmail(true)
+                      }}
                     />
                   </div>
                 </div>
-              </>
+
+                {/* // TODO: check if current user email -> show msg */}
+                {checkEmailData && checkEmailData.exists && (
+                  <>
+                    <div className="text-orange-600 text-[0.90rem] pb-0 flex items-center gap-2 mt-2.5">
+                      <Icons.user className="h-4 w-4" />
+                      User with this email already in this workspace
+                    </div>
+                  </>
+                )}
+
+                {checkEmailError && (
+                  <>
+                    <div className="text-red-600 text-[0.90rem] pb-0 flex items-center gap-2 mt-2.5">
+                      <Icons.xCircle className="h-4 w-4" />
+                      Something went wrong
+                    </div>
+                  </>
+                )}
+              </div>
             )}
 
             <div>
@@ -334,7 +435,7 @@ const InviteUserDialog: React.FC<Props> = ({
                   disabled={getInvitationsError != undefined && tab === 'link'}
                   defaultValue={'MEMBER'}
                   className="flex flex-col gap-6"
-                  value={linkType}
+                  value={role}
                   onValueChange={(e) => handleTypeChange(e as WorkspaceUserRole)}
                 >
                   {/* // */}
