@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from './ui/dialog'
 import clsx from 'clsx'
+import { LucideIcon } from 'lucide-react'
 
 interface Props {
   opened: boolean
@@ -21,9 +22,10 @@ interface Props {
   error?: string
   className?: string
 
-  submit: {
+  submit?: {
     text: string
-    disabled: boolean
+    icon?: LucideIcon,
+    disabled?: boolean
     wFull?: boolean
     variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'ghost'
   }
@@ -70,16 +72,19 @@ const DialogComponent: React.FC<Props> = ({
           </div>
         )}
         <DialogFooter className="mt-1">
+          {submit && 
           <Button
             type="submit"
-            className={clsx({ 'w-full': submit.wFull })}
+            className={clsx({ 'w-full': submit.wFull, 'gap-2': submit.icon && !loading })}
             variant={submit.variant}
             loading={loading}
-            disabled={loading}
+            disabled={loading || submit.disabled}
             onClick={onSubmit}
           >
+            {submit.icon && !loading &&  <submit.icon className="h-4 w-4" />}
             {submit.text}
           </Button>
+          }
         </DialogFooter>
       </DialogContent>
     </Dialog>
