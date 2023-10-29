@@ -5,6 +5,7 @@ import { columns } from './table/Columns'
 import UsersDataTable from './table/DataTable'
 import TableToolbar from './TableToolbar'
 import { useQueryClient } from '@tanstack/react-query'
+import InviteUserDialog from './InviteUserDialog'
 
 interface Props {
   workspaceId: string
@@ -30,8 +31,16 @@ const WorkspaceUsers: React.FC<Props> = ({ workspaceId }) => {
   //   },
   // ]
   //
+
   return (
     <div>
+      <InviteUserDialog
+        workspaceId={workspaceId}
+        opened
+        onClose={() => { }}
+        onSuccess={() => { }}
+        queryClient={queryClient}
+      />
       {/* <UsersDataTable columns={columns as any} data={dummyData} /> */}
       {/* <TableToolbar userCount={data?.totalCount ?? 0} /> */}
       <UsersDataTable
