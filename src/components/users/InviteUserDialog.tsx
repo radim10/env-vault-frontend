@@ -7,8 +7,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useDebounce, useUpdateEffect } from 'react-use'
 import UserRoleBadge from './UserRoleBadge'
 import { WorkspaceUserRole } from '@/types/users'
-import { useUpdateWorkspaceUserRole } from '@/api/mutations/users'
-import { usersErrorMsgFromCode } from '@/api/requests/users'
 import DialogComponent from '../Dialog'
 import { Icons } from '../icons'
 import clsx from 'clsx'
@@ -19,6 +17,7 @@ import { Skeleton } from '../ui/skeleton'
 import { useGenerateWorkspaceInvitationLink } from '@/api/mutations/workspaces'
 import { QueryClient } from '@tanstack/react-query'
 import { WorkspaceInvitationLinks } from '@/types/workspaces'
+import { Tabs, TabsList, TabsTrigger } from '../ui/tabs'
 
 interface Props {
   queryClient: QueryClient
@@ -81,14 +80,15 @@ const InviteUserDialog: React.FC<Props> = ({
 
   const {
     data: workspaceInvitations,
-    isLoading,
-    error,
+    isLoading: invitationLinksLoading,
+    error: getInvitationsError,
   } = useGetWorkspaceInvitationLinks(workspaceId)
 
   const {
     mutate: generateLink,
     isLoading: generatingLink,
     error: generateLinkError,
+    reset: resetGenereteMutation,
   } = useGenerateWorkspaceInvitationLink({
     onSuccess: (data) => {
       setGenerated(true)
@@ -114,8 +114,8 @@ const InviteUserDialog: React.FC<Props> = ({
     })
   }
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText('link')
+  const handleCopy = (value: string) => {
+    navigator.clipboard.writeText(value)
     setCopied(true)
   }
 
@@ -165,43 +165,83 @@ const InviteUserDialog: React.FC<Props> = ({
         onClose={onClose}
         className="md:max-w-[500px]"
       >
-        <div className="flex flex-col gap-6 pb-6 mt-2">
+        <div className="flex flex-col gap-6 pb-6 mt-0">
+          {/* <div className="flex flex-row gap-3 md:gap-4 items-center w-full justify-center"> */}
+          {/*   {tabs.map((item) => ( */}
+          {/*     <button */}
+          {/*       key={item.text} */}
+          {/*       onClick={() => setTab(item.value as 'link' | 'email')} */}
+          {/*       className={clsx( */}
+          {/*         ['flex items-center gap-2 md:gap-2 pb-0.5 px-5 border-b-2 text-[1.06rem] '], */}
+          {/*         { */}
+          {/*           'border-primary text-primary': tab === item.value, */}
+          {/*           'text-muted-foreground hover:text-foreground': tab !== item.value, */}
+          {/*         } */}
+          {/*       )} */}
+          {/*     > */}
+          {/*       <item.icon className="w-4 h-4" /> */}
+          {/*       {item.text} */}
+          {/*     </button> */}
+          {/*   ))} */}
+          {/* </div> */}
           <div className="flex flex-row gap-3 md:gap-4 items-center w-full justify-center">
-            {tabs.map((item) => (
-              <button
-                key={item.text}
-                onClick={() => setTab(item.value as 'link' | 'email')}
-                className={clsx(
-                  ['flex items-center gap-2 md:gap-2 pb-0.5 px-5 border-b-2 text-[1.06rem] '],
-                  {
-                    'border-primary text-primary': tab === item.value,
-                    'text-muted-foreground hover:text-foreground': tab !== item.value,
-                  }
-                )}
-              >
-                <item.icon className="w-4 h-4" />
-                {item.text}
-              </button>
-            ))}
+            <Tabs defaultValue={tab} onValueChange={(value) => setTab(value as 'link' | 'email')}>
+              <TabsList>
+                {tabs.map((item) => (
+                  <TabsTrigger value={item.value} className="w-36 flex items-center gap-2 md:gap-2">
+                    <item.icon className="w-4 h-4" />
+                    {item.text}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
           </div>
 
           <>
             {tab === 'link' ? (
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
-                  {isLoading ? (
+                  {invitationLinksLoading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
-                    <Input
-                      readOnly
-                      value={
+                    <>
+                      {getInvitationsError && (
+                        <>
+                          {/* // TODO: error */}
+                          <div className="w-full h-10 flex justify-start items-center">
+                            <div className="text-red-600 text-[0.92rem] py-2 flex items-center gap-2 mt-0">
+                              <Icons.xCircle className="h-4 w-4" />
+                              Something went wrong
+                            </div>
+                          </div>
+                        </>
+                      )}
+                      {!getInvitationsError && (
+                        <Input
+                          readOnly
+                          value={
+                            linkType === WorkspaceUserRole.MEMBER
+                              ? workspaceInvitations?.member
+                              : workspaceInvitations?.admin
+                          }
+                        />
+                      )}
+                    </>
+                  )}
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      const value =
                         linkType === WorkspaceUserRole.MEMBER
                           ? workspaceInvitations?.member
                           : workspaceInvitations?.admin
+
+                      if (value) {
+                        handleCopy(value)
                       }
-                    />
-                  )}
-                  <Button variant="outline" onClick={handleCopy} disabled={isLoading}>
+                    }}
+                    disabled={invitationLinksLoading || getInvitationsError != undefined}
+                  >
                     {copied ? (
                       <Icons.check className="h-4 w-4 text-green-500 dark:text-green-600" />
                     ) : (
@@ -212,42 +252,56 @@ const InviteUserDialog: React.FC<Props> = ({
 
                 <Button
                   variant="outline"
-                  disabled={isLoading}
+                  disabled={invitationLinksLoading || getInvitationsError != undefined}
                   loading={generatingLink}
                   className={clsx(['w-full gap-2'], {
                     'text-orange-600 dark:text-orange-600 hover:text-orange-600 dark:hover:text-orange-600':
                       confirmGenerate && !generated,
-                    'text-green-500 dark:text-green-600 hover:text-green-500 dark:hover:text-green-600 cursor-not-allowed hover:bg-transparent dark:hover:bg-transparent':
+                    'text-red-600 dark:text-red-600 hover:text-red-600 dark:hover:text-red-600':
+                      generateLinkError && !generated,
+                    'text-green-500 dark:text-green-600 hover:text-green-500 dark:hover:text-green-600 cursor-default hover:bg-transparent dark:hover:bg-transparent':
                       generated,
                   })}
                   onClick={() => {
                     if (generated) return
 
-                    if (!confirmGenerate) {
+                    resetGenereteMutation()
+                    if (!confirmGenerate && !generateLinkError) {
                       setConfirmGenerate(true)
                     } else handleGenerateLink(linkType)
                   }}
                 >
-                  {generated ? (
+                  {generateLinkError && (
                     <>
-                      <Icons.check className="h-4 w-4 text-green-500 dark:text-green-600" />
-                      New link generated
+                      <Icons.alertCircle className="h-4 w-4" />
+                      Something went wrong :(
                     </>
-                  ) : (
+                  )}
+
+                  {!generateLinkError && (
                     <>
-                      {generatingLink ? (
-                        <span>Generating link</span>
+                      {generated ? (
+                        <>
+                          <Icons.check className="h-4 w-4 text-green-500 dark:text-green-600" />
+                          New link generated
+                        </>
                       ) : (
                         <>
-                          {confirmGenerate ? (
-                            <>
-                              <Icons.alertCircle className="h-4 w-4" />
-                              Confirm generate
-                            </>
+                          {generatingLink ? (
+                            <span>Generating link</span>
                           ) : (
                             <>
-                              <Icons.refresh className="h-4 w-4" />
-                              Generate
+                              {confirmGenerate ? (
+                                <>
+                                  <Icons.alertCircle className="h-4 w-4" />
+                                  Confirm generate
+                                </>
+                              ) : (
+                                <>
+                                  <Icons.refresh className="h-4 w-4" />
+                                  Generate
+                                </>
+                              )}
                             </>
                           )}
                         </>
@@ -277,14 +331,21 @@ const InviteUserDialog: React.FC<Props> = ({
 
               <div className="md:px-2">
                 <RadioGroup
-                  defaultValue="option-one"
+                  disabled={getInvitationsError != undefined && tab === 'link'}
+                  defaultValue={'MEMBER'}
                   className="flex flex-col gap-6"
                   value={linkType}
                   onValueChange={(e) => handleTypeChange(e as WorkspaceUserRole)}
                 >
                   {/* // */}
 
-                  <div className="flex items-start gap-4">
+                  <div
+                    className={clsx(['flex items-start gap-4'], {
+                      'opacity-70':
+                        (getInvitationsError != undefined && tab === 'link') ||
+                        (invitationLinksLoading && tab === 'link'),
+                    })}
+                  >
                     <RadioGroupItem value="MEMBER" id="member" />
                     <Label
                       htmlFor="member"
@@ -302,7 +363,13 @@ const InviteUserDialog: React.FC<Props> = ({
                     </Label>
                   </div>
 
-                  <div className="flex items-start gap-4">
+                  <div
+                    className={clsx(['flex items-start gap-4'], {
+                      'opacity-70':
+                        (getInvitationsError != undefined && tab === 'link') ||
+                        (invitationLinksLoading && tab === 'link'),
+                    })}
+                  >
                     <RadioGroupItem value="ADMIN" id="admin" />
                     <Label
                       htmlFor="admin"
