@@ -27,6 +27,7 @@ export async function getWorkspace(id: string) {
   return await response
 }
 
+// get links
 export type GetWorkspaceInvitationLinksError = WorkspacesError<'workspace_not_found'>
 export type GetWorkspaceInvitationLinksData = WorkspaceInvitationLinks
 
@@ -35,6 +36,24 @@ export async function getWorkspaceInvitation(workspaceId: string) {
     method: 'GET',
     basePath: 'workspaces',
     path: `${workspaceId}/invitation`,
+  })
+  return await response
+}
+
+export type GenerateWorkspaceInvitationLinkError = WorkspacesError<'workspace_not_found'>
+export type GenerateWorkspaceInvitationLinkData = Partial<WorkspaceInvitationLinks>
+
+export async function generateWorkspaceInvitationLink(
+  workspaceId: string,
+  type: 'admin' | 'member'
+) {
+  const response = sendRequest<GetWorkspaceInvitationLinksData>({
+    method: 'POST',
+    basePath: 'workspaces',
+    path: `${workspaceId}/invitation`,
+    body: {
+      type,
+    },
   })
   return await response
 }
