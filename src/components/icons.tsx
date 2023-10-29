@@ -71,6 +71,9 @@ import {
   ChevronLeft,
   ChevronsLeft,
   ChevronsRight,
+  Link,
+  Mail,
+  SendHorizonal,
 } from 'lucide-react'
 
 export const Icons = {
@@ -148,4 +151,7 @@ export const Icons = {
   chevronLeft: ChevronLeft,
   chevronsLeft: ChevronsLeft,
   chevronsRight: ChevronsRight,
+  link: Link,
+  mail: Mail,
+  sendHorizontal: SendHorizonal,
 }
