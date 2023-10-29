@@ -35,9 +35,10 @@ interface DataTableProps {
   workspaceId: string
   columns: ColumnDef<WorkspaceUser>[]
   queryClient: QueryClient
+  onInviteUser: () => void
 }
 
-function UsersDataTable({ columns, workspaceId, queryClient }: DataTableProps) {
+function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: DataTableProps) {
   const { toast } = useToast()
   // const [pagesLoaded, setPagesLoaded] = useState<number[]>([])
   const [totalCount, setTotalCount] = useState<number>(0)
@@ -298,6 +299,7 @@ function UsersDataTable({ columns, workspaceId, queryClient }: DataTableProps) {
       )}
 
       <TableToolbar
+
         userCount={
           !totalCount || searchLoading
             ? null
@@ -309,6 +311,7 @@ function UsersDataTable({ columns, workspaceId, queryClient }: DataTableProps) {
         search={search}
         loading={isLoading}
         onSearch={setSearch}
+        onInviteUser={onInviteUser}
       />
       <div className="rounded-md border">
         <Table>

@@ -11,9 +11,17 @@ interface Props {
   loading: boolean
   search: string
   onSearch: (search: string) => void
+  onInviteUser: () => void
 }
 
-const TableToolbar: React.FC<Props> = ({ userCount, search, isSearchCount, loading, onSearch }) => {
+const TableToolbar: React.FC<Props> = ({
+  userCount,
+  search,
+  isSearchCount,
+  loading,
+  onSearch,
+  onInviteUser,
+}) => {
   return (
     <div>
       <div className="flex md:items-center justify-between mb-3 md:flex-row flex-col gap-3 md:gap-0">
@@ -50,7 +58,7 @@ const TableToolbar: React.FC<Props> = ({ userCount, search, isSearchCount, loadi
             />
           </div>
 
-          <Button size={'sm'}>
+          <Button size={'sm'} onClick={onInviteUser}>
             <Icons.plus />
             <span className="md:block hidden">Add user</span>
           </Button>
