@@ -24,10 +24,11 @@ interface Props {
 
   submit?: {
     text: string
-    icon?: LucideIcon,
+    icon?: LucideIcon
     disabled?: boolean
     wFull?: boolean
     variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'ghost'
+    className?: string
   }
 
   onClose: () => void
@@ -72,19 +73,22 @@ const DialogComponent: React.FC<Props> = ({
           </div>
         )}
         <DialogFooter className="mt-1">
-          {submit && 
-          <Button
-            type="submit"
-            className={clsx({ 'w-full': submit.wFull, 'gap-2': submit.icon && !loading })}
-            variant={submit.variant}
-            loading={loading}
-            disabled={loading || submit.disabled}
-            onClick={onSubmit}
-          >
-            {submit.icon && !loading &&  <submit.icon className="h-4 w-4" />}
-            {submit.text}
-          </Button>
-          }
+          {submit && (
+            <Button
+              type="submit"
+              className={cn(
+                clsx({ 'w-full': submit.wFull, 'gap-2': submit.icon && !loading }),
+                submit.className
+              )}
+              variant={submit.variant}
+              loading={loading}
+              disabled={loading || submit.disabled}
+              onClick={onSubmit}
+            >
+              {submit.icon && !loading && <submit.icon className="h-4 w-4" />}
+              {submit.text}
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
