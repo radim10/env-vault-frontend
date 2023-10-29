@@ -1,15 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { useState } from 'react'
 import {
   Select,
   SelectContent,
@@ -17,13 +8,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Icons } from '../icons'
 import { Label } from '../ui/label'
 import { useUpdateEffect } from 'react-use'
 import UserRoleBadge from './UserRoleBadge'
 import { WorkspaceUserRole } from '@/types/users'
 import { useUpdateWorkspaceUserRole } from '@/api/mutations/users'
 import { usersErrorMsgFromCode } from '@/api/requests/users'
+import DialogComponent from '../Dialog'
 
 interface Props {
   opened: boolean
@@ -69,83 +60,63 @@ const UpdateWorkspaceUserRoleDialog: React.FC<Props> = ({
     }
   }, [opened])
 
-  const close = () => {
-    if (isLoading) return
-    onClose()
-  }
-
   return (
     <>
-      <Dialog
-        open={opened}
-        onOpenChange={(e) => {
-          if (!e) {
-            close()
-          }
+      <DialogComponent
+        opened={opened}
+        title={'Change user role'}
+        description={`Users access level is determined by their role.`}
+        submit={{
+          text: 'Confirm',
+          variant: 'default',
+          disabled: selectedRole === user.role,
         }}
+        error={
+          error
+            ? error?.code
+              ? usersErrorMsgFromCode(error.code)
+              : 'Something went wrong'
+            : undefined
+        }
+        loading={isLoading}
+        onSubmit={() => updateUserRole({ workspaceId, userId: user.id, role: selectedRole })}
+        onClose={onClose}
       >
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Change user role</DialogTitle>
-            <DialogDescription>Users access level is determined by their role.</DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col gap-4 pb-4 mt-2 text-lg">
-            <div>
-              <Label htmlFor="name" className="text-right pl-1 text-[0.9rem]">
-                <span className="font-normal">User:</span> {user?.name}
-              </Label>
-            </div>
-            <div className="flex flex-col gap-2 items-start justify-center">
-              <Label htmlFor="type" className="text-right pl-1">
-                Type
-              </Label>
-              <Select
-                value={selectedRole}
-                onValueChange={(value) => setSelectedRole(value as WorkspaceUserRole)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {roleTypes.map((role) => (
-                    <SelectItem
-                      value={role}
-                      key={role}
-                      className="px-10"
-                      onFocus={(e) => e.stopPropagation()}
-                    >
-                      <UserRoleBadge role={role} />
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {error && (
-              <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mt-0">
-                <Icons.xCircle className="h-4 w-4" />
-                {error?.code ? usersErrorMsgFromCode(error?.code) : 'Something went wrong'}
-              </div>
-            )}
+        <div className="flex flex-col gap-3 pb-6 mt-2">
+          <div>
+            <Label htmlFor="name" className="text-right pl-1 text-[0.9rem]">
+              <span className="font-normal">User:</span> {user?.name}
+            </Label>
           </div>
-          <DialogFooter>
-            <Button
-              type="submit"
-              loading={isLoading}
-              disabled={isLoading || selectedRole === user.role}
-              onClick={() => {
-                updateUserRole({
-                  workspaceId,
-                  userId: user.id,
-                  role: selectedRole,
-                })
-              }}
+          <div className="flex flex-col gap-1 items-start justify-center">
+            <div>
+              <Label htmlFor="Role" className="text-right pl-1">
+                Role
+              </Label>
+            </div>
+            <Select
+              value={selectedRole}
+              onValueChange={(value) => setSelectedRole(value as WorkspaceUserRole)}
             >
-              Confirm
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select type" />
+              </SelectTrigger>
+              <SelectContent>
+                {roleTypes.map((role) => (
+                  <SelectItem
+                    value={role}
+                    key={role}
+                    className="px-10"
+                    onFocus={(e) => e.stopPropagation()}
+                  >
+                    <UserRoleBadge role={role} />
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </DialogComponent>
     </>
   )
 }

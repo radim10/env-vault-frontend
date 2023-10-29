@@ -1,19 +1,7 @@
-import React, { useState } from 'react'
-import DeleteDialog from '../DeleteDialog'
-import { Input } from '../ui/input'
-import { Icons } from '../icons'
 import { useUpdateEffect } from 'react-use'
 import { useDeleteWorkspaceUser } from '@/api/mutations/users'
 import { usersErrorMsgFromCode } from '@/api/requests/users'
-import { Dialog } from '@radix-ui/react-dialog'
-import {
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '../ui/dialog'
-import { Button } from '../ui/button'
+import DialogComponent from '../Dialog'
 
 interface Props {
   workspaceId: string
@@ -33,8 +21,6 @@ const DeleteWorkspaceUserDialog: React.FC<Props> = ({
   onClose,
   onSuccess,
 }) => {
-  const [name, setName] = useState('')
-
   const {
     mutate: deleteUser,
     isLoading,
@@ -50,49 +36,33 @@ const DeleteWorkspaceUserDialog: React.FC<Props> = ({
     }
   }, [opened])
 
-  const close = () => {
-    if (isLoading) return
-    onClose()
-  }
-
   return (
-    <div>
-      <Dialog
-        open={opened}
-        onOpenChange={(e) => {
-          if (!e) close()
-        }}
-      >
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Delete user</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete user {user?.name} from this environment?
-            </DialogDescription>
-          </DialogHeader>
-          {error && (
-            <div className="">
-              <div className="text-red-600 text-[0.92rem] py-2 flex items-center gap-2 mt-0">
-                <Icons.xCircle className="h-4 w-4" />
-                {error?.code ? usersErrorMsgFromCode(error.code) : 'Something went wrong'}
-              </div>
-            </div>
-          )}
-          <DialogFooter className="mt-1">
-            <Button
-              className="w-full"
-              type="submit"
-              variant="destructive"
-              loading={isLoading}
-              disabled={isLoading}
-              onClick={() => deleteUser({ workspaceId, userId: user?.id })}
-            >
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+    <DialogComponent
+      opened={opened}
+      title={'Delete user'}
+      submit={{
+        text: 'Delete',
+        disabled: false,
+        wFull: true,
+        variant: 'destructive',
+      }}
+      error={
+        error
+          ? error?.code
+            ? usersErrorMsgFromCode(error.code)
+            : 'Something went wrong'
+          : undefined
+      }
+      descriptionComponent={
+        <span>
+          Are you sure you want to delete user <span className="font-bold">{user?.name}</span> from
+          this workspace?
+        </span>
+      }
+      loading={isLoading}
+      onSubmit={() => deleteUser({ workspaceId, userId: user?.id })}
+      onClose={onClose}
+    />
   )
 }
 
