@@ -48,6 +48,31 @@ export async function getWorkspaceUsers(args: GetWorkspaceUsersArgs) {
   return await response
 }
 
+// check workspace user email
+export type CheckWorkspaceUserEmailError = UsersError<'workspace_not_found' | 'user_not_found'>
+export type CheckWorkspaceUserEmailResData = { exists: boolean }
+
+export type CheckWorkspaceUserEmailArgs = {
+  workspaceId: string
+  email: string
+}
+
+export async function checkWorkspaceUserEmail(args: CheckWorkspaceUserEmailArgs) {
+  const { workspaceId, email } = args
+
+  const response = sendRequest<CheckWorkspaceUserEmailResData>({
+    method: 'GET',
+    basePath: `workspaces`,
+    path: `${workspaceId}/users/check-email`,
+    params: {
+      email,
+    },
+  })
+
+  return await response
+}
+
+// update role
 export type UpdateWorkspaceUserRoleError = UsersError<'user_not_found'>
 export type UpdateWorkspaceUserRoleData = { role: WorkspaceUserRole }
 export type UpdateWorkspaceUserRoleResData = undefined
