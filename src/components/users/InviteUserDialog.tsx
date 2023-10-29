@@ -16,8 +16,12 @@ import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { useGetWorkspaceInvitationLinks } from '@/api/queries/workspaces'
 import { Skeleton } from '../ui/skeleton'
+import { useGenerateWorkspaceInvitationLink } from '@/api/mutations/workspaces'
+import { QueryClient } from '@tanstack/react-query'
+import { WorkspaceInvitationLinks } from '@/types/workspaces'
 
 interface Props {
+  queryClient: QueryClient
   opened: boolean
   workspaceId: string
   onClose: () => void
@@ -29,7 +33,13 @@ const tabs = [
   { text: 'Email', value: 'email', icon: Icons.mail },
 ]
 
-const InviteUserDialog: React.FC<Props> = ({ workspaceId, opened, onClose, onSuccess }) => {
+const InviteUserDialog: React.FC<Props> = ({
+  queryClient,
+  workspaceId,
+  opened,
+  onClose,
+  onSuccess,
+}) => {
   const [email, setEmail] = useState('')
   const [tab, setTab] = useState<'link' | 'email'>('link')
   const [copied, setCopied] = useState(false)
@@ -74,6 +84,35 @@ const InviteUserDialog: React.FC<Props> = ({ workspaceId, opened, onClose, onSuc
     isLoading,
     error,
   } = useGetWorkspaceInvitationLinks(workspaceId)
+
+  const {
+    mutate: generateLink,
+    isLoading: generatingLink,
+    error: generateLinkError,
+  } = useGenerateWorkspaceInvitationLink({
+    onSuccess: (data) => {
+      setGenerated(true)
+
+      const currentData = queryClient.getQueryData<WorkspaceInvitationLinks>([
+        'workspace-invitation',
+        workspaceId,
+      ])
+
+      if (currentData) {
+        queryClient.setQueryData<WorkspaceInvitationLinks>(['workspace-invitation', workspaceId], {
+          ...currentData,
+          ...data,
+        })
+      }
+    },
+  })
+
+  const handleGenerateLink = (type: WorkspaceUserRole) => {
+    generateLink({
+      workspaceId,
+      type: type.toLowerCase() as 'member' | 'admin',
+    })
+  }
 
   const handleCopy = () => {
     navigator.clipboard.writeText('link')
@@ -174,6 +213,7 @@ const InviteUserDialog: React.FC<Props> = ({ workspaceId, opened, onClose, onSuc
                 <Button
                   variant="outline"
                   disabled={isLoading}
+                  loading={generatingLink}
                   className={clsx(['w-full gap-2'], {
                     'text-orange-600 dark:text-orange-600 hover:text-orange-600 dark:hover:text-orange-600':
                       confirmGenerate && !generated,
@@ -185,7 +225,7 @@ const InviteUserDialog: React.FC<Props> = ({ workspaceId, opened, onClose, onSuc
 
                     if (!confirmGenerate) {
                       setConfirmGenerate(true)
-                    } else setGenerated(true)
+                    } else handleGenerateLink(linkType)
                   }}
                 >
                   {generated ? (
@@ -195,15 +235,21 @@ const InviteUserDialog: React.FC<Props> = ({ workspaceId, opened, onClose, onSuc
                     </>
                   ) : (
                     <>
-                      {confirmGenerate ? (
-                        <>
-                          <Icons.alertCircle className="h-4 w-4" />
-                          Confirm generate
-                        </>
+                      {generatingLink ? (
+                        <span>Generating link</span>
                       ) : (
                         <>
-                          <Icons.refresh className="h-4 w-4" />
-                          Generate
+                          {confirmGenerate ? (
+                            <>
+                              <Icons.alertCircle className="h-4 w-4" />
+                              Confirm generate
+                            </>
+                          ) : (
+                            <>
+                              <Icons.refresh className="h-4 w-4" />
+                              Generate
+                            </>
+                          )}
                         </>
                       )}
                     </>
