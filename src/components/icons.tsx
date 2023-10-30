@@ -75,6 +75,9 @@ import {
   Mail,
   SendHorizonal,
   Loader2,
+  UserPlus,
+  UserPlus2,
+  List,
 } from 'lucide-react'
 
 export const Icons = {
@@ -156,4 +159,7 @@ export const Icons = {
   mail: Mail,
   sendHorizontal: SendHorizonal,
   loader2: Loader2,
+  userPlus: UserPlus,
+  userPlus2: UserPlus2,
+  list: List,
 }
