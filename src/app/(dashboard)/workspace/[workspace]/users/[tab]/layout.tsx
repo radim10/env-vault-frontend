@@ -29,10 +29,10 @@ export default function UsersLayout({
       >
         <div className="flex md:flex-col flex-col gap-2 md:items-start ">
           <TypographyH2>Users</TypographyH2>
-          <div className="text-muted-foreground">Manage your workspace users</div>
         </div>
         {/* // */}
       </div>
+      <div className="text-muted-foreground px-6 lg:px-10">Manage your workspace users</div>
       <div className="mt-5">
         <UsersTabs workspaceId={params?.workspace} />
 
