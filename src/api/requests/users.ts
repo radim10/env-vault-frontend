@@ -93,7 +93,7 @@ export async function createWorkspaceInvitation(args: CreateWorkspaceInvitationA
   return await sendRequest<CreateWorkspaceInvitationResData>({
     method: 'POST',
     basePath: `workspaces`,
-    path: `${workspaceId}/users/invitation`,
+    path: `${workspaceId}/users/invitations`,
     body: {
       email,
     },
