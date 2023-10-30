@@ -5,6 +5,8 @@ import InviteUserDialog from './InviteUserDialog'
 import { useState } from 'react'
 import InvitationsTable from './invitationsTable/InvitationsTable'
 import { invitationsColumns } from './invitationsTable/Columns'
+import { invitationsStore } from '@/stores/invitations'
+import { useUnmount } from 'react-use'
 
 interface Props {
   workspaceId: string
@@ -13,6 +15,14 @@ interface Props {
 const WorkspaceInvitations: React.FC<Props> = ({ workspaceId }) => {
   const queryClient = useQueryClient()
   const [inviteUserDialog, setInviteUserDialog] = useState(false)
+
+  useUnmount(() => {
+    invitationsStore.setState({
+      errorIds: [],
+      resentIds: [],
+      resendingIds: [],
+    })
+  })
 
   return (
     <div className="flex flex-col gap-6">
