@@ -19,6 +19,8 @@ import { QueryClient } from '@tanstack/react-query'
 import { WorkspaceInvitationLinks } from '@/types/workspaces'
 import { Tabs, TabsList, TabsTrigger } from '../ui/tabs'
 import { useCheckWorkspaceUserEmail } from '@/api/queries/users'
+import { useCreateWorkspaceInvitation } from '@/api/mutations/users'
+import { usersErrorMsgFromCode } from '@/api/requests/users'
 
 interface Props {
   queryClient: QueryClient
@@ -50,6 +52,7 @@ const InviteUserDialog: React.FC<Props> = ({
   const [generated, setGenerated] = useState(false)
 
   const [loadingEmail, setLoadingEmail] = useState(false)
+  const [invitationSent, setInvitationSent] = useState<string | null>(null)
 
   const [role, setRole] = useState<WorkspaceUserRole>(WorkspaceUserRole.MEMBER)
 
@@ -157,6 +160,19 @@ const InviteUserDialog: React.FC<Props> = ({
     }
   )
 
+  const {
+    // TODO: invitations
+    data: createWorkspaceInvitationData,
+    error: createWorkspaceInvitationError,
+    mutate: createWorkspaceInvitation,
+    reset: resetCreateWorkspaceInvitation,
+  } = useCreateWorkspaceInvitation({
+    onSuccess: () => {
+      setInvitationSent(email)
+      setEmail('')
+    },
+  })
+
   const handleGenerateLink = (type: WorkspaceUserRole) => {
     generateLink({
       workspaceId,
@@ -177,8 +193,11 @@ const InviteUserDialog: React.FC<Props> = ({
     setConfirmGenerate(false)
     setLoadingEmail(false)
     setGenerated(false)
+    setInvitationSent(null)
     resetGenereteMutation()
     setRole(WorkspaceUserRole.MEMBER)
+    resetCreateWorkspaceInvitation()
+    resetGenereteMutation()
     removeCheckEmail()
   }
 
@@ -227,7 +246,9 @@ const InviteUserDialog: React.FC<Props> = ({
         //     : undefined
         // }
         // loading={isLoading}
-        onSubmit={() => { }}
+        onSubmit={() => {
+          createWorkspaceInvitation({ workspaceId, email })
+        }}
         onClose={onClose}
         className="md:max-w-[500px]"
       >
@@ -310,7 +331,7 @@ const InviteUserDialog: React.FC<Props> = ({
                     disabled={invitationLinksLoading || getInvitationsError != undefined}
                   >
                     {copied ? (
-                      <Icons.check className="h-4 w-4 text-green-500 dark:text-green-600" />
+                      <Icons.check className="h-4 w-4 text-green-600 dark:text-green-600" />
                     ) : (
                       <Icons.copy className="h-4 w-4" />
                     )}
@@ -326,7 +347,7 @@ const InviteUserDialog: React.FC<Props> = ({
                       confirmGenerate && !generated,
                     'text-red-600 dark:text-red-600 hover:text-red-600 dark:hover:text-red-600':
                       generateLinkError && !generated,
-                    'text-green-500 dark:text-green-600 hover:text-green-500 dark:hover:text-green-600 cursor-default hover:bg-transparent dark:hover:bg-transparent':
+                    'text-green-600 dark:text-green-600 hover:text-green-600 dark:hover:text-green-600 cursor-default hover:bg-transparent dark:hover:bg-transparent':
                       generated,
                   })}
                   onClick={() => {
@@ -349,7 +370,7 @@ const InviteUserDialog: React.FC<Props> = ({
                     <>
                       {generated ? (
                         <>
-                          <Icons.check className="h-4 w-4 text-green-500 dark:text-green-600" />
+                          <Icons.check className="h-4 w-4 text-green-600 dark:text-green-600" />
                           New link generated
                         </>
                       ) : (
@@ -388,7 +409,7 @@ const InviteUserDialog: React.FC<Props> = ({
                     )}
                     {!loadingEmail && checkEmailData && checkEmailData?.exists !== true && (
                       <div className="pointer-events-none absolute top-1/2 transform -translate-y-1/2 right-4">
-                        <Icons.checkCircle2 className="h-4 w-4 text-green-500 dark:text-green-600" />
+                        <Icons.checkCircle2 className="h-4 w-4 text-green-600 dark:text-green-600" />
                       </div>
                     )}
                     <Input
@@ -401,6 +422,7 @@ const InviteUserDialog: React.FC<Props> = ({
                         setEmail(value)
 
                         if (emailRegex.test(value)) setLoadingEmail(true)
+                        if (invitationSent) setInvitationSent(null)
                       }}
                     />
                   </div>
@@ -421,6 +443,26 @@ const InviteUserDialog: React.FC<Props> = ({
                     <div className="text-red-600 text-[0.90rem] pb-0 flex items-center gap-2 mt-2.5">
                       <Icons.xCircle className="h-4 w-4" />
                       Something went wrong
+                    </div>
+                  </>
+                )}
+
+                {createWorkspaceInvitationError && (
+                  <>
+                    <div className="text-red-600 text-[0.90rem] pb-0 flex items-center gap-2 mt-2.5">
+                      <Icons.xCircle className="h-4 w-4" />
+                      {createWorkspaceInvitationError?.code
+                        ? usersErrorMsgFromCode(createWorkspaceInvitationError.code)
+                        : 'Something went wrong'}
+                    </div>
+                  </>
+                )}
+
+                {invitationSent && (
+                  <>
+                    <div className="text-green-600 text-[0.90rem] pb-0 flex items-center gap-2 mt-2.5">
+                      <Icons.check className="h-4 w-4 text-green-600 dark:text-green-600" />
+                      Invitation sent ({invitationSent})
                     </div>
                   </>
                 )}
