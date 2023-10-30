@@ -19,6 +19,7 @@ interface Props {
 
 const WorkspaceUsers: React.FC<Props> = ({ workspaceId }) => {
   const queryClient = useQueryClient()
+
   const [inviteUserDialog, setInviteUserDialog] = useState(false)
 
   // const { data } = useGetWorkspaceUsers(workspaceId)
@@ -50,54 +51,55 @@ const WorkspaceUsers: React.FC<Props> = ({ workspaceId }) => {
         onEmailInvite={() => { }}
       />
 
-      {/* <Tabs defaultValue="all" className=""> */}
-      {/*   <TabsList className="grid grid-cols-2 Xmd:w-[400px] w-full "> */}
-      {/*     <TabsTrigger value="all" className="flex gap-2 items-center"> */}
-      {/*       <Icons.users2 className="h-4 w-4" /> */}
-      {/*       All users */}
-      {/*     </TabsTrigger> */}
-      {/*     <TabsTrigger value="invitations" className="flex gap-2 items-center"> */}
-      {/*       <Icons.userPlus2 className="h-4 w-4" /> */}
-      {/*       Invitations */}
-      {/*     </TabsTrigger> */}
-      {/*   </TabsList> */}
-      {/*   <TabsContent value="all"> */}
-      {/*     <div className="mt-4"> */}
-      {/*       <UsersDataTable */}
-      {/*         onInviteUser={() => setInviteUserDialog(true)} */}
-      {/*         columns={columns as any} */}
-      {/*         workspaceId={workspaceId} */}
-      {/*         queryClient={queryClient} */}
-      {/*       /> */}
-      {/*     </div> */}
-      {/*   </TabsContent> */}
-      {/*   <TabsContent value="invitations"> */}
-      {/*     <div className="mt-6"> */}
-      {/*       <InvitationsTable */}
-      {/*         workspaceId={workspaceId} */}
-      {/*         columns={invitationsColumns as any} */}
-      {/*         queryClient={queryClient} */}
-      {/*         onInviteUser={() => { }} */}
-      {/*       /> */}
-      {/*     </div> */}
-      {/*   </TabsContent> */}
-      {/* </Tabs> */}
+      <Tabs defaultValue="all" className="">
+        <TabsList className="grid grid-cols-2 md:w-[400px] w-full ">
+          <TabsTrigger value="all" className="flex gap-2 items-center">
+            <Icons.users2 className="h-4 w-4" />
+            All users
+          </TabsTrigger>
+          <TabsTrigger value="invitations" className="flex gap-2 items-center">
+            <Icons.userPlus2 className="h-4 w-4" />
+            Invitations
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="all">
+          <div className="mt-4">
+            <UsersDataTable
+              onInviteUser={() => setInviteUserDialog(true)}
+              columns={columns as any}
+              workspaceId={workspaceId}
+              queryClient={queryClient}
+            />
+          </div>
+        </TabsContent>
+        <TabsContent value="invitations">
+          <div className="mt-6">
+            <InvitationsTable
+              workspaceId={workspaceId}
+              columns={invitationsColumns as any}
+              queryClient={queryClient}
+              onInviteUser={() => { }}
+            />
+          </div>
+        </TabsContent>
+      </Tabs>
+
       {/**/}
       {/* <UsersDataTable columns={columns as any} data={dummyData} /> */}
       {/* <TableToolbar userCount={data?.totalCount ?? 0} /> */}
-      <UsersDataTable
-        onInviteUser={() => setInviteUserDialog(true)}
-        columns={columns as any}
-        workspaceId={workspaceId}
-        queryClient={queryClient}
-      />
-
-      <InvitationsTable
-        workspaceId={workspaceId}
-        columns={invitationsColumns as any}
-        queryClient={queryClient}
-        onInviteUser={() => { }}
-      />
+      {/* <UsersDataTable */}
+      {/*   onInviteUser={() => setInviteUserDialog(true)} */}
+      {/*   columns={columns as any} */}
+      {/*   workspaceId={workspaceId} */}
+      {/*   queryClient={queryClient} */}
+      {/* /> */}
+      {/**/}
+      {/* <InvitationsTable */}
+      {/*   workspaceId={workspaceId} */}
+      {/*   columns={invitationsColumns as any} */}
+      {/*   queryClient={queryClient} */}
+      {/*   onInviteUser={() => { }} */}
+      {/* /> */}
     </div>
   )
 }
