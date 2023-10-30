@@ -21,16 +21,14 @@ import {
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
-import { useGetWorkspaceUsers, useListWorkspaceInvitations } from '@/api/queries/users'
+import { useListWorkspaceInvitations } from '@/api/queries/users'
 import { WorkspaceInvitation, WorkspaceUser, WorkspaceUserRole } from '@/types/users'
 import { Skeleton } from '@/components/ui/skeleton'
 import TableToolbar from '../TableToolbar'
-import { useDebounce, useUpdateEffect } from 'react-use'
-import DeleteWorkspaceUserDialog from '../DeleteUserDialog'
+import { useUpdateEffect } from 'react-use'
 import { QueryClient } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/use-toast'
-import UpdateWorkspaceUserRoleDialog from '../UpdateUserRoleDialog'
-import TypographyH4 from '@/components/typography/TypographyH4'
+import DeleteWorkspaceInvitationDialog from '../DeleteInvitationDialog'
 
 interface DataTableProps {
   workspaceId: string
@@ -41,9 +39,6 @@ interface DataTableProps {
 
 function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: DataTableProps) {
   const { toast } = useToast()
-  // const [pagesLoaded, setPagesLoaded] = useState<number[]>([])
-  const [totalCount, setTotalCount] = useState<number>(0)
-  const [totalSearchCount, setTotalSearchCount] = useState<number>(0)
 
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -96,58 +91,50 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
     refetch()
   }, [sorting])
 
-  const [deleteUserDialog, setDeleteUserDialog] = useState<{
-    id: string
-    name: string
-  } | null>(null)
+  const [deleteInvitationDialog, setDeleteInvitationDialog] = useState<Pick<
+    WorkspaceInvitation,
+    'id' | 'role' | 'email'
+  > | null>(null)
 
-  const handleDeleteUser = (args: { id: string; name: string }) => {
-    setDeleteUserDialog(args)
+  const handleDeleteInvitation = (args: Pick<WorkspaceInvitation, 'id' | 'role' | 'email'>) => {
+    setDeleteInvitationDialog(args)
   }
 
-  const handleDeletedUser = (userId: string) => {
-    const currentKey = getCurrentKey()
-    const data = queryClient.getQueryData<{ data: WorkspaceUser[]; totalCount: number }>(currentKey)
+  const handleResendInvitation = (id: string) => {
+    alert(id)
+  }
+
+  const handleDeletedInvitation = (invitationId: string) => {
+    const currentKey = ['workspace-invitations', workspaceId]
+    const data = queryClient.getQueryData<WorkspaceInvitation[]>(currentKey)
 
     if (data) {
-      const newUsers = [...data.data].filter((item) => item.id !== userId)
-      queryClient.setQueryData(currentKey, {
-        ...data,
-        data: newUsers,
-      })
+      const newInvitations = [...data].filter((item) => item.id !== invitationId)
+      queryClient.setQueryData(
+        currentKey,
+        //
+        newInvitations
+      )
 
-      if (newUsers?.length === 0)
+      if (newInvitations?.length === 0)
         setPagination({ ...pagination, pageIndex: pagination.pageIndex - 1 })
     }
 
-    queryClient.invalidateQueries(['workspace', workspaceId, 'users'], { exact: false })
-
-    setTotalCount(totalCount - 1)
     closeDeleteDialog()
 
     toast({
-      title: 'User has been deleted',
+      title: 'Invitation has been deleted',
       variant: 'success',
     })
   }
 
   const closeDeleteDialog = () => {
-    if (!deleteUserDialog) return
+    if (!deleteInvitationDialog) return
 
-    setDeleteUserDialog({ ...deleteUserDialog, id: '' })
+    setDeleteInvitationDialog({ ...deleteInvitationDialog, id: '' })
     setTimeout(() => {
-      setDeleteUserDialog(null)
+      setDeleteInvitationDialog(null)
     }, 150)
-  }
-
-  const [roleDialog, setRoleDialog] = useState<{
-    id: string
-    name: string
-    role: WorkspaceUserRole
-  } | null>(null)
-
-  const handleUpdateUserRole = (args: { id: string; name: string; role: WorkspaceUserRole }) => {
-    setRoleDialog(args)
   }
 
   const handleUpdatedUser = (userId: string, newRole: WorkspaceUserRole) => {
@@ -169,21 +156,10 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
       }
     }
 
-    closeRoleDialog()
-
     toast({
       title: 'User role has been updated',
       variant: 'success',
     })
-  }
-
-  const closeRoleDialog = () => {
-    if (!roleDialog) return
-
-    setRoleDialog({ ...roleDialog, id: '' })
-    setTimeout(() => {
-      setRoleDialog(null)
-    }, 150)
   }
 
   const table = useReactTable({
@@ -191,12 +167,10 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
     data: data ?? defaultData,
     columns,
     meta: {
-      deleteUser: handleDeleteUser,
-      updateRole: handleUpdateUserRole,
+      delete: handleDeleteInvitation,
+      resend: handleResendInvitation,
     },
     getCoreRowModel: getCoreRowModel(),
-    // getPaginationRowModel: getPaginationRowModel(),
-    // getSortedRowModel: getSortedRowModel(),
     onSortingChange: (sorting) => {
       setSorting(sorting)
     },
@@ -213,25 +187,26 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
 
   return (
     <div>
-      {deleteUserDialog && (
-        <DeleteWorkspaceUserDialog
+      {deleteInvitationDialog && (
+        <DeleteWorkspaceInvitationDialog
           workspaceId={workspaceId}
-          opened={deleteUserDialog?.id !== ''}
-          user={deleteUserDialog}
+          opened={deleteInvitationDialog?.id !== ''}
+          invitation={deleteInvitationDialog}
           onClose={closeDeleteDialog}
-          onSuccess={() => handleDeletedUser(deleteUserDialog.id)}
-        />
-      )}
-      {roleDialog && (
-        <UpdateWorkspaceUserRoleDialog
-          user={roleDialog}
-          opened={roleDialog?.id !== ''}
-          workspaceId={workspaceId}
-          onClose={closeRoleDialog}
-          onSuccess={(newRole) => handleUpdatedUser(roleDialog.id, newRole)}
+          onSuccess={() => handleDeletedInvitation(deleteInvitationDialog.id)}
         />
       )}
       {/* <div className="text-muted-foreground font-medium mb-3">Invitations</div> */}
+
+      <TableToolbar
+        userCount={data !== undefined ? data?.length : null}
+        isInvitations={true}
+        isSearchCount={false}
+        search={''}
+        loading={isLoading}
+        onSearch={() => { }}
+        onInviteUser={onInviteUser}
+      />
 
       <div className="rounded-md border">
         <Table>
@@ -261,21 +236,16 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
           <TableBody>
             {isLoading ? (
               <>
-                {Array.from({ length: 5 }).map((row) => (
+                {Array.from({ length: 5 }).map((_) => (
                   <TableRow className="h-16 w-full bg-red-400X hover:bg-transparent">
-                    {Array.from({ length: 6 }).map((cell, index) => (
+                    {Array.from({ length: 5 }).map((_, index) => (
                       <TableCell
                         key={index}
                         className={clsx(['py-2 md:py-3'], {
                           'pr-0': index === 0,
                         })}
                       >
-                        <Skeleton
-                          className={clsx(['w-full'], {
-                            'h-6 w-full': index !== 0,
-                            'w-10 h-10 rounded-full': index === 0,
-                          })}
-                        />
+                        <Skeleton className={'w-full h-6'} />
                       </TableCell>
                     ))}
                   </TableRow>
