@@ -6,7 +6,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 import { useDebounce, useUpdateEffect } from 'react-use'
 import UserRoleBadge from './UserRoleBadge'
-import { WorkspaceUserRole } from '@/types/users'
+import { WorkspaceInvitation, WorkspaceUserRole } from '@/types/users'
 import DialogComponent from '../Dialog'
 import { Icons } from '../icons'
 import clsx from 'clsx'
@@ -168,11 +168,39 @@ const InviteUserDialog: React.FC<Props> = ({
     reset: resetCreateWorkspaceInvitation,
     isLoading: createWorkspaceInvitationLoading,
   } = useCreateWorkspaceInvitation({
-    onSuccess: () => {
+    onSuccess: ({id}) => {
       setInvitationSent(email)
       setEmail('')
+      addNewInvitation(id, role)
     },
   })
+
+  const addNewInvitation = (newInvitationId: string, role: WorkspaceUserRole) =>{
+    const currentKey = ['workspace-invitations', workspaceId]
+
+    const newInvitaion: WorkspaceInvitation ={
+      id: newInvitationId,
+      role,
+      createdBy:{
+        // TODO
+        name: "RADIM",
+        avatarUrl: ""
+      },
+      email,
+      createdAt: new Date(),
+      lastSentAt: null
+    }
+
+    const data = queryClient.getQueryData<WorkspaceInvitation[]>(currentKey)
+
+    if (data) {
+      queryClient.setQueryData(
+        currentKey,
+        [newInvitaion, ...data]
+      )
+
+    }
+  }
 
   const handleGenerateLink = (type: WorkspaceUserRole) => {
     generateLink({
