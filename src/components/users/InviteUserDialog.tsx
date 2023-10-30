@@ -166,6 +166,7 @@ const InviteUserDialog: React.FC<Props> = ({
     error: createWorkspaceInvitationError,
     mutate: createWorkspaceInvitation,
     reset: resetCreateWorkspaceInvitation,
+    isLoading: createWorkspaceInvitationLoading,
   } = useCreateWorkspaceInvitation({
     onSuccess: () => {
       setInvitationSent(email)
@@ -247,7 +248,7 @@ const InviteUserDialog: React.FC<Props> = ({
         // }
         // loading={isLoading}
         onSubmit={() => {
-          createWorkspaceInvitation({ workspaceId, email })
+          createWorkspaceInvitation({ workspaceId, email, role })
         }}
         onClose={onClose}
         className="md:max-w-[500px]"
@@ -474,7 +475,10 @@ const InviteUserDialog: React.FC<Props> = ({
 
               <div className="md:px-2">
                 <RadioGroup
-                  disabled={getInvitationsError != undefined && tab === 'link'}
+                  disabled={
+                    (getInvitationsError != undefined && tab === 'link') ||
+                    (tab === 'email' && createWorkspaceInvitationLoading)
+                  }
                   defaultValue={'MEMBER'}
                   className="flex flex-col gap-6"
                   value={role}
@@ -484,9 +488,15 @@ const InviteUserDialog: React.FC<Props> = ({
 
                   <div
                     className={clsx(['flex items-start gap-4'], {
+                      'cursor-pointer': !(
+                        (getInvitationsError != undefined && tab === 'link') ||
+                        (invitationLinksLoading && tab === 'link') ||
+                        (tab === 'email' && createWorkspaceInvitationLoading)
+                      ),
                       'opacity-70':
                         (getInvitationsError != undefined && tab === 'link') ||
-                        (invitationLinksLoading && tab === 'link'),
+                        (invitationLinksLoading && tab === 'link') ||
+                        (tab === 'email' && createWorkspaceInvitationLoading),
                     })}
                   >
                     <RadioGroupItem value="MEMBER" id="member" />
@@ -508,9 +518,15 @@ const InviteUserDialog: React.FC<Props> = ({
 
                   <div
                     className={clsx(['flex items-start gap-4'], {
+                      'cursor-pointer': !(
+                        (getInvitationsError != undefined && tab === 'link') ||
+                        (invitationLinksLoading && tab === 'link') ||
+                        (tab === 'email' && createWorkspaceInvitationLoading)
+                      ),
                       'opacity-70':
                         (getInvitationsError != undefined && tab === 'link') ||
-                        (invitationLinksLoading && tab === 'link'),
+                        (invitationLinksLoading && tab === 'link') ||
+                        (tab === 'email' && createWorkspaceInvitationLoading),
                     })}
                   >
                     <RadioGroupItem value="ADMIN" id="admin" />
