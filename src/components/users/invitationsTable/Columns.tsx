@@ -160,7 +160,7 @@ export const invitationsColumns: ColumnDef<WorkspaceInvitation>[] = [
 
   {
     id: 'actions',
-    cell: ({ row, table }) => {
+    cell: ({ row, table, }) => {
       const role = row.getValue('role') as WorkspaceUserRole
       const meta = table.options.meta as any
 
@@ -170,6 +170,9 @@ export const invitationsColumns: ColumnDef<WorkspaceInvitation>[] = [
             <Tooltip>
               <TooltipTrigger>
                 <Button
+                  onClick={() => {
+                    meta.resend(row.original.id)
+                  }}
                   size={'sm'}
                   variant="ghost"
                   className="opacity-60 hover:opacity-100 hover:text-primary"
@@ -184,6 +187,13 @@ export const invitationsColumns: ColumnDef<WorkspaceInvitation>[] = [
             <Tooltip>
               <TooltipTrigger>
                 <Button
+                  onClick={() => {
+                    meta.delete({
+                      id: row.original.id,
+                      email: row.original.email,
+                      role,
+                    })
+                  }}
                   size={'sm'}
                   variant="ghost"
                   className="opacity-70 hover:opacity-100 dark:hover:text-red-500 dark:text-red-500 text-red-600 hover:text-red-600"
