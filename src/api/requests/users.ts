@@ -1,7 +1,7 @@
 import sendRequest, { APIError } from '../instance'
 import { User, WorkspaceUser, WorkspaceUserRole } from '@/types/users'
 
-type UsersErrorCode = 'workspace_not_found' | 'user_not_found'
+type UsersErrorCode = 'workspace_not_found' | 'user_not_found' | 'invitation_already_exists'
 export type UsersError<T extends UsersErrorCode | void> = APIError<T>
 
 export function usersErrorMsgFromCode(code: UsersErrorCode): string {
@@ -13,6 +13,10 @@ export function usersErrorMsgFromCode(code: UsersErrorCode): string {
 
   if (code === 'user_not_found') {
     msg = 'User not found in current workspace'
+  }
+
+  if (code === 'invitation_already_exists') {
+    msg = 'Invitation already exists'
   }
 
   return msg
@@ -70,6 +74,30 @@ export async function checkWorkspaceUserEmail(args: CheckWorkspaceUserEmailArgs)
   })
 
   return await response
+}
+
+// create workspace invitation
+export type CreateWorkspaceInvitationError = UsersError<
+  'workspace_not_found' | 'invitation_already_exists'
+>
+export type CreateWorkspaceInvitationResData = { id: string }
+
+export type CreateWorkspaceInvitationArgs = {
+  workspaceId: string
+  email: string
+}
+
+export async function createWorkspaceInvitation(args: CreateWorkspaceInvitationArgs) {
+  const { workspaceId, email } = args
+
+  return await sendRequest<CreateWorkspaceInvitationResData>({
+    method: 'POST',
+    basePath: `workspaces`,
+    path: `${workspaceId}/users/invitation`,
+    body: {
+      email,
+    },
+  })
 }
 
 // update role
