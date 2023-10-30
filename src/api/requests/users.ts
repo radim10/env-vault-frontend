@@ -139,6 +139,22 @@ export async function deleteWorkspaceInvitation(args: DeleteWorkspaceInvitationA
   })
 }
 
+// resend workspace invitation
+export type ResendWorkspaceInvitationError = DeleteWorkspaceInvitationError
+export type ResendWorkspaceInvitationResData = DeleteWorkspaceInvitationResData
+
+export type ResendWorkspaceInvitationArgs = DeleteWorkspaceInvitationArgs
+
+export async function resendWorkspaceInvitation(args: ResendWorkspaceInvitationArgs) {
+  const { workspaceId, invitationId } = args
+
+  return await sendRequest<ResendWorkspaceInvitationResData>({
+    method: 'POST',
+    basePath: `workspaces`,
+    path: `${workspaceId}/users/invitations/${invitationId}/resend`,
+  })
+}
+
 // update role
 export type UpdateWorkspaceUserRoleError = UsersError<'user_not_found'>
 export type UpdateWorkspaceUserRoleData = { role: WorkspaceUserRole }
