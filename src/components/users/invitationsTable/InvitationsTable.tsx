@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { produce } from 'immer'
 import clsx from 'clsx'
 import {
   ColumnDef,
@@ -29,6 +30,8 @@ import { useUpdateEffect } from 'react-use'
 import { QueryClient } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/use-toast'
 import DeleteWorkspaceInvitationDialog from '../DeleteInvitationDialog'
+import { invitationsStore } from '@/stores/invitations'
+import { useResendWorkspaceInvitation } from '@/api/mutations/users'
 
 interface DataTableProps {
   workspaceId: string
@@ -77,13 +80,27 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
     fetchDataOptions.desc,
   ]
 
+  const { mutate: resendInvitation, isLoading: isResending } = useResendWorkspaceInvitation({
+    onSuccess: () => {
+      toast({
+        title: 'Invitation has been resent',
+        variant: 'success',
+      })
+    },
+    onError: () => {
+      toast({
+        title: 'Failed to resend invitation',
+        variant: 'destructive',
+      })
+    },
+  })
+
   const { data, isLoading, isFetching, refetch, isRefetching } = useListWorkspaceInvitations(
     { workspaceId, ...fetchDataOptions },
     {
       keepPreviousData: false,
       // leave it here???
       // staleTime: Infinity,
-      onSuccess: (data) => { },
     }
   )
 
@@ -101,7 +118,51 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
   }
 
   const handleResendInvitation = (id: string) => {
-    alert(id)
+    invitationsStore.setState((state) => {
+      return produce(state, (draftState) => {
+        draftState.resentIds.push(id)
+      })
+    })
+
+    resendInvitation(
+      { workspaceId, invitationId: id },
+      {
+        onSuccess: () => {
+          invitationsStore.setState((state) => {
+            return produce(state, (draftState) => {
+              draftState.resendingIds = draftState.resendingIds.filter((item) => item !== id)
+              draftState.resentIds.push(id)
+            })
+          })
+
+          updateSentAtState(id)
+        },
+        onError: () => {
+          invitationsStore.setState((state) => {
+            return produce(state, (draftState) => {
+              draftState.resendingIds = draftState.resendingIds.filter((item) => item !== id)
+              draftState.errorIds.push(id)
+            })
+          })
+        },
+      }
+    )
+  }
+
+  const updateSentAtState = (invitationId: string) => {
+    const currentKey = ['workspace-invitations', workspaceId]
+    const data = queryClient.getQueryData<WorkspaceInvitation[]>(currentKey)
+
+    if (data) {
+      const updData = produce(data, (draftData) => {
+        const itemIndex = data.findIndex((item) => item.id === invitationId)
+
+        if (itemIndex !== -1) {
+          draftData[itemIndex].lastSentAt = new Date()
+        }
+      })
+      queryClient.setQueryData(currentKey, updData)
+    }
   }
 
   const handleDeletedInvitation = (invitationId: string) => {
