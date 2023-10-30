@@ -11,6 +11,7 @@ interface Props {
 
 const items = [
   { label: 'Workspace', href: 'workspace' },
+  { label: 'Invitations', href: 'invitations' },
   { label: 'Teams', href: 'teams' },
   { label: 'Roles', href: 'roles' },
 ]
