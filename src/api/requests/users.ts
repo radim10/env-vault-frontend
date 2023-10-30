@@ -85,10 +85,11 @@ export type CreateWorkspaceInvitationResData = { id: string }
 export type CreateWorkspaceInvitationArgs = {
   workspaceId: string
   email: string
+  role: WorkspaceUserRole
 }
 
 export async function createWorkspaceInvitation(args: CreateWorkspaceInvitationArgs) {
-  const { workspaceId, email } = args
+  const { workspaceId, email, role } = args
 
   return await sendRequest<CreateWorkspaceInvitationResData>({
     method: 'POST',
@@ -96,6 +97,7 @@ export async function createWorkspaceInvitation(args: CreateWorkspaceInvitationA
     path: `${workspaceId}/users/invitations`,
     body: {
       email,
+      role,
     },
   })
 }
