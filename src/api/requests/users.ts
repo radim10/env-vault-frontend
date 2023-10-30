@@ -1,5 +1,5 @@
 import sendRequest, { APIError } from '../instance'
-import { User, WorkspaceUser, WorkspaceUserRole } from '@/types/users'
+import { User, WorkspaceInvitation, WorkspaceUser, WorkspaceUserRole } from '@/types/users'
 
 type UsersErrorCode = 'workspace_not_found' | 'user_not_found' | 'invitation_already_exists'
 export type UsersError<T extends UsersErrorCode | void> = APIError<T>
@@ -74,6 +74,18 @@ export async function checkWorkspaceUserEmail(args: CheckWorkspaceUserEmailArgs)
   })
 
   return await response
+}
+
+// list workspace invitations
+export type ListWorkspaceInvitationsError = UsersError<'workspace_not_found'>
+export type ListWorkspaceInvitationsData = WorkspaceInvitation[]
+
+export async function listWorkspaceInvitations(workspaceId: string) {
+  return await sendRequest<ListWorkspaceInvitationsData>({
+    method: 'GET',
+    basePath: `workspaces`,
+    path: `${workspaceId}/users/invitations`,
+  })
 }
 
 // create workspace invitation
