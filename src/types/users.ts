@@ -14,3 +14,12 @@ export enum WorkspaceUserRole {
 }
 
 export type WorkspaceUser = User & { role: WorkspaceUserRole; joinedAt: Date }
+
+export interface WorkspaceInvitation {
+  id: string
+  createdAt: Date
+  lastSentAt: Date | null
+  email: string
+  role: WorkspaceUserRole
+  createdBy: Pick<User, 'name' | 'avatarUrl'>
+}
