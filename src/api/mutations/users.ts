@@ -1,10 +1,14 @@
 import { MutOpt } from './mutOpt'
 import { useMutation } from '@tanstack/react-query'
 import {
+  CreateWorkspaceInvitationArgs,
+  CreateWorkspaceInvitationError,
+  CreateWorkspaceInvitationResData,
   DeleteWorkspaceUserError,
   UpdateWorkspaceUserRoleArgs,
   UpdateWorkspaceUserRoleError,
   UpdateWorkspaceUserRoleResData,
+  createWorkspaceInvitation,
   deleteWorkspaceUser,
   updateWorkspaceUserRole,
 } from '../requests/users'
@@ -18,6 +22,16 @@ export const useUpdateWorkspaceUserRole = (opt?: MutOpt<UpdateWorkspaceUserRoleR
     UpdateWorkspaceUserRoleError,
     UpdateWorkspaceUserRoleVariables
   >(updateWorkspaceUserRole, opt)
+
+// create email workspace invitation
+type UseCreateWorkspaceInvitationVariables = CreateWorkspaceInvitationArgs
+
+export const useCreateWorkspaceInvitation = (opt?: MutOpt<CreateWorkspaceInvitationResData>) =>
+  useMutation<
+    CreateWorkspaceInvitationResData,
+    CreateWorkspaceInvitationError,
+    UseCreateWorkspaceInvitationVariables
+  >(createWorkspaceInvitation, opt)
 
 // delete
 type DeleteWorkspaceUserVariables = {
