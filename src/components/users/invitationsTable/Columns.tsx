@@ -3,6 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { User, WorkspaceInvitation, WorkspaceUser, WorkspaceUserRole } from '@/types/users'
 import { ColumnDef } from '@tanstack/react-table'
+import { produce } from 'immer'
 import { MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,6 +19,8 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import UserRoleBadge from '../UserRoleBadge'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { invitationsStore } from '@/stores/invitations'
+import clsx from 'clsx'
 
 dayjs.extend(relativeTime)
 
@@ -160,33 +163,95 @@ export const invitationsColumns: ColumnDef<WorkspaceInvitation>[] = [
 
   {
     id: 'actions',
-    cell: ({ row, table, }) => {
+    cell: ({ row, table }) => {
       const role = row.getValue('role') as WorkspaceUserRole
       const meta = table.options.meta as any
+      const resendingInProgress = invitationsStore.getState().resendingIds.includes(row.original.id)
+      const lastSentAt = row.original.lastSentAt ?? row.original?.createdAt
+
+      const canResend = dayjs().diff(dayjs(lastSentAt), 'h') >= 24
+      const isResent = invitationsStore.getState().resentIds.includes(row.original.id)
+      const resendError = invitationsStore.getState().errorIds.includes(row.original.id)
 
       return (
         <div className="w-full flex justify-end items-center pr-2 gap-1.5">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <Button
-                  onClick={() => {
-                    meta.resend(row.original.id)
-                  }}
-                  size={'sm'}
-                  variant="ghost"
-                  className="opacity-60 hover:opacity-100 hover:text-primary"
-                >
-                  <Icons.sendHorizontal className="h-4 w-4" />
-                </Button>
+                {!isResent && !resendError && (
+                  <Button
+                    disabled={isResent}
+                    onClick={() => {
+                      if (resendingInProgress || isResent || !canResend) return
+
+                      meta.resend(row.original.id)
+
+                      invitationsStore.setState((state) => {
+                        return produce(state, (draftState) => {
+                          draftState.resendingIds.push(row.original.id)
+                        })
+                      })
+                    }}
+                    size={'sm'}
+                    variant="ghost"
+                    className={clsx({
+                      'opacity-25 hover:bg-transparent': !canResend,
+                      'opacity-80 hover:opacity-100 hover:text-primary':
+                        !resendingInProgress && canResend,
+                      'text-primary opacity-100 hover:bg-transparent cursor-default hover:text-primary':
+                        resendingInProgress && canResend,
+                    })}
+                  >
+                    <>
+                      {resendingInProgress ? (
+                        <Icons.loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Icons.sendHorizontal className="h-4 w-4" />
+                      )}
+                    </>
+                  </Button>
+                )}
+
+                {isResent && !resendError && (
+                  <Button
+                    size={'sm'}
+                    variant="ghost"
+                    className="text-green-600 hover:bg-transparent hover:text-green-600 cursor-default"
+                  >
+                    <Icons.checkCircle2 className="h-4 w-4" />
+                  </Button>
+                )}
+
+                {resendError && (
+                  <Button
+                    size={'sm'}
+                    variant="ghost"
+                    className="text-red-600 hover:bg-transparent hover:text-red-600 cursor-default"
+                  >
+                    <Icons.xCircle className="h-4 w-4" />
+                  </Button>
+                )}
               </TooltipTrigger>
 
-              <TooltipContent>Resend invitation</TooltipContent>
+              <TooltipContent>
+                {!isResent && !resendError && (
+                  <>
+                    {canResend ? (
+                      <>{resendingInProgress ? 'Resending invitation' : 'Resend invitation'}</>
+                    ) : (
+                      <>Can be resnend once a 24 hours</>
+                    )}
+                  </>
+                )}
+                {isResent && !resendError && <>Invitation resent</>}
+                {resendError && <>Something went wrong</>}
+              </TooltipContent>
             </Tooltip>
 
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger disabled={resendingInProgress}>
                 <Button
+                  disabled={resendingInProgress}
                   onClick={() => {
                     meta.delete({
                       id: row.original.id,
@@ -196,7 +261,14 @@ export const invitationsColumns: ColumnDef<WorkspaceInvitation>[] = [
                   }}
                   size={'sm'}
                   variant="ghost"
-                  className="opacity-70 hover:opacity-100 dark:hover:text-red-500 dark:text-red-500 text-red-600 hover:text-red-600"
+                  className={clsx(
+                    [
+                      'opacity-70 hover:opacity-100 dark:hover:text-red-500 Xdark:text-red-500 xtext-red-600 hover:text-red-600',
+                    ],
+                    {
+                      'cursor-not-allowed': resendingInProgress,
+                    }
+                  )}
                 >
                   <Icons.trash className="h-4 w-4" />
                 </Button>
