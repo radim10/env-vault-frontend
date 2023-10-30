@@ -4,11 +4,15 @@ import {
   CreateWorkspaceInvitationArgs,
   CreateWorkspaceInvitationError,
   CreateWorkspaceInvitationResData,
+  DeleteWorkspaceInvitationArgs,
+  DeleteWorkspaceInvitationError,
+  DeleteWorkspaceInvitationResData,
   DeleteWorkspaceUserError,
   UpdateWorkspaceUserRoleArgs,
   UpdateWorkspaceUserRoleError,
   UpdateWorkspaceUserRoleResData,
   createWorkspaceInvitation,
+  deleteWorkspaceInvitation,
   deleteWorkspaceUser,
   updateWorkspaceUserRole,
 } from '../requests/users'
@@ -33,7 +37,17 @@ export const useCreateWorkspaceInvitation = (opt?: MutOpt<CreateWorkspaceInvitat
     UseCreateWorkspaceInvitationVariables
   >(createWorkspaceInvitation, opt)
 
-// delete
+// delete workspace invitation
+type DeleteWorkspaceInvitationVariables = DeleteWorkspaceInvitationArgs
+
+export const useDeleteWorkspaceInvitation = (opt?: MutOpt<DeleteWorkspaceInvitationResData>) =>
+  useMutation<
+    DeleteWorkspaceInvitationResData,
+    DeleteWorkspaceInvitationError,
+    DeleteWorkspaceInvitationVariables
+  >(deleteWorkspaceInvitation, opt)
+
+// delete workspace user
 type DeleteWorkspaceUserVariables = {
   workspaceId: string
   userId: string
