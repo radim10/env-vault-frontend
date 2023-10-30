@@ -7,7 +7,7 @@ import TableToolbar from './TableToolbar'
 import { useQueryClient } from '@tanstack/react-query'
 import InviteUserDialog from './InviteUserDialog'
 import { useState } from 'react'
-import WorkspaceInvitations from './WorkspaceInvitations'
+// import WorkspaceInvitations from './WorkspaceInvitations'
 import InvitationsTable from './invitationsTable/InvitationsTable'
 import { invitationsColumns } from './invitationsTable/Columns'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -41,7 +41,7 @@ const WorkspaceUsers: React.FC<Props> = ({ workspaceId }) => {
   //
 
   return (
-    <div className='flex flex-col gap-6'>
+    <div className="flex flex-col gap-6">
       <InviteUserDialog
         queryClient={queryClient}
         workspaceId={workspaceId}
