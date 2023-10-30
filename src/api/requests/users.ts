@@ -1,7 +1,11 @@
 import sendRequest, { APIError } from '../instance'
 import { User, WorkspaceInvitation, WorkspaceUser, WorkspaceUserRole } from '@/types/users'
 
-type UsersErrorCode = 'workspace_not_found' | 'user_not_found' | 'invitation_already_exists'
+type UsersErrorCode =
+  | 'workspace_not_found'
+  | 'user_not_found'
+  | 'invitation_already_exists'
+  | 'invitation_not_found'
 export type UsersError<T extends UsersErrorCode | void> = APIError<T>
 
 export function usersErrorMsgFromCode(code: UsersErrorCode): string {
@@ -111,6 +115,27 @@ export async function createWorkspaceInvitation(args: CreateWorkspaceInvitationA
       email,
       role,
     },
+  })
+}
+
+// delete workspace invitation
+export type DeleteWorkspaceInvitationError = UsersError<
+  'workspace_not_found' | 'invitation_not_found'
+>
+export type DeleteWorkspaceInvitationResData = undefined
+
+export type DeleteWorkspaceInvitationArgs = {
+  workspaceId: string
+  invitationId: string
+}
+
+export async function deleteWorkspaceInvitation(args: DeleteWorkspaceInvitationArgs) {
+  const { workspaceId, invitationId } = args
+
+  return await sendRequest<DeleteWorkspaceInvitationResData>({
+    method: 'DELETE',
+    basePath: `workspaces`,
+    path: `${workspaceId}/users/invitations/${invitationId}`,
   })
 }
 
