@@ -125,7 +125,6 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
     }
   }, [pageSize])
 
-
   useUpdateEffect(() => {
     if (search?.length === 0) {
       setSearchActive(false)
@@ -199,9 +198,11 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
       })
 
       if (newUsers?.data?.length === 0)
-        setPagination(produce(pagination, (draftPagination) => {
-          draftPagination.pageIndex = draftPagination.pageIndex - 1
-        }))
+        setPagination(
+          produce(pagination, (draftPagination) => {
+            draftPagination.pageIndex = draftPagination.pageIndex - 1
+          })
+        )
     }
 
     queryClient.invalidateQueries(['workspace', workspaceId, 'users'], { exact: false })
@@ -271,8 +272,8 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
       search?.trim()?.length > 1
         ? Math.ceil(totalSearchCount / pageSize)
         : totalCount
-          ? Math.ceil(totalCount / pageSize)
-          : undefined,
+        ? Math.ceil(totalCount / pageSize)
+        : undefined,
     data: data?.data ?? defaultData,
     columns,
     meta: {
@@ -321,13 +322,12 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
       )}
 
       <TableToolbar
-
         userCount={
           !totalCount || searchLoading
             ? null
             : search?.trim()?.length > 1
-              ? totalSearchCount
-              : totalCount
+            ? totalSearchCount
+            : totalCount
         }
         isSearchCount={search?.trim()?.length > 1}
         search={search}
@@ -428,12 +428,26 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
           </span>
         )}
 
-        <div className={clsx(['hidden md:flex gap-0 items-center text-sm mt-0 text-muted-foreground rounded-md border-2'], {
-          'opacity-70': isLoading || searchLoading || (search?.trim()?.length > 1 ? totalSearchCount < 5 : totalCount < 5),
-        })}>
+        <div
+          className={clsx(
+            [
+              'hidden md:flex gap-0 items-center text-sm mt-0 text-muted-foreground rounded-md border-2',
+            ],
+            {
+              'opacity-70':
+                isLoading ||
+                searchLoading ||
+                (search?.trim()?.length > 1 ? totalSearchCount < 5 : totalCount < 5),
+            }
+          )}
+        >
           {[5, 10].map((val, _) => (
             <button
-              disabled={isLoading || searchLoading || (search?.trim()?.length > 1 ? totalSearchCount < 5 : totalCount < 5)}
+              disabled={
+                isLoading ||
+                searchLoading ||
+                (search?.trim()?.length > 1 ? totalSearchCount < 5 : totalCount < 5)
+              }
               onClick={() => {
                 setPagination((s) => {
                   return { ...s, pageSize: val }
@@ -443,7 +457,8 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
                 'bg-secondary text-primary': pageSize === val,
                 'opacity-50 hover:opacity-100': pageSize !== val,
                 'rounded-l-sm rounded-r-sm': true,
-              })}>
+              })}
+            >
               {val}
             </button>
           ))}
