@@ -32,6 +32,7 @@ export type GetWorkspaceUsersData = { data: WorkspaceUser[]; totalCount: number 
 
 export type GetWorkspaceUsersArgs = {
   workspaceId: string
+  pageSize?: number
   page?: number
   sort?: 'name' | 'email' | 'joined' | 'role'
   desc?: boolean
@@ -39,7 +40,7 @@ export type GetWorkspaceUsersArgs = {
 }
 
 export async function getWorkspaceUsers(args: GetWorkspaceUsersArgs) {
-  const { workspaceId, page = 0, sort, desc, search } = args
+  const { workspaceId, page = 0, pageSize = 5, sort, desc, search } = args
 
   const response = sendRequest<GetWorkspaceUsersData>({
     method: 'GET',
@@ -47,6 +48,7 @@ export async function getWorkspaceUsers(args: GetWorkspaceUsersArgs) {
     path: `${workspaceId}/users`,
     params: {
       page,
+      pageSize,
       sort,
       desc,
       search,
