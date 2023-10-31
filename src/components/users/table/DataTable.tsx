@@ -252,9 +252,9 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
   const table = useReactTable({
     pageCount:
       search?.trim()?.length > 1
-        ? Math.ceil(totalSearchCount / 5)
+        ? Math.ceil(totalSearchCount / pageSize)
         : totalCount
-          ? Math.ceil(totalCount / 5)
+          ? Math.ceil(totalCount / pageSize)
           : undefined,
     data: data?.data ?? defaultData,
     columns,
