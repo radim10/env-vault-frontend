@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Label } from '@/components/ui/label'
+import { produce } from 'immer'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 import { useDebounce, useUpdateEffect } from 'react-use'
@@ -20,7 +21,9 @@ import { WorkspaceInvitationLinks } from '@/types/workspaces'
 import { Tabs, TabsList, TabsTrigger } from '../ui/tabs'
 import { useCheckWorkspaceUserEmail } from '@/api/queries/users'
 import { useCreateWorkspaceInvitation } from '@/api/mutations/users'
-import { usersErrorMsgFromCode } from '@/api/requests/users'
+import { ListWorkspaceInvitationsData, usersErrorMsgFromCode } from '@/api/requests/users'
+import { invitationsStore } from '@/stores/invitations'
+import dayjs from 'dayjs'
 
 interface Props {
   queryClient: QueryClient
@@ -161,45 +164,59 @@ const InviteUserDialog: React.FC<Props> = ({
   )
 
   const {
-    // TODO: invitations
-    data: createWorkspaceInvitationData,
     error: createWorkspaceInvitationError,
     mutate: createWorkspaceInvitation,
     reset: resetCreateWorkspaceInvitation,
     isLoading: createWorkspaceInvitationLoading,
   } = useCreateWorkspaceInvitation({
-    onSuccess: ({id}) => {
-      setInvitationSent(email)
+    onSuccess: ({ id }) => {
       setEmail('')
+      setInvitationSent(email)
       addNewInvitation(id, role)
     },
   })
 
-  const addNewInvitation = (newInvitationId: string, role: WorkspaceUserRole) =>{
+  const addNewInvitation = (newInvitationId: string, role: WorkspaceUserRole) => {
     const currentKey = ['workspace-invitations', workspaceId]
+    const data = queryClient.getQueryData<ListWorkspaceInvitationsData>(currentKey)
 
-    const newInvitaion: WorkspaceInvitation ={
+    if (!data) return
+
+    const newInvitaion: WorkspaceInvitation = {
       id: newInvitationId,
       role,
-      createdBy:{
-        // TODO
+      createdBy: {
+        // TODO: current user
         name: "RADIM",
         avatarUrl: ""
       },
       email,
-      createdAt: new Date(),
+      createdAt: dayjs().format("YYYY-MM-DDTHH:mm:ss.000Z") as any as Date,
       lastSentAt: null
     }
 
-    const data = queryClient.getQueryData<WorkspaceInvitation[]>(currentKey)
+    console.log('newInvitaion', newInvitaion)
 
-    if (data) {
-      queryClient.setQueryData(
-        currentKey,
-        [newInvitaion, ...data]
-      )
 
-    }
+    invitationsStore.setState(
+      produce(invitationsStore.getState(), (draftData) => {
+        draftData.newInvitation = newInvitaion
+      })
+    )
+
+
+    // const data = queryClient.getQueryData<ListWorkspaceInvitationsData>(currentKey)
+    //
+    // if (data) {
+    //   const updatedInvitations = produce(data, (draftData) => {
+    //     draftData.data.unshift(newInvitaion)
+    //     draftData.totalCount = draftData.totalCount + 1
+    //   })
+    //
+    //   queryClient.setQueryData(
+    //     currentKey, updatedInvitations
+    //   )
+    // }
   }
 
   const handleGenerateLink = (type: WorkspaceUserRole) => {
