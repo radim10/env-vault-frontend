@@ -23,7 +23,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
 import { useListWorkspaceInvitations } from '@/api/queries/users'
-import { WorkspaceInvitation, WorkspaceUser, WorkspaceUserRole } from '@/types/users'
+import { WorkspaceInvitation, } from '@/types/users'
 import { Skeleton } from '@/components/ui/skeleton'
 import TableToolbar from '../TableToolbar'
 import { useUpdateEffect } from 'react-use'
@@ -72,15 +72,11 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
   }
 
   const getCurrentKey = () => [
-    'workspace',
+    'workspace-invitations',
     workspaceId,
-    'users',
-    fetchDataOptions.page,
-    fetchDataOptions.sort,
-    fetchDataOptions.desc,
   ]
 
-  const { mutate: resendInvitation, isLoading: isResending } = useResendWorkspaceInvitation({
+  const { mutate: resendInvitation } = useResendWorkspaceInvitation({
     onSuccess: () => {
       toast({
         title: 'Invitation has been resent',
@@ -150,7 +146,7 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
   }
 
   const updateSentAtState = (invitationId: string) => {
-    const currentKey = ['workspace-invitations', workspaceId]
+    const currentKey = getCurrentKey()
     const data = queryClient.getQueryData<WorkspaceInvitation[]>(currentKey)
 
     if (data) {
@@ -166,18 +162,21 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
   }
 
   const handleDeletedInvitation = (invitationId: string) => {
-    const currentKey = ['workspace-invitations', workspaceId]
+    const currentKey = getCurrentKey()
     const data = queryClient.getQueryData<WorkspaceInvitation[]>(currentKey)
 
     if (data) {
-      const newInvitations = [...data].filter((item) => item.id !== invitationId)
+      const updatedInvitations = produce(data, (draftData) => {
+        const itemIndex = data.findIndex((item) => item.id === invitationId)
+        draftData.splice(itemIndex, 1)
+      })
+
       queryClient.setQueryData(
         currentKey,
-        //
-        newInvitations
+        updatedInvitations
       )
 
-      if (newInvitations?.length === 0)
+      if (updatedInvitations?.length === 0)
         setPagination({ ...pagination, pageIndex: pagination.pageIndex - 1 })
     }
 
@@ -198,30 +197,6 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
     }, 150)
   }
 
-  const handleUpdatedUser = (userId: string, newRole: WorkspaceUserRole) => {
-    const currentKey = getCurrentKey()
-    const data = queryClient.getQueryData<{ data: WorkspaceUser[]; totalCount: number }>(currentKey)
-
-    if (data) {
-      const newUsers = [...data.data]
-      const updatedUserIndex = newUsers.findIndex((item) => item.id === userId)
-
-      if (updatedUserIndex !== -1) {
-        const updatedUser = newUsers[updatedUserIndex]
-        newUsers[updatedUserIndex] = { ...updatedUser, role: newRole }
-
-        queryClient.setQueryData(currentKey, {
-          ...data,
-          data: newUsers,
-        })
-      }
-    }
-
-    toast({
-      title: 'User role has been updated',
-      variant: 'success',
-    })
-  }
 
   const table = useReactTable({
     pageCount: data ? Math.ceil(data?.length / pageSize) : undefined,
