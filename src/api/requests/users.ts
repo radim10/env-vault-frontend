@@ -82,9 +82,21 @@ export async function checkWorkspaceUserEmail(args: CheckWorkspaceUserEmailArgs)
 
 // list workspace invitations
 export type ListWorkspaceInvitationsError = UsersError<'workspace_not_found'>
-export type ListWorkspaceInvitationsData = WorkspaceInvitation[]
+export type ListWorkspaceInvitationsData = { data: WorkspaceInvitation[], totalCount: number }
 
-export async function listWorkspaceInvitations(workspaceId: string) {
+export type ListWorkspaceInvitationsArgs = {
+  workspaceId: string
+  // page?: number
+  // sort?: 'sender' | 'email' | 'role' | 'sent'
+  // desc?: boolean
+  // search?: string
+}
+
+
+export async function listWorkspaceInvitations(args: ListWorkspaceInvitationsArgs) {
+  // const { workspaceId, page, desc, sort, search } = args
+  const { workspaceId } = args
+
   return await sendRequest<ListWorkspaceInvitationsData>({
     method: 'GET',
     basePath: `workspaces`,
