@@ -234,7 +234,14 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
       const page = pagination?.pageIndex + 1
       const totalPages = Math.ceil((table.getFilteredRowModel().rows.length - 1) / pageSize)
 
-      if (!(page > totalPages)) skipAutoResetPageIndex()
+      // if (!(page > totalPages)) skipAutoResetPageIndex()
+      skipAutoResetPageIndex()
+
+      if (page > totalPages) {
+        setPagination((prev) => {
+          return { ...prev, pageIndex: prev?.pageIndex - 1 }
+        })
+      }
 
       queryClient.setQueryData(
         currentKey,
