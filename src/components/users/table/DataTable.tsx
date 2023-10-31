@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { produce } from 'immer'
 import clsx from 'clsx'
 import {
   ColumnDef,
@@ -168,14 +169,22 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
     const data = queryClient.getQueryData<{ data: WorkspaceUser[]; totalCount: number }>(currentKey)
 
     if (data) {
-      const newUsers = [...data.data].filter((item) => item.id !== userId)
+      const newUsers = produce(data, (draftData) => {
+        const itemIndex = data.data.findIndex((item) => item.id === userId)
+        if (itemIndex !== -1) {
+          draftData.data.splice(itemIndex, 1)
+        }
+      })
+
       queryClient.setQueryData(currentKey, {
         ...data,
         data: newUsers,
       })
 
-      if (newUsers?.length === 0)
-        setPagination({ ...pagination, pageIndex: pagination.pageIndex - 1 })
+      if (newUsers?.data?.length === 0)
+        setPagination(produce(pagination, (draftPagination) => {
+          draftPagination.pageIndex = draftPagination.pageIndex - 1
+        }))
     }
 
     queryClient.invalidateQueries(['workspace', workspaceId, 'users'], { exact: false })
@@ -213,18 +222,14 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
     const data = queryClient.getQueryData<{ data: WorkspaceUser[]; totalCount: number }>(currentKey)
 
     if (data) {
-      const newUsers = [...data.data]
-      const updatedUserIndex = newUsers.findIndex((item) => item.id === userId)
+      const updatedUsers = produce(data, (draftData) => {
+        const itemIndex = data.data.findIndex((item) => item.id === userId)
+        if (itemIndex !== -1) {
+          draftData.data[itemIndex].role = newRole
+        }
+      })
 
-      if (updatedUserIndex !== -1) {
-        const updatedUser = newUsers[updatedUserIndex]
-        newUsers[updatedUserIndex] = { ...updatedUser, role: newRole }
-
-        queryClient.setQueryData(currentKey, {
-          ...data,
-          data: newUsers,
-        })
-      }
+      queryClient.setQueryData(currentKey, updatedUsers)
     }
 
     closeRoleDialog()
