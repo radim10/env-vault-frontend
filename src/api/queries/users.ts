@@ -6,6 +6,7 @@ import {
   GetWorkspaceUsersArgs,
   GetWorkspaceUsersData,
   GetWorkspaceUsersError,
+  ListWorkspaceInvitationsArgs,
   ListWorkspaceInvitationsData,
   ListWorkspaceInvitationsError,
   checkWorkspaceUserEmail,
@@ -43,15 +44,33 @@ export const useCheckWorkspaceUserEmail = (
   )
 
 //
+// // list workspace invitations
+// export const useListWorkspaceInvitations = (
+//   args: ListWorkspaceInvitationsArgs,
+//   opt?: UseQueryOptions<ListWorkspaceInvitationsData, ListWorkspaceInvitationsError>
+// ) =>
+//   useQuery<ListWorkspaceInvitationsData, ListWorkspaceInvitationsError>(
+//     ['workspace-invitations', args.workspaceId, {
+//       page: args.page,
+//       sort: args.sort,
+//       desc: args.desc,
+//       search: args.search,
+//     }],
+//     () => {
+//       return listWorkspaceInvitations(args)
+//     },
+//     opt
+//   )
+
 // list workspace invitations
 export const useListWorkspaceInvitations = (
-  args: { workspaceId: string },
+  args: ListWorkspaceInvitationsArgs,
   opt?: UseQueryOptions<ListWorkspaceInvitationsData, ListWorkspaceInvitationsError>
 ) =>
   useQuery<ListWorkspaceInvitationsData, ListWorkspaceInvitationsError>(
     ['workspace-invitations', args.workspaceId],
     () => {
-      return listWorkspaceInvitations(args.workspaceId)
+      return listWorkspaceInvitations(args)
     },
     opt
   )
