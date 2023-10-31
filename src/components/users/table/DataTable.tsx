@@ -31,6 +31,7 @@ import DeleteWorkspaceUserDialog from '../DeleteUserDialog'
 import { QueryClient } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/use-toast'
 import UpdateWorkspaceUserRoleDialog from '../UpdateUserRoleDialog'
+import useUserTablesPaginationStore from '@/stores/userTables'
 
 interface DataTableProps {
   workspaceId: string
@@ -41,13 +42,15 @@ interface DataTableProps {
 
 function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: DataTableProps) {
   const { toast } = useToast()
+  const { workspacePageSize, setWorkspacePageSize } = useUserTablesPaginationStore()
+
   // const [pagesLoaded, setPagesLoaded] = useState<number[]>([])
   const [totalCount, setTotalCount] = useState<number>(0)
   const [totalSearchCount, setTotalSearchCount] = useState<number>(0)
 
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 5,
+    pageSize: workspacePageSize ?? 5,
   })
 
   const pagination = useMemo(
@@ -72,7 +75,9 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
   const [searchLoading, setSearchLoading] = useState(false)
 
   const fetchDataOptions = {
+    workspaceId,
     page: pageIndex,
+    pageSize: pageSize,
     sort: (sorting?.[0]?.id === 'joinedAt' ? 'joined' : sorting?.[0]?.id) as any,
     desc: sorting?.[0]?.desc ?? undefined,
     search: search?.trim()?.length > 1 ? search : undefined,
@@ -82,6 +87,7 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
     'workspace',
     workspaceId,
     'users',
+    fetchDataOptions.pageSize,
     fetchDataOptions.page,
     fetchDataOptions.sort,
     fetchDataOptions.desc,
@@ -89,7 +95,7 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
   ]
 
   const { data, isLoading, isFetching, refetch, isRefetching } = useGetWorkspaceUsers(
-    { workspaceId, ...fetchDataOptions },
+    fetchDataOptions,
     {
       keepPreviousData: false,
       enabled: !searchActive,
@@ -108,6 +114,17 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
       },
     }
   )
+
+  useUpdateEffect(() => {
+    if (pageSize !== workspacePageSize) {
+      setWorkspacePageSize(pageSize)
+    }
+
+    if (search?.length > 1) {
+      refetch()
+    }
+  }, [pageSize])
+
 
   useUpdateEffect(() => {
     if (search?.length === 0) {
@@ -347,7 +364,7 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
           <TableBody>
             {isLoading || searchLoading ? (
               <>
-                {Array.from({ length: 5 }).map((row) => (
+                {Array.from({ length: pageSize }).map((row) => (
                   <TableRow className="h-16 w-full bg-red-400X hover:bg-transparent">
                     {Array.from({ length: 6 }).map((cell, index) => (
                       <TableCell
@@ -400,7 +417,7 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
           </TableBody>
         </Table>
       </div>
-      <div className="flex justify-end items-center gap-4">
+      <div className="flex justify-end items-center gap-4 md:gap-6">
         {/* <div className="text-muted-foreground text-sm">Pages: {Math.ceil(2 / 5)}/1</div> */}
         {(search?.trim()?.length > 1 ? totalSearchCount !== 0 : totalCount !== 0) && (
           <span className="flex items-center gap-1 text-sm text-muted-foreground">
@@ -410,6 +427,27 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
             </span>
           </span>
         )}
+
+        <div className={clsx(['hidden md:flex gap-0 items-center text-sm mt-0 text-muted-foreground rounded-md border-2'], {
+          'opacity-70': isLoading || searchLoading || (search?.trim()?.length > 1 ? totalSearchCount < 5 : totalCount < 5),
+        })}>
+          {[5, 10].map((val, _) => (
+            <button
+              disabled={isLoading || searchLoading || (search?.trim()?.length > 1 ? totalSearchCount < 5 : totalCount < 5)}
+              onClick={() => {
+                setPagination((s) => {
+                  return { ...s, pageSize: val }
+                })
+              }}
+              className={clsx(['w-10 text-center py-1 ease duration-200'], {
+                'bg-secondary text-primary': pageSize === val,
+                'opacity-50 hover:opacity-100': pageSize !== val,
+                'rounded-l-sm rounded-r-sm': true,
+              })}>
+              {val}
+            </button>
+          ))}
+        </div>
 
         <div className="flex items-center justify-end space-x-2 py-4">
           <Button
