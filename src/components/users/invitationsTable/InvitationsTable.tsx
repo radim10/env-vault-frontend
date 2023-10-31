@@ -37,6 +37,7 @@ import DeleteWorkspaceInvitationDialog from '../DeleteInvitationDialog'
 import { invitationsStore } from '@/stores/invitations'
 import { useResendWorkspaceInvitation } from '@/api/mutations/users'
 import { ListWorkspaceInvitationsData } from '@/api/requests/users'
+import useUserTablesPaginationStore from '@/stores/userTables'
 
 interface DataTableProps {
   workspaceId: string
@@ -44,7 +45,6 @@ interface DataTableProps {
   queryClient: QueryClient
   onInviteUser: () => void
 }
-
 
 // skipper util
 function useSkipper() {
@@ -67,10 +67,11 @@ function useSkipper() {
 function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: DataTableProps) {
   const { toast } = useToast()
   const defaultData = useMemo(() => [], [])
+  const { invitationsPageSize, setInvitationsPageSize } = useUserTablesPaginationStore()
 
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 5,
+    pageSize: invitationsPageSize ?? 5,
   })
 
   const pagination = useMemo(
@@ -128,6 +129,13 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
       // staleTime: Infinity,
     }
   )
+
+  useUpdateEffect(() => {
+    if (pageSize !== invitationsPageSize) {
+      setInvitationsPageSize(pageSize)
+    }
+  }, [pageSize])
+
 
   useUpdateEffect(() => {
     const newInvitation = invitationsStore.getState().newInvitation
@@ -351,7 +359,7 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
           <TableBody>
             {isLoading ? (
               <>
-                {Array.from({ length: 5 }).map((_) => (
+                {Array.from({ length: pageSize }).map((_) => (
                   <TableRow className="h-16 w-full bg-red-400X hover:bg-transparent">
                     {Array.from({ length: 5 }).map((_, index) => (
                       <TableCell
@@ -399,10 +407,14 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
           </TableBody>
         </Table>
       </div>
-      <div className="flex justify-end items-center gap-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {/* {table.getFilteredRowModel().rows.length} */}
-        </div>
+      <div className="flex justify-end items-center gap-4 md:gap-6">
+
+
+
+
+        {/* <div className="flex-1 text-sm text-muted-foreground"> */}
+        {/* {table.getFilteredRowModel().rows.length} */}
+        {/* </div> */}
         {/* <div className="text-muted-foreground text-sm">Pages: {Math.ceil(2 / 5)}/1</div> */}
         {data && data?.totalCount > 0 && table.getFilteredRowModel().rows.length > 0 && (
           <span className="flex items-center gap-1 text-sm text-muted-foreground">
@@ -414,6 +426,27 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
             </span>
           </span>
         )}
+
+        <div className={clsx(['hidden md:flex gap-0 items-center text-sm mt-0 text-muted-foreground rounded-md border-2'], {
+          'opacity-70': table.getFilteredRowModel().rows.length <= 5
+        })}>
+          {[5, 10].map((val, _) => (
+            <button
+              disabled={isLoading || table.getFilteredRowModel().rows.length <= 5}
+              onClick={() => {
+                setPagination((s) => {
+                  return { ...s, pageSize: val }
+                })
+              }}
+              className={clsx(['w-10 text-center py-1 ease duration-200'], {
+                'bg-secondary text-primary': pageSize === val,
+                'opacity-50 hover:opacity-100': pageSize !== val,
+                'rounded-l-sm rounded-r-sm': true,
+              })}>
+              {val}
+            </button>
+          ))}
+        </div>
 
 
         <div className="flex items-center justify-end space-x-2 py-4">
