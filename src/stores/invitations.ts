@@ -1,6 +1,8 @@
+import { WorkspaceInvitation } from '@/types/users'
 import { createStore } from 'zustand/vanilla'
 
 export interface InvitationsState {
+  newInvitation?: WorkspaceInvitation
   resendingIds: string[]
   resentIds: string[]
   errorIds: string[]
