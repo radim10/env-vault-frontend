@@ -27,7 +27,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
 import { useListWorkspaceInvitations } from '@/api/queries/users'
-import { WorkspaceInvitation, } from '@/types/users'
+import { WorkspaceInvitation } from '@/types/users'
 import { Skeleton } from '@/components/ui/skeleton'
 import TableToolbar from '../TableToolbar'
 import { useUpdateEffect } from 'react-use'
@@ -63,7 +63,6 @@ function useSkipper() {
   return [shouldSkip, skip] as const
 }
 
-
 function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: DataTableProps) {
   const { toast } = useToast()
   const defaultData = useMemo(() => [], [])
@@ -82,9 +81,7 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
     [pageIndex, pageSize]
   )
 
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
-    []
-  )
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
   const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper()
   const [sorting, setSorting] = useState<SortingState>([
@@ -101,10 +98,7 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
     // desc: sorting?.[0]?.desc ?? undefined,
   }
 
-  const getCurrentKey = () => [
-    'workspace-invitations',
-    workspaceId,
-  ]
+  const getCurrentKey = () => ['workspace-invitations', workspaceId]
 
   const { mutate: resendInvitation } = useResendWorkspaceInvitation({
     onSuccess: () => {
@@ -121,21 +115,17 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
     },
   })
 
-  const { data, isLoading, isFetching, refetch } = useListWorkspaceInvitations(
-    fetchDataOptions,
-    {
-      keepPreviousData: false,
-      // leave it here???
-      // staleTime: Infinity,
-    }
-  )
+  const { data, isLoading, isFetching, refetch } = useListWorkspaceInvitations(fetchDataOptions, {
+    keepPreviousData: false,
+    // leave it here???
+    // staleTime: Infinity,
+  })
 
   useUpdateEffect(() => {
     if (pageSize !== invitationsPageSize) {
       setInvitationsPageSize(pageSize)
     }
   }, [pageSize])
-
 
   useUpdateEffect(() => {
     const newInvitation = invitationsStore.getState().newInvitation
@@ -160,11 +150,8 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
           draftState.newInvitation = undefined
         })
       })
-
     }
-
   }, [invitationsStore.getState().newInvitation])
-
 
   const [deleteInvitationDialog, setDeleteInvitationDialog] = useState<Pick<
     WorkspaceInvitation,
@@ -238,7 +225,6 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
         }
       })
 
-
       const page = pagination?.pageIndex + 1
       const totalPages = Math.ceil((table.getFilteredRowModel().rows.length - 1) / pageSize)
 
@@ -251,10 +237,7 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
         })
       }
 
-      queryClient.setQueryData(
-        currentKey,
-        updatedInvitations
-      )
+      queryClient.setQueryData(currentKey, updatedInvitations)
       //
     }
 
@@ -275,7 +258,6 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
       setDeleteInvitationDialog(null)
     }, 150)
   }
-
 
   const table = useReactTable({
     pageCount: data ? Math.ceil(data?.totalCount / pageSize) : undefined,
@@ -299,7 +281,7 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
     state: {
       sorting,
       pagination,
-      columnFilters
+      columnFilters,
     },
   })
 
@@ -316,17 +298,19 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
       )}
       {/* <div className="text-muted-foreground font-medium mb-3">Invitations</div> */}
       <TableToolbar
-        userCount={data !== undefined ?
-          (table.getColumn("email")?.getFilterValue() as string)?.length > 0
-            ? table.getFilteredRowModel().rows.length :
-            data?.totalCount : null}
+        userCount={
+          data !== undefined
+            ? (table.getColumn('email')?.getFilterValue() as string)?.length > 0
+              ? table.getFilteredRowModel().rows.length
+              : data?.totalCount
+            : null
+        }
         loading={isLoading}
         isInvitations={true}
-        isSearchCount={(table.getColumn("email")?.getFilterValue() as string)?.length > 0}
-        search={table.getColumn("email")?.getFilterValue() as string ?? ""}
+        isSearchCount={(table.getColumn('email')?.getFilterValue() as string)?.length > 0}
+        search={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
         onSearch={(value) => {
-          table.getColumn("email")?.setFilterValue(value)
-
+          table.getColumn('email')?.setFilterValue(value)
         }}
         onInviteUser={onInviteUser}
       />
@@ -408,10 +392,6 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
         </Table>
       </div>
       <div className="flex justify-end items-center gap-4 md:gap-6">
-
-
-
-
         {/* <div className="flex-1 text-sm text-muted-foreground"> */}
         {/* {table.getFilteredRowModel().rows.length} */}
         {/* </div> */}
@@ -427,9 +407,16 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
           </span>
         )}
 
-        <div className={clsx(['hidden md:flex gap-0 items-center text-sm mt-0 text-muted-foreground rounded-md border-2'], {
-          'opacity-70': table.getFilteredRowModel().rows.length <= 5
-        })}>
+        <div
+          className={clsx(
+            [
+              'hidden md:flex gap-0 items-center text-sm mt-0 text-muted-foreground rounded-md border-2',
+            ],
+            {
+              'opacity-70': table.getFilteredRowModel().rows.length <= 5,
+            }
+          )}
+        >
           {[5, 10].map((val, _) => (
             <button
               disabled={isLoading || table.getFilteredRowModel().rows.length <= 5}
@@ -442,20 +429,22 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
                 'bg-secondary text-primary': pageSize === val,
                 'opacity-50 hover:opacity-100': pageSize !== val,
                 'rounded-l-sm rounded-r-sm': true,
-              })}>
+              })}
+            >
               {val}
             </button>
           ))}
         </div>
-
 
         <div className="flex items-center justify-end space-x-2 py-4">
           <Button
             variant="outline"
             size="sm"
             onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage() ||
-              ((table.getState().pagination.pageIndex + 1) > Math.ceil(table.getFilteredRowModel().rows.length / pageSize))
+            disabled={
+              !table.getCanPreviousPage() ||
+              table.getState().pagination.pageIndex + 1 >
+                Math.ceil(table.getFilteredRowModel().rows.length / pageSize)
             }
           >
             <Icons.chevronsLeft className="h-4 w-4" />
@@ -465,8 +454,10 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
             variant="outline"
             size="sm"
             onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage() ||
-              ((table.getState().pagination.pageIndex + 1) > Math.ceil(table.getFilteredRowModel().rows.length / pageSize))
+            disabled={
+              !table.getCanPreviousPage() ||
+              table.getState().pagination.pageIndex + 1 >
+                Math.ceil(table.getFilteredRowModel().rows.length / pageSize)
             }
           >
             <Icons.chevronLeft className="h-4 w-4" />
@@ -476,8 +467,10 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
             variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage() ||
-              (table.getState().pagination.pageIndex + 1) >= Math.ceil(table.getFilteredRowModel().rows.length / pageSize)
+            disabled={
+              !table.getCanNextPage() ||
+              table.getState().pagination.pageIndex + 1 >=
+                Math.ceil(table.getFilteredRowModel().rows.length / pageSize)
             }
           >
             <Icons.chevronRight className="h-4 w-4" />
@@ -487,8 +480,10 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
             variant="outline"
             size="sm"
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage() ||
-              (table.getState().pagination.pageIndex + 1) >= Math.ceil(table.getFilteredRowModel().rows.length / pageSize)
+            disabled={
+              !table.getCanNextPage() ||
+              table.getState().pagination.pageIndex + 1 >=
+                Math.ceil(table.getFilteredRowModel().rows.length / pageSize)
             }
           >
             <Icons.chevronsRight className="h-4 w-4" />
