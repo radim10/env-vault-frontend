@@ -78,6 +78,8 @@ import {
   UserPlus,
   UserPlus2,
   List,
+  ArrowRight,
+  ChevronsUpDown,
 } from 'lucide-react'
 
 export const Icons = {
@@ -162,4 +164,6 @@ export const Icons = {
   userPlus: UserPlus,
   userPlus2: UserPlus2,
   list: List,
+  arrowRight: ArrowRight,
+  chevronUpDown: ChevronsUpDown,
 }
