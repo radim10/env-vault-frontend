@@ -10,6 +10,7 @@ import { useDebounce, useUpdateEffect } from 'react-use'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { QueryClient } from '@tanstack/react-query'
 import { Badge } from '../ui/badge'
+import { ScrollArea } from '../ui/scroll-area'
 
 interface Props {
   workspaceId: string
@@ -180,13 +181,11 @@ const UsersCombobox: React.FC<Props> = ({ workspaceId, queryClient }) => {
       </div>
 
       <div className="relative bg-red-400 w-full">
-        <ul
-          // className={`absolute w-inherit bg-transparent mt-1 shadow-md max-h-80 overflow-scroll p-0 z-10 ${
-          //   !(isOpen && items.length) && 'hidden'
-          // }`}
+        <div
           className={clsx(
             [
-              'w-full absolute mt-2 shadow-md bg-background border rounded-md max-h-80 overflow-scroll overflow-x-hidden p-0 z-[500]',
+              'w-full absolute mt-2 shadow-md bg-background border rounded-md z-50',
+              // ' max-h-80 overflow-scroll overflow-x-hidden p-0 z-[500]',
             ],
             {
               hidden: !isOpen,
@@ -215,43 +214,52 @@ const UsersCombobox: React.FC<Props> = ({ workspaceId, queryClient }) => {
                 </div>
               )}
 
-              {items &&
-                items?.length > 0 &&
-                items.map((item, index) => (
-                  <li
-                    className={clsx(
-                      ['ease duration-200'],
-                      highlightedIndex === index && 'bg-gray-100 dark:bg-gray-900',
-                      selectedItem === item && 'font-bold',
-                      'cursor-pointer py-2 pl-1 pr-3 md:pr-5 md:pl-4 flex flex-row justify-between items-center'
-                    )}
-                    key={`${item.id}${index}`}
-                    {...getItemProps({ item, index })}
+              <ul>
+                {items && items?.length > 0 && (
+                  <ScrollArea
+                    className={clsx({
+                      'h-fit': items?.length <= 5,
+                      'h-80': items?.length > 5,
+                    })}
                   >
-                    <div className="flex gap-3 items-center">
-                      <div>
-                        <Avatar className="w-8 h-8">
-                          <AvatarImage src={item.avatarUrl ?? undefined} />
-                          <AvatarFallback className="bg-transparent border-2 text-sm">
-                            CN
-                          </AvatarFallback>
-                        </Avatar>
-                      </div>
-                      <div className="flex flex-col text-sm">
-                        <span>{item.name}</span>
-                        <span className="text-sm text-muted-foreground">{item.email}</span>
-                      </div>
-                    </div>
-                    {selectedItems.findIndex((val) => item.id === val.id) !== -1 && (
-                      <div>
-                        <Icons.check className="h-4 w-4" />
-                      </div>
-                    )}
-                  </li>
-                ))}
+                    {items.map((item, index) => (
+                      <li
+                        className={clsx(
+                          ['ease duration-200'],
+                          highlightedIndex === index && 'bg-gray-100 dark:bg-gray-900',
+                          selectedItem === item && 'font-bold',
+                          'cursor-pointer py-2 pl-1 pr-3 md:pr-5 md:pl-4 flex flex-row justify-between items-center'
+                        )}
+                        key={`${item.id}${index}`}
+                        {...getItemProps({ item, index })}
+                      >
+                        <div className="flex gap-3 items-center">
+                          <div>
+                            <Avatar className="w-8 h-8">
+                              <AvatarImage src={item.avatarUrl ?? undefined} />
+                              <AvatarFallback className="bg-transparent border-2 text-sm">
+                                CN
+                              </AvatarFallback>
+                            </Avatar>
+                          </div>
+                          <div className="flex flex-col text-sm">
+                            <span>{item.name}</span>
+                            <span className="text-sm text-muted-foreground">{item.email}</span>
+                          </div>
+                        </div>
+                        {selectedItems.findIndex((val) => item.id === val.id) !== -1 && (
+                          <div>
+                            <Icons.check className="h-4 w-4" />
+                          </div>
+                        )}
+                      </li>
+                    ))}
+                  </ScrollArea>
+                )}
+              </ul>
             </>
           )}
-        </ul>
+        </div>
       </div>
       {/* // Selected */}
       <div
