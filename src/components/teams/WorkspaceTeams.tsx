@@ -20,6 +20,7 @@ const WorkspaceTeams: React.FC<Props> = ({ workspaceId }) => {
   return (
     <div>
       <CreateTeamDrawer
+        workspaceId={workspaceId}
         opened={createdDrawerOpened}
         onClose={() => setCreatedDrawerOpened(false)}
       />
