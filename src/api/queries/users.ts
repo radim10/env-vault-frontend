@@ -9,9 +9,13 @@ import {
   ListWorkspaceInvitationsArgs,
   ListWorkspaceInvitationsData,
   ListWorkspaceInvitationsError,
+  SearchWorkspaceUsersArgs,
+  SearchWorkspaceUsersData,
+  SearchWorkspaceUsersError,
   checkWorkspaceUserEmail,
   getWorkspaceUsers,
   listWorkspaceInvitations,
+  searchWorkspaceUsers,
 } from '../requests/users'
 
 type UseGetWorkspaceUsersArgs = GetWorkspaceUsersArgs
@@ -21,9 +25,33 @@ export const useGetWorkspaceUsers = (
   opt?: UseQueryOptions<GetWorkspaceUsersData, GetWorkspaceUsersError>
 ) =>
   useQuery<GetWorkspaceUsersData, GetWorkspaceUsersError>(
-    ['workspace', args.workspaceId, 'users', args.pageSize, args.page, args.sort, args.desc, args.search],
+    [
+      'workspace',
+      args.workspaceId,
+      'users',
+      args.pageSize,
+      args.page,
+      args.sort,
+      args.desc,
+      args.search,
+    ],
     () => {
       return getWorkspaceUsers(args)
+    },
+    opt
+  )
+
+// search
+type UseSearchWorkspaceUsersArgs = SearchWorkspaceUsersArgs
+
+export const useSearchWorkspaceUsers = (
+  args: UseSearchWorkspaceUsersArgs,
+  opt?: UseQueryOptions<SearchWorkspaceUsersData, SearchWorkspaceUsersError>
+) =>
+  useQuery<SearchWorkspaceUsersData, SearchWorkspaceUsersError>(
+    ['workspace', args.workspaceId, 'users-search', args.value],
+    () => {
+      return searchWorkspaceUsers(args)
     },
     opt
   )
