@@ -58,6 +58,30 @@ export async function getWorkspaceUsers(args: GetWorkspaceUsersArgs) {
   return await response
 }
 
+// search
+export type SearchWorkspaceUsersError = UsersError<undefined>
+export type SearchWorkspaceUsersData = User[]
+
+export type SearchWorkspaceUsersArgs = {
+  workspaceId: string
+  value: string
+}
+
+export async function searchWorkspaceUsers(args: SearchWorkspaceUsersArgs) {
+  const { workspaceId, value } = args
+
+  const response = sendRequest<SearchWorkspaceUsersData>({
+    method: 'GET',
+    basePath: `workspaces`,
+    path: `${workspaceId}/users/search`,
+    params: {
+      value,
+    },
+  })
+
+  return await response
+}
+
 // check workspace user email
 export type CheckWorkspaceUserEmailError = UsersError<'workspace_not_found' | 'user_not_found'>
 export type CheckWorkspaceUserEmailResData = { exists: boolean }
@@ -84,7 +108,7 @@ export async function checkWorkspaceUserEmail(args: CheckWorkspaceUserEmailArgs)
 
 // list workspace invitations
 export type ListWorkspaceInvitationsError = UsersError<'workspace_not_found'>
-export type ListWorkspaceInvitationsData = { data: WorkspaceInvitation[], totalCount: number }
+export type ListWorkspaceInvitationsData = { data: WorkspaceInvitation[]; totalCount: number }
 
 export type ListWorkspaceInvitationsArgs = {
   workspaceId: string
@@ -93,7 +117,6 @@ export type ListWorkspaceInvitationsArgs = {
   // desc?: boolean
   // search?: string
 }
-
 
 export async function listWorkspaceInvitations(args: ListWorkspaceInvitationsArgs) {
   // const { workspaceId, page, desc, sort, search } = args
