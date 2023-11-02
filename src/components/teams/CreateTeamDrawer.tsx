@@ -8,23 +8,58 @@ import {
 } from '@/components/ui/sheet'
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
-import { useCombobox, useMultipleSelection } from 'downshift'
 import clsx from 'clsx'
 import { Icons } from '../icons'
 import { Label } from '../ui/label'
 import UsersCombobox from './UsersCombobox'
 import { useQueryClient } from '@tanstack/react-query'
+import { Button } from '../ui/button'
+import { useCreateTeam } from '@/api/mutations/teams'
+import { User } from '@/types/users'
+import { CreateTeamData, usersErrorMsgFromCode } from '@/api/requests/teams'
+import { ListTeam } from '@/types/teams'
+import { useDebounce } from 'react-use'
 
 interface Props {
   workspaceId: string
   opened: boolean
+  onCreated: (team: ListTeam) => void
   onClose: () => void
 }
 
-const CreateTeamDrawer: React.FC<Props> = ({ workspaceId, opened, onClose }) => {
+const CreateTeamDrawer: React.FC<Props> = ({ workspaceId, opened, onCreated, onClose }) => {
   const queryClient = useQueryClient()
   const [name, setName] = useState('')
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([])
+  const [description, setDescription] = useState('')
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([])
+
+  const {
+    isLoading,
+    mutate: createTeam,
+    error,
+  } = useCreateTeam({
+    onSuccess: ({ id }) => {
+      const team: ListTeam = {
+        id,
+        name,
+        membersCount: selectedUsers.length,
+      }
+
+      onCreated(team)
+    },
+  })
+
+  useDebounce(
+    () => {
+      if (!opened) {
+        setSelectedUsers([])
+        setDescription('')
+        setName('')
+      }
+    },
+    300,
+    [opened]
+  )
 
   return (
     <div>
@@ -42,24 +77,87 @@ const CreateTeamDrawer: React.FC<Props> = ({ workspaceId, opened, onClose }) => 
           }}
         >
           <SheetHeader>
-            <SheetTitle className="text-[1.1rem]">Create new team</SheetTitle>
+            <div className="flex justify-between items-start">
+              <div className="flex items-center gap-3">
+                <button
+                  disabled={isLoading}
+                  onClick={() => onClose()}
+                  className={clsx(['opacity-70 transition-opacity '], {
+                    'opacity-70': isLoading,
+                    'hover:opacity-100 cursor-pointer': !isLoading,
+                  })}
+                >
+                  <Icons.x className="h-4 w-4" />
+                  <span className="sr-only">Close</span>
+                </button>
+
+                <SheetTitle className="text-[1.1rem]">Create new team</SheetTitle>
+              </div>
+
+              <Button
+                size={'sm'}
+                className="w-fit px-6"
+                disabled={name?.length < 2}
+                loading={isLoading}
+                onClick={() => {
+                  const userIds = selectedUsers.map((user) => user.id)
+                  const data: CreateTeamData = {
+                    name,
+                    description: description?.trim()?.length > 0 ? description : undefined,
+                    users: userIds?.length > 0 ? userIds : undefined,
+                  }
+
+                  createTeam({
+                    workspaceId,
+                    data,
+                  })
+                }}
+              >
+                Create
+              </Button>
+            </div>
             <SheetDescription className="text-[0.95rem]">
               Teams are a way to better organize workspace users and their access.
             </SheetDescription>
+            {error && (
+              <>
+                <div className="text-red-600 text-[0.90rem] pb-0 flex items-center gap-2 mt-2.5">
+                  <Icons.xCircle className="h-4 w-4" />
+                  {error?.code ? usersErrorMsgFromCode(error.code) : 'Something went wrong'}
+                </div>
+              </>
+            )}
 
-            <div className="bg-red-400X h-full flex flex-col gap-3">
-              <div className="mt-4">
-                <Input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Team name"
+            <div>
+              <div className="flex justify-end w-full"></div>
+
+              <div className="bg-red-400X h-full flex flex-col gap-3">
+                <div className="mt-3">
+                  <Label className="w-fit">Team name</Label>
+                  <Input
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="My new team..."
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="w-fit">Description</Label>
+                  <Textarea
+                    className="mt-1"
+                    placeholder="Team description (optional)"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                </div>
+                {/* <UsersCombobox /> */}
+                <UsersCombobox
+                  workspaceId={workspaceId}
+                  queryClient={queryClient}
+                  selectedUsers={selectedUsers}
+                  onSelect={setSelectedUsers}
                 />
               </div>
-              <div>
-                <Textarea placeholder="Team description (optional)" />
-              </div>
-              {/* <UsersCombobox /> */}
-              <UsersCombobox workspaceId={workspaceId} queryClient={queryClient} />
             </div>
           </SheetHeader>
         </SheetContent>
