@@ -69,7 +69,8 @@ const Sidebar = () => {
                       pathname?.split('/')?.[3] === item.href ||
                       (pathname?.split('/')?.[3] === item.href?.split('/')[0] && index === 3) ||
                       (pathname?.split('/')?.[3] === item.href?.split('/')[0] && index === 2) ||
-                      (pathname?.split('/')?.[3] === item.href?.split('/')[0] && index === 4),
+                      (pathname?.split('/')?.[3] === item.href?.split('/')[0] && index === 4) ||
+                      (pathname?.split('/')?.[3] === 'teams' && index === 2),
                   }
                 )}
               >
