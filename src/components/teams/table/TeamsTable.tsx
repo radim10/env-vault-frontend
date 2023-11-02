@@ -38,6 +38,7 @@ import useUserTablesPaginationStore from '@/stores/userTables'
 import { useGetTeams } from '@/api/queries/teams'
 import { ListTeam } from '@/types/teams'
 import TeamsToolbar from './Toolbar'
+import { useRouter } from 'next/navigation'
 
 interface DataTableProps {
   workspaceId: string
@@ -64,6 +65,7 @@ function useSkipper() {
 }
 
 function TeamsTable({ columns, workspaceId, queryClient, onCreateTeam }: DataTableProps) {
+  const router = useRouter()
   const { toast } = useToast()
   const defaultData = useMemo(() => [], [])
   const { invitationsPageSize, setInvitationsPageSize } = useUserTablesPaginationStore()
@@ -236,12 +238,17 @@ function TeamsTable({ columns, workspaceId, queryClient, onCreateTeam }: DataTab
     })
   }
 
+  const handleGoToTeam = (teamId: string) => {
+    router.push(`/workspace/${workspaceId}/teams/${teamId}/members`)
+  }
+
   const table = useReactTable({
     pageCount: data ? Math.ceil(data?.length / pageSize) : undefined,
     data: data ?? defaultData,
     columns,
     meta: {
       resend: handleResendInvitation,
+      goto: handleGoToTeam,
     },
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: (sorting) => {
@@ -318,7 +325,7 @@ function TeamsTable({ columns, workspaceId, queryClient, onCreateTeam }: DataTab
             ) : (
               <>
                 {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
+                  table.getRowModel().rows.map((row, index) => (
                     <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                       {row.getVisibleCells().map((cell, index) => (
                         <TableCell

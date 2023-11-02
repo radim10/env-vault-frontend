@@ -77,10 +77,17 @@ export const teamsColumns: ColumnDef<ListTeam>[] = [
   {
     id: 'actions',
     cell: ({ row, table }) => {
+      const meta = table.options.meta as any
+
       return (
-        <>
+        <Button
+          size="sm"
+          variant={'ghost'}
+          onClick={() => meta.goto(row.original.id)}
+          className="opacity-70 hover:opacity-100"
+        >
           <Icons.arrowRight className="h-4 w-4" />
-        </>
+        </Button>
       )
     },
   },
