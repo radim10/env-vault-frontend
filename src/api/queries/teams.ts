@@ -1,11 +1,12 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query'
 import {
-  CreateTeamArgs,
-  CreateTeamError,
-  CreateTeamResData,
+  GetTeamArgs,
+  GetTeamData,
+  GetTeamError,
   GetTeamsArgs,
   GetTeamsData,
   GetTeamsError,
+  getTeam,
   getTeams,
 } from '../requests/teams'
 
@@ -19,6 +20,21 @@ export const useGetTeams = (
     ['workspace-teams', args.workspaceId],
     () => {
       return getTeams(args)
+    },
+    opt
+  )
+
+// get single
+type UseGetTeamArgs = GetTeamArgs
+
+export const useGetTeam = (
+  args: UseGetTeamArgs,
+  opt?: UseQueryOptions<GetTeamData, GetTeamError>
+) =>
+  useQuery<GetTeamData, GetTeamError>(
+    ['workspace-team', args.workspaceId, args.teamId],
+    () => {
+      return getTeam(args)
     },
     opt
   )
