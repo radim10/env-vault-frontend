@@ -62,3 +62,31 @@ export async function getTeams(args: GetTeamsArgs) {
 
   return await response
 }
+
+// create new
+export type CreateTeamError = UsersError<'workspace_not_found' | 'team_already_exists'>
+export type CreateTeamResData = {
+  id: string
+}
+
+export type CreateTeamData = {
+  name: string
+  description?: string
+  // user ids for now
+  users?: string[]
+}
+export type CreateTeamArgs = {
+  workspaceId: string
+  data: CreateTeamData
+}
+
+export async function createTeam(args: CreateTeamArgs) {
+  const { workspaceId } = args
+
+  return await sendRequest<CreateTeamResData>({
+    method: 'POST',
+    basePath: `workspaces`,
+    path: `${workspaceId}/teams`,
+    body: args.data,
+  })
+}
