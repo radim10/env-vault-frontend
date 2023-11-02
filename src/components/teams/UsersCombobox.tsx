@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import clsx from 'clsx'
+import { useState } from 'react'
 import { useCombobox, useMultipleSelection } from 'downshift'
 import { Label } from '../ui/label'
-import clsx from 'clsx'
 import { Icons } from '../icons'
 import { Input } from '../ui/input'
 import { useSearchWorkspaceUsers } from '@/api/queries/users'
@@ -15,13 +15,14 @@ import { ScrollArea } from '../ui/scroll-area'
 interface Props {
   workspaceId: string
   queryClient: QueryClient
+  selectedUsers: User[]
+  onSelect: (users: User[]) => void
 }
 
-const UsersCombobox: React.FC<Props> = ({ workspaceId, queryClient }) => {
+const UsersCombobox: React.FC<Props> = ({ workspaceId, queryClient, selectedUsers, onSelect }) => {
   const [inputValue, setInputValue] = useState('')
-  const [isOpened, setIsOpened] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const [selectedItems, setSelectedItems] = useState<User[]>([])
+  // const [selectedItems, setSelectedItems] = useState<User[]>([])
 
   const { data: items, refetch } = useSearchWorkspaceUsers(
     {
@@ -63,7 +64,7 @@ const UsersCombobox: React.FC<Props> = ({ workspaceId, queryClient }) => {
   }, [inputValue])
 
   const { getSelectedItemProps, getDropdownProps, removeSelectedItem } = useMultipleSelection({
-    selectedItems,
+    selectedItems: selectedUsers,
     onStateChange({ selectedItems: newSelectedItems, type }) {
       switch (type) {
         case useMultipleSelection.stateChangeTypes.SelectedItemKeyDownBackspace:
@@ -71,7 +72,7 @@ const UsersCombobox: React.FC<Props> = ({ workspaceId, queryClient }) => {
         case useMultipleSelection.stateChangeTypes.DropdownKeyDownBackspace:
         case useMultipleSelection.stateChangeTypes.FunctionRemoveSelectedItem:
           if (newSelectedItems) {
-            setSelectedItems(newSelectedItems)
+            onSelect(newSelectedItems)
           }
           break
         default:
@@ -98,7 +99,6 @@ const UsersCombobox: React.FC<Props> = ({ workspaceId, queryClient }) => {
     inputValue,
     onIsOpenChange: (val) => {
       if (val?.isOpen === undefined) return
-      setIsOpened(val?.isOpen)
     },
     stateReducer(state, actionAndChanges) {
       const { changes, type } = actionAndChanges
@@ -125,12 +125,12 @@ const UsersCombobox: React.FC<Props> = ({ workspaceId, queryClient }) => {
             // setSelectedItems([...selectedItems, books[highlightedIndex]])
             const id = newSelectedItem.id
 
-            const index = selectedItems.findIndex((item) => item.id === id)
+            const index = selectedUsers.findIndex((item) => item.id === id)
 
             if (index === -1) {
-              setSelectedItems([...selectedItems, newSelectedItem])
+              onSelect([...selectedUsers, newSelectedItem])
             } else {
-              setSelectedItems([...selectedItems].filter((item) => item.id !== id))
+              onSelect([...selectedUsers].filter((item) => item.id !== id))
             }
 
             // setInputValue('')
@@ -247,7 +247,7 @@ const UsersCombobox: React.FC<Props> = ({ workspaceId, queryClient }) => {
                             <span className="text-sm text-muted-foreground">{item.email}</span>
                           </div>
                         </div>
-                        {selectedItems.findIndex((val) => item.id === val.id) !== -1 && (
+                        {selectedUsers.findIndex((val) => item.id === val.id) !== -1 && (
                           <div>
                             <Icons.check className="h-4 w-4" />
                           </div>
@@ -270,7 +270,7 @@ const UsersCombobox: React.FC<Props> = ({ workspaceId, queryClient }) => {
           }
         )}
       >
-        {selectedItems.map(function renderSelectedItem(selectedItemForRender, index) {
+        {selectedUsers.map(function renderSelectedItem(selectedItemForRender, index) {
           return (
             <Badge variant="outline" className="pl-0.5">
               <div
