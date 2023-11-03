@@ -108,3 +108,37 @@ export async function createTeam(args: CreateTeamArgs) {
     body: args.data,
   })
 }
+
+// get team members
+export type GetTeamMembersError = UsersError<'workspace_not_found' | 'team_not_found'>
+export type GetTeamMembersData = {
+  data: User[]
+  totalCount: number
+}
+
+export type GetTeamMembersArgs = {
+  workspaceId: string
+  teamId: string
+  pageSize?: number
+  page?: number
+  sort?: 'name' | 'email' | 'joined' | 'role'
+  desc?: boolean
+  search?: string
+}
+
+export async function getTeamMembers(args: GetTeamMembersArgs) {
+  const { workspaceId, teamId, page = 0, pageSize = 5, sort, desc, search } = args
+
+  return await sendRequest<GetTeamMembersData>({
+    method: 'GET',
+    basePath: `workspaces`,
+    path: `${workspaceId}/teams/${teamId}/members`,
+    params: {
+      page,
+      pageSize,
+      sort,
+      desc,
+      search,
+    },
+  })
+}

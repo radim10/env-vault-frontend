@@ -3,10 +3,14 @@ import {
   GetTeamArgs,
   GetTeamData,
   GetTeamError,
+  GetTeamMembersArgs,
+  GetTeamMembersData,
+  GetTeamMembersError,
   GetTeamsArgs,
   GetTeamsData,
   GetTeamsError,
   getTeam,
+  getTeamMembers,
   getTeams,
 } from '../requests/teams'
 
@@ -35,6 +39,29 @@ export const useGetTeam = (
     ['workspace-team', args.workspaceId, args.teamId],
     () => {
       return getTeam(args)
+    },
+    opt
+  )
+
+type UseGetTeamMembersArg = GetTeamMembersArgs
+
+export const useGetTeamMembers = (
+  args: UseGetTeamMembersArg,
+  opt?: UseQueryOptions<GetTeamMembersData, GetTeamMembersError>
+) =>
+  useQuery<GetTeamMembersData, GetTeamMembersError>(
+    [
+      'workspace',
+      args.workspaceId,
+      'team-members',
+      args.pageSize,
+      args.page,
+      args.sort,
+      args.desc,
+      args.search,
+    ],
+    () => {
+      return getTeamMembers(args)
     },
     opt
   )
