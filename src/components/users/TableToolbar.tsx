@@ -79,8 +79,19 @@ const TableToolbar: React.FC<Props> = ({
           </div>
 
           <Button size={'sm'} onClick={onInviteUser} className="flex gap-1.5">
-            <Icons.plus className="h-5 w-5" />
-            <span className="md:block hidden">Invite user</span>
+            {!isTeam && (
+              <>
+                <Icons.plus className="h-5 w-5" />
+                <span className="md:block hidden">Invite user</span>
+              </>
+            )}
+
+            {isTeam && (
+              <>
+                <Icons.plus className="h-5 w-5" />
+                <span className="md:block hidden">Add members</span>
+              </>
+            )}
           </Button>
         </div>
       </div>
