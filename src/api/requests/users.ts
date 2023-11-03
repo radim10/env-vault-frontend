@@ -60,15 +60,16 @@ export async function getWorkspaceUsers(args: GetWorkspaceUsersArgs) {
 
 // search
 export type SearchWorkspaceUsersError = UsersError<undefined>
-export type SearchWorkspaceUsersData = User[]
+export type SearchWorkspaceUsersData = Array<User & { isTeamMember?: boolean }>
 
 export type SearchWorkspaceUsersArgs = {
   workspaceId: string
   value: string
+  teamId?: string
 }
 
 export async function searchWorkspaceUsers(args: SearchWorkspaceUsersArgs) {
-  const { workspaceId, value } = args
+  const { workspaceId, value, teamId } = args
 
   const response = sendRequest<SearchWorkspaceUsersData>({
     method: 'GET',
@@ -76,6 +77,7 @@ export async function searchWorkspaceUsers(args: SearchWorkspaceUsersArgs) {
     path: `${workspaceId}/users/search`,
     params: {
       value,
+      team: teamId,
     },
   })
 
