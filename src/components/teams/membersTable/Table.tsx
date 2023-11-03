@@ -22,7 +22,6 @@ import {
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
-import { useGetWorkspaceUsers } from '@/api/queries/users'
 import { User, WorkspaceUser, WorkspaceUserRole } from '@/types/users'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useDebounce, useUpdateEffect } from 'react-use'
@@ -37,7 +36,7 @@ interface DataTableProps {
   teamId: string
   columns: ColumnDef<User>[]
   queryClient: QueryClient
-  onInviteUser: () => void
+  onAddMembers: () => void
 }
 
 function TeamMembersTable({
@@ -45,7 +44,7 @@ function TeamMembersTable({
   workspaceId,
   teamId,
   queryClient,
-  onInviteUser,
+  onAddMembers,
 }: DataTableProps) {
   const { toast } = useToast()
   const { workspacePageSize, setWorkspacePageSize } = useUserTablesPaginationStore()
@@ -322,7 +321,7 @@ function TeamMembersTable({
         search={search}
         loading={isLoading}
         onSearch={setSearch}
-        onInviteUser={onInviteUser}
+        onInviteUser={onAddMembers}
       />
       <div className="rounded-md border">
         <Table>
