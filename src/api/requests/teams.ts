@@ -142,3 +142,26 @@ export async function getTeamMembers(args: GetTeamMembersArgs) {
     },
   })
 }
+
+// add members to team
+export type AddTeamMembersError = UsersError<'workspace_not_found' | 'team_not_found'>
+// ids array for now
+export type AddTeamMembersData = string[]
+export type AddTeamMembersResData = undefined
+
+export type AddTeamMembersArgs = {
+  workspaceId: string
+  teamId: string
+  data: AddTeamMembersData
+}
+
+export async function addTeamMembers(args: AddTeamMembersArgs) {
+  const { workspaceId, teamId } = args
+
+  return await sendRequest<AddTeamMembersResData>({
+    method: 'POST',
+    basePath: `workspaces`,
+    path: `${workspaceId}/teams/${teamId}/members`,
+    body: args.data,
+  })
+}
