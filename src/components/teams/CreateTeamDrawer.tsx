@@ -14,9 +14,9 @@ import { Label } from '../ui/label'
 import UsersCombobox from './UsersCombobox'
 import { QueryClient, useQueryClient } from '@tanstack/react-query'
 import { Button } from '../ui/button'
-import { useAddTeamMembers, useCreateTeam } from '@/api/mutations/teams'
+import { useUpdateTeamMembers, useCreateTeam } from '@/api/mutations/teams'
 import { User } from '@/types/users'
-import { CreateTeamData, addTeamMembers, usersErrorMsgFromCode } from '@/api/requests/teams'
+import { CreateTeamData, updateTeamMembers, teamsErrorMsgFromCode } from '@/api/requests/teams'
 import { ListTeam } from '@/types/teams'
 import { useDebounce } from 'react-use'
 
@@ -63,7 +63,7 @@ const CreateTeamDrawer: React.FC<Props> = ({
     isLoading: addMembersLoading,
     mutate: addMembers,
     error: addMembersError,
-  } = useAddTeamMembers({
+  } = useUpdateTeamMembers({
     onSuccess: () => {
       if (onAddedMembers) onAddedMembers()
     },
@@ -135,7 +135,9 @@ const CreateTeamDrawer: React.FC<Props> = ({
                     addMembers({
                       workspaceId,
                       teamId,
-                      data: userIds,
+                      data: {
+                        new: userIds,
+                      },
                     })
                   } else {
                     const userIds = selectedUsers.map((user) => user.id)
@@ -162,7 +164,7 @@ const CreateTeamDrawer: React.FC<Props> = ({
               <>
                 <div className="text-red-600 text-[0.90rem] pb-0 flex items-center gap-2 mt-2.5">
                   <Icons.xCircle className="h-4 w-4" />
-                  {error?.code ? usersErrorMsgFromCode(error.code) : 'Something went wrong'}
+                  {error?.code ? teamsErrorMsgFromCode(error.code) : 'Something went wrong'}
                 </div>
               </>
             )}
@@ -172,7 +174,7 @@ const CreateTeamDrawer: React.FC<Props> = ({
                 <div className="text-red-600 text-[0.90rem] pb-0 flex items-center gap-2 mt-2.5">
                   <Icons.xCircle className="h-4 w-4" />
                   {addMembersError?.code
-                    ? usersErrorMsgFromCode(addMembersError.code)
+                    ? teamsErrorMsgFromCode(addMembersError.code)
                     : 'Something went wrong'}
                 </div>
               </>
