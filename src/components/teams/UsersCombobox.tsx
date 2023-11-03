@@ -14,20 +14,28 @@ import { ScrollArea } from '../ui/scroll-area'
 
 interface Props {
   workspaceId: string
+  teamId?: string
   queryClient: QueryClient
   selectedUsers: User[]
   onSelect: (users: User[]) => void
 }
 
-const UsersCombobox: React.FC<Props> = ({ workspaceId, queryClient, selectedUsers, onSelect }) => {
+const UsersCombobox: React.FC<Props> = ({
+  workspaceId,
+  teamId,
+  queryClient,
+  selectedUsers,
+  onSelect,
+}) => {
   const [inputValue, setInputValue] = useState('')
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   // const [selectedItems, setSelectedItems] = useState<User[]>([])
 
   const { data: items, refetch } = useSearchWorkspaceUsers(
     {
       workspaceId,
       value: inputValue,
+      teamId,
     },
     {
       enabled: false,
@@ -123,6 +131,8 @@ const UsersCombobox: React.FC<Props> = ({ workspaceId, queryClient, selectedUser
         case useCombobox.stateChangeTypes.InputBlur:
           if (newSelectedItem) {
             // setSelectedItems([...selectedItems, books[highlightedIndex]])
+            if (newSelectedItem?.isTeamMember === true) return
+
             const id = newSelectedItem.id
 
             const index = selectedUsers.findIndex((item) => item.id === id)
@@ -172,7 +182,7 @@ const UsersCombobox: React.FC<Props> = ({ workspaceId, queryClient, selectedUser
               </button>
             </div>
             <Input
-              placeholder="Best book ever"
+              placeholder="Search users"
               className="w-full"
               {...getInputProps(getDropdownProps({ preventKeyAction: isOpen }))}
             />
@@ -226,14 +236,19 @@ const UsersCombobox: React.FC<Props> = ({ workspaceId, queryClient, selectedUser
                       <li
                         className={clsx(
                           ['ease duration-200'],
+                          'opacity-10' && item.isTeamMember === true,
                           highlightedIndex === index && 'bg-gray-100 dark:bg-gray-900',
                           selectedItem === item && 'font-bold',
-                          'cursor-pointer py-2 pl-1 pr-3 md:pr-5 md:pl-4 flex flex-row justify-between items-center'
+                          'cursor-pointer py-2 pl-2.5 pr-3 md:pr-5 md:pl-4 flex flex-row justify-between items-center'
                         )}
                         key={`${item.id}${index}`}
                         {...getItemProps({ item, index })}
                       >
-                        <div className="flex gap-3 items-center">
+                        <div
+                          className={clsx(['flex gap-3 items-center'], {
+                            'opacity-70 cursor-not-allowed': item.isTeamMember === true,
+                          })}
+                        >
                           <div>
                             <Avatar className="w-8 h-8">
                               <AvatarImage src={item.avatarUrl ?? undefined} />
@@ -250,6 +265,12 @@ const UsersCombobox: React.FC<Props> = ({ workspaceId, queryClient, selectedUser
                         {selectedUsers.findIndex((val) => item.id === val.id) !== -1 && (
                           <div>
                             <Icons.check className="h-4 w-4" />
+                          </div>
+                        )}
+
+                        {item.isTeamMember === true && (
+                          <div>
+                            <Icons.userCheck2 className="h-4 w-4" />
                           </div>
                         )}
                       </li>
