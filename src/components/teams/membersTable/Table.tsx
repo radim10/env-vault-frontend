@@ -30,6 +30,8 @@ import { useToast } from '@/components/ui/use-toast'
 import useUserTablesPaginationStore from '@/stores/userTables'
 import TableToolbar from '@/components/users/TableToolbar'
 import { useGetTeamMembers } from '@/api/queries/teams'
+import ActionTableToolbar from '@/components/ActionTableToolbar'
+import DeleteMembersDialog from '../DeleteMembersDialog'
 
 interface DataTableProps {
   workspaceId: string
@@ -52,6 +54,7 @@ function TeamMembersTable({
   // const [pagesLoaded, setPagesLoaded] = useState<number[]>([])
   const [totalCount, setTotalCount] = useState<number>(0)
   const [totalSearchCount, setTotalSearchCount] = useState<number>(0)
+  const [rowSelection, setRowSelection] = useState({})
 
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -167,109 +170,28 @@ function TeamMembersTable({
     [search]
   )
 
-  // useUpdateEffect(() => {
-  //   if (pagesLoaded?.length === table.getPageCount() && pagesLoaded?.length > 0) {
-  //     alert('all pages loaded')
-  //   }
-  // }, [pagesLoaded])
-
-  // useUpdateEffect(() => {
-  //   refetch()
-  // }, [pageIndex, sorting])
-  //
-  const [deleteUserDialog, setDeleteUserDialog] = useState<{
-    id: string
-    name: string
+  const [deleteMembersDialog, setDeleteMembersDialog] = useState<{
+    opened: boolean
   } | null>(null)
 
-  const handleDeleteUser = (args: { id: string; name: string }) => {
-    setDeleteUserDialog(args)
-  }
-
-  const handleDeletedUser = (userId: string) => {
-    const currentKey = getCurrentKey()
-    const data = queryClient.getQueryData<{ data: WorkspaceUser[]; totalCount: number }>(currentKey)
-
-    if (data) {
-      const newUsers = produce(data, (draftData) => {
-        const itemIndex = data.data.findIndex((item) => item.id === userId)
-        if (itemIndex !== -1) {
-          draftData.data.splice(itemIndex, 1)
-        }
-      })
-
-      queryClient.setQueryData(currentKey, {
-        ...data,
-        data: newUsers,
-      })
-
-      if (newUsers?.data?.length === 0)
-        setPagination(
-          produce(pagination, (draftPagination) => {
-            draftPagination.pageIndex = draftPagination.pageIndex - 1
-          })
-        )
-    }
-
-    queryClient.invalidateQueries(['workspace', workspaceId, 'users'], { exact: false })
-
-    setTotalCount(totalCount - 1)
+  const handleDeletedUsers = () => {
+    //invalidateQueries
+    queryClient.invalidateQueries(['workspace', workspaceId, 'team-members'], { exact: false })
+    setRowSelection({})
     closeDeleteDialog()
 
     toast({
-      title: 'User has been deleted',
+      title: 'Users have been deleted',
       variant: 'success',
     })
   }
 
   const closeDeleteDialog = () => {
-    if (!deleteUserDialog) return
+    if (!deleteMembersDialog) return
 
-    setDeleteUserDialog({ ...deleteUserDialog, id: '' })
+    setDeleteMembersDialog({ opened: false })
     setTimeout(() => {
-      setDeleteUserDialog(null)
-    }, 150)
-  }
-
-  const [roleDialog, setRoleDialog] = useState<{
-    id: string
-    name: string
-    role: WorkspaceUserRole
-  } | null>(null)
-
-  const handleUpdateUserRole = (args: { id: string; name: string; role: WorkspaceUserRole }) => {
-    setRoleDialog(args)
-  }
-
-  const handleUpdatedUser = (userId: string, newRole: WorkspaceUserRole) => {
-    const currentKey = getCurrentKey()
-    const data = queryClient.getQueryData<{ data: WorkspaceUser[]; totalCount: number }>(currentKey)
-
-    if (data) {
-      const updatedUsers = produce(data, (draftData) => {
-        const itemIndex = data.data.findIndex((item) => item.id === userId)
-        if (itemIndex !== -1) {
-          draftData.data[itemIndex].role = newRole
-        }
-      })
-
-      queryClient.setQueryData(currentKey, updatedUsers)
-    }
-
-    closeRoleDialog()
-
-    toast({
-      title: 'User role has been updated',
-      variant: 'success',
-    })
-  }
-
-  const closeRoleDialog = () => {
-    if (!roleDialog) return
-
-    setRoleDialog({ ...roleDialog, id: '' })
-    setTimeout(() => {
-      setRoleDialog(null)
+      setDeleteMembersDialog(null)
     }, 150)
   }
 
@@ -282,10 +204,7 @@ function TeamMembersTable({
         : undefined,
     data: data?.data ?? defaultData,
     columns,
-    meta: {
-      deleteUser: handleDeleteUser,
-      updateRole: handleUpdateUserRole,
-    },
+    meta: {},
     getCoreRowModel: getCoreRowModel(),
     // getPaginationRowModel: getPaginationRowModel(),
     // getSortedRowModel: getSortedRowModel(),
@@ -295,34 +214,71 @@ function TeamMembersTable({
       } else setSorting(sorting)
     },
     onPaginationChange: setPagination,
+    onRowSelectionChange: setRowSelection,
     manualPagination: true,
     manualSorting: true,
     debugTable: true,
+    autoResetAll: false,
+    getRowId: (row) => {
+      return row.id
+    },
+
     enableSorting:
       !isFetching || (search?.trim().length > 1 ? totalSearchCount > 1 : totalCount > 1),
     state: {
       sorting,
       pagination,
+      rowSelection,
     },
   })
 
   return (
     <div>
-      <TableToolbar
-        isTeam
-        userCount={
-          !totalCount || searchLoading
-            ? null
-            : search?.trim()?.length > 1
-            ? totalSearchCount
-            : totalCount
-        }
-        isSearchCount={search?.trim()?.length > 1}
-        search={search}
-        loading={isLoading}
-        onSearch={setSearch}
-        onInviteUser={onAddMembers}
-      />
+      {deleteMembersDialog !== null && (
+        <DeleteMembersDialog
+          teamId={teamId}
+          workspaceId={workspaceId}
+          opened={deleteMembersDialog?.opened === true}
+          onClose={closeDeleteDialog}
+          onSuccess={() => handleDeletedUsers()}
+          userIds={Object.keys(rowSelection)}
+        />
+      )}
+
+      {/* <button onClick={() => console.log(rowSelection)}>DEBUG selection</button> */}
+      {Object.keys(rowSelection).length === 0 ? (
+        <TableToolbar
+          isTeam
+          userCount={
+            !totalCount || searchLoading
+              ? null
+              : search?.trim()?.length > 1
+              ? totalSearchCount
+              : totalCount
+          }
+          isSearchCount={search?.trim()?.length > 1}
+          search={search}
+          loading={isLoading}
+          onSearch={setSearch}
+          onInviteUser={onAddMembers}
+        />
+      ) : (
+        <div className="mt-1">
+          <ActionTableToolbar
+            totalCount={
+              !totalCount || searchLoading
+                ? 0
+                : search?.trim()?.length > 1
+                ? totalSearchCount
+                : totalCount
+            }
+            // selectedCount={table.getFilteredSelectedRowModel().rows.length}
+            selectedCount={Object.keys(rowSelection).length}
+            onCancel={() => setRowSelection({})}
+            onDelete={() => setDeleteMembersDialog({ opened: true })}
+          />
+        </div>
+      )}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -333,8 +289,9 @@ function TeamMembersTable({
                     <TableHead
                       key={header.id}
                       className={clsx([''], {
-                        'bg-red-500X  w-6': index === 0,
-                        'md:w-[40%]': index === 1 || index === 2,
+                        'w-1': index === 0,
+                        'bg-red-500X  w-6': index === 1,
+                        'md:w-[40%]': index === 2 || index === 3,
                         // 'md:w-[27%]': index === 2 || index === 1,
                         // 'md:w-36 2xl:w-56 bg-red-300X': index === 3,
                         'pl-7 bg-red-400X':
@@ -426,7 +383,7 @@ function TeamMembersTable({
               'opacity-70':
                 isLoading ||
                 searchLoading ||
-                (search?.trim()?.length > 1 ? totalSearchCount < 5 : totalCount < 5),
+                (search?.trim()?.length > 1 ? totalSearchCount <= 5 : totalCount <= 5),
             }
           )}
         >
@@ -435,7 +392,7 @@ function TeamMembersTable({
               disabled={
                 isLoading ||
                 searchLoading ||
-                (search?.trim()?.length > 1 ? totalSearchCount < 5 : totalCount < 5)
+                (search?.trim()?.length > 1 ? totalSearchCount <= 5 : totalCount <= 5)
               }
               onClick={() => {
                 setPagination((s) => {
