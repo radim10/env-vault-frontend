@@ -54,6 +54,7 @@ export const useGetTeamMembers = (
       'workspace',
       args.workspaceId,
       'team-members',
+      args.teamId,
       args.pageSize,
       args.page,
       args.sort,
