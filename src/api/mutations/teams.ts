@@ -1,11 +1,11 @@
 import {
-  AddTeamMembersArgs,
-  AddTeamMembersError,
-  AddTeamMembersResData,
+  UpdateTeamMembersArgs,
+  UpdateTeamMembersError,
+  UpdateTeamMembersResData,
   CreateTeamArgs,
   CreateTeamError,
   CreateTeamResData,
-  addTeamMembers,
+  updateTeamMembers,
   createTeam,
 } from '../requests/teams'
 import { MutOpt } from './mutOpt'
@@ -17,10 +17,10 @@ type UseCreateTeamVariables = CreateTeamArgs
 export const useCreateTeam = (opt?: MutOpt<CreateTeamResData>) =>
   useMutation<CreateTeamResData, CreateTeamError, UseCreateTeamVariables>(createTeam, opt)
 
-// add team members
-type UseAddTeamMembersArgs = AddTeamMembersArgs
-export const useAddTeamMembers = (opt?: MutOpt<AddTeamMembersResData>) =>
-  useMutation<AddTeamMembersResData, AddTeamMembersError, UseAddTeamMembersArgs>(
-    addTeamMembers,
+// update team members
+type UseUpdateTeamMembersArgs = UpdateTeamMembersArgs
+export const useUpdateTeamMembers = (opt?: MutOpt<UpdateTeamMembersResData>) =>
+  useMutation<UpdateTeamMembersResData, UpdateTeamMembersError, UseUpdateTeamMembersArgs>(
+    updateTeamMembers,
     opt
   )

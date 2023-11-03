@@ -2,14 +2,14 @@ import { ListTeam, Team } from '@/types/teams'
 import sendRequest, { APIError } from '../instance'
 import { User, WorkspaceInvitation, WorkspaceUser, WorkspaceUserRole } from '@/types/users'
 
-type UsersErrorCode =
+type TeamsErrorCode =
   | 'workspace_not_found'
   | 'user_not_found'
   | 'team_already_exists'
   | 'team_not_found'
-export type UsersError<T extends UsersErrorCode | void> = APIError<T>
+export type TeamsError<T extends TeamsErrorCode | void> = APIError<T>
 
-export function usersErrorMsgFromCode(code: UsersErrorCode): string {
+export function teamsErrorMsgFromCode(code: TeamsErrorCode): string {
   let msg = ''
 
   if (code === 'workspace_not_found') {
@@ -32,7 +32,7 @@ export function usersErrorMsgFromCode(code: UsersErrorCode): string {
 }
 
 // NOTE: requests
-export type GetTeamsError = UsersError<undefined>
+export type GetTeamsError = TeamsError<undefined>
 export type GetTeamsData = ListTeam[]
 
 export type GetTeamsArgs = {
@@ -64,7 +64,7 @@ export async function getTeams(args: GetTeamsArgs) {
 }
 
 // get single
-export type GetTeamError = UsersError<'workspace_not_found' | 'team_not_found'>
+export type GetTeamError = TeamsError<'workspace_not_found' | 'team_not_found'>
 export type GetTeamData = Team
 
 export type GetTeamArgs = {
@@ -82,7 +82,7 @@ export async function getTeam(args: GetTeamArgs) {
 }
 
 // create new
-export type CreateTeamError = UsersError<'workspace_not_found' | 'team_already_exists'>
+export type CreateTeamError = TeamsError<'workspace_not_found' | 'team_already_exists'>
 export type CreateTeamResData = {
   id: string
 }
@@ -110,7 +110,7 @@ export async function createTeam(args: CreateTeamArgs) {
 }
 
 // get team members
-export type GetTeamMembersError = UsersError<'workspace_not_found' | 'team_not_found'>
+export type GetTeamMembersError = TeamsError<'workspace_not_found' | 'team_not_found'>
 export type GetTeamMembersData = {
   data: User[]
   totalCount: number
@@ -144,21 +144,24 @@ export async function getTeamMembers(args: GetTeamMembersArgs) {
 }
 
 // add members to team
-export type AddTeamMembersError = UsersError<'workspace_not_found' | 'team_not_found'>
+export type UpdateTeamMembersError = TeamsError<'workspace_not_found' | 'team_not_found'>
 // ids array for now
-export type AddTeamMembersData = string[]
-export type AddTeamMembersResData = undefined
+export type UpdateTeamMembersData = {
+  new?: string[]
+  removed?: string[]
+}
+export type UpdateTeamMembersResData = undefined
 
-export type AddTeamMembersArgs = {
+export type UpdateTeamMembersArgs = {
   workspaceId: string
   teamId: string
-  data: AddTeamMembersData
+  data: UpdateTeamMembersData
 }
 
-export async function addTeamMembers(args: AddTeamMembersArgs) {
+export async function updateTeamMembers(args: UpdateTeamMembersArgs) {
   const { workspaceId, teamId } = args
 
-  return await sendRequest<AddTeamMembersResData>({
+  return await sendRequest<UpdateTeamMembersResData>({
     method: 'POST',
     basePath: `workspaces`,
     path: `${workspaceId}/teams/${teamId}/members`,
