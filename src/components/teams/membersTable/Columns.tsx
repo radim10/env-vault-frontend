@@ -16,10 +16,44 @@ import {
 import { Icons } from '@/components/icons'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { Checkbox } from '@/components/ui/checkbox'
+import clsx from 'clsx'
 
 dayjs.extend(relativeTime)
 
 export const columns: ColumnDef<User>[] = [
+  {
+    id: 'select',
+    header: ({ table }) => (
+      <div className="flex items-center">
+        <Checkbox
+          checked={table.getIsAllPageRowsSelected()}
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+          className={clsx([''], {
+            // 'mt-3': table.getIsAllPageRowsSelected(),
+            'dark:border-gray-600 border-gray-400': !table.getIsAllPageRowsSelected(),
+          })}
+        />
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="flex items-center">
+        <Checkbox
+          checked={row.getIsSelected()}
+          className={clsx([], {
+            // 'mt-3': row.getIsSelected(),
+            'dark:border-gray-600 border-gray-400': !row.getIsSelected(),
+          })}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+
   {
     accessorKey: 'avatarUrl',
     header: (_) => <></>,
