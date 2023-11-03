@@ -12,7 +12,7 @@ const ActionTableToolbar: React.FC<Props> = ({ totalCount, selectedCount, onDele
   return (
     <div className="flex md:items-center justify-between mb-3 md:flex-row flex-col gap-3 md:gap-0">
       <div className="font-medium text-muted-foreground">
-        {selectedCount} of {totalCount} row(s) selected.
+        {selectedCount} of {totalCount} row(s) selected
       </div>
 
       <div className="flex items-center w-full md:w-fit justify-end gap-3">
