@@ -12,23 +12,33 @@ import clsx from 'clsx'
 import { Icons } from '../icons'
 import { Label } from '../ui/label'
 import UsersCombobox from './UsersCombobox'
-import { useQueryClient } from '@tanstack/react-query'
+import { QueryClient, useQueryClient } from '@tanstack/react-query'
 import { Button } from '../ui/button'
-import { useCreateTeam } from '@/api/mutations/teams'
+import { useAddTeamMembers, useCreateTeam } from '@/api/mutations/teams'
 import { User } from '@/types/users'
-import { CreateTeamData, usersErrorMsgFromCode } from '@/api/requests/teams'
+import { CreateTeamData, addTeamMembers, usersErrorMsgFromCode } from '@/api/requests/teams'
 import { ListTeam } from '@/types/teams'
 import { useDebounce } from 'react-use'
 
 interface Props {
+  queryClient: QueryClient
   workspaceId: string
+  teamId?: string
   opened: boolean
   onCreated: (team: ListTeam) => void
+  onAddedMembers?: () => void
   onClose: () => void
 }
 
-const CreateTeamDrawer: React.FC<Props> = ({ workspaceId, opened, onCreated, onClose }) => {
-  const queryClient = useQueryClient()
+const CreateTeamDrawer: React.FC<Props> = ({
+  queryClient,
+  workspaceId,
+  teamId,
+  opened,
+  onCreated,
+  onAddedMembers,
+  onClose,
+}) => {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [selectedUsers, setSelectedUsers] = useState<User[]>([])
@@ -49,12 +59,25 @@ const CreateTeamDrawer: React.FC<Props> = ({ workspaceId, opened, onCreated, onC
     },
   })
 
+  const {
+    isLoading: addMembersLoading,
+    mutate: addMembers,
+    error: addMembersError,
+  } = useAddTeamMembers({
+    onSuccess: () => {
+      if (onAddedMembers) onAddedMembers()
+    },
+  })
+
   useDebounce(
     () => {
       if (!opened) {
         setSelectedUsers([])
-        setDescription('')
-        setName('')
+
+        if (!teamId) {
+          setDescription('')
+          setName('')
+        }
       }
     },
     300,
@@ -80,40 +103,56 @@ const CreateTeamDrawer: React.FC<Props> = ({ workspaceId, opened, onCreated, onC
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-3">
                 <button
-                  disabled={isLoading}
+                  disabled={isLoading || addMembersLoading}
                   onClick={() => onClose()}
                   className={clsx(['opacity-70 transition-opacity '], {
-                    'opacity-70': isLoading,
-                    'hover:opacity-100 cursor-pointer': !isLoading,
+                    'opacity-70': isLoading || addMembersLoading,
+                    'hover:opacity-100 cursor-pointer': !isLoading && !addMembersLoading,
                   })}
                 >
                   <Icons.x className="h-4 w-4" />
                   <span className="sr-only">Close</span>
                 </button>
 
-                <SheetTitle className="text-[1.1rem]">Create new team</SheetTitle>
+                <SheetTitle className="text-[1.1rem]">
+                  {teamId ? 'Add team members' : 'Create new team'}
+                </SheetTitle>
               </div>
 
               <Button
                 size={'sm'}
                 className="w-fit px-6"
-                disabled={name?.length < 2}
-                loading={isLoading}
+                disabled={
+                  (name?.length < 2 && !teamId) || (teamId && selectedUsers?.length === 0)
+                    ? true
+                    : false
+                }
+                loading={isLoading || addMembersLoading}
                 onClick={() => {
-                  const userIds = selectedUsers.map((user) => user.id)
-                  const data: CreateTeamData = {
-                    name,
-                    description: description?.trim()?.length > 0 ? description : undefined,
-                    users: userIds?.length > 0 ? userIds : undefined,
-                  }
+                  if (teamId) {
+                    const userIds = selectedUsers.map((user) => user.id)
 
-                  createTeam({
-                    workspaceId,
-                    data,
-                  })
+                    addMembers({
+                      workspaceId,
+                      teamId,
+                      data: userIds,
+                    })
+                  } else {
+                    const userIds = selectedUsers.map((user) => user.id)
+                    const data: CreateTeamData = {
+                      name,
+                      description: description?.trim()?.length > 0 ? description : undefined,
+                      users: userIds?.length > 0 ? userIds : undefined,
+                    }
+
+                    createTeam({
+                      workspaceId,
+                      data,
+                    })
+                  }
                 }}
               >
-                Create
+                {teamId ? 'Confirm' : 'Create'}
               </Button>
             </div>
             <SheetDescription className="text-[0.95rem]">
@@ -128,35 +167,57 @@ const CreateTeamDrawer: React.FC<Props> = ({ workspaceId, opened, onCreated, onC
               </>
             )}
 
+            {addMembersError && (
+              <>
+                <div className="text-red-600 text-[0.90rem] pb-0 flex items-center gap-2 mt-2.5">
+                  <Icons.xCircle className="h-4 w-4" />
+                  {addMembersError?.code
+                    ? usersErrorMsgFromCode(addMembersError.code)
+                    : 'Something went wrong'}
+                </div>
+              </>
+            )}
+
             <div>
               <div className="flex justify-end w-full"></div>
 
               <div className="bg-red-400X h-full flex flex-col gap-3">
-                <div className="mt-3">
-                  <Label className="w-fit">Team name</Label>
-                  <Input
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="My new team..."
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label className="w-fit">Description</Label>
-                  <Textarea
-                    className="mt-1"
-                    placeholder="Team description (optional)"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                  />
-                </div>
+                {!teamId && (
+                  <>
+                    <div className="mt-3">
+                      <Label className="w-fit">Team name</Label>
+                      <Input
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="My new team..."
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label className="w-fit">Description</Label>
+                      <Textarea
+                        className="mt-1"
+                        placeholder="Team description (optional)"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                      />
+                    </div>
+                  </>
+                )}
                 {/* <UsersCombobox /> */}
-                <UsersCombobox
-                  workspaceId={workspaceId}
-                  queryClient={queryClient}
-                  selectedUsers={selectedUsers}
-                  onSelect={setSelectedUsers}
-                />
+                <div
+                  className={clsx({
+                    'mt-4': teamId,
+                  })}
+                >
+                  <UsersCombobox
+                    teamId={teamId}
+                    workspaceId={workspaceId}
+                    queryClient={queryClient}
+                    selectedUsers={selectedUsers}
+                    onSelect={setSelectedUsers}
+                  />
+                </div>
               </div>
             </div>
           </SheetHeader>
