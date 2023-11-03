@@ -1,5 +1,5 @@
+import TeamMembers from '@/components/teams/TeamMembers'
 import TeamSettings from '@/components/teams/TeamSettings'
-import WorkspaceUsers from '@/components/users/WorkspaceUsers'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -15,7 +15,9 @@ export default function TeamPage({
 }) {
   return (
     <>
-      {params.tab === 'members' && <WorkspaceUsers workspaceId={params.workspace} />}
+      {params.tab === 'members' && (
+        <TeamMembers workspaceId={params.workspace} teamId={params.teamId} />
+      )}
       {params.tab === 'settings' && <TeamSettings />}
     </>
   )
