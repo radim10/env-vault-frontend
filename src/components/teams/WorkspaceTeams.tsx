@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
+import { produce } from 'immer'
 import TeamsTable from './table/TeamsTable'
 import { teamsColumns } from './table/Columns'
 import { useQueryClient } from '@tanstack/react-query'
@@ -24,12 +25,23 @@ const WorkspaceTeams: React.FC<Props> = ({ workspaceId }) => {
     })
 
     setCreatedDrawerOpened(false)
-    // TODO: query data
+
+    // TODO:  query data (sorting issue)
+    //   const existingTeams = queryClient.getQueryData<ListTeam[]>(['workspace-teams', workspaceId])
+    //
+    //   if (existingTeams) {
+    //     const updatedTeams = produce(existingTeams, (draftData) => {
+    //       draftData.unshift(team)
+    //     })
+    //
+    //     queryClient.setQueryData(['workspace-teams', workspaceId], updatedTeams)
+    //   }
   }
 
   return (
     <div>
       <CreateTeamDrawer
+        queryClient={queryClient}
         workspaceId={workspaceId}
         opened={createdDrawerOpened}
         onClose={() => setCreatedDrawerOpened(false)}
