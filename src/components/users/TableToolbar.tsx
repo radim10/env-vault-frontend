@@ -7,6 +7,7 @@ import { Skeleton } from '../ui/skeleton'
 
 interface Props {
   isInvitations?: boolean
+  isTeam?: boolean
   userCount: number | null
   isSearchCount?: boolean
   loading: boolean
@@ -17,6 +18,7 @@ interface Props {
 
 const TableToolbar: React.FC<Props> = ({
   isInvitations,
+  isTeam,
   userCount,
   search,
   isSearchCount,
@@ -34,7 +36,7 @@ const TableToolbar: React.FC<Props> = ({
             </>
           ) : (
             <div className="text-muted-foreground font-medium">
-              {!isInvitations && (
+              {!isInvitations && !isTeam && (
                 <>
                   {!isSearchCount ? 'Total users' : 'Found users'}: {userCount}
                 </>
@@ -43,6 +45,12 @@ const TableToolbar: React.FC<Props> = ({
               {isInvitations && (
                 <>
                   {!isSearchCount ? 'Total invitations' : 'Found invitations'}: {userCount}
+                </>
+              )}
+
+              {isTeam && (
+                <>
+                  {!isSearchCount ? 'Total members' : 'Found members'}: {userCount}
                 </>
               )}
             </div>
@@ -63,7 +71,7 @@ const TableToolbar: React.FC<Props> = ({
 
             <Input
               // readOnly={loading}
-              placeholder={isInvitations ? "Search by email" : "Search by name or email"}
+              placeholder={isInvitations ? 'Search by email' : 'Search by name or email'}
               className="pl-10 pr-10 -mr-10"
               value={search ?? undefined}
               onChange={(e) => onSearch(e.target.value)}
