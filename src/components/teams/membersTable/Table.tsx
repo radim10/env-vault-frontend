@@ -177,6 +177,11 @@ function TeamMembersTable({
   const handleDeletedUsers = () => {
     //invalidateQueries
     queryClient.invalidateQueries(['workspace', workspaceId, 'team-members'], { exact: false })
+
+    if (search?.trim()?.length > 1) {
+      refetch()
+    }
+
     setRowSelection({})
     closeDeleteDialog()
 
@@ -289,11 +294,9 @@ function TeamMembersTable({
                     <TableHead
                       key={header.id}
                       className={clsx([''], {
-                        'w-1': index === 0,
-                        'bg-red-500X  w-6': index === 1,
-                        'md:w-[40%]': index === 2 || index === 3,
-                        // 'md:w-[27%]': index === 2 || index === 1,
-                        // 'md:w-36 2xl:w-56 bg-red-300X': index === 3,
+                        // 'w-1': index === 0,
+                        // 'bg-red-500X  w-2': index === 1,
+                        'md:w-[50%]': index === 1 || index === 2,
                         'pl-7 bg-red-400X':
                           table.getRowModel().rows?.length === 0 && !searchLoading && !isLoading,
                       })}
@@ -312,19 +315,31 @@ function TeamMembersTable({
               <>
                 {Array.from({ length: pageSize }).map((row) => (
                   <TableRow className="h-16 w-full bg-red-400X hover:bg-transparent">
-                    {Array.from({ length: 6 }).map((cell, index) => (
+                    {Array.from({ length: 3 }).map((cell, index) => (
                       <TableCell
                         key={index}
                         className={clsx(['py-2 md:py-3'], {
                           'pr-0': index === 0,
                         })}
                       >
-                        <Skeleton
-                          className={clsx(['w-full'], {
-                            'h-6 w-full': index !== 0,
-                            'w-10 h-10 rounded-full': index === 0,
-                          })}
-                        />
+                        {index === 1 && (
+                          <div className="flex items-center gap-5 w-full">
+                            <Skeleton
+                              className={clsx(['w-full'], {
+                                'w-10 h-10 rounded-full': true,
+                              })}
+                            />
+                            <Skeleton className="w-[85%] h-6" />
+                          </div>
+                        )}
+                        {index !== 1 && (
+                          <Skeleton
+                            className={clsx(['w-full'], {
+                              'h-6 w-full': index !== 0,
+                              'h-5 w-5': index === 0,
+                            })}
+                          />
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
