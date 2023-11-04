@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { produce } from 'immer'
 import clsx from 'clsx'
 import {
@@ -26,13 +26,10 @@ import {
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
-import { useListWorkspaceInvitations } from '@/api/queries/users'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useUpdateEffect } from 'react-use'
 import { QueryClient } from '@tanstack/react-query'
-import { useToast } from '@/components/ui/use-toast'
 import { invitationsStore } from '@/stores/invitations'
-import { useResendWorkspaceInvitation } from '@/api/mutations/users'
 import { ListWorkspaceInvitationsData } from '@/api/requests/users'
 import useUserTablesPaginationStore from '@/stores/userTables'
 import { useGetTeams } from '@/api/queries/teams'
@@ -44,29 +41,12 @@ interface DataTableProps {
   workspaceId: string
   columns: ColumnDef<ListTeam>[]
   queryClient: QueryClient
+  newTeam?: ListTeam
   onCreateTeam: () => void
 }
 
-// skipper util
-function useSkipper() {
-  const shouldSkipRef = useRef(true)
-  const shouldSkip = shouldSkipRef.current
-
-  // Wrap a function with this to skip a pagination reset temporarily
-  const skip = useCallback(() => {
-    shouldSkipRef.current = false
-  }, [])
-
-  useEffect(() => {
-    shouldSkipRef.current = true
-  })
-
-  return [shouldSkip, skip] as const
-}
-
-function TeamsTable({ columns, workspaceId, queryClient, onCreateTeam }: DataTableProps) {
+function TeamsTable({ columns, workspaceId, queryClient, newTeam, onCreateTeam }: DataTableProps) {
   const router = useRouter()
-  const { toast } = useToast()
   const defaultData = useMemo(() => [], [])
   const { invitationsPageSize, setInvitationsPageSize } = useUserTablesPaginationStore()
 
@@ -85,10 +65,9 @@ function TeamsTable({ columns, workspaceId, queryClient, onCreateTeam }: DataTab
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
-  const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper()
   const [sorting, setSorting] = useState<SortingState>([
     {
-      id: 'members',
+      id: 'membersCount',
       desc: true,
     },
   ])
@@ -100,24 +79,47 @@ function TeamsTable({ columns, workspaceId, queryClient, onCreateTeam }: DataTab
     // desc: sorting?.[0]?.desc ?? undefined,
   }
 
-  const getCurrentKey = () => ['workspace-invitations', workspaceId]
-
-  const { mutate: resendInvitation } = useResendWorkspaceInvitation({
-    onSuccess: () => {
-      toast({
-        title: 'Invitation has been resent',
-        variant: 'success',
-      })
-    },
-    onError: () => {
-      toast({
-        title: 'Failed to resend invitation',
-        variant: 'destructive',
-      })
-    },
-  })
+  const getCurrentKey = () => ['workspace-teams', workspaceId]
 
   const { data, isLoading } = useGetTeams(fetchDataOptions)
+
+  useUpdateEffect(() => {
+    if (newTeam) {
+      const key = getCurrentKey()
+
+      const currentTeams = queryClient.getQueryData<ListTeam[]>(key)
+      if (currentTeams) {
+        const sortBy = sorting?.[0]?.id
+        const descSort = sorting?.[0]?.desc
+
+        const updatedTeams = produce(currentTeams, (draftData) => {
+          draftData.unshift(newTeam)
+          draftData = sortTeams(draftData, sortBy as 'membersCount' | 'name', descSort)
+        })
+
+        queryClient.setQueryData(key, updatedTeams)
+      }
+    }
+  }, [newTeam])
+
+  const sortTeams = (
+    teams: ListTeam[],
+    sort: 'membersCount' | 'name',
+    desc: boolean
+  ): ListTeam[] => {
+    if (sort === 'membersCount') {
+      return teams.sort(function (a, b) {
+        const countCompare = desc
+          ? b.membersCount - a.membersCount
+          : a.membersCount - b.membersCount
+        return countCompare || a.name.localeCompare(b.name)
+      })
+    } else {
+      return teams.sort(function (a, b) {
+        return desc ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)
+      })
+    }
+  }
 
   useUpdateEffect(() => {
     if (pageSize !== invitationsPageSize) {
@@ -151,93 +153,6 @@ function TeamsTable({ columns, workspaceId, queryClient, onCreateTeam }: DataTab
     }
   }, [invitationsStore.getState().newInvitation])
 
-  const handleResendInvitation = (id: string) => {
-    invitationsStore.setState((state) => {
-      return produce(state, (draftState) => {
-        draftState.resentIds.push(id)
-      })
-    })
-
-    resendInvitation(
-      { workspaceId, invitationId: id },
-      {
-        onSuccess: () => {
-          invitationsStore.setState((state) => {
-            return produce(state, (draftState) => {
-              draftState.resendingIds = draftState.resendingIds.filter((item) => item !== id)
-              draftState.resentIds.push(id)
-            })
-          })
-
-          updateSentAtState(id)
-        },
-        onError: () => {
-          invitationsStore.setState((state) => {
-            return produce(state, (draftState) => {
-              draftState.resendingIds = draftState.resendingIds.filter((item) => item !== id)
-              draftState.errorIds.push(id)
-            })
-          })
-        },
-      }
-    )
-  }
-
-  const updateSentAtState = (invitationId: string) => {
-    // const currentKey = getCurrentKey()
-    // const data = queryClient.getQueryData<WorkspaceInvitation[]>(currentKey)
-    //
-    // if (data) {
-    //   const updData = produce(data, (draftData) => {
-    //     const itemIndex = data.findIndex((item) => item.id === invitationId)
-    //
-    //     if (itemIndex !== -1) {
-    //       draftData[itemIndex].lastSentAt = new Date()
-    //     }
-    //   })
-    //
-    //   queryClient.setQueryData(currentKey, updData)
-    // }
-  }
-
-  const handleDeletedInvitation = (invitationId: string) => {
-    const currentKey = getCurrentKey()
-    const data = queryClient.getQueryData<ListWorkspaceInvitationsData>(currentKey)
-
-    if (data) {
-      const updatedInvitations = produce(data, (draftData) => {
-        const itemIndex = data?.data?.findIndex((item) => item.id === invitationId)
-
-        if (itemIndex !== -1) {
-          draftData.data?.splice(itemIndex, 1)
-          draftData.totalCount = draftData.totalCount - 1
-        }
-      })
-
-      const page = pagination?.pageIndex + 1
-      const totalPages = Math.ceil((table.getFilteredRowModel().rows.length - 1) / pageSize)
-
-      // if (!(page > totalPages)) skipAutoResetPageIndex()
-      skipAutoResetPageIndex()
-
-      if (page > totalPages) {
-        setPagination((prev) => {
-          return { ...prev, pageIndex: prev?.pageIndex - 1 }
-        })
-      }
-
-      queryClient.setQueryData(currentKey, updatedInvitations)
-      //
-    }
-
-    //
-    //
-    toast({
-      title: 'Invitation has been deleted',
-      variant: 'success',
-    })
-  }
-
   const handleGoToTeam = (teamId: string) => {
     router.push(`/workspace/${workspaceId}/teams/${teamId}/members`)
   }
@@ -247,7 +162,6 @@ function TeamsTable({ columns, workspaceId, queryClient, onCreateTeam }: DataTab
     data: data ?? defaultData,
     columns,
     meta: {
-      resend: handleResendInvitation,
       goto: handleGoToTeam,
     },
     getCoreRowModel: getCoreRowModel(),
@@ -259,7 +173,6 @@ function TeamsTable({ columns, workspaceId, queryClient, onCreateTeam }: DataTab
     getPaginationRowModel: getPaginationRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
-    autoResetPageIndex,
     enableSorting: !isLoading,
     state: {
       sorting,
@@ -325,7 +238,7 @@ function TeamsTable({ columns, workspaceId, queryClient, onCreateTeam }: DataTab
             ) : (
               <>
                 {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row, index) => (
+                  table.getRowModel().rows.map((row, _) => (
                     <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                       {row.getVisibleCells().map((cell, index) => (
                         <TableCell
