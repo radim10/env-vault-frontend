@@ -10,3 +10,8 @@ export interface ListTeam {
   name: string
   membersCount: number
 }
+
+export interface UpdateTeamData {
+  name?: string
+  description?: string | null
+}
