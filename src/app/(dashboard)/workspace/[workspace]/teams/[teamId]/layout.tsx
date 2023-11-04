@@ -11,6 +11,7 @@ import Link from 'next/link'
 import React from 'react'
 import { useWindowScroll } from 'react-use'
 import { useSelectedTeamStore } from '@/stores/selectedTeam'
+import { useQueryClient } from '@tanstack/react-query'
 
 export default function TeamLayout({
   children,
@@ -19,6 +20,7 @@ export default function TeamLayout({
   children: React.ReactNode
   params: { workspace: string; teamId: string; tabs: string }
 }) {
+  const queryClient = useQueryClient()
   const selectedTeam = useSelectedTeamStore()
   const { y } = useWindowScroll()
 
@@ -28,6 +30,8 @@ export default function TeamLayout({
       teamId: params?.teamId,
     },
     {
+      enabled:
+        queryClient.getQueryData(['workspace-team', params?.workspace, params?.teamId]) !== null,
       onSuccess: (data) => {
         selectedTeam.set({
           ...data,
@@ -47,7 +51,7 @@ export default function TeamLayout({
         <NotFound
           link={`/workspace/${params.workspace}/users/teams`}
           title="Team not found"
-          description="Looks like this project doesn't exist"
+          description="Looks like this team doesn't exist"
           btnText="Go to teams"
         />
       )
