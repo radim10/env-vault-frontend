@@ -14,6 +14,7 @@ import { produce } from 'immer'
 import { toast } from '../ui/use-toast'
 import DeleteTeamDialog from './DeleteTeamDialog'
 import { useRouter } from 'next/navigation'
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 
 dayjs.extend(relativeTime)
 
@@ -138,7 +139,19 @@ const TeamSettings = () => {
             {
               icon: Icons.user,
               label: 'Created by',
-              value: '@dimak00',
+              component: (
+                <div className="flex items-center gap-2 md:gap-3">
+                  {selectedTeam?.createdBy?.avatarUrl && (
+                    <Avatar className="w-7 h-7 opacity-90">
+                      <AvatarImage src={selectedTeam?.createdBy?.avatarUrl} />
+                      <AvatarFallback className="bg-transparent border-2 text-sm">
+                        {selectedTeam?.createdBy?.name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
+                  <span>{selectedTeam?.createdBy?.name}</span>
+                </div>
+              ),
             },
             {
               icon: Icons.fileText,
