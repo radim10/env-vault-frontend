@@ -157,7 +157,7 @@ const UpdateProjectDialog: React.FC<Props> = ({
               }
               onClick={() => handleCreateProject()}
             >
-              Create
+              Update
             </Button>
           </DialogFooter>
         </DialogContent>
