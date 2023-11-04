@@ -309,7 +309,7 @@ function TeamsTable({ columns, workspaceId, queryClient, onCreateTeam }: DataTab
               <>
                 {Array.from({ length: pageSize }).map((_) => (
                   <TableRow className="h-16 w-full bg-red-400X hover:bg-transparent">
-                    {Array.from({ length: 5 }).map((_, index) => (
+                    {Array.from({ length: 3 }).map((_, index) => (
                       <TableCell
                         key={index}
                         className={clsx(['py-2 md:py-3'], {
