@@ -57,28 +57,36 @@ const Sidebar = () => {
         <div className="mt-5 py-5 pl-9 pr-6">
           <div className="bg-red-40 flex flex-col gap-3">
             {navItems.map((item, index) => (
-              <Link
-                href={`/workspace/${params.workspace}/${item.href}`}
-                className={clsx(
-                  [
-                    'flex gap-4 items-center dark:hover:text-primary dark:text-gray-300 ease duration-150',
-                  ],
-                  {
-                    // 'text-primary dark:text-primary': pathname === item.href,
-                    'text-primary dark:text-primary':
-                      pathname?.split('/')?.[3] === item.href ||
-                      (pathname?.split('/')?.[3] === item.href?.split('/')[0] && index === 3) ||
-                      (pathname?.split('/')?.[3] === item.href?.split('/')[0] && index === 2) ||
-                      (pathname?.split('/')?.[3] === item.href?.split('/')[0] && index === 4) ||
-                      (pathname?.split('/')?.[3] === 'teams' && index === 2),
-                  }
-                )}
-              >
-                {/* {pathname === item.href} */}
-                {/* {pathname.split('/')?.[3]} */}
-                <item.icon className=" h-5 w-5 opacity-70" />
-                <div className="text-[1.14rem]">{item.label}</div>
-              </Link>
+              <>
+                <Link
+                  href={`/workspace/${params.workspace}/${item.href}`}
+                  className={clsx(
+                    [
+                      'flex gap-4 items-center dark:hover:text-primary dark:text-gray-300 ease duration-150',
+                    ],
+                    {
+                      // 'text-primary dark:text-primary': pathname === item.href,
+                      'text-primary dark:text-primary':
+                        pathname?.split('/')?.[3] === item.href ||
+                        (pathname?.split('/')?.[3] === item.href?.split('/')[0] && index === 3) ||
+                        (pathname?.split('/')?.[3] === item.href?.split('/')[0] && index === 2) ||
+                        (pathname?.split('/')?.[3] === item.href?.split('/')[0] && index === 4) ||
+                        (pathname?.split('/')?.[3] === 'teams' && index === 2),
+                    }
+                  )}
+                >
+                  {/* {pathname === item.href} */}
+                  <item.icon className=" h-5 w-5 opacity-70" />
+                  <div className="text-[1.14rem]">{item.label}</div>
+                </Link>
+
+                {/* {pathname.split('/')?.[3] == 'teams' && index === 2 && ( */}
+                {/*   <div className=" ml-5 flex gap-4 items-center dark:hover:text-primary dark:text-gray-300 ease duration-150"> */}
+                {/*     <Icons.users2 className="h-4 w-4 opacity-70" /> */}
+                {/*     <div className="text-[1.1rem]">Teams</div> */}
+                {/*   </div> */}
+                {/* )} */}
+              </>
             ))}
           </div>
           <Separator className="my-6" />
