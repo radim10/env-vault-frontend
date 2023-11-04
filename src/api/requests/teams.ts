@@ -9,8 +9,8 @@ type TeamsErrorCode =
   | 'team_not_found'
 export type TeamsError<T extends TeamsErrorCode | void> = APIError<T>
 
-export function teamsErrorMsgFromCode(code: TeamsErrorCode): string {
-  let msg = ''
+export function teamsErrorMsgFromCode(code: TeamsErrorCode): string | undefined {
+  let msg = undefined
 
   if (code === 'workspace_not_found') {
     msg = 'Workspace has been deleted'
