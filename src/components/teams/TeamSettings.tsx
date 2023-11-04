@@ -12,16 +12,50 @@ import { Team, UpdateTeamData } from '@/types/teams'
 import { useQueryClient } from '@tanstack/react-query'
 import { produce } from 'immer'
 import { toast } from '../ui/use-toast'
+import DeleteTeamDialog from './DeleteTeamDialog'
+import { useRouter } from 'next/navigation'
 
 dayjs.extend(relativeTime)
 
 const TeamSettings = () => {
+  const router = useRouter()
   const queryClient = useQueryClient()
 
   const { data: selectedTeam, update: updateTeam } = useSelectedTeamStore()
   const [dialog, setDialog] = useState<'edit' | 'delete' | null>(null)
 
   const selectedTeamKey = () => ['workspace-teams', selectedTeam?.workspaceId, selectedTeam?.id]
+
+  const handleRemovedTeam = () => {
+    const key = selectedTeamKey()
+    const teamData = queryClient.getQueryData<Team>(key)
+
+    if (teamData) {
+      queryClient.setQueryData(key, null)
+    }
+
+    const listKey = ['workspace-teams', selectedTeam?.workspaceId]
+    const listTeams = queryClient.getQueryData<Team[]>(listKey)
+
+    if (listTeams) {
+      const index = listTeams.findIndex((item) => item.id === selectedTeam?.id)
+
+      if (index !== -1) {
+        const updatedState = produce(listTeams, (draftData) => {
+          draftData.splice(index, 1)
+        })
+
+        queryClient.setQueryData(listKey, updatedState)
+      }
+    }
+
+    toast({
+      title: 'Team has been deleted',
+      variant: 'success',
+    })
+
+    router.push(`/workspace/${selectedTeam?.workspaceId}/users/teams`)
+  }
 
   const handleUpdatedTeam = (change: UpdateTeamData) => {
     const key = selectedTeamKey()
@@ -61,15 +95,28 @@ const TeamSettings = () => {
   return (
     <>
       {selectedTeam && (
-        <UpdateTeamDialog
-          opened={dialog === 'edit'}
-          workspaceId={selectedTeam?.workspaceId}
-          teamId={selectedTeam?.id}
-          prevName={selectedTeam?.name}
-          prevDesciption={selectedTeam?.description ?? ''}
-          onSuccess={(updated) => handleUpdatedTeam(updated)}
-          onClose={() => setDialog(null)}
-        />
+        <>
+          <UpdateTeamDialog
+            opened={dialog === 'edit'}
+            workspaceId={selectedTeam?.workspaceId}
+            teamId={selectedTeam?.id}
+            prevName={selectedTeam?.name}
+            prevDesciption={selectedTeam?.description ?? ''}
+            onSuccess={(updated) => handleUpdatedTeam(updated)}
+            onClose={() => setDialog(null)}
+          />
+
+          <DeleteTeamDialog
+            opened={dialog === 'delete'}
+            workspaceId={selectedTeam?.workspaceId}
+            team={{
+              id: selectedTeam?.id,
+              name: selectedTeam?.name,
+            }}
+            onClose={() => setDialog(null)}
+            onSuccess={() => handleRemovedTeam()}
+          />
+        </>
       )}
 
       <div className="flex flex-col gap-7">
@@ -121,8 +168,8 @@ const TeamSettings = () => {
 
         <DangerZone
           btn={{
-            onClick: () => {},
-            disabled: true,
+            onClick: () => setDialog('delete'),
+            disabled: false,
           }}
           title="Delete team"
           description="Permanently delete this team, cannto be undone"
