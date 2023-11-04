@@ -16,7 +16,8 @@ export default async function sendRequest<ResponseType>(config: {
   headers?: Record<string, string>
 }): Promise<ResponseType> {
   // const baseURL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/${config.basePath}`
-  const baseURL = `http://localhost:8080/api/v1/${config.basePath}`
+  // const baseURL = `http://localhost:8080/api/v1/${config.basePath}`
+  const baseURL = `${process.env.API_URL}/${config.basePath}`
 
   try {
     const req = await axios.request<ResponseType>({
