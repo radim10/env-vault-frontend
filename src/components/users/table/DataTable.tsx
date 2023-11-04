@@ -438,7 +438,7 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
         }}
         page={{
           hidden: !(search?.trim()?.length > 1 ? totalSearchCount !== 0 : totalCount !== 0),
-          current: table.getState().pagination.pageIndex + 1,
+          current: pagination?.pageIndex + 1,
           total: table.getPageCount(),
         }}
         pageSize={{
