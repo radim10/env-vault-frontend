@@ -76,6 +76,7 @@ export const teamsColumns: ColumnDef<ListTeam>[] = [
 
   {
     id: 'actions',
+    header: 'Actions',
     cell: ({ row, table }) => {
       const meta = table.options.meta as any
 
