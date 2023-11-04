@@ -1,4 +1,4 @@
-import { ListTeam, Team } from '@/types/teams'
+import { ListTeam, Team, UpdateTeamData } from '@/types/teams'
 import sendRequest, { APIError } from '../instance'
 import { User, WorkspaceInvitation, WorkspaceUser, WorkspaceUserRole } from '@/types/users'
 
@@ -105,6 +105,29 @@ export async function createTeam(args: CreateTeamArgs) {
     method: 'POST',
     basePath: `workspaces`,
     path: `${workspaceId}/teams`,
+    body: args.data,
+  })
+}
+
+// update team
+export type UpdateTeamError = TeamsError<
+  'workspace_not_found' | 'team_not_found' | 'team_already_exists'
+>
+export type UpdateTeamResData = undefined
+
+export type UpdateTeamArgs = {
+  workspaceId: string
+  teamId: string
+  data: UpdateTeamData
+}
+
+export async function updateTeam(args: UpdateTeamArgs) {
+  const { workspaceId, teamId } = args
+
+  return await sendRequest<UpdateTeamResData>({
+    method: 'PATCH',
+    basePath: `workspaces`,
+    path: `${workspaceId}/teams/${teamId}`,
     body: args.data,
   })
 }
