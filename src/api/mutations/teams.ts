@@ -11,6 +11,10 @@ import {
   UpdateTeamResData,
   UpdateTeamError,
   updateTeam,
+  DeleteTeamArgs,
+  DeleteTeamResData,
+  deleteTeam,
+  DeleteTeamError,
 } from '../requests/teams'
 import { MutOpt } from './mutOpt'
 import { useMutation } from '@tanstack/react-query'
@@ -34,3 +38,9 @@ type UseUpdateTeamVariables = UpdateTeamArgs
 
 export const useUpdateTeam = (opt?: MutOpt<UpdateTeamResData>) =>
   useMutation<UpdateTeamResData, UpdateTeamError, UseUpdateTeamVariables>(updateTeam, opt)
+
+// delete team
+type UseDeleteTeamVariables = DeleteTeamArgs
+
+export const useDeleteTeam = (opt?: MutOpt<DeleteTeamResData>) =>
+  useMutation<DeleteTeamResData, DeleteTeamError, UseDeleteTeamVariables>(deleteTeam, opt)

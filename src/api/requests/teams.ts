@@ -132,6 +132,25 @@ export async function updateTeam(args: UpdateTeamArgs) {
   })
 }
 
+// delete team
+export type DeleteTeamError = TeamsError<'workspace_not_found' | 'team_not_found'>
+export type DeleteTeamResData = undefined
+
+export type DeleteTeamArgs = {
+  workspaceId: string
+  teamId: string
+}
+
+export async function deleteTeam(args: DeleteTeamArgs) {
+  const { workspaceId, teamId } = args
+
+  return await sendRequest<DeleteTeamResData>({
+    method: 'DELETE',
+    basePath: `workspaces`,
+    path: `${workspaceId}/teams/${teamId}`,
+  })
+}
+
 // get team members
 export type GetTeamMembersError = TeamsError<'workspace_not_found' | 'team_not_found'>
 export type GetTeamMembersData = {
