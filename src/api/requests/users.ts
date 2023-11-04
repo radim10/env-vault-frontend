@@ -58,6 +58,25 @@ export async function getWorkspaceUsers(args: GetWorkspaceUsersArgs) {
   return await response
 }
 
+// get single user
+export type GetWorkspaceUserError = UsersError<'workspace_not_found' | 'user_not_found'>
+export type GetWorkspaceUserData = WorkspaceUser
+
+export type GetWorkspaceUserArgs = {
+  workspaceId: string
+  userId: string
+}
+
+export async function getWorkspaceUser(args: GetWorkspaceUserArgs) {
+  const { workspaceId, userId } = args
+
+  return await sendRequest<GetWorkspaceUserData>({
+    method: 'GET',
+    basePath: `workspaces`,
+    path: `${workspaceId}/users/${userId}`,
+  })
+}
+
 // search
 export type SearchWorkspaceUsersError = UsersError<undefined>
 export type SearchWorkspaceUsersData = Array<User & { isTeamMember?: boolean }>
