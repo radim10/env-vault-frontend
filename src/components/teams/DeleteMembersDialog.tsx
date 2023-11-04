@@ -8,6 +8,7 @@ interface Props {
   teamId: string
   opened: boolean
   userIds: string[]
+  userName?: string
   onClose: () => void
   onSuccess: () => void
 }
@@ -16,6 +17,7 @@ const DeleteMembersDialog: React.FC<Props> = ({
   workspaceId,
   teamId,
   userIds,
+  userName,
   opened,
   onClose,
   onSuccess,
@@ -38,7 +40,7 @@ const DeleteMembersDialog: React.FC<Props> = ({
   return (
     <DialogComponent
       opened={opened}
-      title={'Delete users'}
+      title={userName ? 'Delete user' : 'Delete users'}
       submit={{
         text: 'Delete',
         disabled: false,
@@ -53,13 +55,28 @@ const DeleteMembersDialog: React.FC<Props> = ({
           : undefined
       }
       descriptionComponent={
-        <span>
-          Are you sure you want to remove <span className="font-bold">{userIds?.length}</span> users
-          from this team?
-        </span>
+        <>
+          {userName ? (
+            <span>
+              Are you sure you want to remove <span className="font-bold">{userName}</span> from
+              this team?
+            </span>
+          ) : (
+            <span>
+              Are you sure you want to remove <span className="font-bold">{userIds?.length}</span>{' '}
+              users from this team?
+            </span>
+          )}
+        </>
       }
       loading={isLoading}
-      onSubmit={() => deleteUsers({ workspaceId, teamId, data: { removed: userIds } })}
+      onSubmit={() =>
+        deleteUsers({
+          workspaceId,
+          teamId,
+          data: { removed: userIds },
+        })
+      }
       onClose={onClose}
     />
   )
