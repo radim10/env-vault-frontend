@@ -30,6 +30,7 @@ import { useGetTeamMembers } from '@/api/queries/teams'
 import ActionTableToolbar from '@/components/ActionTableToolbar'
 import DeleteMembersDialog from '../DeleteMembersDialog'
 import TableFooter from '@/components/tables/TableFooter'
+import { useImmer } from 'use-immer'
 
 interface DataTableProps {
   workspaceId: string
@@ -52,7 +53,7 @@ function TeamMembersTable({
   // const [pagesLoaded, setPagesLoaded] = useState<number[]>([])
   const [totalCount, setTotalCount] = useState<number>(0)
   const [totalSearchCount, setTotalSearchCount] = useState<number>(0)
-  const [rowSelection, setRowSelection] = useState({})
+  const [rowSelection, setRowSelection] = useImmer<{ [key: string]: boolean }>({})
 
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -172,7 +173,7 @@ function TeamMembersTable({
     opened: boolean
   } | null>(null)
 
-  const handleDeletedUsers = (multiple: boolean) => {
+  const handleDeletedUsers = (deletedId?: string) => {
     //invalidateQueries
     queryClient.invalidateQueries(['workspace', workspaceId, 'team-members'], { exact: false })
 
@@ -180,15 +181,21 @@ function TeamMembersTable({
       refetch()
     }
 
-    if (multiple) {
+    if (!deletedId) {
       setRowSelection({})
       closeDeleteMembersDialog()
     } else {
       closeDeleteSingleMemberDialog()
+
+      if (Object.keys(rowSelection).length > 0) {
+        setRowSelection((draft) => {
+          if (draft[deletedId]) delete draft[deletedId]
+        })
+      }
     }
 
     toast({
-      title: multiple ? 'Users have been deleted' : 'User have been deleted',
+      title: !deletedId ? 'Users have been deleted' : 'User have been deleted',
       variant: 'success',
     })
   }
@@ -279,7 +286,7 @@ function TeamMembersTable({
               closeDeleteSingleMemberDialog()
             }
           }}
-          onSuccess={() => handleDeletedUsers(deleteMembersDialog !== null)}
+          onSuccess={() => handleDeletedUsers(deleteSingleMemberDialog?.id)}
           userName={deleteSingleMemberDialog?.name}
           userIds={
             !deleteSingleMemberDialog ? Object.keys(rowSelection) : [deleteSingleMemberDialog.id]
