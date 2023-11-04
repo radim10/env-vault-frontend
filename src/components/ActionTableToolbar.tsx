@@ -17,7 +17,8 @@ const ActionTableToolbar: React.FC<Props> = ({ totalCount, selectedCount, onDele
 
       <div className="flex items-center w-full md:w-fit justify-end gap-3">
         <Button size={'sm'} onClick={onCancel} className="flex gap-1.5" variant="outline">
-          <Icons.x className="h-4 w-4 -mt-[0.5px]" />
+          <Icons.x className="h-4 w-4" />
+          <span className="md:block hidden">Cancel</span>
         </Button>
 
         <Button size={'sm'} onClick={onDelete} className="flex gap-1.5" variant="destructive">
