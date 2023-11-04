@@ -20,8 +20,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
-import { Icons } from '@/components/icons'
 import { useGetWorkspaceUsers } from '@/api/queries/users'
 import { WorkspaceUser, WorkspaceUserRole } from '@/types/users'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -32,6 +30,7 @@ import { QueryClient } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/use-toast'
 import UpdateWorkspaceUserRoleDialog from '../UpdateUserRoleDialog'
 import useUserTablesPaginationStore from '@/stores/userTables'
+import TableFooter from '@/components/tables/TableFooter'
 
 interface DataTableProps {
   workspaceId: string
@@ -417,91 +416,44 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
           </TableBody>
         </Table>
       </div>
-      <div className="flex justify-end items-center gap-4 md:gap-6">
-        {/* <div className="text-muted-foreground text-sm">Pages: {Math.ceil(2 / 5)}/1</div> */}
-        {(search?.trim()?.length > 1 ? totalSearchCount !== 0 : totalCount !== 0) && (
-          <span className="flex items-center gap-1 text-sm text-muted-foreground">
-            <div>Page</div>
-            <span className="">
-              {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-            </span>
-          </span>
-        )}
 
-        <div
-          className={clsx(
-            [
-              'hidden md:flex gap-0 items-center text-sm mt-0 text-muted-foreground rounded-md border-2',
-            ],
-            {
-              'opacity-70':
-                isLoading ||
-                searchLoading ||
-                (search?.trim()?.length > 1 ? totalSearchCount < 5 : totalCount < 5),
-            }
-          )}
-        >
-          {[5, 10].map((val, _) => (
-            <button
-              disabled={
-                isLoading ||
-                searchLoading ||
-                (search?.trim()?.length > 1 ? totalSearchCount < 5 : totalCount < 5)
-              }
-              onClick={() => {
-                setPagination((s) => {
-                  return { ...s, pageSize: val }
-                })
-              }}
-              className={clsx(['w-10 text-center py-1 ease duration-200'], {
-                'bg-secondary text-primary': pageSize === val,
-                'opacity-50 hover:opacity-100': pageSize !== val,
-                'rounded-l-sm rounded-r-sm': true,
-              })}
-            >
-              {val}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <Icons.chevronsLeft className="h-4 w-4" />
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <Icons.chevronLeft className="h-4 w-4" />
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            <Icons.chevronRight className="h-4 w-4" />
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
-          >
-            <Icons.chevronsRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+      <TableFooter
+        pagination={{
+          toStart: {
+            onClick: () => table.setPageIndex(0),
+            disabled: !table.getCanPreviousPage(),
+          },
+          toEnd: {
+            onClick: () => table.setPageIndex(table.getPageCount() - 1),
+            disabled: !table.getCanNextPage(),
+          },
+          prev: {
+            onClick: () => table.previousPage(),
+            disabled: !table.getCanPreviousPage(),
+          },
+          next: {
+            onClick: () => table.nextPage(),
+            disabled: !table.getCanNextPage(),
+          },
+        }}
+        page={{
+          hidden: !(search?.trim()?.length > 1 ? totalSearchCount !== 0 : totalCount !== 0),
+          current: table.getState().pagination.pageIndex + 1,
+          total: table.getPageCount(),
+        }}
+        pageSize={{
+          value: pageSize,
+          disabled:
+            isLoading ||
+            searchLoading ||
+            (search?.trim()?.length > 1 ? totalSearchCount < 5 : totalCount < 5),
+          onChange: (pageSize) => {
+            setPagination((p) => {
+              return { ...p, pageSize }
+            })
+          },
+        }}
+      />
     </div>
   )
 }

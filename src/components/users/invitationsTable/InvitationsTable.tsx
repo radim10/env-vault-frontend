@@ -24,8 +24,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
-import { Icons } from '@/components/icons'
 import { useListWorkspaceInvitations } from '@/api/queries/users'
 import { WorkspaceInvitation } from '@/types/users'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -38,6 +36,7 @@ import { invitationsStore } from '@/stores/invitations'
 import { useResendWorkspaceInvitation } from '@/api/mutations/users'
 import { ListWorkspaceInvitationsData } from '@/api/requests/users'
 import useUserTablesPaginationStore from '@/stores/userTables'
+import TableFooter from '@/components/tables/TableFooter'
 
 interface DataTableProps {
   workspaceId: string
@@ -391,105 +390,53 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
           </TableBody>
         </Table>
       </div>
-      <div className="flex justify-end items-center gap-4 md:gap-6">
-        {/* <div className="flex-1 text-sm text-muted-foreground"> */}
-        {/* {table.getFilteredRowModel().rows.length} */}
-        {/* </div> */}
-        {/* <div className="text-muted-foreground text-sm">Pages: {Math.ceil(2 / 5)}/1</div> */}
-        {data && data?.totalCount > 0 && table.getFilteredRowModel().rows.length > 0 && (
-          <span className="flex items-center gap-1 text-sm text-muted-foreground">
-            <div>Page</div>
-            <span className="">
-              {/* {table.getState().pagination.pageIndex + 1} of {table.getPageCount()} */}
-              {table.getState().pagination.pageIndex + 1} {`of `}
-              {Math.ceil(table.getFilteredRowModel().rows.length / pageSize)}
-            </span>
-          </span>
-        )}
 
-        <div
-          className={clsx(
-            [
-              'hidden md:flex gap-0 items-center text-sm mt-0 text-muted-foreground rounded-md border-2',
-            ],
-            {
-              'opacity-70': table.getFilteredRowModel().rows.length <= 5,
-            }
-          )}
-        >
-          {[5, 10].map((val, _) => (
-            <button
-              disabled={isLoading || table.getFilteredRowModel().rows.length <= 5}
-              onClick={() => {
-                setPagination((s) => {
-                  return { ...s, pageSize: val }
-                })
-              }}
-              className={clsx(['w-10 text-center py-1 ease duration-200'], {
-                'bg-secondary text-primary': pageSize === val,
-                'opacity-50 hover:opacity-100': pageSize !== val,
-                'rounded-l-sm rounded-r-sm': true,
-              })}
-            >
-              {val}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.setPageIndex(0)}
-            disabled={
+      <TableFooter
+        pagination={{
+          toStart: {
+            onClick: () => table.setPageIndex(0),
+            disabled:
               !table.getCanPreviousPage() ||
               table.getState().pagination.pageIndex + 1 >
-                Math.ceil(table.getFilteredRowModel().rows.length / pageSize)
-            }
-          >
-            <Icons.chevronsLeft className="h-4 w-4" />
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={
+                Math.ceil(table.getFilteredRowModel().rows.length / pageSize),
+          },
+          toEnd: {
+            onClick: () => table.setPageIndex(table.getPageCount() - 1),
+            disabled:
+              !table.getCanNextPage() ||
+              table.getState().pagination.pageIndex + 1 >=
+                Math.ceil(table.getFilteredRowModel().rows.length / pageSize),
+          },
+          prev: {
+            onClick: () => table.previousPage(),
+            disabled:
               !table.getCanPreviousPage() ||
               table.getState().pagination.pageIndex + 1 >
-                Math.ceil(table.getFilteredRowModel().rows.length / pageSize)
-            }
-          >
-            <Icons.chevronLeft className="h-4 w-4" />
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={
+                Math.ceil(table.getFilteredRowModel().rows.length / pageSize),
+          },
+          next: {
+            onClick: () => table.nextPage(),
+            disabled:
               !table.getCanNextPage() ||
               table.getState().pagination.pageIndex + 1 >=
-                Math.ceil(table.getFilteredRowModel().rows.length / pageSize)
-            }
-          >
-            <Icons.chevronRight className="h-4 w-4" />
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={
-              !table.getCanNextPage() ||
-              table.getState().pagination.pageIndex + 1 >=
-                Math.ceil(table.getFilteredRowModel().rows.length / pageSize)
-            }
-          >
-            <Icons.chevronsRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+                Math.ceil(table.getFilteredRowModel().rows.length / pageSize),
+          },
+        }}
+        page={{
+          hidden: !(data && data?.totalCount > 0 && table.getFilteredRowModel().rows.length > 0),
+          current: table.getState().pagination.pageIndex + 1,
+          total: Math.ceil(table.getFilteredRowModel().rows.length / pageSize),
+        }}
+        pageSize={{
+          value: pageSize,
+          disabled: isLoading || table.getFilteredRowModel().rows.length <= 5,
+          onChange: (pageSize) => {
+            setPagination((p) => {
+              return { ...p, pageSize }
+            })
+          },
+        }}
+      />
     </div>
   )
 }
