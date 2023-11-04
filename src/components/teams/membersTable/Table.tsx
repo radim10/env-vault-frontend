@@ -31,6 +31,7 @@ import ActionTableToolbar from '@/components/ActionTableToolbar'
 import DeleteMembersDialog from '../DeleteMembersDialog'
 import TableFooter from '@/components/tables/TableFooter'
 import { useImmer } from 'use-immer'
+import { useRouter } from 'next/navigation'
 
 interface DataTableProps {
   workspaceId: string
@@ -47,6 +48,7 @@ function TeamMembersTable({
   queryClient,
   onAddMembers,
 }: DataTableProps) {
+  const router = useRouter()
   const { toast } = useToast()
   const { workspacePageSize, setWorkspacePageSize } = useUserTablesPaginationStore()
 
@@ -227,6 +229,10 @@ function TeamMembersTable({
     }, 150)
   }
 
+  const handleShowProfile = (id: string) => {
+    router.push(`/workspace/${workspaceId}/users/profiles/${id}`)
+  }
+
   const table = useReactTable({
     pageCount:
       search?.trim()?.length > 1
@@ -237,7 +243,7 @@ function TeamMembersTable({
     data: data?.data ?? defaultData,
     columns,
     meta: {
-      // showUser: () =>{}
+      showProfile: handleShowProfile,
       deleteUser: handleDeleteUser,
     },
     getCoreRowModel: getCoreRowModel(),

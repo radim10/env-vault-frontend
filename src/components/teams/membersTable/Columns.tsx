@@ -183,7 +183,6 @@ export const columns: ColumnDef<User>[] = [
     id: 'actions',
     header: () => <div className="text-center">Actions</div>,
     cell: ({ row, table }) => {
-      const role = row.getValue('role') as WorkspaceUserRole
       const meta = table.options.meta as any
 
       return (
@@ -194,7 +193,9 @@ export const columns: ColumnDef<User>[] = [
                 <Button
                   size="sm"
                   variant={'ghost'}
-                  onClick={() => {}}
+                  onClick={() => {
+                    meta.showProfile(row.original.id)
+                  }}
                   className="opacity-70 hover:opacity-100"
                 >
                   <Icons.arrowRight className="h-4 w-4" />

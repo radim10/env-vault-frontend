@@ -169,18 +169,18 @@ export const columns: ColumnDef<WorkspaceUser>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[160px] ">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
+
+              <DropdownMenuItem
+                onClick={() => {
+                  meta.showProfile(row.original?.id)
+                }}
+                className="flex px-2.5 py-2 gap-3 items-center"
+              >
+                <Icons.arrowRight className="h-4 w-4 " />
+                <span className="">Go to profile</span>
+              </DropdownMenuItem>
+
               {/* <DropdownMenuSeparator /> */}
-              {role !== WorkspaceUserRole.OWNER && (
-                <DropdownMenuItem
-                  onClick={() => {
-                    meta.deleteUser({ name: row.original.name, id: row.original.id })
-                  }}
-                  className="px-3.5 py-2 flex gap-2 items-center dark:hover:text-red-500 dark:text-red-500 text-red-600 hover:text-red-600"
-                >
-                  <Icons.trash className="h-4 w-4 " />
-                  <span className="">Delete</span>
-                </DropdownMenuItem>
-              )}
 
               {role !== WorkspaceUserRole.OWNER && (
                 <DropdownMenuItem
@@ -191,10 +191,22 @@ export const columns: ColumnDef<WorkspaceUser>[] = [
                       role: row.original.role,
                     })
                   }}
-                  className="flex px-3.5 py-2 gap-2 items-center"
+                  className="flex px-2.5 py-2 gap-3 items-center"
                 >
                   <Icons.penSquare className="h-4 w-4 " />
                   <span className="">Chage role</span>
+                </DropdownMenuItem>
+              )}
+
+              {role !== WorkspaceUserRole.OWNER && (
+                <DropdownMenuItem
+                  onClick={() => {
+                    meta.deleteUser({ name: row.original.name, id: row.original.id })
+                  }}
+                  className="px-2.5 py-2 flex gap-3 items-center dark:hover:text-red-500 dark:text-red-500 text-red-600 hover:text-red-600"
+                >
+                  <Icons.trash className="h-4 w-4 " />
+                  <span className="">Delete</span>
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>

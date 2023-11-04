@@ -31,6 +31,7 @@ import { useToast } from '@/components/ui/use-toast'
 import UpdateWorkspaceUserRoleDialog from '../UpdateUserRoleDialog'
 import useUserTablesPaginationStore from '@/stores/userTables'
 import TableFooter from '@/components/tables/TableFooter'
+import { useRouter } from 'next/navigation'
 
 interface DataTableProps {
   workspaceId: string
@@ -40,6 +41,7 @@ interface DataTableProps {
 }
 
 function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: DataTableProps) {
+  const router = useRouter()
   const { toast } = useToast()
   const { workspacePageSize, setWorkspacePageSize } = useUserTablesPaginationStore()
 
@@ -266,6 +268,10 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
     }, 150)
   }
 
+  const handleShowProfile = (id: string) => {
+    router.push(`/workspace/${workspaceId}/users/profiles/${id}`)
+  }
+
   const table = useReactTable({
     pageCount:
       search?.trim()?.length > 1
@@ -278,6 +284,7 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
     meta: {
       deleteUser: handleDeleteUser,
       updateRole: handleUpdateUserRole,
+      showProfile: handleShowProfile,
     },
     getCoreRowModel: getCoreRowModel(),
     // getPaginationRowModel: getPaginationRowModel(),
