@@ -208,7 +208,9 @@ export const columns: ColumnDef<User>[] = [
                 <Button
                   size="sm"
                   variant={'ghost'}
-                  onClick={() => {}}
+                  onClick={() => {
+                    meta.deleteUser({ name: row.original.name, id: row.original.id })
+                  }}
                   className="opacity-70 hover:opacity-100 hover:text-red-600 dark:hover:text-red-500"
                 >
                   <Icons.trash className="h-4 w-4" />

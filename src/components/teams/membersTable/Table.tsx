@@ -174,7 +174,7 @@ function TeamMembersTable({
     opened: boolean
   } | null>(null)
 
-  const handleDeletedUsers = () => {
+  const handleDeletedUsers = (multiple: boolean) => {
     //invalidateQueries
     queryClient.invalidateQueries(['workspace', workspaceId, 'team-members'], { exact: false })
 
@@ -182,21 +182,43 @@ function TeamMembersTable({
       refetch()
     }
 
-    setRowSelection({})
-    closeDeleteDialog()
+    if (multiple) {
+      setRowSelection({})
+      closeDeleteMembersDialog()
+    } else {
+      closeDeleteSingleMemberDialog()
+    }
 
     toast({
-      title: 'Users have been deleted',
+      title: multiple ? 'Users have been deleted' : 'User have been deleted',
       variant: 'success',
     })
   }
 
-  const closeDeleteDialog = () => {
+  const closeDeleteMembersDialog = () => {
     if (!deleteMembersDialog) return
 
     setDeleteMembersDialog({ opened: false })
     setTimeout(() => {
       setDeleteMembersDialog(null)
+    }, 150)
+  }
+
+  const [deleteSingleMemberDialog, setDeleteSingleMemberDialog] = useState<{
+    id: string
+    name: string
+  } | null>(null)
+
+  const handleDeleteUser = (args: { id: string; name: string }) => {
+    setDeleteSingleMemberDialog(args)
+  }
+
+  const closeDeleteSingleMemberDialog = () => {
+    if (!deleteSingleMemberDialog) return
+
+    setDeleteSingleMemberDialog({ ...deleteSingleMemberDialog, id: '' })
+    setTimeout(() => {
+      setDeleteSingleMemberDialog(null)
     }, 150)
   }
 
@@ -209,7 +231,10 @@ function TeamMembersTable({
         : undefined,
     data: data?.data ?? defaultData,
     columns,
-    meta: {},
+    meta: {
+      // showUser: () =>{}
+      deleteUser: handleDeleteUser,
+    },
     getCoreRowModel: getCoreRowModel(),
     // getPaginationRowModel: getPaginationRowModel(),
     // getSortedRowModel: getSortedRowModel(),
@@ -239,14 +264,28 @@ function TeamMembersTable({
 
   return (
     <div>
-      {deleteMembersDialog !== null && (
+      {(deleteMembersDialog !== null || deleteSingleMemberDialog !== null) && (
         <DeleteMembersDialog
           teamId={teamId}
           workspaceId={workspaceId}
-          opened={deleteMembersDialog?.opened === true}
-          onClose={closeDeleteDialog}
-          onSuccess={() => handleDeletedUsers()}
-          userIds={Object.keys(rowSelection)}
+          opened={
+            deleteMembersDialog?.opened === true ||
+            (deleteSingleMemberDialog && deleteSingleMemberDialog?.id !== '')
+              ? true
+              : false
+          }
+          onClose={() => {
+            if (deleteMembersDialog) {
+              closeDeleteMembersDialog()
+            } else {
+              closeDeleteSingleMemberDialog()
+            }
+          }}
+          onSuccess={() => handleDeletedUsers(deleteMembersDialog !== null)}
+          userName={deleteSingleMemberDialog?.name}
+          userIds={
+            !deleteSingleMemberDialog ? Object.keys(rowSelection) : [deleteSingleMemberDialog.id]
+          }
         />
       )}
 
