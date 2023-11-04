@@ -88,7 +88,7 @@ function TeamsTable({ columns, workspaceId, queryClient, onCreateTeam }: DataTab
   const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper()
   const [sorting, setSorting] = useState<SortingState>([
     {
-      id: 'created',
+      id: 'members',
       desc: true,
     },
   ])

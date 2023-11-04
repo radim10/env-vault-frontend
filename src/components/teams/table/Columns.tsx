@@ -48,7 +48,7 @@ export const teamsColumns: ColumnDef<ListTeam>[] = [
   },
 
   {
-    accessorKey: 'membersCount',
+    accessorKey: 'members',
     header: ({ column }) => {
       return (
         <button
