@@ -311,7 +311,13 @@ function TeamsTable({ columns, workspaceId, queryClient, newTeam, onCreateTeam }
           disabled: isLoading || table.getFilteredRowModel().rows.length <= 5,
           onChange: (pageSize) => {
             setPagination((p) => {
-              return { ...p, pageSize }
+              const currentPage = p.pageIndex + 1
+
+              if (pageSize === 10 && currentPage === table.getPageCount()) {
+                return { pageIndex: p.pageIndex - 1, pageSize }
+              } else {
+                return { pageIndex: p.pageIndex, pageSize }
+              }
             })
           },
         }}
