@@ -7,6 +7,10 @@ import {
   CreateTeamResData,
   updateTeamMembers,
   createTeam,
+  UpdateTeamArgs,
+  UpdateTeamResData,
+  UpdateTeamError,
+  updateTeam,
 } from '../requests/teams'
 import { MutOpt } from './mutOpt'
 import { useMutation } from '@tanstack/react-query'
@@ -24,3 +28,9 @@ export const useUpdateTeamMembers = (opt?: MutOpt<UpdateTeamMembersResData>) =>
     updateTeamMembers,
     opt
   )
+
+// update team
+type UseUpdateTeamVariables = UpdateTeamArgs
+
+export const useUpdateTeam = (opt?: MutOpt<UpdateTeamResData>) =>
+  useMutation<UpdateTeamResData, UpdateTeamError, UseUpdateTeamVariables>(updateTeam, opt)
