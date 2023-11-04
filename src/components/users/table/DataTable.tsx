@@ -417,7 +417,6 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
         </Table>
       </div>
 
-      {table.getFilteredRowModel().rows?.length}
       <TableFooter
         pagination={{
           toStart: {
