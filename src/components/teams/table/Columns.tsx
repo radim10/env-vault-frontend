@@ -1,15 +1,10 @@
 'use client'
 
-import clsx from 'clsx'
 import dayjs from 'dayjs'
-import { produce } from 'immer'
 import { ColumnDef } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { WorkspaceInvitation, WorkspaceUserRole } from '@/types/users'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { invitationsStore } from '@/stores/invitations'
 import { ListTeam } from '@/types/teams'
 
 dayjs.extend(relativeTime)
@@ -48,7 +43,7 @@ export const teamsColumns: ColumnDef<ListTeam>[] = [
   },
 
   {
-    accessorKey: 'members',
+    accessorKey: 'membersCount',
     header: ({ column }) => {
       return (
         <button
