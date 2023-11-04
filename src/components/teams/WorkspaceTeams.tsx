@@ -17,6 +17,7 @@ const WorkspaceTeams: React.FC<Props> = ({ workspaceId }) => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const [createdDrawerOpened, setCreatedDrawerOpened] = useState(false)
+  const [newTeam, setNewTeam] = useState<ListTeam | undefined>()
 
   const handleNewTeam = (team: ListTeam) => {
     toast({
@@ -25,17 +26,22 @@ const WorkspaceTeams: React.FC<Props> = ({ workspaceId }) => {
     })
 
     setCreatedDrawerOpened(false)
+    setNewTeam(team)
+
+    setTimeout(() => {
+      setNewTeam(undefined)
+    }, 500)
 
     // TODO:  query data (sorting issue)
-    //   const existingTeams = queryClient.getQueryData<ListTeam[]>(['workspace-teams', workspaceId])
+    // const existingTeams = queryClient.getQueryData<ListTeam[]>(['workspace-teams', workspaceId])
     //
-    //   if (existingTeams) {
-    //     const updatedTeams = produce(existingTeams, (draftData) => {
-    //       draftData.unshift(team)
-    //     })
+    // if (existingTeams) {
+    //   const updatedTeams = produce(existingTeams, (draftData) => {
+    //     draftData.unshift(team)
+    //   })
     //
-    //     queryClient.setQueryData(['workspace-teams', workspaceId], updatedTeams)
-    //   }
+    //   queryClient.setQueryData(['workspace-teams', workspaceId], updatedTeams)
+    // }
   }
 
   return (
@@ -49,6 +55,7 @@ const WorkspaceTeams: React.FC<Props> = ({ workspaceId }) => {
       />
       <TeamsTable
         onCreateTeam={() => setCreatedDrawerOpened(true)}
+        newTeam={newTeam}
         workspaceId={workspaceId}
         columns={teamsColumns}
         queryClient={queryClient}
