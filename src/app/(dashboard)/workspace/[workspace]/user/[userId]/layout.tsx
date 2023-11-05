@@ -8,23 +8,22 @@ import NotFound from '@/components/projects/NotFound'
 import Error from '@/components/Error'
 import clsx from 'clsx'
 import Link from 'next/link'
-import React from 'react'
 import { useWindowScroll } from 'react-use'
 import { useSelectedUserStore } from '@/stores/selectedUser'
 
-export default function ProfileLayout({
+export default function UserLayout({
   children,
   params,
 }: {
   children: React.ReactNode
-  params: { workspace: string; id: string }
+  params: { workspace: string; userId: string }
 }) {
   const { y } = useWindowScroll()
   const { set: setSelectedUser } = useSelectedUserStore()
 
   const { data, isLoading, error } = useGetWorkspaceUser(
     {
-      userId: params?.id,
+      userId: params?.userId,
       workspaceId: params?.workspace,
     },
     {
