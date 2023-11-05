@@ -28,6 +28,20 @@ export const useGetTeams = (
     opt
   )
 
+export const useSearchTeams = (
+  args: Required<UseGetTeamsArgs>,
+  opt?: UseQueryOptions<GetTeamsData, GetTeamsError>
+) =>
+  useQuery<GetTeamsData, GetTeamsError>(
+    ['workspace-teams', args.workspaceId, args.search],
+    () => {
+      return getTeams(args)
+    },
+    opt
+  )
+
+//
+
 // get single
 type UseGetTeamArgs = GetTeamArgs
 
@@ -43,6 +57,7 @@ export const useGetTeam = (
     opt
   )
 
+//
 type UseGetTeamMembersArg = GetTeamMembersArgs
 
 export const useGetTeamMembers = (

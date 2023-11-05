@@ -37,6 +37,7 @@ export type GetTeamsData = ListTeam[]
 
 export type GetTeamsArgs = {
   workspaceId: string
+  search?: string
   // pageSize?: number
   // page?: number
   // sort?: 'name' | 'email' | 'joined' | 'role'
