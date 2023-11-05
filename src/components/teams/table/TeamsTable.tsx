@@ -185,7 +185,7 @@ function TeamsTable({ columns, workspaceId, queryClient, newTeam, onCreateTeam }
   return (
     <div>
       <TeamsToolbar
-        count={data?.length ?? null}
+        count={table.getRowModel().rows.length ?? null}
         loading={isLoading}
         isSearchCount={(table.getColumn('name')?.getFilterValue() as string)?.length > 0}
         search={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
