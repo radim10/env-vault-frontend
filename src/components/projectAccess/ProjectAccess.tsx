@@ -1,4 +1,9 @@
+'use client'
+
+import { useQueryClient } from '@tanstack/react-query'
 import { Button } from '../ui/button'
+import AccessTeams from './teams/AccessTeams'
+import AddTeamAccessDrawer from './teams/AddTeamAccessDrawer'
 
 interface Props {
   workspaceId: string
@@ -6,6 +11,8 @@ interface Props {
 }
 
 const ProjectAccess: React.FC<Props> = ({ projectName, workspaceId }) => {
+  const queryClient = useQueryClient()
+
   return (
     <div className="mt-4 flex flex-col gap-3 px-6 lg:px-10">
       <div className="py-2 pl-4 pr-2 flex items-center justify-between rounded-md border w-full">
@@ -18,7 +25,16 @@ const ProjectAccess: React.FC<Props> = ({ projectName, workspaceId }) => {
       </div>
 
       <div>TABLE WITH USERS</div>
-      <div>TABLE WITH TEAMS</div>
+      <div>
+        <AccessTeams />
+      </div>
+      <AddTeamAccessDrawer
+        workspaceId={workspaceId}
+        opened={false}
+        onClose={function (): void {
+          throw new Error('Function not implemented.')
+        }}
+      />
     </div>
   )
 }
