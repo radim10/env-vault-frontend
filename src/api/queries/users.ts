@@ -3,6 +3,9 @@ import {
   CheckWorkspaceUserEmailArgs,
   CheckWorkspaceUserEmailError,
   CheckWorkspaceUserEmailResData,
+  GetUserTeamsArgs,
+  GetUserTeamsData,
+  GetUserTeamsError,
   GetWorkspaceUserArgs,
   GetWorkspaceUserData,
   GetWorkspaceUserError,
@@ -16,6 +19,7 @@ import {
   SearchWorkspaceUsersData,
   SearchWorkspaceUsersError,
   checkWorkspaceUserEmail,
+  getUserTeams,
   getWorkspaceUser,
   getWorkspaceUsers,
   listWorkspaceInvitations,
@@ -35,6 +39,22 @@ export const useGetWorkspaceUser = (
     },
     opt
   )
+
+// get user team memberships
+
+export const useGetUserTeams = (
+  args: GetUserTeamsArgs,
+  opt?: UseQueryOptions<GetUserTeamsData, GetUserTeamsError>
+) =>
+  useQuery<GetUserTeamsData, GetUserTeamsError>(
+    ['workspace', args.workspaceId, 'user', args.userId, 'teams'],
+    () => {
+      return getUserTeams(args)
+    },
+    opt
+  )
+
+//
 
 type UseGetWorkspaceUsersArgs = GetWorkspaceUsersArgs
 

@@ -1,3 +1,4 @@
+import { Team } from '@/types/teams'
 import sendRequest, { APIError } from '../instance'
 import { User, WorkspaceInvitation, WorkspaceUser, WorkspaceUserRole } from '@/types/users'
 
@@ -74,6 +75,25 @@ export async function getWorkspaceUser(args: GetWorkspaceUserArgs) {
     method: 'GET',
     basePath: `workspaces`,
     path: `${workspaceId}/users/${userId}`,
+  })
+}
+
+// get user team memberships
+export type GetUserTeamsError = UsersError<'workspace_not_found' | 'user_not_found'>
+export type GetUserTeamsData = Array<Pick<Team, 'id' | 'name'>>
+
+export type GetUserTeamsArgs = {
+  workspaceId: string
+  userId: string
+}
+
+export async function getUserTeams(args: GetUserTeamsArgs) {
+  const { workspaceId, userId } = args
+
+  return await sendRequest<GetUserTeamsData>({
+    method: 'GET',
+    basePath: `workspaces`,
+    path: `${workspaceId}/users/${userId}/teams`,
   })
 }
 
