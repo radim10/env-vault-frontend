@@ -89,6 +89,12 @@ function ProjectLayout({
         </div>
       </div>
 
+      {project.description && (
+        <div className="text-muted-foreground px-6 lg:px-10 line-clamp-1 md:max-w-[50%]">
+          {project.description}
+        </div>
+      )}
+
       <div className="mt-5">
         <ProjectTabs
           workspaceId={params.workspace}
