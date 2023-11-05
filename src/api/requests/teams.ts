@@ -46,12 +46,15 @@ export type GetTeamsArgs = {
 }
 
 export async function getTeams(args: GetTeamsArgs) {
-  const { workspaceId } = args
+  const { workspaceId, search } = args
 
   const response = sendRequest<GetTeamsData>({
     method: 'GET',
     basePath: `workspaces`,
     path: `${workspaceId}/teams`,
+    params: {
+      search,
+    },
     //   params: {
     //     page,
     //     pageSize,
