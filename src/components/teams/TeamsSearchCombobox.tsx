@@ -159,7 +159,7 @@ const TeamsSearchCombobox: React.FC<Props> = ({
     <div className="">
       <div className="flex flex-col gap-1">
         <Label className="w-fit" {...getLabelProps()}>
-          Add users
+          Add teams
         </Label>
 
         <div className="flex  w-full mt-2">
@@ -180,7 +180,7 @@ const TeamsSearchCombobox: React.FC<Props> = ({
               </button>
             </div>
             <Input
-              placeholder="Search users"
+              placeholder="Search teams"
               className="w-full"
               {...getInputProps(getDropdownProps({ preventKeyAction: isOpen }))}
             />
@@ -218,7 +218,7 @@ const TeamsSearchCombobox: React.FC<Props> = ({
 
               {!isLoading && inputValue?.length > 1 && !isLoading && items?.length === 0 && (
                 <div className="w-full flex gap-3 items-center justify-center h-20 text-sm">
-                  No users found
+                  No teams found
                 </div>
               )}
 
