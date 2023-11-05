@@ -1,3 +1,4 @@
+import ProjectAccess from '@/components/projectAccess/ProjectAccess'
 import EnvironmentList from '@/components/projects/EnvironmentList'
 import ProjectSettings from '@/components/projects/ProjectSettings'
 import { Metadata, ResolvingMetadata } from 'next'
@@ -33,6 +34,10 @@ export default function ProjectPage({
     <>
       {params?.projectTab === 'environments' && (
         <EnvironmentList workspaceId={params.workspace} projectName={params.projectName} />
+      )}
+
+      {params?.projectTab === 'access' && (
+        <ProjectAccess workspaceId={params.workspace} projectName={params.projectName} />
       )}
 
       {params?.projectTab === 'settings' && (
