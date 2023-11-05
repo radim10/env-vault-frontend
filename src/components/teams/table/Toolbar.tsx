@@ -11,7 +11,7 @@ interface Props {
   loading: boolean
   search: string
   onSearch: (search: string) => void
-  onNewTeam: () => void
+  onNewTeam?: () => void
 }
 
 const TeamsToolbar: React.FC<Props> = ({ count, search, isSearchCount, onSearch, onNewTeam }) => {
@@ -52,11 +52,12 @@ const TeamsToolbar: React.FC<Props> = ({ count, search, isSearchCount, onSearch,
               onChange={(e) => onSearch(e.target.value)}
             />
           </div>
-
-          <Button size={'sm'} onClick={onNewTeam} className="flex gap-1.5">
-            <Icons.plus className="h-5 w-5" />
-            <span className="md:block hidden">Create team</span>
-          </Button>
+          {onNewTeam && (
+            <Button size={'sm'} onClick={onNewTeam} className="flex gap-1.5">
+              <Icons.plus className="h-5 w-5" />
+              <span className="md:block hidden">Create team</span>
+            </Button>
+          )}
         </div>
       </div>
     </div>
