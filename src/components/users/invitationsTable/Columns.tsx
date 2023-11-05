@@ -16,7 +16,7 @@ dayjs.extend(relativeTime)
 
 export const invitationsColumns: ColumnDef<WorkspaceInvitation>[] = [
   {
-    id: "sender",
+    id: 'sender',
     accessorKey: 'createdBy',
     header: ({ column }) => {
       return (
@@ -110,7 +110,7 @@ export const invitationsColumns: ColumnDef<WorkspaceInvitation>[] = [
   },
 
   {
-    id: "created",
+    id: 'created',
     accessorKey: 'createdAt',
     // sortingFn: (a, b) => {
     //   return (a < b ? 1 : -1)
