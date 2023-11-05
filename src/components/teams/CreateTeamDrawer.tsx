@@ -30,6 +30,18 @@ interface Props {
   onClose: () => void
 }
 
+const colors = [
+  'bg-red-500 dark:bg-red-700',
+  'bg-blue-500 dark:bg-blue-700',
+  'bg-green-500 dark:bg-green-700',
+  'bg-yellow-500 dark:bg-yellow-700',
+  'bg-orange-500 dark:bg-orange-700',
+  'bg-indigo-500 dark:bg-indigo-700',
+  'bg-purple-500 dark:bg-purple-700',
+  'bg-pink-500 dark:bg-pink-700',
+  'bg-orange-800 dark:bg-orange-900',
+]
+
 const CreateTeamDrawer: React.FC<Props> = ({
   queryClient,
   workspaceId,
@@ -186,6 +198,14 @@ const CreateTeamDrawer: React.FC<Props> = ({
               <div className="bg-red-400X h-full flex flex-col gap-3">
                 {!teamId && (
                   <>
+                    {/* <div className="mt-3"> */}
+                    {/*   <Label className="w-fit">Team color</Label> */}
+                    {/*   <div className="mt-2 flex flex-row gap-2 items-center flex-wrap"> */}
+                    {/*     {colors.map((color, index) => ( */}
+                    {/*       <div className={clsx([color, 'w-8 h-8 rounded-full'])}></div> */}
+                    {/*     ))} */}
+                    {/*   </div> */}
+                    {/* </div> */}
                     <div className="mt-3">
                       <Label className="w-fit">Team name</Label>
                       <Input
