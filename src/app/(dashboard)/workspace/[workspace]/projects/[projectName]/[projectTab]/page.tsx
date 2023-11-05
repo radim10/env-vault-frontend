@@ -23,7 +23,7 @@ export default function ProjectPage({
 }) {
   if (
     params.projectTab !== 'environments' &&
-    params.projectTab !== 'users' &&
+    params.projectTab !== 'access' &&
     params.projectTab !== 'webhooks' &&
     params.projectTab !== 'settings'
   ) {
