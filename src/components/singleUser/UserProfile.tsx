@@ -71,7 +71,7 @@ const UserProfile: React.FC<Props> = ({ workspaceId, userId }) => {
           icon={Icons.user}
           items={[
             {
-              icon: Icons.user,
+              icon: Icons.userCircle,
               label: 'Avatar',
               component: (
                 <div className="flex items-center gap-2 md:gap-3">

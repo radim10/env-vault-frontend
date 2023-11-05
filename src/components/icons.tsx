@@ -82,6 +82,7 @@ import {
   ChevronsUpDown,
   Diff,
   UserCheck2,
+  UserCircle,
 } from 'lucide-react'
 
 export const Icons = {
@@ -170,4 +171,5 @@ export const Icons = {
   chevronUpDown: ChevronsUpDown,
   plusMinus: Diff,
   userCheck2: UserCheck2,
+  userCircle: UserCircle,
 }
