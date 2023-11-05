@@ -5,20 +5,31 @@ import Drawer from '@/components/Drawer'
 import { ListTeam } from '@/types/teams'
 import { useQueryClient } from '@tanstack/react-query'
 import TeamsSearchCombobox from '@/components/teams/TeamsSearchCombobox'
+import { useAddProjectAccessTeams } from '@/api/mutations/projectAccess'
 
 interface Props {
   workspaceId: string
-  projectName?: string
+  projectName: string
   opened: boolean
-  onAdded?: () => void
+  onAdded: (teams: ListTeam[]) => void
   onClose: () => void
 }
 
-const AddTeamAccessDrawer: React.FC<Props> = ({ workspaceId, projectName, opened, onClose }) => {
+const AddTeamAccessDrawer: React.FC<Props> = ({
+  workspaceId,
+  projectName,
+  opened,
+  onAdded,
+  onClose,
+}) => {
   const queryClient = useQueryClient()
-  const isLoading = false
-
   const [selectedTeams, setSelectedTeams] = useState<ListTeam[]>([])
+
+  const { mutate, isLoading, error } = useAddProjectAccessTeams({
+    onSuccess: () => {
+      onAdded(selectedTeams)
+    },
+  })
 
   return (
     <>
@@ -31,7 +42,17 @@ const AddTeamAccessDrawer: React.FC<Props> = ({ workspaceId, projectName, opened
           text: 'Confirm',
           disabled: selectedTeams.length === 0,
           loading: isLoading,
-          onSubmit: () => {},
+          onSubmit: () => {
+            const teamIds = selectedTeams.map((team) => team.id)
+
+            mutate({
+              workspaceId,
+              projectName,
+              data: {
+                teams: teamIds,
+              },
+            })
+          },
         }}
       >
         <div>
