@@ -269,7 +269,7 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
   }
 
   const handleShowProfile = (id: string) => {
-    router.push(`/workspace/${workspaceId}/users/profiles/${id}`)
+    router.push(`/workspace/${workspaceId}/user/${id}/profile`)
   }
 
   const table = useReactTable({
