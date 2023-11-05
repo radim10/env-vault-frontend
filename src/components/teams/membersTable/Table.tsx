@@ -230,7 +230,7 @@ function TeamMembersTable({
   }
 
   const handleShowProfile = (id: string) => {
-    router.push(`/workspace/${workspaceId}/user/profiles/${id}/profile`)
+    router.push(`/workspace/${workspaceId}/user/${id}/profile`)
   }
 
   const table = useReactTable({
