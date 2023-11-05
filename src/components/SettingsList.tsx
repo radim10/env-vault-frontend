@@ -21,18 +21,26 @@ interface Item {
 interface Props {
   // children: ReactNode
   title?: String
+  titleComponent?: ReactNode
   description?: String
   icon?: LucideIcon
   items: Item[]
 }
 
-const SettingsList: React.FC<Props> = ({ title, description, icon: Icon, items }) => {
+const SettingsList: React.FC<Props> = ({
+  title,
+  titleComponent,
+  description,
+  icon: Icon,
+  items,
+}) => {
   return (
     <>
       <div className="mt-2 gap-2 rounded-md border-2">
         <div className="px-0 py-3 md:px-0 lg:px-0 md:py-4">
           <div className="flex items-center justify-start gap-3 px-3 md:px-6 lg:px-6">
             {title && <TypographyH4>{title}</TypographyH4>}
+            {titleComponent && <div>{titleComponent}</div>}
             {Icon && <Icon className="h-5 w-5 opacity-80" />}
           </div>
           {/* // */}
