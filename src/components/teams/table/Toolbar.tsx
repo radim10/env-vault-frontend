@@ -10,11 +10,19 @@ interface Props {
   isSearchCount?: boolean
   loading: boolean
   search: string
+  submitText?: string
   onSearch: (search: string) => void
   onNewTeam?: () => void
 }
 
-const TeamsToolbar: React.FC<Props> = ({ count, search, isSearchCount, onSearch, onNewTeam }) => {
+const TeamsToolbar: React.FC<Props> = ({
+  count,
+  search,
+  isSearchCount,
+  onSearch,
+  onNewTeam,
+  submitText,
+}) => {
   return (
     <div>
       <div className="flex md:items-center justify-between mb-3 md:flex-row flex-col gap-3 md:gap-0">
@@ -55,7 +63,7 @@ const TeamsToolbar: React.FC<Props> = ({ count, search, isSearchCount, onSearch,
           {onNewTeam && (
             <Button size={'sm'} onClick={onNewTeam} className="flex gap-1.5">
               <Icons.plus className="h-5 w-5" />
-              <span className="md:block hidden">Create team</span>
+              <span className="md:block hidden">{submitText ?? 'Create team'}</span>
             </Button>
           )}
         </div>
