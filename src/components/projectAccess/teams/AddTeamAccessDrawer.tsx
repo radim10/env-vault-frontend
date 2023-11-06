@@ -46,7 +46,7 @@ const AddTeamAccessDrawer: React.FC<Props> = ({
           onSubmit: () => {
             const teamIds = selectedTeams.map((team) => team.id)
             const payload: UpdateProjectAccessTeamsData = {
-              new: teamIds,
+              add: teamIds,
             }
 
             mutate({
