@@ -1,5 +1,6 @@
 import sendRequest, { APIError } from '@/api/instance'
 import { ListTeam } from '@/types/teams'
+import { User } from '@/types/users'
 
 // NOTE: errors
 type ProjectAccessErrorCode = 'project_not_found'
@@ -23,14 +24,16 @@ export function projectAccessErrorMsgFromCode(
   return msg
 }
 
+export type ProjectAccessArgs = {
+  workspaceId: string
+  projectName: string
+}
+
 // NOTE: requests
 export type GetProjectAccessTeamsError = ProjectAccessError<'project_not_found'>
 export type GetProjectAccessTeamsData = ListTeam[]
 
-export type GetProjectAccessTeamsArgs = {
-  workspaceId: string
-  projectName: string
-}
+export type GetProjectAccessTeamsArgs = ProjectAccessArgs
 
 export async function getProjectAccessTeams(args: GetProjectAccessTeamsArgs) {
   const { workspaceId, projectName } = args
@@ -48,13 +51,11 @@ export type UpdateProjectAccessTeamsResData = undefined
 
 // ids array for now
 export type UpdateProjectAccessTeamsData = {
-  new?: string[]
-  removed?: string[]
+  add?: string[]
+  remove?: string[]
 }
 
-export type UpdateProjectAccessTeamsArgs = {
-  workspaceId: string
-  projectName: string
+export type UpdateProjectAccessTeamsArgs = ProjectAccessArgs & {
   data: UpdateProjectAccessTeamsData
 }
 
@@ -65,6 +66,47 @@ export async function addProjectAccessTeams(args: UpdateProjectAccessTeamsArgs) 
     method: 'POST',
     basePath: 'workspaces',
     path: `${workspaceId}/projects/${projectName}/access/teams`,
+    body: data,
+  })
+}
+
+// NOTE: users
+// get
+export type GetProjectAccessUsersError = GetProjectAccessTeamsError
+export type GetProjectAccessUsersArgs = GetProjectAccessTeamsArgs
+export type GetProjectAccessUsersData = User[]
+
+export async function getProjectAccessUsers(args: GetProjectAccessUsersArgs) {
+  const { workspaceId, projectName } = args
+
+  return await sendRequest<GetProjectAccessUsersData>({
+    method: 'GET',
+    basePath: 'workspaces',
+    path: `${workspaceId}/projects/${projectName}/access/users`,
+  })
+}
+
+// update
+export type UpdateProjectAccessUsersError = GetProjectAccessTeamsError
+export type UpdateProjectAccessUsersResData = undefined
+
+export type UpdateProjectAccessUsersData = {
+  //
+  add?: string[]
+  remove?: string[]
+}
+
+export type UpdateProjectAccessUsersArgs = ProjectAccessArgs & {
+  data: UpdateProjectAccessUsersData
+}
+
+export async function updateProjectAccessUsers(args: UpdateProjectAccessUsersArgs) {
+  const { workspaceId, projectName, data } = args
+
+  return await sendRequest<UpdateProjectAccessUsersResData>({
+    method: 'POST',
+    basePath: 'workspaces',
+    path: `${workspaceId}/projects/${projectName}/access/users`,
     body: data,
   })
 }
