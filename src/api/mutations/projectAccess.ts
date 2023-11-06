@@ -1,17 +1,17 @@
 import { useMutation } from '@tanstack/react-query'
 import {
-  AddProjectAccessTeamsArgs,
-  AddProjectAccessTeamsError,
-  AddProjectAccessTeamsResData,
+  UpdateProjectAccessTeamsArgs,
+  UpdateProjectAccessTeamsError,
+  UpdateProjectAccessTeamsResData,
   addProjectAccessTeams,
 } from '../requests/projectAccess'
 import { MutOpt } from './mutOpt'
 
-type UseAddProjectAccessTeamsVariables = AddProjectAccessTeamsArgs
+type UseAddProjectAccessTeamsVariables = UpdateProjectAccessTeamsArgs
 
-export const useAddProjectAccessTeams = (opt?: MutOpt<AddProjectAccessTeamsResData>) =>
+export const useAddProjectAccessTeams = (opt?: MutOpt<UpdateProjectAccessTeamsResData>) =>
   useMutation<
-    AddProjectAccessTeamsResData,
-    AddProjectAccessTeamsError,
+    UpdateProjectAccessTeamsResData,
+    UpdateProjectAccessTeamsError,
     UseAddProjectAccessTeamsVariables
   >(addProjectAccessTeams, opt)
