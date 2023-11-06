@@ -13,11 +13,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { ProjectRole } from '@/types/projectAccess'
+import { ProjectAccessTeam, ProjectRole } from '@/types/projectAccess'
 import UserRoleBadge from '@/components/users/UserRoleBadge'
 import { WorkspaceUserRole } from '@/types/users'
 import { Label } from '@/components/ui/label'
 import { UpdateProjectAccessTeamsData } from '@/api/requests/projectAccess'
+import { Icons } from '@/components/icons'
+import { projectErrorMsgFromCode } from '@/api/requests/projects/root'
 
 const roles: ProjectRole[] = [ProjectRole.MEMBER, ProjectRole.ADMIN, ProjectRole.OWNER]
 
@@ -25,7 +27,7 @@ interface Props {
   workspaceId: string
   projectName: string
   opened: boolean
-  onAdded: (teams: ListTeam[]) => void
+  onAdded: (teams: ProjectAccessTeam[]) => void
   onClose: () => void
 }
 
@@ -42,7 +44,7 @@ const AddTeamAccessDrawer: React.FC<Props> = ({
 
   const { mutate, isLoading, error } = useUpdateProjectAccessTeams({
     onSuccess: () => {
-      onAdded(selectedTeams)
+      onAdded(selectedTeams?.map((val) => ({ ...val, role: selectedRole })))
     },
   })
 
@@ -75,14 +77,27 @@ const AddTeamAccessDrawer: React.FC<Props> = ({
           },
         }}
       >
-        <div className="flex flex-col gap-4">
+        {error && (
+          <>
+            <div className="text-red-600 text-[0.90rem] pb-0 flex items-center gap-2 mb-5">
+              <Icons.xCircle className="h-4 w-4" />
+              {error?.code ? projectErrorMsgFromCode(error.code) : 'Something went wrong'}
+            </div>
+          </>
+        )}
+
+        <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
             <div>
               <Label htmlFor="Role" className="">
                 <span className="">Project role</span>
               </Label>
             </div>
-            <Select onValueChange={(value) => setSelectedRole(value as ProjectRole)}>
+            <Select
+              onValueChange={(value) => setSelectedRole(value as ProjectRole)}
+              value={selectedRole}
+              disabled={isLoading}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
@@ -103,12 +118,13 @@ const AddTeamAccessDrawer: React.FC<Props> = ({
 
           <TeamsSearchCombobox
             queryClient={queryClient}
+            workspaceId={workspaceId}
+            project={projectName}
+            disabled={isLoading}
+            selectedTeams={selectedTeams}
             onSelect={(teams) => {
               setSelectedTeams(teams)
             }}
-            workspaceId={workspaceId}
-            project={projectName}
-            selectedTeams={selectedTeams}
           />
         </div>
       </Drawer>
