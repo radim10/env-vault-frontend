@@ -3,7 +3,11 @@ import {
   GetProjectAccessTeamsArgs,
   GetProjectAccessTeamsData,
   GetProjectAccessTeamsError,
+  GetProjectAccessUsersArgs,
+  GetProjectAccessUsersData,
+  GetProjectAccessUsersError,
   getProjectAccessTeams,
+  getProjectAccessUsers,
 } from '../requests/projectAccess'
 
 export const useGetProjectAccessTeams = (
@@ -12,8 +16,18 @@ export const useGetProjectAccessTeams = (
 ) =>
   useQuery<GetProjectAccessTeamsData, GetProjectAccessTeamsError>(
     ['workspace', args.workspaceId, 'project', args.projectName, 'access', 'teams'],
-    () => {
-      return getProjectAccessTeams(args)
-    },
+    () => getProjectAccessTeams(args),
     opt
   )
+
+// users
+export const useGetProjectAccessUsers = (
+  args: GetProjectAccessUsersArgs,
+  opt?: UseQueryOptions<GetProjectAccessUsersData, GetProjectAccessUsersError>
+) => {
+  return useQuery<GetProjectAccessUsersData, GetProjectAccessUsersError>(
+    ['workspace', args.workspaceId, 'project', args.projectName, 'access', 'users'],
+    () => getProjectAccessUsers(args),
+    opt
+  )
+}
