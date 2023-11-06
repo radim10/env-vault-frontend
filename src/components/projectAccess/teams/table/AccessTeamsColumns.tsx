@@ -74,7 +74,10 @@ export const accessTeamsColumns: ColumnDef<ListTeam>[] = [
     id: 'actions',
     header: 'Actions',
     cell: ({ row, table }) => {
-      const meta = table.options.meta as any
+      const meta = table.options.meta as {
+        goto: (id: string) => void
+        delete: (args: { id: string; name: string }) => void
+      }
 
       return (
         <div className="w-full flex justify-start items-center gap-1.5 bg-red-400X">
@@ -88,7 +91,7 @@ export const accessTeamsColumns: ColumnDef<ListTeam>[] = [
           </Button>
 
           <Button
-            onClick={() => {}}
+            onClick={() => meta.delete({ id: row.original.id, name: row.original.name })}
             size={'sm'}
             variant="ghost"
             className={clsx([
