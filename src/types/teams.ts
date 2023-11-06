@@ -12,6 +12,8 @@ export interface ListTeam {
   id: string
   name: string
   membersCount: number
+  // for access combobox
+  projectAccess?: boolean
 }
 
 export interface UpdateTeamData {
