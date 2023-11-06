@@ -1,7 +1,6 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { produce } from 'immer'
 import clsx from 'clsx'
 import {
   ColumnDef,
@@ -108,12 +107,21 @@ function AccessTeamsTable({ columns, projectName, workspaceId }: DataTableProps)
       const descSort = sorting?.[0]?.desc
 
       // TODO: fix
-      const updatedTeams = produce(currentTeams, (draftData) => {
-        draftData = [...draftData, ...newTeams]
-        draftData = sortTeams(draftData, sortBy as 'membersCount' | 'name', descSort)
-      })
+      // const updatedTeams = produce(currentTeams, (draftData) => {
+      //   draftData = [...currentTeams, ...newTeams]
+      //   console.log('draftData', draftData)
+      //
+      //   const sorted = sortTeams(draftData, sortBy as 'membersCount' | 'name', descSort)
+      //   draftData = sorted
+      //
+      //   console.log('draftDataSorted', draftData)
+      // })
+      //
+      // console.log('updatedTeams', updatedTeams)
+      const updatedTeams = [...currentTeams, ...newTeams]
+      const sortedUpdated = sortTeams(updatedTeams, sortBy as 'membersCount' | 'name', descSort)
 
-      queryClient.setQueryData(key, updatedTeams)
+      queryClient.setQueryData(key, sortedUpdated)
     }
 
     //
