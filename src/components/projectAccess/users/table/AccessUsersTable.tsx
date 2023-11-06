@@ -233,8 +233,12 @@ function AccessUsersTable({ columns, projectName, workspaceId }: DataTableProps)
                     <TableHead
                       key={header.id}
                       className={clsx([''], {
-                        'md:w-[50%]': index === 1 || index === 2,
-                        'pl-7 bg-red-400X': table.getRowModel().rows?.length === 0 && !isLoading,
+                        // 'md:w-[50%]': index === 1 || index === 2,
+                        // 'pl-7 bg-red-400X': table.getRowModel().rows?.length === 0 && !isLoading,
+                        //
+                        'bg-red-500X  w-8': index === 0,
+                        'md:w-[35%]': index === 2 || index === 1,
+                        'md:w-36 2xl:w-56 bg-red-300X': index === 3,
                       })}
                     >
                       {header.isPlaceholder
