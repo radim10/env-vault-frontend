@@ -305,7 +305,7 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
             : null
         }
         loading={isLoading}
-        isInvitations={true}
+        entity={'invitations'}
         isSearchCount={(table.getColumn('email')?.getFilterValue() as string)?.length > 0}
         search={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
         onSearch={(value) => {

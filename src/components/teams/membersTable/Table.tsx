@@ -303,7 +303,7 @@ function TeamMembersTable({
       {/* <button onClick={() => console.log(rowSelection)}>DEBUG selection</button> */}
       {Object.keys(rowSelection).length === 0 ? (
         <TableToolbar
-          isTeam
+          entity="teams"
           userCount={
             !totalCount || searchLoading
               ? null

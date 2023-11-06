@@ -6,8 +6,7 @@ import { Input } from '../ui/input'
 import { Skeleton } from '../ui/skeleton'
 
 interface Props {
-  isInvitations?: boolean
-  isTeam?: boolean
+  entity: 'users' | 'teams' | 'invitations'
   userCount: number | null
   isSearchCount?: boolean
   submitText?: string
@@ -18,8 +17,7 @@ interface Props {
 }
 
 const TableToolbar: React.FC<Props> = ({
-  isInvitations,
-  isTeam,
+  entity,
   userCount,
   search,
   isSearchCount,
@@ -38,19 +36,19 @@ const TableToolbar: React.FC<Props> = ({
             </>
           ) : (
             <div className="text-muted-foreground font-medium">
-              {!isInvitations && !isTeam && (
+              {entity === 'users' && (
                 <>
                   {!isSearchCount ? 'Total users' : 'Found users'}: {userCount}
                 </>
               )}
 
-              {isInvitations && (
+              {entity === 'invitations' && (
                 <>
                   {!isSearchCount ? 'Total invitations' : 'Found invitations'}: {userCount}
                 </>
               )}
 
-              {isTeam && (
+              {entity === 'teams' && (
                 <>
                   {!isSearchCount ? 'Total members' : 'Found members'}: {userCount}
                 </>
@@ -73,7 +71,7 @@ const TableToolbar: React.FC<Props> = ({
 
             <Input
               // readOnly={loading}
-              placeholder={isInvitations ? 'Search by email' : 'Search by name or email'}
+              placeholder={entity === 'invitations' ? 'Search by email' : 'Search by name or email'}
               className="pl-10 pr-10 -mr-10"
               value={search ?? undefined}
               onChange={(e) => onSearch(e.target.value)}
@@ -81,14 +79,14 @@ const TableToolbar: React.FC<Props> = ({
           </div>
 
           <Button size={'sm'} onClick={onInviteUser} className="flex gap-1.5">
-            {!isTeam && (
+            {entity !== 'teams' && (
               <>
                 <Icons.plus className="h-5 w-5" />
                 <span className="md:block hidden">{submitText ?? 'Invite users'}</span>
               </>
             )}
 
-            {isTeam && (
+            {entity === 'teams' && (
               <>
                 <Icons.plus className="h-5 w-5" />
                 <span className="md:block hidden">{submitText ?? 'Add members'}</span>

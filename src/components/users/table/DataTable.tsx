@@ -335,6 +335,7 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
             ? totalSearchCount
             : totalCount
         }
+        entity="users"
         isSearchCount={search?.trim()?.length > 1}
         search={search}
         loading={isLoading}
