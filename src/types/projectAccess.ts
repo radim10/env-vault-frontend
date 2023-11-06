@@ -19,4 +19,5 @@ export type SearchProjectAccessTeam = ListTeam & {
 // useres
 export type ProjectAccessUser = User & {
   role: ProjectRole
+  isAutoRole?: boolean
 }
