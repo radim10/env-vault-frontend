@@ -241,7 +241,10 @@ function AccessTeamsTable({ columns, projectName, workspaceId }: DataTableProps)
                     <TableHead
                       key={header.id}
                       className={clsx([''], {
-                        'md:w-[45%]': index === 0 || index === 1,
+                        // 'md:w-[45%]': index === 0 || index === 1,
+                        'w-[45%]': index === 0,
+                        'w-[20%]': index === 1,
+                        'w-[45%] ': index === 2,
                         'pl-7 bg-red-400X': table.getRowModel().rows?.length === 0 && !isLoading,
                       })}
                     >
