@@ -5,12 +5,14 @@ import { ColumnDef } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { ListTeam } from '@/types/teams'
 import clsx from 'clsx'
+import { ProjectAccessTeam } from '@/types/projectAccess'
+import UserRoleBadge from '@/components/users/UserRoleBadge'
+import { WorkspaceUserRole } from '@/types/users'
 
 dayjs.extend(relativeTime)
 
-export const accessTeamsColumns: ColumnDef<ListTeam>[] = [
+export const accessTeamsColumns: ColumnDef<ProjectAccessTeam>[] = [
   {
     accessorKey: 'name',
     header: ({ column }) => {
@@ -71,8 +73,39 @@ export const accessTeamsColumns: ColumnDef<ListTeam>[] = [
   },
 
   {
+    accessorKey: 'role',
+    header: ({ column }) => {
+      return (
+        <button
+          className="flex items-center gap-1"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Role
+          {column.getIsSorted() && (
+            <>
+              {column.getIsSorted() === 'asc' ? (
+                <Icons.arrowUp className="ml-2 h-4 w-4" />
+              ) : (
+                <Icons.arrowDown className="ml-2 h-4 w-4" />
+              )}
+            </>
+          )}
+        </button>
+      )
+    },
+    cell: ({ row }) => {
+      const role = row.original.role
+      return (
+        <div className="text-left">
+          <UserRoleBadge role={role as any as WorkspaceUserRole} />
+        </div>
+      )
+    },
+  },
+
+  {
     id: 'actions',
-    header: 'Actions',
+    header: () => <div className="text-center">Actions</div>,
     cell: ({ row, table }) => {
       const meta = table.options.meta as {
         goto: (id: string) => void
