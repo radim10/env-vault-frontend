@@ -14,7 +14,7 @@ interface Props {
 const AccessTeams: React.FC<Props> = ({ workspaceId, projectName }) => {
   return (
     <>
-      <TypographyH4>Teams</TypographyH4>
+      {/* <TypographyH4>Teams</TypographyH4> */}
       <AccessTeamsTable
         workspaceId={workspaceId}
         projectName={projectName}
