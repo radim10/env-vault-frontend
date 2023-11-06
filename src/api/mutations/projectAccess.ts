@@ -9,7 +9,7 @@ import { MutOpt } from './mutOpt'
 
 type UseAddProjectAccessTeamsVariables = UpdateProjectAccessTeamsArgs
 
-export const useAddProjectAccessTeams = (opt?: MutOpt<UpdateProjectAccessTeamsResData>) =>
+export const useUpdateProjectAccessTeams = (opt?: MutOpt<UpdateProjectAccessTeamsResData>) =>
   useMutation<
     UpdateProjectAccessTeamsResData,
     UpdateProjectAccessTeamsError,
