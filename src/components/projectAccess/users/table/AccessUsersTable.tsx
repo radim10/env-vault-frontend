@@ -142,12 +142,16 @@ function AccessUsersTable({ columns, projectName, workspaceId }: DataTableProps)
 
   const handleDeleteTeamAccess = (args: { id: string; name: string }) => setDeleteTeamDialog(args)
 
+  const handleShowProfile = (id: string) => {
+    router.push(`/workspace/${workspaceId}/user/${id}/profile`)
+  }
+
   const table = useReactTable({
     pageCount: data ? Math.ceil(data?.length / pageSize) : undefined,
     data: data ?? defaultData,
     columns,
     meta: {
-      goto: handleGoToTeam,
+      showProfile: handleShowProfile,
       delete: handleDeleteTeamAccess,
     },
     getCoreRowModel: getCoreRowModel(),
