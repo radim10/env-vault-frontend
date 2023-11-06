@@ -72,7 +72,7 @@ const DeleteProjectTeamAccessDialog: React.FC<Props> = ({
       loading={isLoading}
       onSubmit={() => {
         const data: UpdateProjectAccessTeamsData = {
-          removed: [team.id],
+          remove: [team.id],
         }
 
         updateTeamAccess({
