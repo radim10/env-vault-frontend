@@ -1,16 +1,18 @@
 'use client'
 
 import clsx from 'clsx'
-import { User } from '@/types/users'
+import { User, WorkspaceUserRole } from '@/types/users'
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { ProjectAccessUser, ProjectRole } from '@/types/projectAccess'
+import UserRoleBadge from '@/components/users/UserRoleBadge'
 
 // TODO: role column
-export const accessUsersColumns: ColumnDef<User>[] = [
+export const accessUsersColumns: ColumnDef<ProjectAccessUser>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -104,6 +106,42 @@ export const accessUsersColumns: ColumnDef<User>[] = [
       return <div className="text-left">{email}</div>
     },
   },
+
+  {
+    accessorKey: 'role',
+    // sortingFn: (a, b) => {
+    //   return a.getValue('role').localeCompare(b.getValue('role'))
+    // },
+    header: ({ column }) => {
+      return (
+        <button
+          className="flex items-center gap-1"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Role
+          {column.getIsSorted() && (
+            <>
+              {column.getIsSorted() === 'asc' ? (
+                <Icons.arrowUp className="ml-2 h-4 w-4" />
+              ) : (
+                <Icons.arrowDown className="ml-2 h-4 w-4" />
+              )}
+            </>
+          )}
+        </button>
+      )
+    },
+    cell: ({ row }) => {
+      const role = row.getValue('role') as ProjectRole
+
+      return (
+        <div>
+          <UserRoleBadge role={role as any as WorkspaceUserRole} />
+        </div>
+      )
+    },
+  },
+
   {
     id: 'actions',
     header: () => <div className="text-center">Actions</div>,
