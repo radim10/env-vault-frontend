@@ -1,8 +1,7 @@
 'use client'
 
-import { useMemo, useState } from 'react'
 import clsx from 'clsx'
-import { produce } from 'immer'
+import { useMemo, useState } from 'react'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -27,20 +26,19 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { ListTeam } from '@/types/teams'
 import { useRouter } from 'next/navigation'
 import TableFooter from '@/components/tables/TableFooter'
-import TeamsToolbar from '@/components/teams/table/Toolbar'
-import { useGetProjectAccessTeams, useGetProjectAccessUsers } from '@/api/queries/projectAccess'
+import { useGetProjectAccessUsers } from '@/api/queries/projectAccess'
 import { useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/use-toast'
-import { User } from '@/types/users'
 import TableToolbar from '@/components/users/TableToolbar'
+import { ProjectAccessUser } from '@/types/projectAccess'
 
 interface DataTableProps {
   workspaceId: string
   projectName: string
-  columns: ColumnDef<User>[]
+  columns: ColumnDef<ProjectAccessUser>[]
 }
 
-function AccessUsersTable({ columns, projectName, workspaceId }: DataTableProps) {
+const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, workspaceId }) => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
