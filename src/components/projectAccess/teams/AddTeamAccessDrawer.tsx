@@ -6,6 +6,7 @@ import { ListTeam } from '@/types/teams'
 import { useQueryClient } from '@tanstack/react-query'
 import TeamsSearchCombobox from '@/components/teams/TeamsSearchCombobox'
 import { useAddProjectAccessTeams } from '@/api/mutations/projectAccess'
+import { UpdateProjectAccessTeamsData } from '@/api/requests/projectAccess'
 
 interface Props {
   workspaceId: string
@@ -44,13 +45,14 @@ const AddTeamAccessDrawer: React.FC<Props> = ({
           loading: isLoading,
           onSubmit: () => {
             const teamIds = selectedTeams.map((team) => team.id)
+            const payload: UpdateProjectAccessTeamsData = {
+              new: teamIds,
+            }
 
             mutate({
               workspaceId,
               projectName,
-              data: {
-                teams: teamIds,
-              },
+              data: payload,
             })
           },
         }}

@@ -43,22 +43,25 @@ export async function getProjectAccessTeams(args: GetProjectAccessTeamsArgs) {
 }
 
 // add
-export type AddProjectAccessTeamsError = ProjectAccessError<'project_not_found'>
-export type AddProjectAccessTeamsResData = undefined
+export type UpdateProjectAccessTeamsError = ProjectAccessError<'project_not_found'>
+export type UpdateProjectAccessTeamsResData = undefined
 
-export type AddProjectAccessTeamsArgs = {
-  workspaceId: string
-  projectName: string
-  data: {
-    // ids
-    teams: string[]
-  }
+// ids array for now
+export type UpdateProjectAccessTeamsData = {
+  new?: string[]
+  removed?: string[]
 }
 
-export async function addProjectAccessTeams(args: AddProjectAccessTeamsArgs) {
+export type UpdateProjectAccessTeamsArgs = {
+  workspaceId: string
+  projectName: string
+  data: UpdateProjectAccessTeamsData
+}
+
+export async function addProjectAccessTeams(args: UpdateProjectAccessTeamsArgs) {
   const { workspaceId, projectName, data } = args
 
-  return await sendRequest<AddProjectAccessTeamsResData>({
+  return await sendRequest<UpdateProjectAccessTeamsResData>({
     method: 'POST',
     basePath: 'workspaces',
     path: `${workspaceId}/projects/${projectName}/access/teams`,
