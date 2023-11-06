@@ -1,6 +1,6 @@
 import { User } from '@/types/users'
 import sendRequest, { APIError } from '@/api/instance'
-import { ProjectAccessTeam, ProjectRole } from '@/types/projectAccess'
+import { ProjectAccessTeam, ProjectAccessUser, ProjectRole } from '@/types/projectAccess'
 
 // NOTE: errors
 type ProjectAccessErrorCode = 'project_not_found'
@@ -75,7 +75,7 @@ export async function addProjectAccessTeams(args: UpdateProjectAccessTeamsArgs) 
 // get
 export type GetProjectAccessUsersError = GetProjectAccessTeamsError
 export type GetProjectAccessUsersArgs = GetProjectAccessTeamsArgs
-export type GetProjectAccessUsersData = User[]
+export type GetProjectAccessUsersData = ProjectAccessUser[]
 
 export async function getProjectAccessUsers(args: GetProjectAccessUsersArgs) {
   const { workspaceId, projectName } = args
