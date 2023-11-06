@@ -29,7 +29,7 @@ export const useGetTeams = (
   )
 
 export const useSearchTeams = (
-  args: Required<UseGetTeamsArgs>,
+  args: Required<Pick<UseGetTeamsArgs, 'workspaceId' | 'search'>> & { project?: string },
   opt?: UseQueryOptions<GetTeamsData, GetTeamsError>
 ) =>
   useQuery<GetTeamsData, GetTeamsError>(

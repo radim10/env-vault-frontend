@@ -38,6 +38,8 @@ export type GetTeamsData = ListTeam[]
 export type GetTeamsArgs = {
   workspaceId: string
   search?: string
+  // for project access - check if has project access
+  project?: string
   // pageSize?: number
   // page?: number
   // sort?: 'name' | 'email' | 'joined' | 'role'
@@ -46,7 +48,7 @@ export type GetTeamsArgs = {
 }
 
 export async function getTeams(args: GetTeamsArgs) {
-  const { workspaceId, search } = args
+  const { workspaceId, search, project } = args
 
   const response = sendRequest<GetTeamsData>({
     method: 'GET',
@@ -54,6 +56,7 @@ export async function getTeams(args: GetTeamsArgs) {
     path: `${workspaceId}/teams`,
     params: {
       search,
+      project,
     },
     //   params: {
     //     page,
