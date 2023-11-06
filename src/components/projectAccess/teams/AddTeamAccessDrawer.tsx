@@ -62,6 +62,7 @@ const AddTeamAccessDrawer: React.FC<Props> = ({
               setSelectedTeams(teams)
             }}
             workspaceId={workspaceId}
+            project={projectName}
             selectedTeams={selectedTeams}
           />
         </div>
