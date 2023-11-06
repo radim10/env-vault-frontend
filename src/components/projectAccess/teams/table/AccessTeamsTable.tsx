@@ -41,7 +41,7 @@ interface DataTableProps {
   columns: ColumnDef<ProjectAccessTeam>[]
 }
 
-function AccessTeamsTable({ columns, projectName, workspaceId }: DataTableProps) {
+const AccessTeamsTable: React.FC<DataTableProps> = ({ columns, projectName, workspaceId }) => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
