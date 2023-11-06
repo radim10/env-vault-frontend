@@ -140,16 +140,12 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
 
   const handleDeleteTeamAccess = (args: { id: string; name: string }) => setDeleteTeamDialog(args)
 
-  const handleShowProfile = (id: string) => {
-    router.push(`/workspace/${workspaceId}/user/${id}/profile`)
-  }
-
   const table = useReactTable({
     pageCount: data ? Math.ceil(data?.length / pageSize) : undefined,
     data: data ?? defaultData,
     columns,
     meta: {
-      showProfile: handleShowProfile,
+      goto: handleGoToTeam,
       delete: handleDeleteTeamAccess,
     },
     getCoreRowModel: getCoreRowModel(),
@@ -218,6 +214,7 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
         loading={isLoading}
         onInviteUser={() => {}}
         submitText="Add users"
+        entity="users"
         isSearchCount={(table.getColumn('name')?.getFilterValue() as string)?.length > 0}
         search={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
         onSearch={(value) => {

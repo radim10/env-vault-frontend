@@ -160,7 +160,7 @@ export const accessUsersColumns: ColumnDef<ProjectAccessUser>[] = [
                   size="sm"
                   variant={'ghost'}
                   onClick={() => {
-                    meta.showProfile(row.original.id)
+                    meta.goto(row.original.id)
                   }}
                   className="opacity-70 hover:opacity-100"
                 >
