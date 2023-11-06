@@ -1,6 +1,6 @@
-import sendRequest, { APIError } from '@/api/instance'
-import { ListTeam } from '@/types/teams'
 import { User } from '@/types/users'
+import sendRequest, { APIError } from '@/api/instance'
+import { ProjectAccessTeam, ProjectRole } from '@/types/projectAccess'
 
 // NOTE: errors
 type ProjectAccessErrorCode = 'project_not_found'
@@ -31,7 +31,7 @@ export type ProjectAccessArgs = {
 
 // NOTE: requests
 export type GetProjectAccessTeamsError = ProjectAccessError<'project_not_found'>
-export type GetProjectAccessTeamsData = ListTeam[]
+export type GetProjectAccessTeamsData = ProjectAccessTeam[]
 
 export type GetProjectAccessTeamsArgs = ProjectAccessArgs
 
@@ -51,7 +51,8 @@ export type UpdateProjectAccessTeamsResData = undefined
 
 // ids array for now
 export type UpdateProjectAccessTeamsData = {
-  add?: string[]
+  // add?: Array<{ id: string; role: ProjectRole }>
+  add?: { ids: string[]; role: ProjectRole }
   remove?: string[]
 }
 
@@ -91,7 +92,8 @@ export type UpdateProjectAccessUsersError = GetProjectAccessTeamsError
 export type UpdateProjectAccessUsersResData = undefined
 
 export type UpdateProjectAccessUsersData = {
-  add?: string[]
+  // add?: Array<{ id: string; role: ProjectRole }>
+  add?: { ids: string[]; role: ProjectRole }
   remove?: string[]
 }
 
