@@ -15,6 +15,8 @@ interface Props {
   workspaceId: string
   project?: string
   queryClient: QueryClient
+  disabled?: boolean
+
   selectedTeams: ListTeam[]
   onSelect: (users: ListTeam[]) => void
 }
@@ -23,6 +25,7 @@ const TeamsSearchCombobox: React.FC<Props> = ({
   workspaceId,
   project,
   queryClient,
+  disabled,
   selectedTeams,
   onSelect,
 }) => {
@@ -183,7 +186,7 @@ const TeamsSearchCombobox: React.FC<Props> = ({
             <Input
               placeholder="Search teams"
               className="w-full"
-              {...getInputProps(getDropdownProps({ preventKeyAction: isOpen }))}
+              {...getInputProps(getDropdownProps({ preventKeyAction: isOpen, disabled }))}
             />
           </div>
         </div>
@@ -302,8 +305,15 @@ const TeamsSearchCombobox: React.FC<Props> = ({
               >
                 <span className="text-muted-foregroundXXX">{selectedItemForRender.name}</span>
                 <span
-                  className="pl-0.5 cursor-pointer opacity-70 hover:opacity-100 duration-200"
+                  className={clsx(
+                    ['pl-0.5 cursor-pointer opacity-70 hover:opacity-100 duration-200'],
+                    {
+                      'opacity-50': disabled,
+                    }
+                  )}
                   onClick={(e) => {
+                    if (disabled) return
+
                     e.stopPropagation()
                     removeSelectedItem(selectedItemForRender)
                   }}

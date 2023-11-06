@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
   Sheet,
   SheetContent,
@@ -12,11 +12,11 @@ import clsx from 'clsx'
 import { Icons } from '../icons'
 import { Label } from '../ui/label'
 import UsersCombobox from './UsersCombobox'
-import { QueryClient, useQueryClient } from '@tanstack/react-query'
+import { QueryClient } from '@tanstack/react-query'
 import { Button } from '../ui/button'
 import { useUpdateTeamMembers, useCreateTeam } from '@/api/mutations/teams'
 import { User } from '@/types/users'
-import { CreateTeamData, updateTeamMembers, teamsErrorMsgFromCode } from '@/api/requests/teams'
+import { CreateTeamData, teamsErrorMsgFromCode } from '@/api/requests/teams'
 import { ListTeam } from '@/types/teams'
 import { useDebounce } from 'react-use'
 
@@ -211,6 +211,7 @@ const CreateTeamDrawer: React.FC<Props> = ({
                       <Input
                         value={name}
                         onChange={(e) => setName(e.target.value)}
+                        disabled={isLoading}
                         placeholder="My new team..."
                         className="mt-1"
                       />
@@ -221,6 +222,7 @@ const CreateTeamDrawer: React.FC<Props> = ({
                         className="mt-1"
                         placeholder="Team description (optional)"
                         value={description}
+                        disabled={isLoading}
                         onChange={(e) => setDescription(e.target.value)}
                       />
                     </div>
@@ -238,6 +240,7 @@ const CreateTeamDrawer: React.FC<Props> = ({
                     queryClient={queryClient}
                     selectedUsers={selectedUsers}
                     onSelect={setSelectedUsers}
+                    disabled={isLoading}
                   />
                 </div>
               </div>

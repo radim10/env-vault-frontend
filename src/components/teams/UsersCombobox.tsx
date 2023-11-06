@@ -16,6 +16,8 @@ interface Props {
   workspaceId: string
   teamId?: string
   queryClient: QueryClient
+  disabled?: boolean
+
   selectedUsers: User[]
   onSelect: (users: User[]) => void
 }
@@ -25,6 +27,7 @@ const UsersCombobox: React.FC<Props> = ({
   teamId,
   queryClient,
   selectedUsers,
+  disabled,
   onSelect,
 }) => {
   const [inputValue, setInputValue] = useState('')
@@ -184,6 +187,7 @@ const UsersCombobox: React.FC<Props> = ({
             <Input
               placeholder="Search users"
               className="w-full"
+              disabled={disabled}
               {...getInputProps(getDropdownProps({ preventKeyAction: isOpen }))}
             />
           </div>
