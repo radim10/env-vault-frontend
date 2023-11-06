@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import clsx from 'clsx'
+import { produce } from 'immer'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -31,6 +32,7 @@ import { useGetProjectAccessTeams } from '@/api/queries/projectAccess'
 import AddTeamAccessDrawer from '../AddTeamAccessDrawer'
 import { useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/use-toast'
+import DeleteProjectTeamAccessDialog from '../DeleteTeamAccessDialog'
 
 interface DataTableProps {
   workspaceId: string
@@ -73,6 +75,11 @@ function AccessTeamsTable({ columns, projectName, workspaceId }: DataTableProps)
   })
 
   const getCurrentKey = () => ['workspace', workspaceId, 'project', projectName, 'access', 'teams']
+
+  const [deleteTeamDialog, setDeleteTeamDialog] = useState<{
+    id: string
+    name: string
+  } | null>(null)
 
   const handleGoToTeam = (teamId: string) => {
     router.push(`/workspace/${workspaceId}/teams/${teamId}/members`)
@@ -133,12 +140,15 @@ function AccessTeamsTable({ columns, projectName, workspaceId }: DataTableProps)
     })
   }
 
+  const handleDeleteTeamAccess = (args: { id: string; name: string }) => setDeleteTeamDialog(args)
+
   const table = useReactTable({
     pageCount: data ? Math.ceil(data?.length / pageSize) : undefined,
     data: data ?? defaultData,
     columns,
     meta: {
       goto: handleGoToTeam,
+      delete: handleDeleteTeamAccess,
     },
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: (sorting) => {
@@ -159,6 +169,32 @@ function AccessTeamsTable({ columns, projectName, workspaceId }: DataTableProps)
 
   const [addTeamDrawerOpened, setAddTeamDrawerOpened] = useState(false)
 
+  const closeDeleteDialog = () => {
+    if (!deleteTeamDialog) return
+
+    setDeleteTeamDialog({ ...deleteTeamDialog, id: '' })
+    setTimeout(() => {
+      setDeleteTeamDialog(null)
+    }, 150)
+  }
+
+  const handleDeletedTeam = (id: string) => {
+    const key = getCurrentKey()
+
+    const currentTeams = queryClient.getQueryData<ListTeam[]>(key)
+
+    if (currentTeams) {
+      const updatedTeams = [...currentTeams].filter((team) => team.id !== id)
+      queryClient.setQueryData(key, updatedTeams)
+    }
+
+    toast({
+      title: 'Team has been removed',
+      description: 'Team members have no access anymore',
+      variant: 'success',
+    })
+  }
+
   return (
     <div>
       <AddTeamAccessDrawer
@@ -168,6 +204,20 @@ function AccessTeamsTable({ columns, projectName, workspaceId }: DataTableProps)
         onClose={() => setAddTeamDrawerOpened(false)}
         onAdded={handleAddedTeams}
       />
+
+      {deleteTeamDialog !== null && (
+        <DeleteProjectTeamAccessDialog
+          workspaceId={workspaceId}
+          projectName={projectName}
+          team={deleteTeamDialog}
+          opened={deleteTeamDialog?.id !== ''}
+          onClose={() => closeDeleteDialog()}
+          onSuccess={() => {
+            handleDeletedTeam(deleteTeamDialog?.id)
+            closeDeleteDialog()
+          }}
+        />
+      )}
 
       <TeamsToolbar
         count={table.getRowModel().rows.length ?? null}
