@@ -3,7 +3,11 @@ import {
   UpdateProjectAccessTeamsArgs,
   UpdateProjectAccessTeamsError,
   UpdateProjectAccessTeamsResData,
+  UpdateProjectAccessUsersArgs,
+  UpdateProjectAccessUsersError,
+  UpdateProjectAccessUsersResData,
   addProjectAccessTeams,
+  updateProjectAccessUsers,
 } from '../requests/projectAccess'
 import { MutOpt } from './mutOpt'
 
@@ -15,3 +19,13 @@ export const useUpdateProjectAccessTeams = (opt?: MutOpt<UpdateProjectAccessTeam
     UpdateProjectAccessTeamsError,
     UseAddProjectAccessTeamsVariables
   >(addProjectAccessTeams, opt)
+
+// users
+type UseUpdateProjectAccessUsersVariables = UpdateProjectAccessUsersArgs
+
+export const useUpdateProjectAccessUsers = (opt?: MutOpt<UpdateProjectAccessUsersResData>) =>
+  useMutation<
+    UpdateProjectAccessUsersResData,
+    UpdateProjectAccessUsersError,
+    UseUpdateProjectAccessUsersVariables
+  >(updateProjectAccessUsers, opt)
