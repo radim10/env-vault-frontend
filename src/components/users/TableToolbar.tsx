@@ -10,6 +10,7 @@ interface Props {
   isTeam?: boolean
   userCount: number | null
   isSearchCount?: boolean
+  submitText?: string
   loading: boolean
   search: string
   onSearch: (search: string) => void
@@ -22,6 +23,7 @@ const TableToolbar: React.FC<Props> = ({
   userCount,
   search,
   isSearchCount,
+  submitText,
   loading,
   onSearch,
   onInviteUser,
@@ -82,14 +84,14 @@ const TableToolbar: React.FC<Props> = ({
             {!isTeam && (
               <>
                 <Icons.plus className="h-5 w-5" />
-                <span className="md:block hidden">Invite user</span>
+                <span className="md:block hidden">{submitText ?? 'Invite users'}</span>
               </>
             )}
 
             {isTeam && (
               <>
                 <Icons.plus className="h-5 w-5" />
-                <span className="md:block hidden">Add members</span>
+                <span className="md:block hidden">{submitText ?? 'Add members'}</span>
               </>
             )}
           </Button>
