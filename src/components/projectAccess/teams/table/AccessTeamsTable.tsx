@@ -33,11 +33,12 @@ import AddTeamAccessDrawer from '../AddTeamAccessDrawer'
 import { useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/use-toast'
 import DeleteProjectTeamAccessDialog from '../DeleteTeamAccessDialog'
+import { ProjectAccessTeam } from '@/types/projectAccess'
 
 interface DataTableProps {
   workspaceId: string
   projectName: string
-  columns: ColumnDef<ListTeam>[]
+  columns: ColumnDef<ProjectAccessTeam>[]
 }
 
 function AccessTeamsTable({ columns, projectName, workspaceId }: DataTableProps) {
