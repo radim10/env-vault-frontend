@@ -118,7 +118,7 @@ export const accessUsersColumns: ColumnDef<ProjectAccessUser>[] = [
           className="flex items-center gap-1"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Role
+          P. role
           {column.getIsSorted() && (
             <>
               {column.getIsSorted() === 'asc' ? (
