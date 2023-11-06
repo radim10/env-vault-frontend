@@ -143,10 +143,13 @@ export const accessUsersColumns: ColumnDef<ProjectAccessUser>[] = [
   },
 
   {
+    accessorKey: 'isAutoRole',
     id: 'actions',
     header: () => <div className="text-center">Actions</div>,
     cell: ({ row, table }) => {
       const meta = table.options.meta as any
+      // is workspace admin/owner
+      const isAutoRole = row.original.isAutoRole
 
       return (
         <div className="w-full flex justify-end items-center pr-2 gap-1.5">
@@ -172,15 +175,23 @@ export const accessUsersColumns: ColumnDef<ProjectAccessUser>[] = [
                 <Button
                   size="sm"
                   variant={'ghost'}
+                  disabled={false}
                   onClick={() => {
+                    if (isAutoRole) return
                     meta.deleteUser({ name: row.original.name, id: row.original.id })
                   }}
-                  className="opacity-70 hover:opacity-100 hover:text-red-600 dark:hover:text-red-500"
+                  className={clsx([''], {
+                    'opacity-30 hover:bg-transparent cursor-default': isAutoRole,
+                    'opacity-70 hover:opacity-100 hover:text-red-600 dark:hover:text-red-500':
+                      !isAutoRole,
+                  })}
                 >
                   <Icons.trash className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Delete user</TooltipContent>
+              <TooltipContent>
+                {!isAutoRole ? 'Delete user' : 'Cannot be removed (is workspace admin/owner)'}
+              </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
