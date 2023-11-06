@@ -1,4 +1,5 @@
 import { ListTeam } from './teams'
+import { User } from './users'
 
 export enum ProjectRole {
   MEMBER = 'MEMBER',
@@ -13,4 +14,9 @@ export type ProjectAccessTeam = ListTeam & {
 // for access combobox
 export type SearchProjectAccessTeam = ListTeam & {
   projectAccess: boolean
+}
+
+// useres
+export type ProjectAccessUser = User & {
+  role: ProjectRole
 }
