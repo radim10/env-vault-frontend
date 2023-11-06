@@ -7,7 +7,7 @@ export type ProjectAccessError<T extends ProjectAccessErrorCode | void> = APIErr
   T | 'workspace_not_found'
 >
 
-export function projectErrorMsgFromCode(
+export function projectAccessErrorMsgFromCode(
   code: ProjectAccessErrorCode | 'workspace_not_found'
 ): string {
   let msg = ''
