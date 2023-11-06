@@ -91,7 +91,6 @@ export type UpdateProjectAccessUsersError = GetProjectAccessTeamsError
 export type UpdateProjectAccessUsersResData = undefined
 
 export type UpdateProjectAccessUsersData = {
-  //
   add?: string[]
   remove?: string[]
 }
