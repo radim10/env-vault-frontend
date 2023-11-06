@@ -33,6 +33,7 @@ const TeamsSearchCombobox: React.FC<Props> = ({
     {
       workspaceId,
       search: inputValue,
+      project,
     },
     {
       enabled: false,
@@ -129,7 +130,7 @@ const TeamsSearchCombobox: React.FC<Props> = ({
         case useCombobox.stateChangeTypes.InputBlur:
           if (newSelectedItem) {
             // TODO:
-            // if (newSelectedItem?.isTeamMember === true) return
+            if (newSelectedItem?.projectAccess === true) return
 
             const id = newSelectedItem.id
 
@@ -235,7 +236,7 @@ const TeamsSearchCombobox: React.FC<Props> = ({
                         className={clsx(
                           ['ease duration-200'],
                           // TODO:
-                          'opacity-10' && false,
+                          'opacity-10' && item.projectAccess === true,
                           highlightedIndex === index && 'bg-gray-100 dark:bg-gray-900',
                           selectedItem === item && 'font-bold',
                           'cursor-pointer py-2 pl-2.5 pr-3 md:pr-5 md:pl-4 flex flex-row justify-between items-center'
@@ -246,7 +247,7 @@ const TeamsSearchCombobox: React.FC<Props> = ({
                         <div
                           className={clsx(['flex gap-3 items-center'], {
                             // TODO:
-                            'opacity-70 cursor-not-allowed': false,
+                            'opacity-70 cursor-not-allowed': item.projectAccess === true,
                           })}
                         >
                           <div className="flex flex-col text-sm">
@@ -265,11 +266,11 @@ const TeamsSearchCombobox: React.FC<Props> = ({
                         )}
 
                         {/* // TODO: */}
-                        {/*   {item.isTeamMember === true && ( */}
-                        {/*     <div> */}
-                        {/*       <Icons.userCheck2 className="h-4 w-4" /> */}
-                        {/*     </div> */}
-                        {/*   )} */}
+                        {item.projectAccess === true && (
+                          <div>
+                            <Icons.userCheck2 className="h-4 w-4" />
+                          </div>
+                        )}
                       </li>
                     ))}
                   </ScrollArea>
@@ -282,7 +283,7 @@ const TeamsSearchCombobox: React.FC<Props> = ({
       {/* // Selected */}
       <div
         className={clsx(
-          ['mt-3 bg-transparent inline-flex gap-2 items-center flex-wrap p-1.5 z-0'],
+          ['mt-3 bg-transparent inline-flex gap-2 items-center flex-wrap py-1.5 z-0'],
           {
             hidden: false,
           }
@@ -290,9 +291,9 @@ const TeamsSearchCombobox: React.FC<Props> = ({
       >
         {selectedTeams.map(function renderSelectedItem(selectedItemForRender, index) {
           return (
-            <Badge variant="outline" className="pl-0.5">
+            <Badge variant="outline" className="pl-3">
               <div
-                className="flex items-center gap-2 text-sm "
+                className="flex items-center gap-1.5 text-sm "
                 key={`selected-item-${index}`}
                 {...getSelectedItemProps({
                   selectedItem: selectedItemForRender,
@@ -301,13 +302,13 @@ const TeamsSearchCombobox: React.FC<Props> = ({
               >
                 <span className="text-muted-foregroundXXX">{selectedItemForRender.name}</span>
                 <span
-                  className="px-1 cursor-pointer text-opacity-50 hover:text-opacity-100 duration-200"
+                  className="pl-0.5 cursor-pointer opacity-70 hover:opacity-100 duration-200"
                   onClick={(e) => {
                     e.stopPropagation()
                     removeSelectedItem(selectedItemForRender)
                   }}
                 >
-                  &#10005;
+                  <Icons.x className="h-4 w-4" />
                 </span>
               </div>
             </Badge>
