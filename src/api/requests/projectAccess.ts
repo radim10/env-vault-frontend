@@ -4,6 +4,7 @@ import {
   ProjectAccessTeam,
   ProjectAccessUser,
   ProjectRole,
+  SearchProjectAccessTeam,
   SearchProjectAccessUser,
 } from '@/types/projectAccess'
 
@@ -56,8 +57,8 @@ export type UpdateProjectAccessTeamsResData = undefined
 
 // ids array for now
 export type UpdateProjectAccessTeamsData = {
-  // add?: Array<{ id: string; role: ProjectRole }>
-  add?: { ids: string[]; role: ProjectRole }
+  add?: Array<{ id: string; role: ProjectRole }>
+  // add?: { ids: string[]; role: ProjectRole }
   remove?: string[]
 }
 
@@ -65,7 +66,7 @@ export type UpdateProjectAccessTeamsArgs = ProjectAccessArgs & {
   data: UpdateProjectAccessTeamsData
 }
 
-export async function addProjectAccessTeams(args: UpdateProjectAccessTeamsArgs) {
+export async function updateProjectAccessTeams(args: UpdateProjectAccessTeamsArgs) {
   const { workspaceId, projectName, data } = args
 
   return await sendRequest<UpdateProjectAccessTeamsResData>({
@@ -116,6 +117,28 @@ export async function updateProjectAccessUsers(args: UpdateProjectAccessUsersArg
     basePath: 'workspaces',
     path: `${workspaceId}/projects/${projectName}/access/users`,
     body: data,
+  })
+}
+
+// search teams for access
+export type SearchSelectProjectAccessTeamsError = GetProjectAccessTeamsError
+export type SearchSelectProjectAccessTeamsData = SearchProjectAccessTeam[]
+
+export type SearchSelectProjectAccessTemsArgs = ProjectAccessArgs & {
+  search: string
+}
+
+export async function searchSelectProjectAccessTeams(args: SearchSelectProjectAccessTemsArgs) {
+  const { workspaceId, projectName, search } = args
+
+  return await sendRequest<SearchSelectProjectAccessTeamsData>({
+    method: 'GET',
+    basePath: 'workspaces',
+    path: `${workspaceId}/teams`,
+    params: {
+      search,
+      project: projectName,
+    },
   })
 }
 
