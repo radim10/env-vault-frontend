@@ -93,7 +93,9 @@ export type UpdateProjectAccessUsersResData = undefined
 
 export type UpdateProjectAccessUsersData = {
   // add?: Array<{ id: string; role: ProjectRole }>
-  add?: { ids: string[]; role: ProjectRole }
+  // add?: { ids: string[]; role: ProjectRole }
+  // add?: { [key in ProjectRole]?: string[] }
+  add?: Array<{ id: string; role: ProjectRole }>
   remove?: string[]
 }
 

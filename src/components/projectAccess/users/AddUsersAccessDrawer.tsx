@@ -19,6 +19,7 @@ import UsersCombobox from '@/components/teams/UsersCombobox'
 import { useImmer } from 'use-immer'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { UpdateProjectAccessUsersData } from '@/api/requests/projectAccess'
 
 const roles: ProjectRole[] = [ProjectRole.MEMBER, ProjectRole.ADMIN, ProjectRole.OWNER]
 
@@ -169,6 +170,27 @@ const AddUsersAccessDrawer: React.FC<Props> = ({
           disabled: selectedUsers.length === 0,
           loading: isLoading,
           onSubmit: () => {
+            const users = selectedUsers.map((user) => {
+              return {
+                id: user.id,
+                role: user.role,
+              }
+            })
+
+            const payload: UpdateProjectAccessUsersData = {
+              add: users,
+            }
+
+            console.log('payload', payload)
+
+            mutate({
+              workspaceId,
+              projectName,
+              data: {
+                add: users,
+              },
+            })
+
             // const teamIds = selectedTeams.map((team) => team.id)
             //
             // const payload: UpdateProjectAccessTeamsData = {
