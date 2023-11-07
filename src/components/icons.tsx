@@ -83,6 +83,7 @@ import {
   Diff,
   UserCheck2,
   UserCircle,
+  User2,
 } from 'lucide-react'
 
 export const Icons = {
@@ -172,4 +173,5 @@ export const Icons = {
   plusMinus: Diff,
   userCheck2: UserCheck2,
   userCircle: UserCircle,
+  user2: User2,
 }
