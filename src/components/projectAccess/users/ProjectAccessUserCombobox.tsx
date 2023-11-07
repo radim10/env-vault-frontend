@@ -290,8 +290,8 @@ const ProjectAccessUserCombobox: React.FC<Props> = ({
                             <span>{item.name}</span>
                             <span
                               className={clsx(['text-sm ease duration-200'], {
-                                'text-muted-foreground':
-                                  selectedUsers.findIndex((val) => item.id === val.id) === -1,
+                                'text-muted-foreground': true,
+                                // selectedUsers.findIndex((val) => item.id === val.id) === -1,
                               })}
                             >
                               {item.email}
