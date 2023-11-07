@@ -131,7 +131,7 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
     }
 
     //
-    setAddTeamDrawerOpened(false)
+    setAddUsersDrawerOpened(false)
 
     toast({
       title: 'Team(s) has been added',
@@ -166,7 +166,7 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
     },
   })
 
-  const [addTeamDrawerOpened, setAddTeamDrawerOpened] = useState(false)
+  const [addUsersDrawerOpened, setAddUsersDrawerOpened] = useState(false)
 
   const closeDeleteDialog = () => {
     if (!deleteTeamDialog) return
@@ -212,15 +212,15 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
       <AddUsersAccessDrawer
         workspaceId={workspaceId}
         projectName={projectName}
-        opened={true}
-        onClose={() => setAddTeamDrawerOpened(false)}
+        opened={addUsersDrawerOpened}
+        onClose={() => setAddUsersDrawerOpened(false)}
         onAdded={() => {}}
       />
 
       <TableToolbar
         userCount={table.getRowModel().rows.length ?? null}
         loading={isLoading}
-        onInviteUser={() => {}}
+        onInviteUser={() => setAddUsersDrawerOpened(true)}
         submitText="Add users"
         entity="users"
         isSearchCount={(table.getColumn('name')?.getFilterValue() as string)?.length > 0}
