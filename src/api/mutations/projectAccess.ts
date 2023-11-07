@@ -6,7 +6,7 @@ import {
   UpdateProjectAccessUsersArgs,
   UpdateProjectAccessUsersError,
   UpdateProjectAccessUsersResData,
-  addProjectAccessTeams,
+  updateProjectAccessTeams,
   updateProjectAccessUsers,
 } from '../requests/projectAccess'
 import { MutOpt } from './mutOpt'
@@ -18,7 +18,7 @@ export const useUpdateProjectAccessTeams = (opt?: MutOpt<UpdateProjectAccessTeam
     UpdateProjectAccessTeamsResData,
     UpdateProjectAccessTeamsError,
     UseAddProjectAccessTeamsVariables
-  >(addProjectAccessTeams, opt)
+  >(updateProjectAccessTeams, opt)
 
 // users
 type UseUpdateProjectAccessUsersVariables = UpdateProjectAccessUsersArgs
