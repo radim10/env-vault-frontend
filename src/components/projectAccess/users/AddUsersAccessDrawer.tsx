@@ -21,6 +21,7 @@ import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { UpdateProjectAccessUsersData } from '@/api/requests/projectAccess'
 import clsx from 'clsx'
+import ProjectAccessUserCombobox from './ProjectAccessUserCombobox'
 
 const roles: ProjectRole[] = [ProjectRole.MEMBER, ProjectRole.ADMIN, ProjectRole.OWNER]
 
@@ -148,10 +149,10 @@ const AddUsersAccessDrawer: React.FC<Props> = ({
             </Select>
           </div>
 
-          <UsersCombobox
-            hideSelected
+          <ProjectAccessUserCombobox
             queryClient={queryClient}
             workspaceId={workspaceId}
+            projectName={projectName}
             // project={projectName}
             disabled={isLoading}
             // selectedUsers={selectedUsers}
