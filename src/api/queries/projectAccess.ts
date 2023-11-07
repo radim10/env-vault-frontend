@@ -6,11 +6,15 @@ import {
   GetProjectAccessUsersArgs,
   GetProjectAccessUsersData,
   GetProjectAccessUsersError,
+  SearchSelectProjectAccessTeamsData,
+  SearchSelectProjectAccessTeamsError,
+  SearchSelectProjectAccessTemsArgs,
   SearchSelectProjectAccessUsersArgs,
   SearchSelectProjectAccessUsersData,
   SearchSelectProjectAccessUsersError,
   getProjectAccessTeams,
   getProjectAccessUsers,
+  searchSelectProjectAccessTeams,
   searchSelectProjectAccessUsers,
 } from '../requests/projectAccess'
 
@@ -32,6 +36,18 @@ export const useGetProjectAccessUsers = (
   return useQuery<GetProjectAccessUsersData, GetProjectAccessUsersError>(
     ['workspace', args.workspaceId, 'project', args.projectName, 'access', 'users'],
     () => getProjectAccessUsers(args),
+    opt
+  )
+}
+
+// search teams for combobox
+export const useSearchSelectProjectAccessTeams = (
+  args: SearchSelectProjectAccessTemsArgs,
+  opt?: UseQueryOptions<SearchSelectProjectAccessTeamsData, SearchSelectProjectAccessTeamsError>
+) => {
+  return useQuery<SearchSelectProjectAccessTeamsData, SearchSelectProjectAccessTeamsError>(
+    ['workspace-teams', args.workspaceId, args.search, 'project', args.projectName],
+    () => searchSelectProjectAccessTeams(args),
     opt
   )
 }
