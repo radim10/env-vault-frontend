@@ -80,8 +80,8 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
     name: string
   } | null>(null)
 
-  const handleGoToTeam = (teamId: string) => {
-    router.push(`/workspace/${workspaceId}/teams/${teamId}/members`)
+  const handleGotoUser = (teamId: string) => {
+    router.push(`/workspace/${workspaceId}/user/${teamId}/profile`)
   }
 
   const sortTeams = (
@@ -157,7 +157,7 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
     data: data ?? defaultData,
     columns,
     meta: {
-      goto: handleGoToTeam,
+      goto: handleGotoUser,
       delete: handleDeleteTeamAccess,
     },
     getCoreRowModel: getCoreRowModel(),
