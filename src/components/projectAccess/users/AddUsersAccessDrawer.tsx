@@ -20,6 +20,7 @@ import { useImmer } from 'use-immer'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { UpdateProjectAccessUsersData } from '@/api/requests/projectAccess'
+import clsx from 'clsx'
 
 const roles: ProjectRole[] = [ProjectRole.MEMBER, ProjectRole.ADMIN, ProjectRole.OWNER]
 
@@ -40,9 +41,11 @@ const AddUsersAccessDrawer: React.FC<Props> = ({
 }) => {
   const queryClient = useQueryClient()
 
-  const { mutate, isLoading, error } = useUpdateProjectAccessUsers()
+  const { mutate, isLoading, error } = useUpdateProjectAccessUsers({
+    onSuccess: () => onAdded(selectedUsers),
+  })
 
-  const [selectedUsers, setSelectedUsers] = useImmer<Array<User & { role: ProjectRole }>>([])
+  const [selectedUsers, setSelectedUsers] = useImmer<Array<ProjectAccessUser>>([])
   const [selectedRole, setSelectedRole] = useState<ProjectRole>(ProjectRole.MEMBER)
 
   const handleSelectedUsers = (users: User[], role: ProjectRole) => {
@@ -163,6 +166,7 @@ const AddUsersAccessDrawer: React.FC<Props> = ({
             <SelectedRoleSection
               users={selectedUsers?.filter((val) => val?.role === ProjectRole.OWNER)}
               role={ProjectRole.OWNER}
+              isLoading={isLoading}
               onRemove={(user) => handleRemovedUser(user, ProjectRole.OWNER)}
             />
           )}
@@ -171,14 +175,16 @@ const AddUsersAccessDrawer: React.FC<Props> = ({
             <SelectedRoleSection
               users={selectedUsers?.filter((val) => val?.role === ProjectRole.ADMIN)}
               role={ProjectRole.ADMIN}
+              isLoading={isLoading}
               onRemove={(user) => handleRemovedUser(user, ProjectRole.ADMIN)}
             />
           )}
 
-          {selectedUsers?.filter((val, index) => val?.role === ProjectRole.MEMBER).length > 0 && (
+          {selectedUsers?.filter((val) => val?.role === ProjectRole.MEMBER).length > 0 && (
             <SelectedRoleSection
               users={selectedUsers?.filter((val) => val?.role === ProjectRole.MEMBER)}
               role={ProjectRole.MEMBER}
+              isLoading={isLoading}
               onRemove={(user) => handleRemovedUser(user, ProjectRole.MEMBER)}
             />
           )}
@@ -191,10 +197,11 @@ const AddUsersAccessDrawer: React.FC<Props> = ({
 interface SectionProps {
   role: ProjectRole
   users: User[]
+  isLoading?: boolean
   onRemove: (index: number) => void
 }
 
-const SelectedRoleSection = ({ role, users, onRemove }: SectionProps) => {
+const SelectedRoleSection = ({ role, users, isLoading, onRemove }: SectionProps) => {
   return (
     <>
       <div className="flex flex-col gap-3">
@@ -213,9 +220,15 @@ const SelectedRoleSection = ({ role, users, onRemove }: SectionProps) => {
 
                   <span className="text-muted-foregroundXXX">{user.name}</span>
                   <span
-                    className="px-1 cursor-pointer text-opacity-50 hover:text-opacity-100 duration-200"
+                    className={clsx(
+                      ['px-1 cursor-pointer text-opacity-50 hover:text-opacity-100 duration-200'],
+                      {
+                        'opacity-0': isLoading,
+                      }
+                    )}
                     onClick={(e) => {
                       e.stopPropagation()
+                      if (isLoading) return
                       onRemove(index)
                       // removeSelectedItem(selectedItemForRender)
                     }}
