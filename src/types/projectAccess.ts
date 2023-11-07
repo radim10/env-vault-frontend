@@ -16,6 +16,11 @@ export type SearchProjectAccessTeam = ListTeam & {
   projectAccess: boolean
 }
 
+export type SearchProjectAccessUser = User & {
+  hasProjectAccess: boolean
+  isTeamAccess: boolean
+}
+
 // useres
 export type ProjectAccessUser = User & {
   role: ProjectRole
