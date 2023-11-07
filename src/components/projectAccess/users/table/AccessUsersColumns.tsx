@@ -178,7 +178,7 @@ export const accessUsersColumns: ColumnDef<ProjectAccessUser>[] = [
                   disabled={false}
                   onClick={() => {
                     if (isAutoRole) return
-                    meta.deleteUser({ name: row.original.name, id: row.original.id })
+                    meta.delete([{ name: row.original.name, id: row.original.id }])
                   }}
                   className={clsx([''], {
                     'opacity-30 hover:bg-transparent cursor-default': isAutoRole,

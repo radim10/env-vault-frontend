@@ -32,6 +32,7 @@ import { useToast } from '@/components/ui/use-toast'
 import TableToolbar from '@/components/users/TableToolbar'
 import { ProjectAccessUser } from '@/types/projectAccess'
 import AddUsersAccessDrawer from '../AddUsersAccessDrawer'
+import DeleteProjectUserAccessDialog from '../DeleteUserAccessDialog'
 
 interface DataTableProps {
   workspaceId: string
@@ -75,10 +76,10 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
 
   const getCurrentKey = () => ['workspace', workspaceId, 'project', projectName, 'access', 'users']
 
-  const [deleteTeamDialog, setDeleteTeamDialog] = useState<{
+  const [deleteUsersDialog, setDeleteUsersDialog] = useState<Array<{
     id: string
     name: string
-  } | null>(null)
+  }> | null>(null)
 
   const handleGotoUser = (teamId: string) => {
     router.push(`/workspace/${workspaceId}/user/${teamId}/profile`)
@@ -103,32 +104,35 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
     }
   }
 
-  const handleDeleteTeamAccess = (args: { id: string; name: string }) => setDeleteTeamDialog(args)
+  const handleDeleteUserAccess = (args: { id: string; name: string }[]) =>
+    setDeleteUsersDialog(args)
 
   const [addUsersDrawerOpened, setAddUsersDrawerOpened] = useState(false)
 
   const closeDeleteDialog = () => {
-    if (!deleteTeamDialog) return
+    if (!deleteUsersDialog) return
 
-    setDeleteTeamDialog({ ...deleteTeamDialog, id: '' })
+    setDeleteUsersDialog({ ...deleteUsersDialog?.map((user) => ({ ...user, id: '' })) })
     setTimeout(() => {
-      setDeleteTeamDialog(null)
+      setDeleteUsersDialog(null)
     }, 150)
   }
 
-  const handleDeletedTeam = (id: string) => {
+  const handleDeletedUsers = (users: Array<{ id: string; name: string }>) => {
     const key = getCurrentKey()
 
     const currentTeams = queryClient.getQueryData<ListTeam[]>(key)
 
     if (currentTeams) {
-      const updatedTeams = [...currentTeams].filter((team) => team.id !== id)
+      const updatedTeams = [...currentTeams].filter(
+        (team) => !users.some((user) => user.id === team.id)
+      )
       queryClient.setQueryData(key, updatedTeams)
     }
 
     toast({
-      title: 'Team has been removed',
-      description: 'Team members have no access anymore',
+      title: 'User(s) has been removed',
+      description: 'Users have no user access anymore',
       variant: 'success',
     })
   }
@@ -158,7 +162,7 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
     columns,
     meta: {
       goto: handleGotoUser,
-      delete: handleDeleteTeamAccess,
+      delete: handleDeleteUserAccess,
     },
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: (sorting) => {
@@ -199,6 +203,20 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
         onClose={() => setAddUsersDrawerOpened(false)}
         onAdded={handleAddedUsers}
       />
+
+      {deleteUsersDialog !== null && (
+        <DeleteProjectUserAccessDialog
+          users={deleteUsersDialog}
+          workspaceId={workspaceId}
+          projectName={projectName}
+          opened={deleteUsersDialog !== null}
+          onClose={() => setDeleteUsersDialog(null)}
+          onSuccess={() => {
+            handleDeletedUsers(deleteUsersDialog)
+            closeDeleteDialog()
+          }}
+        />
+      )}
 
       <TableToolbar
         userCount={table.getRowModel().rows.length ?? null}
