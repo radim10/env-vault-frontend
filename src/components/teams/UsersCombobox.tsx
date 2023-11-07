@@ -17,6 +17,7 @@ interface Props {
   teamId?: string
   queryClient: QueryClient
   disabled?: boolean
+  hideSelected?: boolean
 
   selectedUsers: User[]
   onSelect: (users: User[]) => void
@@ -24,6 +25,7 @@ interface Props {
 
 const UsersCombobox: React.FC<Props> = ({
   workspaceId,
+  hideSelected,
   teamId,
   queryClient,
   selectedUsers,
@@ -287,45 +289,47 @@ const UsersCombobox: React.FC<Props> = ({
         </div>
       </div>
       {/* // Selected */}
-      <div
-        className={clsx(
-          ['mt-3 bg-transparent inline-flex gap-2 items-center flex-wrap p-1.5 z-0'],
-          {
-            hidden: false,
-          }
-        )}
-      >
-        {selectedUsers.map(function renderSelectedItem(selectedItemForRender, index) {
-          return (
-            <Badge variant="outline" className="pl-0.5">
-              <div
-                className="flex items-center gap-2 text-sm "
-                key={`selected-item-${index}`}
-                {...getSelectedItemProps({
-                  selectedItem: selectedItemForRender,
-                  index,
-                })}
-              >
-                <Avatar className="w-7 h-7 opacity-90">
-                  <AvatarImage src={selectedItemForRender.avatarUrl ?? undefined} />
-                  <AvatarFallback className="bg-transparent border-2 text-sm">CN</AvatarFallback>
-                </Avatar>
-
-                <span className="text-muted-foregroundXXX">{selectedItemForRender.name}</span>
-                <span
-                  className="px-1 cursor-pointer text-opacity-50 hover:text-opacity-100 duration-200"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    removeSelectedItem(selectedItemForRender)
-                  }}
+      {hideSelected !== true && (
+        <div
+          className={clsx(
+            ['mt-3 bg-transparent inline-flex gap-2 items-center flex-wrap p-1.5 z-0'],
+            {
+              hidden: false,
+            }
+          )}
+        >
+          {selectedUsers.map(function renderSelectedItem(selectedItemForRender, index) {
+            return (
+              <Badge variant="outline" className="pl-0.5">
+                <div
+                  className="flex items-center gap-2 text-sm "
+                  key={`selected-item-${index}`}
+                  {...getSelectedItemProps({
+                    selectedItem: selectedItemForRender,
+                    index,
+                  })}
                 >
-                  &#10005;
-                </span>
-              </div>
-            </Badge>
-          )
-        })}
-      </div>
+                  <Avatar className="w-7 h-7 opacity-90">
+                    <AvatarImage src={selectedItemForRender.avatarUrl ?? undefined} />
+                    <AvatarFallback className="bg-transparent border-2 text-sm">CN</AvatarFallback>
+                  </Avatar>
+
+                  <span className="text-muted-foregroundXXX">{selectedItemForRender.name}</span>
+                  <span
+                    className="px-1 cursor-pointer text-opacity-50 hover:text-opacity-100 duration-200"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      removeSelectedItem(selectedItemForRender)
+                    }}
+                  >
+                    &#10005;
+                  </span>
+                </div>
+              </Badge>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
