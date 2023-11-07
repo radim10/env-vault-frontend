@@ -73,7 +73,7 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
     projectName,
   })
 
-  const getCurrentKey = () => ['workspace', workspaceId, 'project', projectName, 'access', 'teams']
+  const getCurrentKey = () => ['workspace', workspaceId, 'project', projectName, 'access', 'users']
 
   const [deleteTeamDialog, setDeleteTeamDialog] = useState<{
     id: string
@@ -103,68 +103,7 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
     }
   }
 
-  const handleAddedTeams = (newTeams: ListTeam[]) => {
-    const key = getCurrentKey()
-
-    const currentTeams = queryClient.getQueryData<ListTeam[]>(key)
-
-    if (currentTeams) {
-      const sortBy = sorting?.[0]?.id
-      const descSort = sorting?.[0]?.desc
-
-      // TODO: fix
-      // const updatedTeams = produce(currentTeams, (draftData) => {
-      //   draftData = [...currentTeams, ...newTeams]
-      //   console.log('draftData', draftData)
-      //
-      //   const sorted = sortTeams(draftData, sortBy as 'membersCount' | 'name', descSort)
-      //   draftData = sorted
-      //
-      //   console.log('draftDataSorted', draftData)
-      // })
-      //
-      // console.log('updatedTeams', updatedTeams)
-      const updatedTeams = [...currentTeams, ...newTeams]
-      const sortedUpdated = sortTeams(updatedTeams, sortBy as 'membersCount' | 'name', descSort)
-
-      queryClient.setQueryData(key, sortedUpdated)
-    }
-
-    //
-    setAddUsersDrawerOpened(false)
-
-    toast({
-      title: 'Team(s) has been added',
-      variant: 'success',
-    })
-  }
-
   const handleDeleteTeamAccess = (args: { id: string; name: string }) => setDeleteTeamDialog(args)
-
-  const table = useReactTable({
-    pageCount: data ? Math.ceil(data?.length / pageSize) : undefined,
-    data: data ?? defaultData,
-    columns,
-    meta: {
-      goto: handleGoToTeam,
-      delete: handleDeleteTeamAccess,
-    },
-    getCoreRowModel: getCoreRowModel(),
-    onSortingChange: (sorting) => {
-      setSorting(sorting)
-    },
-    onPaginationChange: setPagination,
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    enableSorting: !isLoading,
-    state: {
-      sorting,
-      pagination,
-      columnFilters,
-    },
-  })
 
   const [addUsersDrawerOpened, setAddUsersDrawerOpened] = useState(false)
 
@@ -194,6 +133,50 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
     })
   }
 
+  const handleAddedUsers = (newUsers: ProjectAccessUser[]) => {
+    const key = getCurrentKey()
+
+    const currentUsers = queryClient.getQueryData<ProjectAccessUser[]>(key)
+
+    // TODO: sorting etc..
+    if (currentUsers) {
+      const updatedUsers = [...currentUsers, ...newUsers]
+      queryClient.setQueryData(key, updatedUsers)
+    }
+
+    setAddUsersDrawerOpened(false)
+
+    toast({
+      title: 'Team(s) has been added',
+      variant: 'success',
+    })
+  }
+
+  const table = useReactTable({
+    pageCount: data ? Math.ceil(data?.length / pageSize) : undefined,
+    data: data ?? defaultData,
+    columns,
+    meta: {
+      goto: handleGoToTeam,
+      delete: handleDeleteTeamAccess,
+    },
+    getCoreRowModel: getCoreRowModel(),
+    onSortingChange: (sorting) => {
+      setSorting(sorting)
+    },
+    onPaginationChange: setPagination,
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
+    enableSorting: !isLoading,
+    state: {
+      sorting,
+      pagination,
+      columnFilters,
+    },
+  })
+
   return (
     <div>
       {/* {deleteTeamDialog !== null && ( */}
@@ -214,7 +197,7 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
         projectName={projectName}
         opened={addUsersDrawerOpened}
         onClose={() => setAddUsersDrawerOpened(false)}
-        onAdded={() => {}}
+        onAdded={handleAddedUsers}
       />
 
       <TableToolbar
