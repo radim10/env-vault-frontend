@@ -71,93 +71,6 @@ const AddUsersAccessDrawer: React.FC<Props> = ({
     })
   }
 
-  // const [usersByRole, setUsersByRole] = useImmer<{
-  //   [key in ProjectRole | any]: User[]
-  // }>({
-  //   MEMBER: [],
-  //   ADMIN: [],
-  //   OWNER: [],
-  // })
-  //
-  //
-  // const handleSelectedUsers = (users: User[], role: ProjectRole) => {
-  //   const allCurrentSelected = [...selectedMembers, ...selectedAdmins, ...selectedOwners]
-  //
-  //   const usersToDelete = allCurrentSelected.filter((user) => {
-  //     return users.some((selectedUser) => selectedUser.id === user.id)
-  //   })
-  //
-  //   for (const user of usersToDelete) {
-  //     const membersIndex = selectedMembers.findIndex((u) => u.id === user.id)
-  //
-  //     if (membersIndex !== -1) {
-  //       setSelectedMembers((draft) => {
-  //         draft.splice(membersIndex, 1)
-  //       })
-  //       break
-  //     }
-  //
-  //     const adminsIndex = selectedAdmins.findIndex((u) => u.id === user.id)
-  //
-  //     if (adminsIndex !== -1) {
-  //       setSelectedAdmins((draft) => {
-  //         draft.splice(adminsIndex, 1)
-  //       })
-  //       break
-  //     }
-  //
-  //     const ownersIndex = selectedOwners.findIndex((u) => u.id === user.id)
-  //
-  //     if (ownersIndex !== -1) {
-  //       setSelectedOwners((draft) => {
-  //         draft.splice(ownersIndex, 1)
-  //       })
-  //
-  //       break
-  //     }
-  //   }
-  //
-  //   const newUsers = users
-  //   // const newUsers = users?.filter((user) => {
-  //   //   return !usersToDelete.some((selectedUser) => selectedUser.id === user.id)
-  //   // })
-  //   //
-  //   if (role === ProjectRole.MEMBER) {
-  //     setSelectedMembers(newUsers)
-  //   } else if (role === ProjectRole.ADMIN) {
-  //     setSelectedAdmins(newUsers)
-  //   } else if (role === ProjectRole.OWNER) {
-  //     setSelectedOwners(newUsers)
-  //   }
-  // }
-
-  // const handleSelectedUsers = (users: User[], role: ProjectRole) => {
-  //   const allCurrentSelected = Object.values(usersByRole).flat(1)
-  //
-  //   console.log('allCurrentSelected', allCurrentSelected)
-  //   const uniqueUsers = users
-  //
-  //   // const uniqueUsers = users.filter((user) => {
-  //   //   return !allCurrentSelected.some((selectedUser) => selectedUser.id === user.id)
-  //   // })
-  //   //
-  //   // console.log('uniqueUsers', uniqueUsers)
-  //
-  //   if (role === ProjectRole.MEMBER) {
-  //     setUsersByRole((draft) => {
-  //       draft.MEMBER = uniqueUsers
-  //     })
-  //   } else if (role === ProjectRole.ADMIN) {
-  //     setUsersByRole((draft) => {
-  //       draft.ADMIN = uniqueUsers
-  //     })
-  //   } else if (role === ProjectRole.OWNER) {
-  //     setUsersByRole((draft) => {
-  //       draft.OWNER = uniqueUsers
-  //     })
-  //   }
-  // }
-  //
   return (
     <>
       <Drawer
@@ -190,21 +103,6 @@ const AddUsersAccessDrawer: React.FC<Props> = ({
                 add: users,
               },
             })
-
-            // const teamIds = selectedTeams.map((team) => team.id)
-            //
-            // const payload: UpdateProjectAccessTeamsData = {
-            //   add: {
-            //     ids: teamIds,
-            //     role: selectedRole,
-            //   },
-            // }
-            //
-            // mutate({
-            //   workspaceId,
-            //   projectName,
-            //   data: payload,
-            // })
           },
         }}
       >
