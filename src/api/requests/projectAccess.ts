@@ -1,6 +1,11 @@
 import { User } from '@/types/users'
 import sendRequest, { APIError } from '@/api/instance'
-import { ProjectAccessTeam, ProjectAccessUser, ProjectRole } from '@/types/projectAccess'
+import {
+  ProjectAccessTeam,
+  ProjectAccessUser,
+  ProjectRole,
+  SearchProjectAccessUser,
+} from '@/types/projectAccess'
 
 // NOTE: errors
 type ProjectAccessErrorCode = 'project_not_found'
@@ -111,5 +116,27 @@ export async function updateProjectAccessUsers(args: UpdateProjectAccessUsersArg
     basePath: 'workspaces',
     path: `${workspaceId}/projects/${projectName}/access/users`,
     body: data,
+  })
+}
+
+// search users for access
+export type SearchSelectProjectAccessUsersError = GetProjectAccessTeamsError
+export type SearchSelectProjectAccessUsersData = SearchProjectAccessUser[]
+
+export type SearchSelectProjectAccessUsersArgs = ProjectAccessArgs & {
+  value: string
+}
+
+export async function searchSelectProjectAccessUsers(args: SearchSelectProjectAccessUsersArgs) {
+  const { workspaceId, projectName, value } = args
+
+  return await sendRequest<SearchSelectProjectAccessUsersData>({
+    method: 'GET',
+    basePath: 'workspaces',
+    path: `${workspaceId}/users/search`,
+    params: {
+      value,
+      project: projectName,
+    },
   })
 }
