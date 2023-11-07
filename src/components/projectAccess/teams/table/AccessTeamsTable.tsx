@@ -105,10 +105,10 @@ const AccessTeamsTable: React.FC<DataTableProps> = ({ columns, projectName, work
     }
   }
 
-  const handleAddedTeams = (newTeams: ListTeam[]) => {
+  const handleAddedTeams = (newTeams: ProjectAccessTeam[]) => {
     const key = getCurrentKey()
 
-    const currentTeams = queryClient.getQueryData<ListTeam[]>(key)
+    const currentTeams = queryClient.getQueryData<ProjectAccessTeam[]>(key)
 
     if (currentTeams) {
       const sortBy = sorting?.[0]?.id
