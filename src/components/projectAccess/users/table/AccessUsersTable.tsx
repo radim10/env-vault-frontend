@@ -31,6 +31,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/use-toast'
 import TableToolbar from '@/components/users/TableToolbar'
 import { ProjectAccessUser } from '@/types/projectAccess'
+import AddUsersAccessDrawer from '../AddUsersAccessDrawer'
 
 interface DataTableProps {
   workspaceId: string
@@ -208,6 +209,13 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
       {/*     }} */}
       {/*   /> */}
       {/* )} */}
+      <AddUsersAccessDrawer
+        workspaceId={workspaceId}
+        projectName={projectName}
+        opened={true}
+        onClose={() => setAddTeamDrawerOpened(false)}
+        onAdded={() => {}}
+      />
 
       <TableToolbar
         userCount={table.getRowModel().rows.length ?? null}
