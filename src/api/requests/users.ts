@@ -1,6 +1,7 @@
 import { ListTeam, Team } from '@/types/teams'
 import sendRequest, { APIError } from '../instance'
 import { User, WorkspaceInvitation, WorkspaceUser, WorkspaceUserRole } from '@/types/users'
+import { UserAccessProject } from '@/types/userAccess'
 
 type UsersErrorCode =
   | 'workspace_not_found'
@@ -95,6 +96,25 @@ export async function getUserTeams(args: GetUserTeamsArgs) {
     method: 'GET',
     basePath: `workspaces`,
     path: `${workspaceId}/users/${userId}/teams`,
+  })
+}
+
+// get user project access - granted for individual users
+export type GetUserAccessProjectsError = UsersError<'workspace_not_found' | 'user_not_found'>
+export type GetUserAccessProjectsData = UserAccessProject[]
+
+export type GetUserAccessProjectsArgs = {
+  workspaceId: string
+  userId: string
+}
+
+export async function getUserAccessProjects(args: GetUserAccessProjectsArgs) {
+  const { workspaceId, userId } = args
+
+  return await sendRequest<GetUserAccessProjectsData>({
+    method: 'GET',
+    basePath: `workspaces`,
+    path: `${workspaceId}/users/${userId}/access/user`,
   })
 }
 

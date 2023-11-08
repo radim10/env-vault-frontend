@@ -3,6 +3,9 @@ import {
   CheckWorkspaceUserEmailArgs,
   CheckWorkspaceUserEmailError,
   CheckWorkspaceUserEmailResData,
+  GetUserAccessProjectsArgs,
+  GetUserAccessProjectsData,
+  GetUserAccessProjectsError,
   GetUserTeamsArgs,
   GetUserTeamsData,
   GetUserTeamsError,
@@ -19,6 +22,7 @@ import {
   SearchWorkspaceUsersData,
   SearchWorkspaceUsersError,
   checkWorkspaceUserEmail,
+  getUserAccessProjects,
   getUserTeams,
   getWorkspaceUser,
   getWorkspaceUsers,
@@ -50,6 +54,18 @@ export const useGetUserTeams = (
     ['workspace', args.workspaceId, 'user', args.userId, 'teams'],
     () => {
       return getUserTeams(args)
+    },
+    opt
+  )
+
+export const useGetUserAccessProjects = (
+  args: GetUserAccessProjectsArgs,
+  opt?: UseQueryOptions<GetUserAccessProjectsData, GetUserAccessProjectsError>
+) =>
+  useQuery<GetUserAccessProjectsData, GetUserAccessProjectsError>(
+    ['workspace', args.workspaceId, 'user', args.userId, 'projects-user'],
+    () => {
+      return getUserAccessProjects(args)
     },
     opt
   )
