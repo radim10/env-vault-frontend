@@ -1,3 +1,4 @@
+import TeamAccess from '@/components/teams/TeamAccess'
 import TeamMembers from '@/components/teams/TeamMembers'
 import TeamSettings from '@/components/teams/TeamSettings'
 import { Metadata } from 'next'
@@ -19,6 +20,9 @@ export default function TeamPage({
         <TeamMembers workspaceId={params.workspace} teamId={params.teamId} />
       )}
       {params.tab === 'settings' && <TeamSettings />}
+      {params.tab === 'access' && (
+        <TeamAccess workspaceId={params.workspace} teamId={params.teamId} />
+      )}
     </>
   )
 }
