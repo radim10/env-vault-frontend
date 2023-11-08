@@ -126,7 +126,7 @@ const UserAccessTable: React.FC<DataTableProps> = ({ columns, userId, workspaceI
     <div className="rounded-md border">
       <div className="px-3 pt-3 md:px-5 md:pt-4">
         <div className="gap-3 flex items-center">
-          <TypographyH4>Individual Access</TypographyH4>
+          <TypographyH4>Individual access</TypographyH4>
           <Icons.user className="h-5 w-5 opacity-80" />
         </div>
       </div>

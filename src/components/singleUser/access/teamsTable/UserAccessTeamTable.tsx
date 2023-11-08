@@ -80,7 +80,7 @@ const UserAccessTeamTable: React.FC<DataTableProps> = ({ columns, userId, worksp
   }
 
   const handleGotoTeam = (teamId: string) => {
-    router.push(`/workspace/${workspaceId}/users/teams/${teamId}`)
+    router.push(`/workspace/${workspaceId}/teams/${teamId}`)
   }
 
   const sortTeams = (
@@ -131,7 +131,7 @@ const UserAccessTeamTable: React.FC<DataTableProps> = ({ columns, userId, worksp
     <div className="rounded-md border">
       <div className="px-3 pt-3 md:px-5 md:pt-4">
         <div className="gap-3 flex items-center">
-          <TypographyH4>Team Access</TypographyH4>
+          <TypographyH4>Team access</TypographyH4>
           <Icons.users2 className="h-5 w-5 opacity-80" />
         </div>
       </div>
