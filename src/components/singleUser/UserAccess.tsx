@@ -18,7 +18,7 @@ const UserAccess: React.FC<Props> = ({ workspaceId, userId }) => {
   // })
 
   return (
-    <div>
+    <div className="flex flex-col gap-6 md:gap-8">
       <UserAccessTable
         userId={userId}
         workspaceId={workspaceId}
