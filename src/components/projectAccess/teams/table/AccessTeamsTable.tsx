@@ -236,6 +236,11 @@ const AccessTeamsTable: React.FC<DataTableProps> = ({ columns, projectName, work
     console.log('updatedUsers', updatedTeams)
 
     queryClient.setQueryData(key, updatedTeams)
+
+    toast({
+      title: 'Team role has been updated',
+      variant: 'success',
+    })
   }
 
   return (

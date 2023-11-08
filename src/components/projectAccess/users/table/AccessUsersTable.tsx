@@ -191,6 +191,11 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
     console.log('updatedUsers', updatedUsers)
 
     queryClient.setQueryData(key, updatedUsers)
+
+    toast({
+      title: 'User role has been updated',
+      variant: 'success',
+    })
   }
 
   const table = useReactTable({
