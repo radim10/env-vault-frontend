@@ -9,4 +9,5 @@ export type UserAccessTeamProject = {
   name: string
   role: ProjectRole
   teamName: string
+  teamId: string
 }
