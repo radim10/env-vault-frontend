@@ -1,7 +1,7 @@
 'use client'
 
 import clsx from 'clsx'
-import { User, WorkspaceUserRole } from '@/types/users'
+import { WorkspaceUserRole } from '@/types/users'
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { ColumnDef } from '@tanstack/react-table'
@@ -13,24 +13,29 @@ import UserRoleBadge from '@/components/users/UserRoleBadge'
 
 // TODO: role column
 export const accessUsersColumns: ColumnDef<ProjectAccessUser>[] = [
+  // TODO: toggle all excpet auto roles with meta event or remove it???
   {
     id: 'select',
+    accessorKey: 'isAutoRole',
     header: ({ table }) => (
       <div className="flex items-center">
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-          className={clsx([''], {
-            // 'mt-3': table.getIsAllPageRowsSelected(),
-            'dark:border-gray-600 border-gray-400': !table.getIsAllPageRowsSelected(),
-          })}
-        />
+        <>
+          <Checkbox
+            checked={table.getIsAllPageRowsSelected()}
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            aria-label="Select all"
+            className={clsx([''], {
+              // 'mt-3': table.getIsAllPageRowsSelected(),
+              'dark:border-gray-600 border-gray-400': !table.getIsAllPageRowsSelected(),
+            })}
+          />
+        </>
       </div>
     ),
     cell: ({ row }) => (
       <div className="flex items-center">
         <Checkbox
+          disabled={row?.original?.isAutoRole === true}
           checked={row.getIsSelected()}
           className={clsx([], {
             // 'mt-3': row.getIsSelected(),
