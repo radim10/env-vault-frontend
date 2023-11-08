@@ -131,7 +131,7 @@ const UserAccessTable: React.FC<DataTableProps> = ({ columns, userId, workspaceI
         </div>
       </div>
 
-      <div className="px-3 md:px-5">
+      <div className="pl-3 md:pl-5 pr-1 md:pr-3">
         <TableToolbar
           hideSubmit
           count={table.getRowModel().rows.length ?? null}
