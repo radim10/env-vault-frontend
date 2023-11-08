@@ -71,7 +71,7 @@ export const userAccessTeamProjectColumns: ColumnDef<UserAccessTeamProject>[] = 
       return (
         <div
           onClick={() => meta.gotoTeam(teamId)}
-          className="text-left flex items-center gap-2 hover:text-primary ease duration-200 cursor-pointer"
+          className="text-left flex items-center gap-2 hover:text-primary ease duration-200 cursor-pointer w-fit"
         >
           {teamName}
         </div>
