@@ -33,7 +33,8 @@ import AddTeamAccessDrawer from '../AddTeamAccessDrawer'
 import { useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/use-toast'
 import DeleteProjectTeamAccessDialog from '../DeleteTeamAccessDialog'
-import { ProjectAccessTeam } from '@/types/projectAccess'
+import { ProjectAccessTeam, ProjectRole } from '@/types/projectAccess'
+import UpdateTeamAccessRoleDialog from '../UpdateTeamAccessRoleDialog'
 
 interface DataTableProps {
   workspaceId: string
@@ -143,6 +144,13 @@ const AccessTeamsTable: React.FC<DataTableProps> = ({ columns, projectName, work
 
   const handleDeleteTeamAccess = (args: { id: string; name: string }) => setDeleteTeamDialog(args)
 
+  const handleChangeRole = (args: {
+    id: string
+    name: string
+    membersCount: number
+    role: ProjectRole
+  }) => setUpdateTeamRoleDialog(args)
+
   const table = useReactTable({
     pageCount: data ? Math.ceil(data?.length / pageSize) : undefined,
     data: data ?? defaultData,
@@ -150,6 +158,7 @@ const AccessTeamsTable: React.FC<DataTableProps> = ({ columns, projectName, work
     meta: {
       goto: handleGoToTeam,
       delete: handleDeleteTeamAccess,
+      changeRole: handleChangeRole,
     },
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: (sorting) => {
@@ -196,6 +205,39 @@ const AccessTeamsTable: React.FC<DataTableProps> = ({ columns, projectName, work
     })
   }
 
+  const [updateTeamRoleDialog, setUpdateTeamRoleDialog] = useState<{
+    id: string
+    name: string
+    membersCount: number
+    role: ProjectRole
+  } | null>(null)
+
+  const closeUpdateRoleDialog = () => {
+    if (!updateTeamRoleDialog) return
+
+    setUpdateTeamRoleDialog({ ...updateTeamRoleDialog, id: '' })
+    setTimeout(() => {
+      setUpdateTeamRoleDialog(null)
+    }, 150)
+  }
+
+  const handleUpdatedTeamRole = (user: { id: string; role: ProjectRole }) => {
+    const key = getCurrentKey()
+    const currentTeams = queryClient.getQueryData<ProjectAccessTeam[]>(key)
+
+    if (!currentTeams) return
+    const teamIndex = currentTeams.findIndex((u) => u.id === user.id)
+
+    if (teamIndex === -1) return
+    const updatedTeams = produce([...currentTeams], (draftData) => {
+      draftData[teamIndex].role = user.role
+    })
+
+    console.log('updatedUsers', updatedTeams)
+
+    queryClient.setQueryData(key, updatedTeams)
+  }
+
   return (
     <div>
       <AddTeamAccessDrawer
@@ -216,6 +258,20 @@ const AccessTeamsTable: React.FC<DataTableProps> = ({ columns, projectName, work
           onSuccess={() => {
             handleDeletedTeam(deleteTeamDialog?.id)
             closeDeleteDialog()
+          }}
+        />
+      )}
+
+      {updateTeamRoleDialog !== null && (
+        <UpdateTeamAccessRoleDialog
+          team={updateTeamRoleDialog}
+          workspaceId={workspaceId}
+          projectName={projectName}
+          opened={updateTeamRoleDialog?.id !== ''}
+          onClose={() => closeUpdateRoleDialog()}
+          onSuccess={(newRole) => {
+            handleUpdatedTeamRole({ id: updateTeamRoleDialog.id, role: newRole })
+            closeUpdateRoleDialog()
           }}
         />
       )}
