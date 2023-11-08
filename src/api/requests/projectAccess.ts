@@ -1,4 +1,3 @@
-import { User } from '@/types/users'
 import sendRequest, { APIError } from '@/api/instance'
 import {
   ProjectAccessTeam,
@@ -9,7 +8,7 @@ import {
 } from '@/types/projectAccess'
 
 // NOTE: errors
-type ProjectAccessErrorCode = 'project_not_found'
+type ProjectAccessErrorCode = 'project_not_found' | 'team_not_found' | 'user_not_found'
 export type ProjectAccessError<T extends ProjectAccessErrorCode | void> = APIError<
   T | 'workspace_not_found'
 >
@@ -140,6 +139,32 @@ export async function updateProjectAccessUserRole(args: UpdateProjectAccessUserR
     method: 'PATCH',
     basePath: 'workspaces',
     path: `${workspaceId}/projects/${projectName}/access/users/${userId}`,
+    body: data,
+  })
+}
+
+// update single team role
+export type UpdateProjectAccessTeamRoleError = ProjectAccessError<
+  'project_not_found' | 'team_not_found'
+>
+export type UpdateProjectAccessTeamRoleResData = undefined
+
+export type UpdateProjectAccessTeamRoleData = {
+  role: ProjectRole
+}
+
+export type UpdateProjectAccessTeamRoleArgs = ProjectAccessArgs & {
+  teamId: string
+  data: UpdateProjectAccessTeamRoleData
+}
+
+export async function updateProjectAccessTeamRole(args: UpdateProjectAccessTeamRoleArgs) {
+  const { workspaceId, projectName, teamId, data } = args
+
+  return await sendRequest<UpdateProjectAccessTeamRoleResData>({
+    method: 'PATCH',
+    basePath: 'workspaces',
+    path: `${workspaceId}/projects/${projectName}/access/teams/${teamId}`,
     body: data,
   })
 }

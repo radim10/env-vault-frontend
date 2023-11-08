@@ -1,5 +1,8 @@
 import { useMutation } from '@tanstack/react-query'
 import {
+  UpdateProjectAccessTeamRoleArgs,
+  UpdateProjectAccessTeamRoleError,
+  UpdateProjectAccessTeamRoleResData,
   UpdateProjectAccessTeamsArgs,
   UpdateProjectAccessTeamsError,
   UpdateProjectAccessTeamsResData,
@@ -9,6 +12,7 @@ import {
   UpdateProjectAccessUsersArgs,
   UpdateProjectAccessUsersError,
   UpdateProjectAccessUsersResData,
+  updateProjectAccessTeamRole,
   updateProjectAccessTeams,
   updateProjectAccessUserRole,
   updateProjectAccessUsers,
@@ -35,10 +39,17 @@ export const useUpdateProjectAccessUsers = (opt?: MutOpt<UpdateProjectAccessUser
   >(updateProjectAccessUsers, opt)
 
 // update single user role
-
 export const useUpdateProjectAccessUserRole = (opt?: MutOpt<UpdateProjectAccessUserRoleResData>) =>
   useMutation<
     UpdateProjectAccessUserRoleResData,
     UpdateProjectAccessUserRoleError,
     UpdateProjectAccessUserRoleArgs
   >(updateProjectAccessUserRole, opt)
+
+// update single team role
+export const useUpdateProjectAccessTeamRole = (opt?: MutOpt<UpdateProjectAccessTeamRoleResData>) =>
+  useMutation<
+    UpdateProjectAccessTeamRoleResData,
+    UpdateProjectAccessTeamRoleError,
+    UpdateProjectAccessTeamRoleArgs
+  >(updateProjectAccessTeamRole, opt)
