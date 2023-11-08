@@ -60,9 +60,22 @@ export const userAccessTeamProjectColumns: ColumnDef<UserAccessTeamProject>[] = 
         </button>
       )
     },
-    cell: ({ row }) => {
-      const teamName = row?.original?.teamName
-      return <div className="text-left flex items-center gap-2">{teamName}</div>
+    cell: ({ row, table }) => {
+      const { teamId, teamName } = row?.original
+
+      const meta = table.options.meta as {
+        gotoProject: (projectName: string) => void
+        gotoTeam: (teamId: string) => void
+      }
+
+      return (
+        <div
+          onClick={() => meta.gotoTeam(teamId)}
+          className="text-left flex items-center gap-2 hover:text-primary ease duration-200 cursor-pointer"
+        >
+          {teamName}
+        </div>
+      )
     },
   },
 
@@ -105,7 +118,7 @@ export const userAccessTeamProjectColumns: ColumnDef<UserAccessTeamProject>[] = 
       const projectName = row.original.name
 
       const meta = table.options.meta as {
-        goto: (projectName: string) => void
+        gotoProject: (projectName: string) => void
       }
 
       return (
@@ -113,7 +126,7 @@ export const userAccessTeamProjectColumns: ColumnDef<UserAccessTeamProject>[] = 
           <Button
             size="sm"
             variant={'ghost'}
-            onClick={() => meta.goto(projectName)}
+            onClick={() => meta.gotoProject(projectName)}
             className="ml-1 opacity-70 hover:opacity-100"
           >
             <Icons.arrowRight className="h-4 w-4" />

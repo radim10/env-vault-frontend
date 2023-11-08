@@ -79,6 +79,10 @@ const UserAccessTeamTable: React.FC<DataTableProps> = ({ columns, userId, worksp
     router.push(`/workspace/${workspaceId}/projects/${projectName}/environments`)
   }
 
+  const handleGotoTeam = (teamId: string) => {
+    router.push(`/workspace/${workspaceId}/users/teams/${teamId}`)
+  }
+
   const sortTeams = (
     teams: ListTeam[],
     sort: 'membersCount' | 'name',
@@ -103,7 +107,8 @@ const UserAccessTeamTable: React.FC<DataTableProps> = ({ columns, userId, worksp
     data: data ?? defaultData,
     columns,
     meta: {
-      goto: handleGotoProject,
+      gotoProject: handleGotoProject,
+      gotoTeam: handleGotoTeam,
     },
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: (sorting) => {
