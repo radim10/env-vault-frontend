@@ -175,6 +175,33 @@ export const accessUsersColumns: ColumnDef<ProjectAccessUser>[] = [
               <TooltipContent>User profile</TooltipContent>
             </Tooltip>
 
+            {/* // change role */}
+            <Tooltip>
+              <TooltipTrigger>
+                <Button
+                  size="sm"
+                  variant={'ghost'}
+                  disabled={false}
+                  onClick={() => {
+                    if (isAutoRole) return
+
+                    meta.changeRole({
+                      id: row.original.id,
+                      name: row.original.name,
+                      role: row.original.role,
+                    })
+                  }}
+                  className={clsx([''], {
+                    'opacity-30 hover:bg-transparent cursor-default': isAutoRole,
+                    'opacity-70 hover:opacity-100': !isAutoRole,
+                  })}
+                >
+                  <Icons.userCog className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Change role</TooltipContent>
+            </Tooltip>
+
             <Tooltip>
               <TooltipTrigger>
                 <Button
