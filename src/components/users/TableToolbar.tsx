@@ -6,22 +6,24 @@ import { Input } from '../ui/input'
 import { Skeleton } from '../ui/skeleton'
 
 interface Props {
-  entity: 'users' | 'teams' | 'invitations'
-  userCount: number | null
+  entity: 'users' | 'teams' | 'invitations' | 'user-access'
+  count: number | null
   isSearchCount?: boolean
   submitText?: string
+  hideSubmit?: boolean
   loading: boolean
   search: string
   onSearch: (search: string) => void
-  onInviteUser: () => void
+  onInviteUser?: () => void
 }
 
 const TableToolbar: React.FC<Props> = ({
   entity,
-  userCount,
+  count: userCount,
   search,
   isSearchCount,
   submitText,
+  hideSubmit,
   loading,
   onSearch,
   onInviteUser,
@@ -39,6 +41,12 @@ const TableToolbar: React.FC<Props> = ({
               {entity === 'users' && (
                 <>
                   {!isSearchCount ? 'Total users' : 'Found users'}: {userCount}
+                </>
+              )}
+
+              {entity === 'user-access' && (
+                <>
+                  {!isSearchCount ? 'Total projects' : 'Found projects'}: {userCount}
                 </>
               )}
 
@@ -71,28 +79,36 @@ const TableToolbar: React.FC<Props> = ({
 
             <Input
               // readOnly={loading}
-              placeholder={entity === 'invitations' ? 'Search by email' : 'Search by name or email'}
+              placeholder={
+                entity === 'invitations'
+                  ? 'Search by email'
+                  : entity === 'user-access'
+                  ? 'Search projects'
+                  : 'Search by name or email'
+              }
               className="pl-10 pr-10 -mr-10"
               value={search ?? undefined}
               onChange={(e) => onSearch(e.target.value)}
             />
           </div>
 
-          <Button size={'sm'} onClick={onInviteUser} className="flex gap-1.5">
-            {entity !== 'teams' && (
-              <>
-                <Icons.plus className="h-5 w-5" />
-                <span className="md:block hidden">{submitText ?? 'Invite users'}</span>
-              </>
-            )}
+          {!hideSubmit && (
+            <Button size={'sm'} onClick={onInviteUser} className="flex gap-1.5">
+              {entity !== 'teams' && (
+                <>
+                  <Icons.plus className="h-5 w-5" />
+                  <span className="md:block hidden">{submitText ?? 'Invite users'}</span>
+                </>
+              )}
 
-            {entity === 'teams' && (
-              <>
-                <Icons.plus className="h-5 w-5" />
-                <span className="md:block hidden">{submitText ?? 'Add members'}</span>
-              </>
-            )}
-          </Button>
+              {entity === 'teams' && (
+                <>
+                  <Icons.plus className="h-5 w-5" />
+                  <span className="md:block hidden">{submitText ?? 'Add members'}</span>
+                </>
+              )}
+            </Button>
+          )}
         </div>
       </div>
     </div>
