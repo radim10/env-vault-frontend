@@ -1,3 +1,4 @@
+import UserAccess from '@/components/singleUser/UserAccess'
 import UserProfile from '@/components/singleUser/UserProfile'
 import UserTeams from '@/components/singleUser/UserTeams'
 import { Metadata } from 'next'
@@ -15,6 +16,7 @@ const UserPage = ({
     <>
       {tab === 'teams' && <UserTeams workspaceId={workspace} userId={userId} />}
       {tab === 'profile' && <UserProfile workspaceId={workspace} userId={userId} />}
+      {tab === 'access' && <UserAccess workspaceId={workspace} userId={userId} />}
     </>
   )
 }
