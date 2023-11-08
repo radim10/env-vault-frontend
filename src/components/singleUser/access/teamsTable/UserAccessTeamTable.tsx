@@ -162,7 +162,7 @@ const UserAccessTeamTable: React.FC<DataTableProps> = ({ columns, userId, worksp
                     <TableHead
                       key={header.id}
                       className={clsx([''], {
-                        'px-4 md:px-6': index === 0,
+                        'pl-4 md:pl-6': index === 0,
                         'md:w-[35%]': index === 0 || index === 1,
                         'md:w-[20%]': index === 2,
                         'md:w-36 2xl:w-56 bg-red-300X': index === 3,
