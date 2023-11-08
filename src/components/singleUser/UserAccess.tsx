@@ -3,6 +3,8 @@
 import { useGetUserAccessProjects } from '@/api/queries/users'
 import UserAccessTable from './access/table/UserAccessTable'
 import { userAccessProjectColumns } from './access/table/AccessTableColumns'
+import UserAccessTeamTable from './access/teamsTable/UserAccessTeamTable'
+import { userAccessTeamProjectColumns } from './access/teamsTable/TeamAccessTableColumns'
 
 interface Props {
   workspaceId: string
@@ -21,6 +23,12 @@ const UserAccess: React.FC<Props> = ({ workspaceId, userId }) => {
         userId={userId}
         workspaceId={workspaceId}
         columns={userAccessProjectColumns}
+      />
+
+      <UserAccessTeamTable
+        userId={userId}
+        workspaceId={workspaceId}
+        columns={userAccessTeamProjectColumns}
       />
     </div>
   )
