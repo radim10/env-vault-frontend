@@ -14,41 +14,41 @@ import UserRoleBadge from '@/components/users/UserRoleBadge'
 // TODO: role column
 export const accessUsersColumns: ColumnDef<ProjectAccessUser>[] = [
   // TODO: toggle all excpet auto roles with meta event or remove it???
-  {
-    id: 'select',
-    accessorKey: 'isAutoRole',
-    header: ({ table }) => (
-      <div className="flex items-center">
-        <>
-          <Checkbox
-            checked={table.getIsAllPageRowsSelected()}
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Select all"
-            className={clsx([''], {
-              // 'mt-3': table.getIsAllPageRowsSelected(),
-              'dark:border-gray-600 border-gray-400': !table.getIsAllPageRowsSelected(),
-            })}
-          />
-        </>
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="flex items-center">
-        <Checkbox
-          disabled={row?.original?.isAutoRole === true}
-          checked={row.getIsSelected()}
-          className={clsx([], {
-            // 'mt-3': row.getIsSelected(),
-            'dark:border-gray-600 border-gray-400': !row.getIsSelected(),
-          })}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
+  // {
+  //   id: 'select',
+  //   accessorKey: 'isAutoRole',
+  //   header: ({ table }) => (
+  //     <div className="flex items-center">
+  //       <>
+  //         <Checkbox
+  //           checked={table.getIsAllPageRowsSelected()}
+  //           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+  //           aria-label="Select all"
+  //           className={clsx([''], {
+  //             // 'mt-3': table.getIsAllPageRowsSelected(),
+  //             'dark:border-gray-600 border-gray-400': !table.getIsAllPageRowsSelected(),
+  //           })}
+  //         />
+  //       </>
+  //     </div>
+  //   ),
+  //   cell: ({ row }) => (
+  //     <div className="flex items-center">
+  //       <Checkbox
+  //         disabled={row?.original?.isAutoRole === true}
+  //         checked={row.getIsSelected()}
+  //         className={clsx([], {
+  //           // 'mt-3': row.getIsSelected(),
+  //           'dark:border-gray-600 border-gray-400': !row.getIsSelected(),
+  //         })}
+  //         onCheckedChange={(value) => row.toggleSelected(!!value)}
+  //         aria-label="Select row"
+  //       />
+  //     </div>
+  //   ),
+  //   enableSorting: false,
+  //   enableHiding: false,
+  // },
   {
     accessorKey: 'name',
     header: ({ column }) => {
