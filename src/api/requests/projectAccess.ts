@@ -120,6 +120,30 @@ export async function updateProjectAccessUsers(args: UpdateProjectAccessUsersArg
   })
 }
 
+// update single user role
+export type UpdateProjectAccessUserRoleError = GetProjectAccessTeamsError
+export type UpdateProjectAccessUserRoleResData = undefined
+
+export type UpdateProjectAccessUserRoleData = {
+  role: ProjectRole
+}
+
+export type UpdateProjectAccessUserRoleArgs = ProjectAccessArgs & {
+  userId: string
+  data: UpdateProjectAccessUserRoleData
+}
+
+export async function updateProjectAccessUserRole(args: UpdateProjectAccessUserRoleArgs) {
+  const { workspaceId, projectName, userId, data } = args
+
+  return await sendRequest<UpdateProjectAccessUserRoleResData>({
+    method: 'PATCH',
+    basePath: 'workspaces',
+    path: `${workspaceId}/projects/${projectName}/access/users/${userId}`,
+    body: data,
+  })
+}
+
 // search teams for access
 export type SearchSelectProjectAccessTeamsError = GetProjectAccessTeamsError
 export type SearchSelectProjectAccessTeamsData = SearchProjectAccessTeam[]
