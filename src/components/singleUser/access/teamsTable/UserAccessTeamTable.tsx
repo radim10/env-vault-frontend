@@ -80,7 +80,7 @@ const UserAccessTeamTable: React.FC<DataTableProps> = ({ columns, userId, worksp
   }
 
   const handleGotoTeam = (teamId: string) => {
-    router.push(`/workspace/${workspaceId}/teams/${teamId}`)
+    router.push(`/workspace/${workspaceId}/teams/${teamId}/members`)
   }
 
   const sortTeams = (
