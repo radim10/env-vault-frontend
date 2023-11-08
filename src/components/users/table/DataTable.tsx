@@ -426,6 +426,7 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
       </div>
 
       <TableFooter
+        className="py-4"
         pagination={{
           toStart: {
             onClick: () => table.setPageIndex(0),

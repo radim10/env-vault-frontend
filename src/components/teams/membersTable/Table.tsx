@@ -430,6 +430,7 @@ function TeamMembersTable({
       </div>
 
       <TableFooter
+        className="py-4"
         pagination={{
           toStart: {
             onClick: () => table.setPageIndex(0),

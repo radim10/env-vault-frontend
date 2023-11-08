@@ -271,6 +271,7 @@ function TeamsTable({ columns, workspaceId, queryClient, newTeam, onCreateTeam }
       </div>
 
       <TableFooter
+        className="py-4"
         pagination={{
           toStart: {
             onClick: () => table.setPageIndex(0),

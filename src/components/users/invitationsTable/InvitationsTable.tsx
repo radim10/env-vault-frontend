@@ -392,6 +392,7 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
       </div>
 
       <TableFooter
+        className="py-4"
         pagination={{
           toStart: {
             onClick: () => table.setPageIndex(0),
