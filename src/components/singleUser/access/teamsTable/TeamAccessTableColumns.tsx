@@ -35,7 +35,7 @@ export const userAccessTeamProjectColumns: ColumnDef<UserAccessTeamProject>[] = 
     },
     cell: ({ row }) => {
       const projectName = row?.original?.name
-      return <div className="text-left font-bold flex items-center gap-2">{projectName}</div>
+      return <div className="text-left font-bold flex items-center  md:pl-2">{projectName}</div>
     },
   },
 

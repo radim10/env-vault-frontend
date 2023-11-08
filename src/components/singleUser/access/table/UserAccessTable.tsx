@@ -30,6 +30,8 @@ import { useToast } from '@/components/ui/use-toast'
 import TableToolbar from '@/components/users/TableToolbar'
 import { useGetUserAccessProjects } from '@/api/queries/users'
 import { UserAccessProject } from '@/types/userAccess'
+import { Icons } from '@/components/icons'
+import TypographyH4 from '@/components/typography/TypographyH4'
 
 interface DataTableProps {
   workspaceId: string
@@ -121,22 +123,31 @@ const UserAccessTable: React.FC<DataTableProps> = ({ columns, userId, workspaceI
   })
 
   return (
-    <div>
-      <TableToolbar
-        hideSubmit
-        count={table.getRowModel().rows.length ?? null}
-        loading={isLoading}
-        entity="user-access"
-        isSearchCount={(table.getColumn('name')?.getFilterValue() as string)?.length > 0}
-        search={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-        onSearch={(value) => {
-          table.getColumn('name')?.setFilterValue(value)
-        }}
-      />
+    <div className="rounded-md border">
+      <div className="px-3 pt-3 md:px-5 md:pt-4">
+        <div className="gap-3 flex items-center">
+          <TypographyH4>Individual Access</TypographyH4>
+          <Icons.user className="h-5 w-5 opacity-80" />
+        </div>
+      </div>
 
-      <div className="rounded-md border">
+      <div className="px-3 md:px-5">
+        <TableToolbar
+          hideSubmit
+          count={table.getRowModel().rows.length ?? null}
+          loading={isLoading}
+          entity="user-access"
+          isSearchCount={(table.getColumn('name')?.getFilterValue() as string)?.length > 0}
+          search={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+          onSearch={(value) => {
+            table.getColumn('name')?.setFilterValue(value)
+          }}
+        />
+      </div>
+
+      <div className="border-t-NONE border-b">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-gray-100/60 hover:bg-gray-100/60 dark:bg-gray-900/80 hover:dark:bg-gray-900/80 sticky">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header, index) => {
@@ -144,7 +155,7 @@ const UserAccessTable: React.FC<DataTableProps> = ({ columns, userId, workspaceI
                     <TableHead
                       key={header.id}
                       className={clsx([''], {
-                        'md:w-[50%]': index === 0,
+                        'md:w-[50%] px-4 md:px-6': index === 0,
                         'md:w-[40%]': index === 1,
                         'md:w-36 2xl:w-56 bg-red-300X': index === 2,
                       })}
@@ -217,58 +228,60 @@ const UserAccessTable: React.FC<DataTableProps> = ({ columns, userId, workspaceI
         </Table>
       </div>
 
-      <TableFooter
-        pagination={{
-          toStart: {
-            onClick: () => table.setPageIndex(0),
-            disabled:
-              !table.getCanPreviousPage() ||
-              table.getState().pagination.pageIndex + 1 >
-                Math.ceil(table.getFilteredRowModel().rows.length / pageSize),
-          },
-          toEnd: {
-            onClick: () => table.setPageIndex(table.getPageCount() - 1),
-            disabled:
-              !table.getCanNextPage() ||
-              table.getState().pagination.pageIndex + 1 >=
-                Math.ceil(table.getFilteredRowModel().rows.length / pageSize),
-          },
-          prev: {
-            onClick: () => table.previousPage(),
-            disabled:
-              !table.getCanPreviousPage() ||
-              table.getState().pagination.pageIndex + 1 >
-                Math.ceil(table.getFilteredRowModel().rows.length / pageSize),
-          },
-          next: {
-            onClick: () => table.nextPage(),
-            disabled:
-              !table.getCanNextPage() ||
-              table.getState().pagination.pageIndex + 1 >=
-                Math.ceil(table.getFilteredRowModel().rows.length / pageSize),
-          },
-        }}
-        page={{
-          hidden: isLoading || table.getFilteredRowModel().rows.length <= 5,
-          current: table.getState().pagination.pageIndex + 1,
-          total: table.getPageCount(),
-        }}
-        pageSize={{
-          value: pageSize,
-          disabled: isLoading || table.getFilteredRowModel().rows.length <= 5,
-          onChange: (pageSize) => {
-            setPagination((p) => {
-              const currentPage = p.pageIndex + 1
+      <div className="px-3 md:px-5 py-3">
+        <TableFooter
+          pagination={{
+            toStart: {
+              onClick: () => table.setPageIndex(0),
+              disabled:
+                !table.getCanPreviousPage() ||
+                table.getState().pagination.pageIndex + 1 >
+                  Math.ceil(table.getFilteredRowModel().rows.length / pageSize),
+            },
+            toEnd: {
+              onClick: () => table.setPageIndex(table.getPageCount() - 1),
+              disabled:
+                !table.getCanNextPage() ||
+                table.getState().pagination.pageIndex + 1 >=
+                  Math.ceil(table.getFilteredRowModel().rows.length / pageSize),
+            },
+            prev: {
+              onClick: () => table.previousPage(),
+              disabled:
+                !table.getCanPreviousPage() ||
+                table.getState().pagination.pageIndex + 1 >
+                  Math.ceil(table.getFilteredRowModel().rows.length / pageSize),
+            },
+            next: {
+              onClick: () => table.nextPage(),
+              disabled:
+                !table.getCanNextPage() ||
+                table.getState().pagination.pageIndex + 1 >=
+                  Math.ceil(table.getFilteredRowModel().rows.length / pageSize),
+            },
+          }}
+          page={{
+            hidden: isLoading || table.getFilteredRowModel().rows.length <= 5,
+            current: table.getState().pagination.pageIndex + 1,
+            total: table.getPageCount(),
+          }}
+          pageSize={{
+            value: pageSize,
+            disabled: isLoading || table.getFilteredRowModel().rows.length <= 5,
+            onChange: (pageSize) => {
+              setPagination((p) => {
+                const currentPage = p.pageIndex + 1
 
-              if (pageSize === 10 && currentPage === table.getPageCount()) {
-                return { pageIndex: p.pageIndex - 1, pageSize }
-              } else {
-                return { pageIndex: p.pageIndex, pageSize }
-              }
-            })
-          },
-        }}
-      />
+                if (pageSize === 10 && currentPage === table.getPageCount()) {
+                  return { pageIndex: p.pageIndex - 1, pageSize }
+                } else {
+                  return { pageIndex: p.pageIndex, pageSize }
+                }
+              })
+            },
+          }}
+        />
+      </div>
     </div>
   )
 }
