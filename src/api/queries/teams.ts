@@ -6,11 +6,15 @@ import {
   GetTeamMembersArgs,
   GetTeamMembersData,
   GetTeamMembersError,
+  GetTeamProjectsArgs,
+  GetTeamProjectsData,
+  GetTeamProjectsError,
   GetTeamsArgs,
   GetTeamsData,
   GetTeamsError,
   getTeam,
   getTeamMembers,
+  getTeamProjects,
   getTeams,
 } from '../requests/teams'
 
@@ -78,6 +82,19 @@ export const useGetTeamMembers = (
     ],
     () => {
       return getTeamMembers(args)
+    },
+    opt
+  )
+
+// list projects that the team has access to
+export const useGetTeamProjects = (
+  args: GetTeamProjectsArgs,
+  opt?: UseQueryOptions<GetTeamProjectsData, GetTeamProjectsError>
+) =>
+  useQuery<GetTeamProjectsData, GetTeamProjectsError>(
+    ['workspace', args.workspaceId, 'team-projects'],
+    () => {
+      return getTeamProjects(args)
     },
     opt
   )

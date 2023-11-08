@@ -1,4 +1,4 @@
-import { ListTeam, Team, UpdateTeamData } from '@/types/teams'
+import { ListTeam, Team, TeamProjectAccess, UpdateTeamData } from '@/types/teams'
 import sendRequest, { APIError } from '../instance'
 import { User, WorkspaceInvitation, WorkspaceUser, WorkspaceUserRole } from '@/types/users'
 
@@ -155,6 +155,25 @@ export async function deleteTeam(args: DeleteTeamArgs) {
     method: 'DELETE',
     basePath: `workspaces`,
     path: `${workspaceId}/teams/${teamId}`,
+  })
+}
+
+// list projects that the team has access to
+export type GetTeamProjectsError = TeamsError<'workspace_not_found' | 'team_not_found'>
+export type GetTeamProjectsData = TeamProjectAccess[]
+
+export type GetTeamProjectsArgs = {
+  workspaceId: string
+  teamId: string
+}
+
+export async function getTeamProjects(args: GetTeamProjectsArgs) {
+  const { workspaceId, teamId } = args
+
+  return await sendRequest<GetTeamProjectsData>({
+    method: 'GET',
+    basePath: `workspaces`,
+    path: `${workspaceId}/teams/${teamId}/projects`,
   })
 }
 
