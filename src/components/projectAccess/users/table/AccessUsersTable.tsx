@@ -247,7 +247,7 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
           user={updateUserRoleDialog}
           workspaceId={workspaceId}
           projectName={projectName}
-          opened={updateUserRoleDialog !== null}
+          opened={updateUserRoleDialog?.id !== ''}
           onClose={() => closeUpdateRoleDialog()}
           onSuccess={(newRole) => {
             handleUpdatedUserRole({ id: updateUserRoleDialog.id, role: newRole })
@@ -261,7 +261,7 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
           users={deleteUsersDialog}
           workspaceId={workspaceId}
           projectName={projectName}
-          opened={deleteUsersDialog !== null}
+          opened={deleteUsersDialog?.[0]?.id !== ''}
           onClose={() => setDeleteUsersDialog(null)}
           onSuccess={() => {
             handleDeletedUsers(deleteUsersDialog)
