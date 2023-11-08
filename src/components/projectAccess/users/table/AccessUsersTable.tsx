@@ -276,7 +276,7 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
       )}
 
       <TableToolbar
-        userCount={table.getRowModel().rows.length ?? null}
+        count={table.getRowModel().rows.length ?? null}
         loading={isLoading}
         onInviteUser={() => setAddUsersDrawerOpened(true)}
         submitText="Add users"
