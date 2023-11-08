@@ -38,7 +38,7 @@ export const accessTeamsColumns: ColumnDef<ProjectAccessTeam>[] = [
     cell: ({ row }) => {
       const name = row.getValue('name') as string
       return (
-        <div className="text-left font-bold flex items-center gap-2">
+        <div className="text-left font-bold flex items-center gap-2 md:pl-2">
           {/* <div className="h-2.5 w-2.5 bg-green-500 dark:bg-green-600 rounded-full"></div> */}
           {name}
         </div>
