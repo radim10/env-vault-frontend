@@ -11,6 +11,7 @@ interface Props {
 
 const items = [
   { label: 'Members', href: 'members' },
+  { label: 'Access', href: 'access' },
   { label: 'Settings', href: 'settings' },
 ]
 
