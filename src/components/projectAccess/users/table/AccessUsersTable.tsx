@@ -1,6 +1,7 @@
 'use client'
 
 import clsx from 'clsx'
+import { produce } from 'immer'
 import { useMemo, useState } from 'react'
 import {
   ColumnDef,
@@ -30,9 +31,10 @@ import { useGetProjectAccessUsers } from '@/api/queries/projectAccess'
 import { useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/use-toast'
 import TableToolbar from '@/components/users/TableToolbar'
-import { ProjectAccessUser } from '@/types/projectAccess'
+import { ProjectAccessUser, ProjectRole } from '@/types/projectAccess'
 import AddUsersAccessDrawer from '../AddUsersAccessDrawer'
 import DeleteProjectUserAccessDialog from '../DeleteUserAccessDialog'
+import UpdateUserAccessRoleDialog from '../UpdateUserAccessRoleDialog'
 
 interface DataTableProps {
   workspaceId: string
@@ -156,6 +158,41 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
     })
   }
 
+  const [updateUserRoleDialog, setUpdateUserRoleDialog] = useState<{
+    id: string
+    name: string
+    role: ProjectRole
+  } | null>(null)
+
+  const handleChangeRole = (args: { id: string; name: string; role: ProjectRole }) =>
+    setUpdateUserRoleDialog(args)
+
+  const closeUpdateRoleDialog = () => {
+    if (!updateUserRoleDialog) return
+
+    setUpdateUserRoleDialog({ ...updateUserRoleDialog, id: '' })
+    setTimeout(() => {
+      setUpdateUserRoleDialog(null)
+    }, 150)
+  }
+
+  const handleUpdatedUserRole = (user: { id: string; role: ProjectRole }) => {
+    const key = getCurrentKey()
+    const currentUsers = queryClient.getQueryData<ProjectAccessUser[]>(key)
+
+    if (!currentUsers) return
+    const userIndex = currentUsers.findIndex((u) => u.id === user.id)
+
+    if (userIndex === -1) return
+    const updatedUsers = produce([...currentUsers], (draftData) => {
+      draftData[userIndex].role = user.role
+    })
+
+    console.log('updatedUsers', updatedUsers)
+
+    queryClient.setQueryData(key, updatedUsers)
+  }
+
   const table = useReactTable({
     pageCount: data ? Math.ceil(data?.length / pageSize) : undefined,
     data: data ?? defaultData,
@@ -163,6 +200,7 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
     meta: {
       goto: handleGotoUser,
       delete: handleDeleteUserAccess,
+      changeRole: handleChangeRole,
     },
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: (sorting) => {
@@ -203,6 +241,20 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
         onClose={() => setAddUsersDrawerOpened(false)}
         onAdded={handleAddedUsers}
       />
+
+      {updateUserRoleDialog !== null && (
+        <UpdateUserAccessRoleDialog
+          user={updateUserRoleDialog}
+          workspaceId={workspaceId}
+          projectName={projectName}
+          opened={updateUserRoleDialog !== null}
+          onClose={() => closeUpdateRoleDialog()}
+          onSuccess={(newRole) => {
+            handleUpdatedUserRole({ id: updateUserRoleDialog.id, role: newRole })
+            closeUpdateRoleDialog()
+          }}
+        />
+      )}
 
       {deleteUsersDialog !== null && (
         <DeleteProjectUserAccessDialog
