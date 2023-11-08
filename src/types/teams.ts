@@ -1,3 +1,5 @@
+import { ProjectRole } from './projectAccess'
+import { Project } from './projects'
 import { User } from './users'
 
 export interface Team {
@@ -19,4 +21,8 @@ export interface ListTeam {
 export interface UpdateTeamData {
   name?: string
   description?: string | null
+}
+
+export type TeamProjectAccess = Pick<Project, 'name'> & {
+  role: ProjectRole
 }
