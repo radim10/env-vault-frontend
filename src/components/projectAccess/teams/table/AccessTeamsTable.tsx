@@ -35,6 +35,8 @@ import { useToast } from '@/components/ui/use-toast'
 import DeleteProjectTeamAccessDialog from '../DeleteTeamAccessDialog'
 import { ProjectAccessTeam, ProjectRole } from '@/types/projectAccess'
 import UpdateTeamAccessRoleDialog from '../UpdateTeamAccessRoleDialog'
+import TypographyH4 from '@/components/typography/TypographyH4'
+import { Icons } from '@/components/icons'
 
 interface DataTableProps {
   workspaceId: string
@@ -244,7 +246,14 @@ const AccessTeamsTable: React.FC<DataTableProps> = ({ columns, projectName, work
   }
 
   return (
-    <div>
+    <div className="rounded-md border">
+      <div className="px-3 pt-3 md:px-5 md:pt-4">
+        <div className="gap-3 flex items-center">
+          <TypographyH4>Team access</TypographyH4>
+          <Icons.users2 className="h-5 w-5 opacity-80" />
+        </div>
+      </div>
+
       <AddTeamAccessDrawer
         workspaceId={workspaceId}
         projectName={projectName}
@@ -281,21 +290,25 @@ const AccessTeamsTable: React.FC<DataTableProps> = ({ columns, projectName, work
         />
       )}
 
-      <TeamsToolbar
-        count={table.getRowModel().rows.length ?? null}
-        loading={isLoading}
-        onNewTeam={() => setAddTeamDrawerOpened(true)}
-        submitText="Add team"
-        isSearchCount={(table.getColumn('name')?.getFilterValue() as string)?.length > 0}
-        search={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-        onSearch={(value) => {
-          table.getColumn('name')?.setFilterValue(value)
-        }}
-      />
+      <div className="pl-3 md:pl-5 pr-1 md:pr-3">
+        <TeamsToolbar
+          count={table.getRowModel().rows.length ?? null}
+          loading={isLoading}
+          onNewTeam={() => setAddTeamDrawerOpened(true)}
+          submitText="Add team"
+          isSearchCount={(table.getColumn('name')?.getFilterValue() as string)?.length > 0}
+          search={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+          onSearch={(value) => {
+            table.getColumn('name')?.setFilterValue(value)
+          }}
+        />
+      </div>
       {/**/}
-      <div className="rounded-md border">
+      {/* <div className="rounded-md border"> */}
+      <div className="border-b">
         <Table>
-          <TableHeader>
+          {/* <TableHeader> */}
+          <TableHeader className="bg-gray-100/60 hover:bg-gray-100/60 dark:bg-gray-900/80 hover:dark:bg-gray-900/80 sticky">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header, index) => {
@@ -304,6 +317,7 @@ const AccessTeamsTable: React.FC<DataTableProps> = ({ columns, projectName, work
                       key={header.id}
                       className={clsx([''], {
                         // 'md:w-[45%]': index === 0 || index === 1,
+                        'pl-4 md:pl-6': index === 0,
                         'w-[45%]': index === 0,
                         'w-[20%]': index === 1,
                         'w-[45%] ': index === 2,
@@ -372,6 +386,7 @@ const AccessTeamsTable: React.FC<DataTableProps> = ({ columns, projectName, work
       </div>
 
       <TableFooter
+        className="px-3 md:px-5 py-3"
         pagination={{
           toStart: {
             onClick: () => table.setPageIndex(0),

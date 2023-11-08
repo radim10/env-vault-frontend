@@ -35,6 +35,8 @@ import { ProjectAccessUser, ProjectRole } from '@/types/projectAccess'
 import AddUsersAccessDrawer from '../AddUsersAccessDrawer'
 import DeleteProjectUserAccessDialog from '../DeleteUserAccessDialog'
 import UpdateUserAccessRoleDialog from '../UpdateUserAccessRoleDialog'
+import { Icons } from '@/components/icons'
+import TypographyH4 from '@/components/typography/TypographyH4'
 
 interface DataTableProps {
   workspaceId: string
@@ -225,7 +227,13 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
   })
 
   return (
-    <div>
+    <div className="rounded-md border">
+      <div className="px-3 pt-3 md:px-5 md:pt-4">
+        <div className="gap-3 flex items-center">
+          <TypographyH4>User access</TypographyH4>
+          <Icons.user className="h-5 w-5 opacity-80" />
+        </div>
+      </div>
       {/* {deleteTeamDialog !== null && ( */}
       {/*   <DeleteProjectTeamAccessDialog */}
       {/*     workspaceId={workspaceId} */}
@@ -275,22 +283,26 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
         />
       )}
 
-      <TableToolbar
-        count={table.getRowModel().rows.length ?? null}
-        loading={isLoading}
-        onInviteUser={() => setAddUsersDrawerOpened(true)}
-        submitText="Add users"
-        entity="users"
-        isSearchCount={(table.getColumn('name')?.getFilterValue() as string)?.length > 0}
-        search={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-        onSearch={(value) => {
-          table.getColumn('name')?.setFilterValue(value)
-        }}
-      />
+      <div className="pl-3 md:pl-5 pr-1 md:pr-3">
+        <TableToolbar
+          count={table.getRowModel().rows.length ?? null}
+          loading={isLoading}
+          onInviteUser={() => setAddUsersDrawerOpened(true)}
+          submitText="Add users"
+          entity="users"
+          isSearchCount={(table.getColumn('name')?.getFilterValue() as string)?.length > 0}
+          search={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+          onSearch={(value) => {
+            table.getColumn('name')?.setFilterValue(value)
+          }}
+        />
+      </div>
       {/**/}
-      <div className="rounded-md border">
+      {/* <div className="rounded-md border"> */}
+      <div className="border-t-NONE border-b">
         <Table>
-          <TableHeader>
+          {/* <TableHeader> */}
+          <TableHeader className="bg-gray-100/60 hover:bg-gray-100/60 dark:bg-gray-900/80 hover:dark:bg-gray-900/80 sticky">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header, index) => {
@@ -382,6 +394,7 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
       </div>
 
       <TableFooter
+        className="px-3 md:px-5 py-3"
         pagination={{
           toStart: {
             onClick: () => table.setPageIndex(0),
