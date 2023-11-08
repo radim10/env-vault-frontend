@@ -297,7 +297,7 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
       )}
       {/* <div className="text-muted-foreground font-medium mb-3">Invitations</div> */}
       <TableToolbar
-        userCount={
+        count={
           data !== undefined
             ? (table.getColumn('email')?.getFilterValue() as string)?.length > 0
               ? table.getFilteredRowModel().rows.length

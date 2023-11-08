@@ -328,7 +328,7 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
       )}
 
       <TableToolbar
-        userCount={
+        count={
           !totalCount || searchLoading
             ? null
             : search?.trim()?.length > 1

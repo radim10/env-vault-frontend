@@ -304,7 +304,7 @@ function TeamMembersTable({
       {Object.keys(rowSelection).length === 0 ? (
         <TableToolbar
           entity="teams"
-          userCount={
+          count={
             !totalCount || searchLoading
               ? null
               : search?.trim()?.length > 1
