@@ -324,14 +324,24 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
               <>
                 {Array.from({ length: pageSize }).map((_) => (
                   <TableRow className="h-16 w-full bg-red-400X hover:bg-transparent">
-                    {Array.from({ length: 3 }).map((_, index) => (
+                    {Array.from({ length: 4 }).map((_, index) => (
                       <TableCell
                         key={index}
                         className={clsx(['py-2 md:py-3'], {
                           'pr-0': index === 0,
                         })}
                       >
-                        <Skeleton className={'w-full h-6'} />
+                        {index === 0 && (
+                          <div className="flex items-center gap-5 w-full">
+                            <Skeleton
+                              className={clsx(['w-full'], {
+                                'w-10 h-10 rounded-full': true,
+                              })}
+                            />
+                            <Skeleton className="w-[85%] h-6" />
+                          </div>
+                        )}
+                        {index !== 0 && <Skeleton className={'w-full h-6'} />}
                       </TableCell>
                     ))}
                   </TableRow>
