@@ -34,9 +34,10 @@ import { useToast } from '@/components/ui/use-toast'
 import DeleteWorkspaceInvitationDialog from '../DeleteInvitationDialog'
 import { invitationsStore } from '@/stores/invitations'
 import { useResendWorkspaceInvitation } from '@/api/mutations/users'
-import { ListWorkspaceInvitationsData } from '@/api/requests/users'
+import { ListWorkspaceInvitationsData, usersErrorMsgFromCode } from '@/api/requests/users'
 import useUserTablesPaginationStore from '@/stores/userTables'
 import TableFooter from '@/components/tables/TableFooter'
+import TableError from '@/components/TableError'
 
 interface DataTableProps {
   workspaceId: string
@@ -114,11 +115,14 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
     },
   })
 
-  const { data, isLoading, isFetching, refetch } = useListWorkspaceInvitations(fetchDataOptions, {
-    keepPreviousData: false,
-    // leave it here???
-    // staleTime: Infinity,
-  })
+  const { data, isLoading, isFetching, error, refetch } = useListWorkspaceInvitations(
+    fetchDataOptions,
+    {
+      keepPreviousData: false,
+      // leave it here???
+      // staleTime: Infinity,
+    }
+  )
 
   useUpdateEffect(() => {
     if (pageSize !== invitationsPageSize) {
@@ -283,6 +287,20 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
       columnFilters,
     },
   })
+
+  if (error) {
+    return (
+      <TableError
+        className="mt-16"
+        description={usersErrorMsgFromCode(error?.code) ?? 'Failed to load invitations'}
+        actionBtn={{
+          text: 'Try again',
+          className: 'px-6',
+          onClick: () => refetch(),
+        }}
+      />
+    )
+  }
 
   return (
     <div>

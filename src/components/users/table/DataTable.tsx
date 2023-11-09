@@ -32,6 +32,8 @@ import UpdateWorkspaceUserRoleDialog from '../UpdateUserRoleDialog'
 import useUserTablesPaginationStore from '@/stores/userTables'
 import TableFooter from '@/components/tables/TableFooter'
 import { useRouter } from 'next/navigation'
+import TableError from '@/components/TableError'
+import { usersErrorMsgFromCode } from '@/api/requests/users'
 
 interface DataTableProps {
   workspaceId: string
@@ -95,7 +97,7 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
     fetchDataOptions.search,
   ]
 
-  const { data, isLoading, isFetching, refetch, isRefetching } = useGetWorkspaceUsers(
+  const { data, isLoading, isFetching, refetch, isRefetching, error } = useGetWorkspaceUsers(
     fetchDataOptions,
     {
       keepPreviousData: false,
@@ -305,6 +307,22 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
       pagination,
     },
   })
+
+  if (error) {
+    return (
+      <>
+        <TableError
+          className="mt-20"
+          description={usersErrorMsgFromCode(error?.code) ?? 'Failed to load users'}
+          actionBtn={{
+            text: 'Try again',
+            className: 'px-6',
+            onClick: () => refetch(),
+          }}
+        />
+      </>
+    )
+  }
 
   return (
     <div>
