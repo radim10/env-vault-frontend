@@ -9,17 +9,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { Loader2 } from 'lucide-react'
-import { Icons } from './icons'
+import clsx from 'clsx'
+import { Loader2, LucideIcon } from 'lucide-react'
 
 interface Props {
   opened: boolean
   inProgress: boolean
   children?: React.ReactNode
   title?: string
+  icon?: LucideIcon
   description?: string
   descriptionComponent?: React.ReactNode
   disabledConfirm?: boolean
+  confirmText?: string
   onClose: () => void
   onConfirm: () => void
 }
@@ -27,9 +29,11 @@ interface Props {
 const DeleteDialog: React.FC<Props> = ({
   opened,
   title,
+  icon: Icon,
   children,
   inProgress,
   description,
+  confirmText,
   disabledConfirm,
   descriptionComponent,
   onClose,
@@ -41,8 +45,13 @@ const DeleteDialog: React.FC<Props> = ({
         <AlertDialogTrigger asChild></AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
+            <AlertDialogTitle
+              className={clsx({
+                'flex items-center gap-3': Icon !== undefined,
+              })}
+            >
               <span>{title ? title : 'Are you absolutely sure?'}</span>
+              {Icon && <Icon className="h-5 w-5 text-muted-foreground" />}
             </AlertDialogTitle>
 
             {description && <AlertDialogDescription>{description}</AlertDialogDescription>}
@@ -61,7 +70,7 @@ const DeleteDialog: React.FC<Props> = ({
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {inProgress && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Confirm
+              {confirmText ? confirmText : 'Confirm'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
