@@ -4,6 +4,8 @@ import { useGetUserTeams } from '@/api/queries/users'
 import UserTeamsTable from './table/UserTeamsTable'
 import { userTeamsColumns } from './table/UserTeamsColumns'
 import { Icons } from '../icons'
+import { usersErrorMsgFromCode } from '@/api/requests/users'
+import TableError from '../TableError'
 
 interface Props {
   workspaceId: string
@@ -15,13 +17,24 @@ const UserTeams: React.FC<Props> = ({ workspaceId, userId }) => {
     data: teams,
     isLoading,
     error,
+    refetch,
   } = useGetUserTeams({
     workspaceId,
     userId,
   })
 
   if (error) {
-    return 'Error'
+    return (
+      <TableError
+        className="mt-16"
+        description={usersErrorMsgFromCode(error?.code) ?? 'Failed to load teams'}
+        actionBtn={{
+          text: 'Try again',
+          className: 'px-6',
+          onClick: () => refetch(),
+        }}
+      />
+    )
   }
 
   return (
