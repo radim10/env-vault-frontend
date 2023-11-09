@@ -12,6 +12,7 @@ interface Props {
   submitText?: string
   hideSubmit?: boolean
   loading: boolean
+  disabledSearch?: boolean
   search: string
   onSearch: (search: string) => void
   onInviteUser?: () => void
@@ -25,6 +26,7 @@ const TableToolbar: React.FC<Props> = ({
   submitText,
   hideSubmit,
   loading,
+  disabledSearch,
   onSearch,
   onInviteUser,
 }) => {
@@ -32,7 +34,7 @@ const TableToolbar: React.FC<Props> = ({
     <div>
       <div className="flex md:items-center justify-between mb-3 md:flex-row flex-col gap-3 md:gap-0">
         <div className="">
-          {userCount === null ? (
+          {userCount === null || loading ? (
             <>
               <Skeleton className="h-6 w-32" />
             </>
@@ -79,6 +81,7 @@ const TableToolbar: React.FC<Props> = ({
 
             <Input
               // readOnly={loading}
+              disabled={disabledSearch}
               placeholder={
                 entity === 'invitations'
                   ? 'Search by email'
