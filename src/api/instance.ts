@@ -47,6 +47,11 @@ export default async function sendRequest<ResponseType>(config: {
       error.status = err?.response?.status
       throw error
     }
-    throw err
+    console.error(err)
+    // for now throw generic error
+    const error = new Error()
+
+    throw error
+    // throw err
   }
 }
