@@ -6,25 +6,16 @@ import Drawer from '@/components/Drawer'
 import { ListTeam } from '@/types/teams'
 import { useQueryClient } from '@tanstack/react-query'
 import { useUpdateProjectAccessTeams } from '@/api/mutations/projectAccess'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { ProjectAccessTeam, ProjectRole } from '@/types/projectAccess'
 import UserRoleBadge from '@/components/users/UserRoleBadge'
 import { WorkspaceUserRole } from '@/types/users'
-import { Label } from '@/components/ui/label'
 import { UpdateProjectAccessTeamsData } from '@/api/requests/projectAccess'
 import { Icons } from '@/components/icons'
 import { projectErrorMsgFromCode } from '@/api/requests/projects/root'
 import { useImmer } from 'use-immer'
 import ProjectAccessTeamCombobox from './ProjectAccessTeamCombobox'
 import { Badge } from '@/components/ui/badge'
-
-const roles: ProjectRole[] = [ProjectRole.MEMBER, ProjectRole.ADMIN, ProjectRole.OWNER]
+import ProjectRoleSelect from '../ProjectRoleSelect'
 
 interface Props {
   workspaceId: string
@@ -114,34 +105,11 @@ const AddTeamAccessDrawer: React.FC<Props> = ({
         )}
 
         <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-2">
-            <div>
-              <Label htmlFor="Role" className="">
-                <span className="">Project role</span>
-              </Label>
-            </div>
-            <Select
-              onValueChange={(value) => setSelectedRole(value as ProjectRole)}
-              value={selectedRole}
-              disabled={isLoading}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select role" />
-              </SelectTrigger>
-              <SelectContent>
-                {roles.map((role) => (
-                  <SelectItem
-                    value={role}
-                    key={role}
-                    className="px-10"
-                    onFocus={(e) => e.stopPropagation()}
-                  >
-                    <UserRoleBadge role={role as any as WorkspaceUserRole} className="px-4" />
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <ProjectRoleSelect
+            selected={selectedRole}
+            onValueChange={setSelectedRole}
+            disabled={isLoading}
+          />
 
           <ProjectAccessTeamCombobox
             queryClient={queryClient}
