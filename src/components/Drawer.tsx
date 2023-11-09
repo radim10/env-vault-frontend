@@ -91,7 +91,7 @@ const Drawer: React.FC<Props> = ({
             </SheetDescription>
           )}
         </SheetHeader>
-        <div className="mt-6">{children}</div>
+        <div className="mt-2">{children}</div>
       </SheetContent>
     </Sheet>
   )
