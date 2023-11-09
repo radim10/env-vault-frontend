@@ -4,7 +4,7 @@ import { Button } from './ui/button'
 
 interface Props {
   title: string
-  description: string
+  description?: string
   btn: {
     onClick: () => void
     disabled?: boolean
@@ -24,7 +24,9 @@ const DangerZone: React.FC<Props> = ({ title, description, btn }) => {
           <div className="mt-4 flex items-center gap-2 text-md justify-between px-3 md:px-8">
             <div className="flex flex-col items-start gap-0 md:gap-0">
               <span className="font-semibold text-[1.01rem]">{title}</span>
-              <span className="text-muted-foreground text-[0.95rem]">{description}</span>
+              {description && (
+                <span className="text-muted-foreground text-[0.95rem]">{description}</span>
+              )}
             </div>
             <div className="flex items-center gap-6">
               <Button
