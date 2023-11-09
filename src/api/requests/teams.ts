@@ -1,12 +1,13 @@
 import { ListTeam, Team, TeamProjectAccess, UpdateTeamData } from '@/types/teams'
 import sendRequest, { APIError } from '../instance'
-import { User, WorkspaceInvitation, WorkspaceUser, WorkspaceUserRole } from '@/types/users'
+import { User } from '@/types/users'
 
 type TeamsErrorCode =
   | 'workspace_not_found'
   | 'user_not_found'
   | 'team_already_exists'
   | 'team_not_found'
+  | 'not_team_member'
 export type TeamsError<T extends TeamsErrorCode | void> = APIError<T>
 
 export function teamsErrorMsgFromCode(code: TeamsErrorCode): string | undefined {
@@ -26,6 +27,10 @@ export function teamsErrorMsgFromCode(code: TeamsErrorCode): string | undefined 
 
   if (code === 'team_not_found') {
     msg = 'Team not found'
+  }
+
+  if (code === 'not_team_member') {
+    msg = 'You are not a member of this team'
   }
 
   return msg
@@ -234,5 +239,24 @@ export async function updateTeamMembers(args: UpdateTeamMembersArgs) {
     basePath: `workspaces`,
     path: `${workspaceId}/teams/${teamId}/members`,
     body: args.data,
+  })
+}
+
+// leave team
+export type LeaveTeamError = TeamsError<'workspace_not_found' | 'team_not_found'>
+export type LeaveTeamResData = undefined
+
+export type LeaveTeamArgs = {
+  workspaceId: string
+  teamId: string
+}
+
+export async function leaveTeam(args: LeaveTeamArgs) {
+  const { workspaceId, teamId } = args
+
+  return await sendRequest<LeaveTeamResData>({
+    method: 'POST',
+    basePath: `workspaces`,
+    path: `${workspaceId}/teams/${teamId}/leave`,
   })
 }
