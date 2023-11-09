@@ -80,13 +80,16 @@ export const teamProjectsColumns: ColumnDef<TeamProjectAccess>[] = [
     id: 'actions',
     header: 'Actions',
     cell: ({ row, table }) => {
-      const meta = table.options.meta as any
+      const projectName = row?.original?.name
+      const meta = table.options.meta as {
+        gotoProject: (projectName: string) => void
+      }
 
       return (
         <Button
           size="sm"
           variant={'ghost'}
-          onClick={() => meta.goto(row.original.name)}
+          onClick={() => meta.gotoProject(projectName)}
           className="opacity-70 hover:opacity-100"
         >
           <Icons.arrowRight className="h-4 w-4" />

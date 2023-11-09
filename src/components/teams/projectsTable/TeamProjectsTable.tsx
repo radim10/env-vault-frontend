@@ -77,14 +77,10 @@ const TeamProjectsTable: React.FC<Props> = ({ columns, teamId, workspaceId }) =>
   })
 
   // TODO:
-  const getCurrentKey = () => ['workspace', workspaceId, 'user', teamId, 'access-user']
+  const getCurrentKey = () => ['workspace', workspaceId, 'team-projects']
 
   const handleGotoProject = (projectName: string) => {
     router.push(`/workspace/${workspaceId}/projects/${projectName}/environments`)
-  }
-
-  const handleGotoTeam = (teamId: string) => {
-    router.push(`/workspace/${workspaceId}/teams/${teamId}/members`)
   }
 
   const sortTeams = (
@@ -112,7 +108,6 @@ const TeamProjectsTable: React.FC<Props> = ({ columns, teamId, workspaceId }) =>
     columns,
     meta: {
       gotoProject: handleGotoProject,
-      gotoTeam: handleGotoTeam,
     },
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: (sorting) => {
