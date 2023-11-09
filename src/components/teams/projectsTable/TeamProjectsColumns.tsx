@@ -8,6 +8,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { TeamProjectAccess } from '@/types/teams'
 import UserRoleBadge from '@/components/users/UserRoleBadge'
 import { WorkspaceUserRole } from '@/types/users'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 dayjs.extend(relativeTime)
 
@@ -86,14 +87,21 @@ export const teamProjectsColumns: ColumnDef<TeamProjectAccess>[] = [
       }
 
       return (
-        <Button
-          size="sm"
-          variant={'ghost'}
-          onClick={() => meta.gotoProject(projectName)}
-          className="opacity-70 hover:opacity-100"
-        >
-          <Icons.arrowRight className="h-4 w-4" />
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                size="sm"
+                variant={'ghost'}
+                onClick={() => meta.gotoProject(projectName)}
+                className="opacity-70 hover:opacity-100"
+              >
+                <Icons.arrowRight className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Go to project</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       )
     },
   },
