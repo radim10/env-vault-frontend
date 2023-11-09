@@ -222,7 +222,7 @@ export const accessUsersColumns: ColumnDef<ProjectAccessUser>[] = [
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                {!isAutoRole ? 'Delete user' : 'Cannot be removed (is workspace admin/owner)'}
+                {!isAutoRole ? 'Remove access' : 'Cannot be removed (is workspace admin/owner)'}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

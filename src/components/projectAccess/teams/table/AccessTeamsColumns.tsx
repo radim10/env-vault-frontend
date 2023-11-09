@@ -122,14 +122,19 @@ export const accessTeamsColumns: ColumnDef<ProjectAccessTeam>[] = [
       return (
         <div className="w-full flex justify-start items-center gap-1.5 bg-red-400X">
           <TooltipProvider>
-            <Button
-              size="sm"
-              variant={'ghost'}
-              onClick={() => meta.goto(row.original.id)}
-              className="opacity-70 hover:opacity-100"
-            >
-              <Icons.arrowRight className="h-4 w-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button
+                  size="sm"
+                  variant={'ghost'}
+                  onClick={() => meta.goto(row.original.id)}
+                  className="opacity-70 hover:opacity-100"
+                >
+                  <Icons.arrowRight className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Go to team</TooltipContent>
+            </Tooltip>
 
             {/* // change role */}
             <Tooltip>
@@ -156,16 +161,21 @@ export const accessTeamsColumns: ColumnDef<ProjectAccessTeam>[] = [
               <TooltipContent>Change role</TooltipContent>
             </Tooltip>
 
-            <Button
-              onClick={() => meta.delete({ id: row.original.id, name: row.original.name })}
-              size={'sm'}
-              variant="ghost"
-              className={clsx([
-                'opacity-70 hover:opacity-100 dark:hover:text-red-500 Xdark:text-red-500 xtext-red-600 hover:text-red-600',
-              ])}
-            >
-              <Icons.trash className="h-4 w-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button
+                  onClick={() => meta.delete({ id: row.original.id, name: row.original.name })}
+                  size={'sm'}
+                  variant="ghost"
+                  className={clsx([
+                    'opacity-70 hover:opacity-100 dark:hover:text-red-500 Xdark:text-red-500 xtext-red-600 hover:text-red-600',
+                  ])}
+                >
+                  <Icons.trash className="h-4 w-4" />
+                </Button>
+                <TooltipContent>Remove access</TooltipContent>
+              </TooltipTrigger>
+            </Tooltip>
           </TooltipProvider>
         </div>
       )
