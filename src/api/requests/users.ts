@@ -10,8 +10,8 @@ type UsersErrorCode =
   | 'invitation_not_found'
 export type UsersError<T extends UsersErrorCode | void> = APIError<T>
 
-export function usersErrorMsgFromCode(code: UsersErrorCode): string {
-  let msg = ''
+export function usersErrorMsgFromCode(code?: UsersErrorCode): string | null {
+  let msg = null
 
   if (code === 'workspace_not_found') {
     msg = 'Workspace has been deleted'
