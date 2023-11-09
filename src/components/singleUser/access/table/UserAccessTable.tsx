@@ -232,7 +232,7 @@ const UserAccessTable: React.FC<DataTableProps> = ({ columns, userId, workspaceI
                     {!isLoading && (
                       <TableRow className="hover:bg-transparent">
                         <TableCell colSpan={columns.length} className="h-24 text-center">
-                          No teams
+                          No projects
                         </TableCell>
                       </TableRow>
                     )}

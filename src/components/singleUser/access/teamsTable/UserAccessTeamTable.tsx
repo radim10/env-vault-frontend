@@ -239,7 +239,7 @@ const UserAccessTeamTable: React.FC<DataTableProps> = ({ columns, userId, worksp
                     {!isLoading && (
                       <TableRow className="hover:bg-transparent">
                         <TableCell colSpan={columns.length} className="h-24 text-center">
-                          No teams
+                          No projects
                         </TableCell>
                       </TableRow>
                     )}
