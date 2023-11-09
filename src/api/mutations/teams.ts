@@ -15,6 +15,10 @@ import {
   DeleteTeamResData,
   deleteTeam,
   DeleteTeamError,
+  LeaveTeamArgs,
+  LeaveTeamResData,
+  LeaveTeamError,
+  leaveTeam,
 } from '../requests/teams'
 import { MutOpt } from './mutOpt'
 import { useMutation } from '@tanstack/react-query'
@@ -44,3 +48,7 @@ type UseDeleteTeamVariables = DeleteTeamArgs
 
 export const useDeleteTeam = (opt?: MutOpt<DeleteTeamResData>) =>
   useMutation<DeleteTeamResData, DeleteTeamError, UseDeleteTeamVariables>(deleteTeam, opt)
+
+// leave team
+export const useLeaveTeam = (opt?: MutOpt<LeaveTeamResData>) =>
+  useMutation<LeaveTeamResData, LeaveTeamError, LeaveTeamArgs>(leaveTeam, opt)
