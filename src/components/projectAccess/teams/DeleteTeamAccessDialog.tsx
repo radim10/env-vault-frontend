@@ -55,11 +55,7 @@ const DeleteProjectTeamAccessDialog: React.FC<Props> = ({
         variant: 'destructive',
       }}
       error={
-        error
-          ? error?.code
-            ? projectAccessErrorMsgFromCode(error.code)
-            : 'Something went wrong'
-          : undefined
+        error ? projectAccessErrorMsgFromCode(error.code) ?? 'Something went wrong' : undefined
       }
       descriptionComponent={
         <>

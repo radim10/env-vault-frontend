@@ -99,7 +99,7 @@ const AddTeamAccessDrawer: React.FC<Props> = ({
           <>
             <div className="text-red-600 text-[0.90rem] pb-0 flex items-center gap-2 mb-5">
               <Icons.xCircle className="h-4 w-4" />
-              {error?.code ? projectErrorMsgFromCode(error.code) : 'Something went wrong'}
+              {projectErrorMsgFromCode(error.code) ?? 'Something went wrong'}
             </div>
           </>
         )}

@@ -47,13 +47,7 @@ const DeleteMembersDialog: React.FC<Props> = ({
         wFull: true,
         variant: 'destructive',
       }}
-      error={
-        error
-          ? error?.code
-            ? teamsErrorMsgFromCode(error.code)
-            : 'Something went wrong'
-          : undefined
-      }
+      error={error ? teamsErrorMsgFromCode(error.code) ?? 'Something went wrong' : undefined}
       descriptionComponent={
         <>
           {userName ? (

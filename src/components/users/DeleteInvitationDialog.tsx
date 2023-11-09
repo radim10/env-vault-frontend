@@ -46,13 +46,7 @@ const DeleteWorkspaceInvitationDialog: React.FC<Props> = ({
         wFull: true,
         variant: 'destructive',
       }}
-      error={
-        error
-          ? error?.code
-            ? usersErrorMsgFromCode(error.code)
-            : 'Something went wrong'
-          : undefined
-      }
+      error={error ? usersErrorMsgFromCode(error.code) ?? 'Something went wrong' : undefined}
       descriptionComponent={<span>Are you sure you want to delete this invitation?</span>}
       loading={isLoading}
       onSubmit={() => deleteInvitation({ workspaceId, invitationId: invitation?.id })}

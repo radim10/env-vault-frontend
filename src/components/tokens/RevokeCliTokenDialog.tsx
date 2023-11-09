@@ -62,7 +62,7 @@ const RevokeCliTokenDialog: React.FC<Props> = ({
               <div className="flex flex-col gap-4 mt-5 pb-1">
                 <div className="text-red-600 text-[0.92rem] flex items-center gap-2 ">
                   <Icons.xCircle className="h-4 w-4" />
-                  {error?.code ? cliTokensErrorMsgFromCode(error?.code) : 'Something went wrong'}
+                  {cliTokensErrorMsgFromCode(error?.code) ?? 'Something went wrong'}
                 </div>
               </div>
             )}

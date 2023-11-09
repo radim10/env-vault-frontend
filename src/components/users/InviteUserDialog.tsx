@@ -187,23 +187,21 @@ const InviteUserDialog: React.FC<Props> = ({
       role,
       createdBy: {
         // TODO: current user
-        name: "RADIM",
-        avatarUrl: ""
+        name: 'RADIM',
+        avatarUrl: '',
       },
       email,
-      createdAt: dayjs().format("YYYY-MM-DDTHH:mm:ss.000Z") as any as Date,
-      lastSentAt: null
+      createdAt: dayjs().format('YYYY-MM-DDTHH:mm:ss.000Z') as any as Date,
+      lastSentAt: null,
     }
 
     console.log('newInvitaion', newInvitaion)
-
 
     invitationsStore.setState(
       produce(invitationsStore.getState(), (draftData) => {
         draftData.newInvitation = newInvitaion
       })
     )
-
 
     // const data = queryClient.getQueryData<ListWorkspaceInvitationsData>(currentKey)
     //
@@ -272,16 +270,16 @@ const InviteUserDialog: React.FC<Props> = ({
         submit={
           tab === 'email'
             ? {
-              text: 'Send',
-              variant: 'default',
-              icon: Icons.sendHorizontal,
-              className: 'px-5',
-              disabled:
-                loadingEmail ||
-                checkEmailError === undefined ||
-                !emailRegex.test(email) ||
-                checkEmailData?.exists === true,
-            }
+                text: 'Send',
+                variant: 'default',
+                icon: Icons.sendHorizontal,
+                className: 'px-5',
+                disabled:
+                  loadingEmail ||
+                  checkEmailError === undefined ||
+                  !emailRegex.test(email) ||
+                  checkEmailData?.exists === true,
+              }
             : undefined
         }
         // error={
@@ -497,9 +495,8 @@ const InviteUserDialog: React.FC<Props> = ({
                   <>
                     <div className="text-red-600 text-[0.90rem] pb-0 flex items-center gap-2 mt-2.5">
                       <Icons.xCircle className="h-4 w-4" />
-                      {createWorkspaceInvitationError?.code
-                        ? usersErrorMsgFromCode(createWorkspaceInvitationError.code)
-                        : 'Something went wrong'}
+                      {usersErrorMsgFromCode(createWorkspaceInvitationError.code) ??
+                        'Something went wrong'}
                     </div>
                   </>
                 )}

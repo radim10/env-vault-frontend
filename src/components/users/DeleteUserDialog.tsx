@@ -46,13 +46,7 @@ const DeleteWorkspaceUserDialog: React.FC<Props> = ({
         wFull: true,
         variant: 'destructive',
       }}
-      error={
-        error
-          ? error?.code
-            ? usersErrorMsgFromCode(error.code)
-            : 'Something went wrong'
-          : undefined
-      }
+      error={error ? usersErrorMsgFromCode(error.code) ?? 'Something went wrong' : undefined}
       descriptionComponent={
         <span>
           Are you sure you want to delete user <span className="font-bold">{user?.name}</span> from

@@ -73,11 +73,7 @@ const UpdateTeamAccessRoleDialog: React.FC<Props> = ({
           disabled: selectedRole === team.role,
         }}
         error={
-          error
-            ? error?.code
-              ? projectAccessErrorMsgFromCode(error.code)
-              : 'Something went wrong'
-            : undefined
+          error ? projectAccessErrorMsgFromCode(error.code) ?? 'Something went wrong' : undefined
         }
         loading={isLoading}
         onSubmit={() => {

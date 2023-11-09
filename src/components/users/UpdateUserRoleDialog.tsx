@@ -71,13 +71,7 @@ const UpdateWorkspaceUserRoleDialog: React.FC<Props> = ({
           variant: 'default',
           disabled: selectedRole === user.role,
         }}
-        error={
-          error
-            ? error?.code
-              ? usersErrorMsgFromCode(error.code)
-              : 'Something went wrong'
-            : undefined
-        }
+        error={error ? usersErrorMsgFromCode(error.code) ?? 'Something went wrong' : undefined}
         loading={isLoading}
         onSubmit={() => updateUserRole({ workspaceId, userId: user.id, role: selectedRole })}
         onClose={onClose}

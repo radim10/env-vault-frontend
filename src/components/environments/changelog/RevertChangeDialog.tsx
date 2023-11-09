@@ -76,7 +76,7 @@ const RevertChangeDialog: React.FC<Props> = ({
                 <Icons.xCircle className="h-4 w-4 mt-1" />
               </div>
 
-              {error?.code ? envChangelogErrorMsgFromCode(error?.code) : 'Something went wrong'}
+              {envChangelogErrorMsgFromCode(error?.code) ?? 'Something went wrong'}
             </div>
           )}
 

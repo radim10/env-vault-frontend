@@ -176,7 +176,7 @@ const CreateTeamDrawer: React.FC<Props> = ({
               <>
                 <div className="text-red-600 text-[0.90rem] pb-0 flex items-center gap-2 mt-2.5">
                   <Icons.xCircle className="h-4 w-4" />
-                  {error?.code ? teamsErrorMsgFromCode(error.code) : 'Something went wrong'}
+                  {teamsErrorMsgFromCode(error.code) ?? 'Something went wrong'}
                 </div>
               </>
             )}
@@ -185,9 +185,7 @@ const CreateTeamDrawer: React.FC<Props> = ({
               <>
                 <div className="text-red-600 text-[0.90rem] pb-0 flex items-center gap-2 mt-2.5">
                   <Icons.xCircle className="h-4 w-4" />
-                  {addMembersError?.code
-                    ? teamsErrorMsgFromCode(addMembersError.code)
-                    : 'Something went wrong'}
+                  {teamsErrorMsgFromCode(addMembersError.code) ?? 'Something went wrong'}
                 </div>
               </>
             )}
