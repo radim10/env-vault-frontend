@@ -1,7 +1,6 @@
 'use client'
 
 import clsx from 'clsx'
-import { produce } from 'immer'
 import { useMemo, useState } from 'react'
 import {
   ColumnDef,
@@ -27,14 +26,10 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { ListTeam, TeamProjectAccess } from '@/types/teams'
 import { useRouter } from 'next/navigation'
 import TableFooter from '@/components/tables/TableFooter'
-import { useQueryClient } from '@tanstack/react-query'
-import { useToast } from '@/components/ui/use-toast'
 import TableToolbar from '@/components/users/TableToolbar'
-import { useGetUserAccessProjects, useGetUserAccessTeamProjects } from '@/api/queries/users'
-import { UserAccessProject, UserAccessTeamProject } from '@/types/userAccess'
-import TypographyH4 from '@/components/typography/TypographyH4'
-import { Icons } from '@/components/icons'
 import { useGetTeamProjects } from '@/api/queries/teams'
+import { teamsErrorMsgFromCode } from '@/api/requests/teams'
+import TableError from '@/components/TableError'
 
 interface Props {
   workspaceId: string
@@ -43,9 +38,6 @@ interface Props {
 }
 
 const TeamProjectsTable: React.FC<Props> = ({ columns, teamId, workspaceId }) => {
-  const { toast } = useToast()
-  const queryClient = useQueryClient()
-
   const router = useRouter()
   const defaultData = useMemo(() => [], [])
 
@@ -71,7 +63,7 @@ const TeamProjectsTable: React.FC<Props> = ({ columns, teamId, workspaceId }) =>
     },
   ])
 
-  const { data, isLoading, error } = useGetTeamProjects({
+  const { data, isLoading, error, refetch } = useGetTeamProjects({
     workspaceId,
     teamId,
   })
@@ -125,6 +117,20 @@ const TeamProjectsTable: React.FC<Props> = ({ columns, teamId, workspaceId }) =>
       columnFilters,
     },
   })
+
+  if (error) {
+    return (
+      <TableError
+        className="mt-16"
+        description={teamsErrorMsgFromCode(error?.code) ?? 'Failed to load projects'}
+        actionBtn={{
+          text: 'Try again',
+          className: 'px-6',
+          onClick: () => refetch(),
+        }}
+      />
+    )
+  }
 
   return (
     <div className="">

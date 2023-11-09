@@ -32,6 +32,8 @@ import DeleteMembersDialog from '../DeleteMembersDialog'
 import TableFooter from '@/components/tables/TableFooter'
 import { useImmer } from 'use-immer'
 import { useRouter } from 'next/navigation'
+import { teamsErrorMsgFromCode } from '@/api/requests/teams'
+import TableError from '@/components/TableError'
 
 interface DataTableProps {
   workspaceId: string
@@ -104,7 +106,7 @@ function TeamMembersTable({
     fetchDataOptions.search,
   ]
 
-  const { data, isLoading, isFetching, refetch, isRefetching } = useGetTeamMembers(
+  const { data, isLoading, isFetching, refetch, isRefetching, error } = useGetTeamMembers(
     fetchDataOptions,
     {
       keepPreviousData: false,
@@ -272,6 +274,20 @@ function TeamMembersTable({
       rowSelection,
     },
   })
+
+  if (error) {
+    return (
+      <TableError
+        className="mt-16"
+        description={teamsErrorMsgFromCode(error?.code) ?? 'Failed to load members'}
+        actionBtn={{
+          text: 'Try again',
+          className: 'px-6',
+          onClick: () => refetch(),
+        }}
+      />
+    )
+  }
 
   return (
     <div>
