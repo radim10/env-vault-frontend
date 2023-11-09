@@ -15,6 +15,7 @@ import { toast } from '../ui/use-toast'
 import DeleteTeamDialog from './DeleteTeamDialog'
 import { useRouter } from 'next/navigation'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
+import LeaveTeamDialog from './LeaveTeamDialog'
 
 dayjs.extend(relativeTime)
 
@@ -23,7 +24,7 @@ const TeamSettings = () => {
   const queryClient = useQueryClient()
 
   const { data: selectedTeam, update: updateTeam } = useSelectedTeamStore()
-  const [dialog, setDialog] = useState<'edit' | 'delete' | null>(null)
+  const [dialog, setDialog] = useState<'edit' | 'delete' | 'leave' | null>(null)
 
   const selectedTeamKey = () => ['workspace-teams', selectedTeam?.workspaceId, selectedTeam?.id]
 
@@ -93,6 +94,16 @@ const TeamSettings = () => {
     })
   }
 
+  // TODO:
+  const handleLeaveTeam = () => {
+    setDialog(null)
+
+    toast({
+      title: 'You have left the team',
+      variant: 'success',
+    })
+  }
+
   return (
     <>
       {selectedTeam && (
@@ -116,6 +127,17 @@ const TeamSettings = () => {
             }}
             onClose={() => setDialog(null)}
             onSuccess={() => handleRemovedTeam()}
+          />
+
+          <LeaveTeamDialog
+            opened={dialog === 'leave'}
+            workspaceId={selectedTeam?.workspaceId}
+            team={{
+              id: selectedTeam?.id,
+              name: selectedTeam?.name,
+            }}
+            onClose={() => setDialog(null)}
+            onLeave={() => handleLeaveTeam()}
           />
         </>
       )}
@@ -177,6 +199,18 @@ const TeamSettings = () => {
                 selectedTeam?.description !== null ? <>{selectedTeam?.description}</> : undefined,
             },
           ]}
+        />
+
+        {/* // TODO: leave team if not owner */}
+
+        <DangerZone
+          btn={{
+            onClick: () => setDialog('leave'),
+            disabled: false,
+            text: 'Leave',
+          }}
+          title="Leave team"
+          description="You will not longer be member of this team"
         />
 
         <DangerZone
