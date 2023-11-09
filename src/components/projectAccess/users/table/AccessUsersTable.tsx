@@ -37,6 +37,8 @@ import DeleteProjectUserAccessDialog from '../DeleteUserAccessDialog'
 import UpdateUserAccessRoleDialog from '../UpdateUserAccessRoleDialog'
 import { Icons } from '@/components/icons'
 import TypographyH4 from '@/components/typography/TypographyH4'
+import TableError from '@/components/TableError'
+import { projectAccessErrorMsgFromCode } from '@/api/requests/projectAccess'
 
 interface DataTableProps {
   workspaceId: string
@@ -73,7 +75,7 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
     },
   ])
 
-  const { data, isLoading, error } = useGetProjectAccessUsers({
+  const { data, isLoading, error, refetch } = useGetProjectAccessUsers({
     workspaceId,
     projectName,
   })
@@ -225,6 +227,20 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
       columnFilters,
     },
   })
+
+  if (error) {
+    return (
+      <TableError
+        className="mt-16"
+        description={projectAccessErrorMsgFromCode(error?.code) ?? 'Failed to project users'}
+        actionBtn={{
+          text: 'Try again',
+          className: 'px-6',
+          onClick: () => refetch(),
+        }}
+      />
+    )
+  }
 
   return (
     <div className="rounded-md border">

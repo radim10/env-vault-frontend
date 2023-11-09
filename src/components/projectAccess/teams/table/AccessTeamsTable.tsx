@@ -37,6 +37,8 @@ import { ProjectAccessTeam, ProjectRole } from '@/types/projectAccess'
 import UpdateTeamAccessRoleDialog from '../UpdateTeamAccessRoleDialog'
 import TypographyH4 from '@/components/typography/TypographyH4'
 import { Icons } from '@/components/icons'
+import TableError from '@/components/TableError'
+import { projectAccessErrorMsgFromCode } from '@/api/requests/projectAccess'
 
 interface DataTableProps {
   workspaceId: string
@@ -73,7 +75,7 @@ const AccessTeamsTable: React.FC<DataTableProps> = ({ columns, projectName, work
     },
   ])
 
-  const { data, isLoading, error } = useGetProjectAccessTeams({
+  const { data, isLoading, error, refetch } = useGetProjectAccessTeams({
     workspaceId,
     projectName,
   })
@@ -243,6 +245,20 @@ const AccessTeamsTable: React.FC<DataTableProps> = ({ columns, projectName, work
       title: 'Team role has been updated',
       variant: 'success',
     })
+  }
+
+  if (error) {
+    return (
+      <TableError
+        className="mt-16"
+        description={projectAccessErrorMsgFromCode(error?.code) ?? 'Failed to project tems'}
+        actionBtn={{
+          text: 'Try again',
+          className: 'px-6',
+          onClick: () => refetch(),
+        }}
+      />
+    )
   }
 
   return (
