@@ -18,7 +18,7 @@ interface Props {
   description?: string
   isLoading?: boolean
   onClose: () => void
-  submit: {
+  submit?: {
     text: string
     disabled?: boolean
     loading?: boolean
@@ -71,20 +71,23 @@ const Drawer: React.FC<Props> = ({
               <SheetTitle className="text-[1.1rem]">{title}</SheetTitle>
             </div>
 
-            <Button
-              size={'sm'}
-              className="w-fit px-6"
-              disabled={submit?.disabled}
-              loading={submit?.loading}
-              onClick={submit?.onSubmit}
-            >
-              {submit?.text}
-            </Button>
+            {submit && (
+              <Button
+                size={'sm'}
+                className="w-fit px-6"
+                disabled={submit?.disabled}
+                loading={submit?.loading}
+                onClick={submit?.onSubmit}
+              >
+                {submit?.text}
+              </Button>
+            )}
           </div>
 
           {description && (
             <SheetDescription className="text-[0.95rem]">
-              Teams are a way to better organize workspace users and their access.
+              {description}
+              {/* Teams are a way to better organize workspace users and their access. */}
             </SheetDescription>
           )}
         </SheetHeader>
