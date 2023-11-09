@@ -86,6 +86,7 @@ import {
   User2,
   UserCog,
   UserCog2,
+  DoorOpen,
 } from 'lucide-react'
 
 export const Icons = {
@@ -178,4 +179,5 @@ export const Icons = {
   user2: User2,
   userCog: UserCog,
   userCog2: UserCog2,
+  doorOpen: DoorOpen,
 }
