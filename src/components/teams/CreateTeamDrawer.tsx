@@ -1,11 +1,4 @@
 import { useState } from 'react'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
 import clsx from 'clsx'
@@ -13,12 +6,12 @@ import { Icons } from '../icons'
 import { Label } from '../ui/label'
 import UsersCombobox from './UsersCombobox'
 import { QueryClient } from '@tanstack/react-query'
-import { Button } from '../ui/button'
 import { useUpdateTeamMembers, useCreateTeam } from '@/api/mutations/teams'
 import { User } from '@/types/users'
 import { CreateTeamData, teamsErrorMsgFromCode } from '@/api/requests/teams'
 import { ListTeam } from '@/types/teams'
 import { useDebounce } from 'react-use'
+import Drawer from '../Drawer'
 
 interface Props {
   queryClient: QueryClient
@@ -96,156 +89,121 @@ const CreateTeamDrawer: React.FC<Props> = ({
     [opened]
   )
 
+  const handleSubmit = () => {
+    if (teamId) {
+      const userIds = selectedUsers.map((user) => user.id)
+
+      addMembers({
+        workspaceId,
+        teamId,
+        data: {
+          new: userIds,
+        },
+      })
+    } else {
+      const userIds = selectedUsers.map((user) => user.id)
+      const data: CreateTeamData = {
+        name,
+        description: description?.trim()?.length > 0 ? description : undefined,
+        users: userIds?.length > 0 ? userIds : undefined,
+      }
+
+      createTeam({
+        workspaceId,
+        data,
+      })
+    }
+  }
+
   return (
     <div>
-      <Sheet
-        open={opened}
-        onOpenChange={(e) => {
-          if (!e) onClose()
+      <Drawer
+        opened={opened}
+        onClose={() => onClose()}
+        title={teamId ? 'Add team members' : 'Create new team'}
+        isLoading={isLoading || addMembersLoading}
+        description="Teams are a way to better organize workspace users and their access."
+        className="w-screen sm:w-[500px] md:w-[700px] lg:w-[700px] h-full md:px-8 md:py-4 py-3 px-4"
+        submit={{
+          text: teamId ? 'Confirm' : 'Create',
+          disabled:
+            (name?.length < 2 && !teamId) || (teamId && selectedUsers?.length === 0) ? true : false,
+          loading: isLoading || addMembersLoading,
+          onSubmit: handleSubmit,
         }}
       >
-        <SheetContent
-          className="w-screen sm:w-[500px] md:w-[700px] lg:w-[700px] h-full md:px-8 md:py-4 py-3 px-4"
-          onPointerDownOutside={(e) => e.preventDefault()}
-          onEscapeKeyDown={(e) => {
-            e.preventDefault()
-          }}
-        >
-          <SheetHeader>
-            <div className="flex justify-between items-start">
-              <div className="flex items-center gap-3">
-                <button
-                  disabled={isLoading || addMembersLoading}
-                  onClick={() => onClose()}
-                  className={clsx(['opacity-70 transition-opacity '], {
-                    'opacity-70': isLoading || addMembersLoading,
-                    'hover:opacity-100 cursor-pointer': !isLoading && !addMembersLoading,
-                  })}
-                >
-                  <Icons.x className="h-4 w-4" />
-                  <span className="sr-only">Close</span>
-                </button>
-
-                <SheetTitle className="text-[1.1rem]">
-                  {teamId ? 'Add team members' : 'Create new team'}
-                </SheetTitle>
-              </div>
-
-              <Button
-                size={'sm'}
-                className="w-fit px-6"
-                disabled={
-                  (name?.length < 2 && !teamId) || (teamId && selectedUsers?.length === 0)
-                    ? true
-                    : false
-                }
-                loading={isLoading || addMembersLoading}
-                onClick={() => {
-                  if (teamId) {
-                    const userIds = selectedUsers.map((user) => user.id)
-
-                    addMembers({
-                      workspaceId,
-                      teamId,
-                      data: {
-                        new: userIds,
-                      },
-                    })
-                  } else {
-                    const userIds = selectedUsers.map((user) => user.id)
-                    const data: CreateTeamData = {
-                      name,
-                      description: description?.trim()?.length > 0 ? description : undefined,
-                      users: userIds?.length > 0 ? userIds : undefined,
-                    }
-
-                    createTeam({
-                      workspaceId,
-                      data,
-                    })
-                  }
-                }}
-              >
-                {teamId ? 'Confirm' : 'Create'}
-              </Button>
+        {error && (
+          <>
+            <div className="text-red-600 text-[0.90rem] pb-0 flex items-center gap-2 mt-2.5">
+              <Icons.xCircle className="h-4 w-4" />
+              {teamsErrorMsgFromCode(error.code) ?? 'Something went wrong'}
             </div>
-            <SheetDescription className="text-[0.95rem]">
-              Teams are a way to better organize workspace users and their access.
-            </SheetDescription>
-            {error && (
+          </>
+        )}
+
+        {addMembersError && (
+          <>
+            <div className="text-red-600 text-[0.90rem] pb-0 flex items-center gap-2 mt-2.5">
+              <Icons.xCircle className="h-4 w-4" />
+              {teamsErrorMsgFromCode(addMembersError.code) ?? 'Something went wrong'}
+            </div>
+          </>
+        )}
+
+        <div>
+          <div className="flex justify-end w-full"></div>
+
+          <div className="bg-red-400X h-full flex flex-col gap-3">
+            {!teamId && (
               <>
-                <div className="text-red-600 text-[0.90rem] pb-0 flex items-center gap-2 mt-2.5">
-                  <Icons.xCircle className="h-4 w-4" />
-                  {teamsErrorMsgFromCode(error.code) ?? 'Something went wrong'}
-                </div>
-              </>
-            )}
-
-            {addMembersError && (
-              <>
-                <div className="text-red-600 text-[0.90rem] pb-0 flex items-center gap-2 mt-2.5">
-                  <Icons.xCircle className="h-4 w-4" />
-                  {teamsErrorMsgFromCode(addMembersError.code) ?? 'Something went wrong'}
-                </div>
-              </>
-            )}
-
-            <div>
-              <div className="flex justify-end w-full"></div>
-
-              <div className="bg-red-400X h-full flex flex-col gap-3">
-                {!teamId && (
-                  <>
-                    {/* <div className="mt-3"> */}
-                    {/*   <Label className="w-fit">Team color</Label> */}
-                    {/*   <div className="mt-2 flex flex-row gap-2 items-center flex-wrap"> */}
-                    {/*     {colors.map((color, index) => ( */}
-                    {/*       <div className={clsx([color, 'w-8 h-8 rounded-full'])}></div> */}
-                    {/*     ))} */}
-                    {/*   </div> */}
-                    {/* </div> */}
-                    <div className="mt-3">
-                      <Label className="w-fit">Team name</Label>
-                      <Input
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        disabled={isLoading}
-                        placeholder="My new team..."
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label className="w-fit">Description</Label>
-                      <Textarea
-                        className="mt-1"
-                        placeholder="Team description (optional)"
-                        value={description}
-                        disabled={isLoading}
-                        onChange={(e) => setDescription(e.target.value)}
-                      />
-                    </div>
-                  </>
-                )}
-                {/* <UsersCombobox /> */}
-                <div
-                  className={clsx({
-                    'mt-4': teamId,
-                  })}
-                >
-                  <UsersCombobox
-                    teamId={teamId}
-                    workspaceId={workspaceId}
-                    queryClient={queryClient}
-                    selectedUsers={selectedUsers}
-                    onSelect={setSelectedUsers}
+                {/* <div className="mt-3"> */}
+                {/*   <Label className="w-fit">Team color</Label> */}
+                {/*   <div className="mt-2 flex flex-row gap-2 items-center flex-wrap"> */}
+                {/*     {colors.map((color, index) => ( */}
+                {/*       <div className={clsx([color, 'w-8 h-8 rounded-full'])}></div> */}
+                {/*     ))} */}
+                {/*   </div> */}
+                {/* </div> */}
+                <div className="mt-3">
+                  <Label className="w-fit">Team name</Label>
+                  <Input
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     disabled={isLoading}
+                    placeholder="My new team..."
+                    className="mt-1"
                   />
                 </div>
-              </div>
+                <div>
+                  <Label className="w-fit">Description</Label>
+                  <Textarea
+                    className="mt-1"
+                    placeholder="Team description (optional)"
+                    value={description}
+                    disabled={isLoading}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                </div>
+              </>
+            )}
+            {/* <UsersCombobox /> */}
+            <div
+              className={clsx({
+                'mt-4': teamId,
+              })}
+            >
+              <UsersCombobox
+                teamId={teamId}
+                workspaceId={workspaceId}
+                queryClient={queryClient}
+                selectedUsers={selectedUsers}
+                onSelect={setSelectedUsers}
+                disabled={isLoading}
+              />
             </div>
-          </SheetHeader>
-        </SheetContent>
-      </Sheet>
+          </div>
+        </div>
+      </Drawer>
     </div>
   )
 }
