@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { ListTeam } from '@/types/teams'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 dayjs.extend(relativeTime)
 
@@ -76,14 +77,21 @@ export const teamsColumns: ColumnDef<ListTeam>[] = [
       const meta = table.options.meta as any
 
       return (
-        <Button
-          size="sm"
-          variant={'ghost'}
-          onClick={() => meta.goto(row.original.id)}
-          className="opacity-70 hover:opacity-100"
-        >
-          <Icons.arrowRight className="h-4 w-4" />
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                size="sm"
+                variant={'ghost'}
+                onClick={() => meta.goto(row.original.id)}
+                className="opacity-70 hover:opacity-100"
+              >
+                <Icons.arrowRight className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Go to team</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       )
     },
   },
