@@ -32,6 +32,8 @@ import { useGetUserAccessProjects, useGetUserAccessTeamProjects } from '@/api/qu
 import { UserAccessProject, UserAccessTeamProject } from '@/types/userAccess'
 import TypographyH4 from '@/components/typography/TypographyH4'
 import { Icons } from '@/components/icons'
+import { usersErrorMsgFromCode } from '@/api/requests/users'
+import TableError from '@/components/TableError'
 
 interface DataTableProps {
   workspaceId: string
@@ -68,7 +70,7 @@ const UserAccessTeamTable: React.FC<DataTableProps> = ({ columns, userId, worksp
     },
   ])
 
-  const { data, isLoading, error } = useGetUserAccessTeamProjects({
+  const { data, isLoading, error, refetch } = useGetUserAccessTeamProjects({
     workspaceId,
     userId,
   })
@@ -126,6 +128,20 @@ const UserAccessTeamTable: React.FC<DataTableProps> = ({ columns, userId, worksp
       columnFilters,
     },
   })
+
+  if (error) {
+    return (
+      <TableError
+        className="mt-16"
+        description={usersErrorMsgFromCode(error?.code) ?? 'Failed to load teams'}
+        actionBtn={{
+          text: 'Try again',
+          className: 'px-6',
+          onClick: () => refetch(),
+        }}
+      />
+    )
+  }
 
   return (
     <div className="rounded-md border">

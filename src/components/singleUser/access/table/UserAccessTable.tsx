@@ -32,6 +32,8 @@ import { useGetUserAccessProjects } from '@/api/queries/users'
 import { UserAccessProject } from '@/types/userAccess'
 import { Icons } from '@/components/icons'
 import TypographyH4 from '@/components/typography/TypographyH4'
+import TableError from '@/components/TableError'
+import { usersErrorMsgFromCode } from '@/api/requests/users'
 
 interface DataTableProps {
   workspaceId: string
@@ -68,7 +70,7 @@ const UserAccessTable: React.FC<DataTableProps> = ({ columns, userId, workspaceI
     },
   ])
 
-  const { data, isLoading, error } = useGetUserAccessProjects({
+  const { data, isLoading, error, refetch } = useGetUserAccessProjects({
     workspaceId,
     userId,
   })
@@ -121,6 +123,20 @@ const UserAccessTable: React.FC<DataTableProps> = ({ columns, userId, workspaceI
       columnFilters,
     },
   })
+
+  if (error) {
+    return (
+      <TableError
+        className="mt-16"
+        description={usersErrorMsgFromCode(error?.code) ?? 'Failed to load user access'}
+        actionBtn={{
+          text: 'Try again',
+          className: 'px-6',
+          onClick: () => refetch(),
+        }}
+      />
+    )
+  }
 
   return (
     <div className="rounded-md border">
