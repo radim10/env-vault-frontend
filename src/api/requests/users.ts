@@ -1,4 +1,4 @@
-import { ListTeam, Team } from '@/types/teams'
+import { ListTeam } from '@/types/teams'
 import sendRequest, { APIError } from '../instance'
 import { User, WorkspaceInvitation, WorkspaceUser, WorkspaceUserRole } from '@/types/users'
 import { UserAccessProject, UserAccessTeamProject } from '@/types/userAccess'

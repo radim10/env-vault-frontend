@@ -11,8 +11,8 @@ type EnvErrorCode =
 
 export type EnvError<T extends EnvErrorCode | void> = APIError<T>
 
-export function envErrorMsgFromCode(code: EnvErrorCode | 'workspace_not_found'): string {
-  let msg = ''
+export function envErrorMsgFromCode(code?: EnvErrorCode | 'workspace_not_found'): string | null {
+  let msg = null
 
   if (code === 'project_not_found') {
     msg = 'Project not found'
@@ -131,8 +131,9 @@ export async function lockEnvironment(args: {
   const response = sendRequest<LockEnvironmentResData>({
     method: 'PATCH',
     basePath: 'workspaces',
-    path: `${workspaceId}/projects/${projectName}/environments/${envName}/${lock ? 'lock' : 'unlock'
-      }`,
+    path: `${workspaceId}/projects/${projectName}/environments/${envName}/${
+      lock ? 'lock' : 'unlock'
+    }`,
   })
   return await response
 }

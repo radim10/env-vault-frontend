@@ -7,9 +7,9 @@ type EnvTokensErrorCode = 'project_not_found' | 'environment_not_found' | 'token
 export type EnvTokensError<T extends EnvTokensErrorCode | void> = APIError<T>
 
 export function envTokensErrorMsgFromCode(
-  code: EnvTokensErrorCode | 'workspace_not_found'
-): string {
-  let msg = ''
+  code?: EnvTokensErrorCode | 'workspace_not_found'
+): string | null {
+  let msg = null
 
   if (code === 'token_not_found') {
     msg = 'Token not found'

@@ -6,8 +6,10 @@ import { WorkspaceToken } from '@/types/tokens/workspace'
 type TokensErrorCode = 'token_not_found'
 export type TokensError<T extends TokensErrorCode | void> = APIError<T>
 
-export function tokensErrorMsgFromCode(code: TokensErrorCode | 'workspace_not_found'): string {
-  let msg = ''
+export function tokensErrorMsgFromCode(
+  code?: TokensErrorCode | 'workspace_not_found'
+): string | null {
+  let msg = null
 
   if (code === 'token_not_found') {
     msg = 'Token not found'

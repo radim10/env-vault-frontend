@@ -5,9 +5,9 @@ type CliTokensErrorCode = 'token_not_found' | 'user_not_found'
 export type CliTokensError<T extends CliTokensErrorCode | void> = APIError<T>
 
 export function cliTokensErrorMsgFromCode(
-  code: CliTokensErrorCode | 'workspace_not_found'
-): string {
-  let msg = ''
+  code?: CliTokensErrorCode | 'workspace_not_found'
+): string | null {
+  let msg = null
 
   if (code === 'token_not_found') {
     msg = 'Token not found'

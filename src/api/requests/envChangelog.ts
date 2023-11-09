@@ -12,8 +12,8 @@ type EnvChangelogErrorCode =
 export type EnvChangelogError<T extends EnvChangelogErrorCode | void> = APIError<T>
 
 export function envChangelogErrorMsgFromCode(
-  code: EnvChangelogErrorCode | 'workspace_not_found'
-): string {
+  code?: EnvChangelogErrorCode | 'workspace_not_found'
+): string | null {
   let msg = ''
 
   if (code === 'project_not_found') {

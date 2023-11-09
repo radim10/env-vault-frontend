@@ -14,9 +14,9 @@ export type ProjectAccessError<T extends ProjectAccessErrorCode | void> = APIErr
 >
 
 export function projectAccessErrorMsgFromCode(
-  code: ProjectAccessErrorCode | 'workspace_not_found'
-): string {
-  let msg = ''
+  code?: ProjectAccessErrorCode | 'workspace_not_found'
+): string | null {
+  let msg = null
 
   if (code === 'project_not_found') {
     msg = 'Project not found'

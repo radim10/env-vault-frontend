@@ -4,8 +4,8 @@ import sendRequest, { APIError } from '../instance'
 type WorkspacesErrorCode = 'workspace_not_found'
 export type WorkspacesError<T extends WorkspacesErrorCode | void> = APIError<T>
 
-export function workspacesErrorMsgFromCode(code: WorkspacesErrorCode): string {
-  let msg = ''
+export function workspacesErrorMsgFromCode(code?: WorkspacesErrorCode): string | null {
+  let msg = null
 
   if (code === 'workspace_not_found') {
     msg = 'Workspace has been deleted'

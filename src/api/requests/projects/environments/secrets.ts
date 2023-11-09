@@ -4,8 +4,10 @@ import { Secret, UpdatedSecretsBody } from '@/types/secrets'
 type SecretsErrorCode = 'project_not_found' | 'environment_not_found' | 'out_of_sync'
 export type SecretsError<T extends SecretsErrorCode | void> = APIError<T>
 
-export function secretsErrorMsgFromCode(code: SecretsErrorCode | 'workspace_not_found'): string {
-  let msg = ''
+export function secretsErrorMsgFromCode(
+  code?: SecretsErrorCode | 'workspace_not_found'
+): string | null {
+  let msg = null
 
   if (code === 'project_not_found') {
     msg = 'Project not found'

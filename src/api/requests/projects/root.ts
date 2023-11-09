@@ -5,8 +5,10 @@ import { ListProject, NewProject, Project, UpdatedProjectData } from '@/types/pr
 type ProjectsErrorCode = 'project_not_found' | 'project_already_exists'
 export type ProjectsError<T extends ProjectsErrorCode | void> = APIError<T | 'workspace_not_found'>
 
-export function projectErrorMsgFromCode(code: ProjectsErrorCode | 'workspace_not_found'): string {
-  let msg = ''
+export function projectErrorMsgFromCode(
+  code?: ProjectsErrorCode | 'workspace_not_found'
+): string | null {
+  let msg = null
 
   if (code === 'project_not_found') {
     msg = 'Project not found'
