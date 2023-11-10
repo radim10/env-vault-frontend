@@ -12,6 +12,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { ListProject, Project, UpdatedProjectData } from '@/types/projects'
 import { toast } from '../ui/use-toast'
 import UpdateProjectDialog from './UpdateProjectDialog'
+import { useSelectedProjectStore } from '@/stores/selectedProject'
 
 dayjs.extend(relativeTime)
 
@@ -21,6 +22,8 @@ interface Props {
 }
 
 const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
+  const { data: projectState } = useSelectedProjectStore()
+
   const queryClient = useQueryClient()
   const router = useRouter()
   const [dialog, setDialog] = useState<'edit' | 'delete' | null>(null)
@@ -145,48 +148,44 @@ const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
             {
               icon: Icons.fileText,
               label: 'Name',
-              editBtn: {
-                disabled: false,
-                onClick: () => setDialog('edit'),
-              },
+              editBtn:
+                projectState?.userRole === 'OWNER'
+                  ? {
+                      disabled: false,
+                      onClick: () => setDialog('edit'),
+                    }
+                  : undefined,
               component: <div className="flex items-center gap-2">{projectName}</div>,
             },
             {
               icon: Icons.penSquare,
               label: 'Description',
-              editBtn: {
-                disabled: false,
-                onClick: () => setDialog('edit'),
-              },
+              editBtn:
+                projectState?.userRole === 'OWNER'
+                  ? {
+                      disabled: false,
+                      onClick: () => setDialog('edit'),
+                    }
+                  : undefined,
 
-              component:
-                queryClient.getQueryData<Project>(['project', workspaceId, projectName])
-                  ?.description === null ? (
-                  <></>
-                ) : undefined,
+              component: projectState?.description === null ? <></> : undefined,
 
               fullComponent:
-                queryClient.getQueryData<Project>(['project', workspaceId, projectName])
-                  ?.description !== null ? (
-                  <>
-                    {
-                      queryClient.getQueryData<Project>(['project', workspaceId, projectName])
-                        ?.description
-                    }
-                  </>
-                ) : undefined,
+                projectState?.description !== null ? <>{projectState?.description}</> : undefined,
             },
           ]}
         />
 
-        <DangerZone
-          btn={{
-            onClick: () => setDialog('delete'),
-            disabled: false,
-          }}
-          title="Delete project"
-          description="Permanently delete this project, cannot be undone"
-        />
+        {projectState?.userRole === 'OWNER' && (
+          <DangerZone
+            btn={{
+              onClick: () => setDialog('delete'),
+              disabled: false,
+            }}
+            title="Delete project"
+            description="Permanently delete this project, cannot be undone"
+          />
+        )}
       </div>
     </>
   )

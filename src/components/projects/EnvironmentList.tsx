@@ -20,6 +20,7 @@ import DeleteEnvironmentDialog from '../environments/DeleteEnvironmentDialog'
 import { useMount, useUnmount, useUpdateEffect } from 'react-use'
 import NotFound from './NotFound'
 import Error from '../Error'
+import { useSelectedProjectStore } from '@/stores/selectedProject'
 
 interface Props {
   workspaceId: string
@@ -27,6 +28,7 @@ interface Props {
 }
 
 const EnvironmentList: React.FC<Props> = ({ projectName, workspaceId }) => {
+  const { data: projectState } = useSelectedProjectStore()
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
@@ -343,9 +345,9 @@ const EnvironmentList: React.FC<Props> = ({ projectName, workspaceId }) => {
             !groupedEnvironments
               ? data.length
               : Object.values(groupedEnvironments).reduce(
-                (accumulator, currentArray) => accumulator + currentArray.length,
-                0
-              )
+                  (accumulator, currentArray) => accumulator + currentArray.length,
+                  0
+                )
           }
           onCreated={handleNewEnvironment}
         />
@@ -357,9 +359,9 @@ const EnvironmentList: React.FC<Props> = ({ projectName, workspaceId }) => {
               <div className="flex flex-col gap-2">
                 <div>
                   {group !== 'Unlocked' &&
-                    group !== 'Locked' &&
-                    group !== 'true' &&
-                    group !== 'false' ? (
+                  group !== 'Locked' &&
+                  group !== 'true' &&
+                  group !== 'false' ? (
                     <EnvTypeBadge type={group as EnvironmentType} className="text-[0.9rem]" />
                   ) : (
                     <div className="px-1 flex items-center gap-2 font-bold text-[1.125rem]">
@@ -389,6 +391,7 @@ const EnvironmentList: React.FC<Props> = ({ projectName, workspaceId }) => {
                       type={type}
                       name={name}
                       secretsCount={secretsCount}
+                      disableActions={projectState?.userRole === 'MEMBER'}
                       onLock={() => {
                         setDialog({ type: 'lock', lock: !locked, environmentName: name })
                       }}
@@ -419,6 +422,7 @@ const EnvironmentList: React.FC<Props> = ({ projectName, workspaceId }) => {
               type={type}
               name={name}
               secretsCount={secretsCount}
+              disableActions={projectState?.userRole === 'MEMBER'}
               onLock={() => {
                 setDialog({ type: 'lock', lock: !locked, environmentName: name })
               }}
