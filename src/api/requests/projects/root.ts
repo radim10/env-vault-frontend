@@ -2,7 +2,7 @@ import sendRequest, { APIError } from '@/api/instance'
 import { ListProject, NewProject, Project, UpdatedProjectData } from '@/types/projects'
 
 // NOTE: errors
-type ProjectsErrorCode = 'project_not_found' | 'project_already_exists'
+type ProjectsErrorCode = 'project_not_found' | 'project_already_exists' | 'missing_permission'
 export type ProjectsError<T extends ProjectsErrorCode | void> = APIError<T | 'workspace_not_found'>
 
 export function projectErrorMsgFromCode(
@@ -18,6 +18,10 @@ export function projectErrorMsgFromCode(
   }
   if (code === 'workspace_not_found') {
     msg = 'Workspace has been deleted'
+  }
+
+  if (code === 'missing_permission') {
+    msg = "You don't have permission to perform this action"
   }
 
   return msg
