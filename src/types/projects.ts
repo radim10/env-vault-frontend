@@ -1,9 +1,11 @@
 import { Environment } from './environments'
+import { ProjectRole } from './projectAccess'
 
 export interface Project {
   createdAt: string
   description: string | null
   name: string
+  userRole: ProjectRole
   // environments: ListEnvironment[]
 }
 
