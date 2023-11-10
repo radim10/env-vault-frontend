@@ -11,7 +11,7 @@ import { useToast } from '../ui/use-toast'
 import { ListEnvironment } from '@/types/projects'
 import { Icons } from '../icons'
 import CreateEnvironmentDialog from '../environments/CreateEnvironmentDialog'
-import ProjectSkeleton, { EnvironmentListSkeleton } from './ProjectSkeleton'
+import { EnvironmentListSkeleton } from './ProjectSkeleton'
 import EnvTypeBadge from '../environments/EnvTypeBadge'
 import LockEnvDialog from '../environments/LockEnvDialog'
 import RenameEnvironmentDialog from '../environments/RenameEnvironmentDialog'
@@ -28,7 +28,7 @@ interface Props {
 }
 
 const EnvironmentList: React.FC<Props> = ({ projectName, workspaceId }) => {
-  const { data: projectState } = useSelectedProjectStore()
+  const { data: selectedProject } = useSelectedProjectStore()
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
@@ -349,7 +349,7 @@ const EnvironmentList: React.FC<Props> = ({ projectName, workspaceId }) => {
                   0
                 )
           }
-          onCreated={handleNewEnvironment}
+          onCreated={selectedProject?.userRole === 'OWNER' ? handleNewEnvironment : undefined}
         />
 
         {/* List */}
@@ -391,7 +391,7 @@ const EnvironmentList: React.FC<Props> = ({ projectName, workspaceId }) => {
                       type={type}
                       name={name}
                       secretsCount={secretsCount}
-                      disableActions={projectState?.userRole === 'MEMBER'}
+                      disableActions={selectedProject?.userRole === 'MEMBER'}
                       onLock={() => {
                         setDialog({ type: 'lock', lock: !locked, environmentName: name })
                       }}
@@ -422,7 +422,7 @@ const EnvironmentList: React.FC<Props> = ({ projectName, workspaceId }) => {
               type={type}
               name={name}
               secretsCount={secretsCount}
-              disableActions={projectState?.userRole === 'MEMBER'}
+              disableActions={selectedProject?.userRole === 'MEMBER'}
               onLock={() => {
                 setDialog({ type: 'lock', lock: !locked, environmentName: name })
               }}

@@ -15,14 +15,6 @@ import { Icons } from '../icons'
 import { LucideIcon } from 'lucide-react'
 import { useEnvironmentListStore } from '@/stores/environments'
 
-interface Props {
-  workspaceId: string
-  projectName: string
-  //
-  environmentsCount: number
-  onCreated: (args: { name: string; type: EnvironmentType }) => void
-}
-
 const sortOptions: Array<{ value: EnvSortOption; label: string; icon: LucideIcon }> = [
   {
     label: 'Created',
@@ -66,6 +58,14 @@ const groupByOptions: Array<{ value: EnvGroupBy; icon: LucideIcon }> = [
     icon: Icons.group,
   },
 ]
+
+interface Props {
+  workspaceId: string
+  projectName: string
+  //
+  environmentsCount: number
+  onCreated?: (args: { name: string; type: EnvironmentType }) => void
+}
 
 const EnvironmentListToolbar: React.FC<Props> = ({
   workspaceId,
@@ -152,12 +152,14 @@ const EnvironmentListToolbar: React.FC<Props> = ({
           </div>
         </div>
 
-        <CreateEnvironmentDialog
-          workspaceId={workspaceId}
-          projectName={projectName}
-          onSuccess={onCreated}
-          fullBtn
-        />
+        {onCreated && (
+          <CreateEnvironmentDialog
+            workspaceId={workspaceId}
+            projectName={projectName}
+            onSuccess={onCreated}
+            fullBtn
+          />
+        )}
       </div>
     </div>
   )
