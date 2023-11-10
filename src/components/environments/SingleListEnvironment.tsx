@@ -22,6 +22,7 @@ interface Props {
   locked: boolean
   type: EnvironmentType
   secretsCount: number
+  disableActions?: boolean
 
   onLock: () => void
   onRename: () => void
@@ -44,6 +45,7 @@ const SingleListEnvironment: React.FC<Props> = ({
   locked,
   type,
   secretsCount,
+  disableActions,
 
   onLock,
   onRename,
@@ -53,7 +55,7 @@ const SingleListEnvironment: React.FC<Props> = ({
   return (
     <Link href={link}>
       <div className="pb-2.5 py-2.5 md:py-1.5 pl-5 md:pl-6 pr-2 md:pr-4 cursor-pointer border-2 dark:border-gray-800 transition hover:dark:shadow-xl hover:shadow-xl hover:shadow-primary/20 hover:dark:shadow-primary/20 rounded-md hover:dark:border-primary hover:border-primary hover:scale-[101%] ease duration-200">
-        <div className="flex justify-between items-center">
+        <div className="h-8 flex justify-between items-center">
           <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-0 w-[90%] bg-red-700X">
             <div className="w-full md:w-[50%] bg-red-800X flex items-center gap-2 md:gap-4">
               {/* // */}
@@ -90,13 +92,15 @@ const SingleListEnvironment: React.FC<Props> = ({
           </div>
 
           {/* // DropdownMenu */}
-          <SingleEnvironmentDropdown
-            locked={locked}
-            onLock={onLock}
-            onRename={onRename}
-            onDelete={onDelete}
-            onChangeType={onChangeType}
-          />
+          {!disableActions && (
+            <SingleEnvironmentDropdown
+              locked={locked}
+              onLock={onLock}
+              onRename={onRename}
+              onDelete={onDelete}
+              onChangeType={onChangeType}
+            />
+          )}
         </div>
       </div>
     </Link>
