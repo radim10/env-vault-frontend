@@ -2,6 +2,7 @@
 
 import clsx from 'clsx'
 import dayjs from 'dayjs'
+import { produce } from 'immer'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -271,6 +272,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
       envName,
       searchParams?.get('only-secrets') === 'true' ? 'only-secrets' : null,
     ]
+
     const existingData = queryClient?.getQueryData<{
       pages: Array<{ data: Array<EnvChangelogItem> }>
     }>(key)
@@ -280,26 +282,41 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
       const pageData = existingData?.pages?.[page]
       if (!pageData) return
 
-      const updatedPage = [...pageData?.data]
-      const item = updatedPage?.find((val) => val?.id === changeId)
-      console.log(item)
+      const updatedPageState = produce(pageData, (draft) => {
+        const item = draft?.data?.find((val) => val?.id === changeId) as any
 
-      if (!item) return
-      const itemIndex = updatedPage?.findIndex((val) => val?.id === changeId)
+        if (item) {
+          item.change.data = secrets
+        }
+      })
 
-      if (itemIndex === -1) return
-      // const updatedItem = { ...item, secretsChanges: secrets }
-      const updatedItem = { ...item, change: { ...item.change, data: secrets } }
-
-      console.log('Updated item:\n', updatedItem)
-      updatedPage[itemIndex] = updatedItem
-
-      const updatedData = { ...existingData }
-      updatedData.pages[page].data = updatedPage
-
-      console.log(updatedData)
+      const updatedData = produce(existingData, (draft) => {
+        draft.pages[page] = updatedPageState
+      })
 
       queryClient.setQueryData(key, updatedData)
+
+      //
+      // const updatedPage = [...pageData?.data]
+      // const item = updatedPage?.find((val) => val?.id === changeId)
+      // console.log(item)
+      //
+      // if (!item) return
+      // const itemIndex = updatedPage?.findIndex((val) => val?.id === changeId)
+      //
+      // if (itemIndex === -1) return
+      // // const updatedItem = { ...item, secretsChanges: secrets }
+      // const updatedItem = { ...item, change: { ...item.change, data: secrets } }
+      //
+      // console.log('Updated item:\n', updatedItem)
+      // updatedPage[itemIndex] = updatedItem
+      //
+      // const updatedData = { ...existingData }
+      // updatedData.pages[page].data = updatedPage
+      //
+      // console.log(updatedData)
+
+      // queryClient.setQueryData(key, updatedData)
     }
   }
 
