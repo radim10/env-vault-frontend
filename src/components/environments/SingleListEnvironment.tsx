@@ -101,6 +101,7 @@ const SingleListEnvironment: React.FC<Props> = ({
               onChangeType={onChangeType}
             />
           )}
+          {disableActions && <div className="h-9"></div>}
         </div>
       </div>
     </Link>
