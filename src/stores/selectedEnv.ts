@@ -1,4 +1,5 @@
 import { EnvironmentType } from '@/types/environments'
+import { ProjectRole } from '@/types/projectAccess'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
@@ -11,6 +12,8 @@ export interface SelectedEnvironment {
   createdAt: string
   locked: boolean
   type: EnvironmentType
+  // inherited from project
+  userRole: ProjectRole
 }
 
 export interface SelectedEnvironmentState {
@@ -19,18 +22,22 @@ export interface SelectedEnvironmentState {
 }
 
 interface SelectedEnvironmentActions {
+  reset: () => void
   set: (env: SelectedEnvironment) => void
   update: (locked: Partial<{ name: string; locked: boolean; type: EnvironmentType }>) => void
   setChangelogFilter: (envChangelogFilter: 'secrets' | null) => void
-  reset: () => void
+  isOwnerRole: () => boolean | null
+  isAdminRole: () => boolean | null
+  isMemberRole: () => boolean | null
 }
 
 export const useSelectedEnvironmentStore = create(
   devtools(
-    immer<SelectedEnvironmentState & SelectedEnvironmentActions>((set) => ({
+    immer<SelectedEnvironmentState & SelectedEnvironmentActions>((set,get) => ({
       data: null,
       changelogFilter: null,
       set: (env) => set({ data: env }),
+      reset: () => set({ data: null }),
       setChangelogFilter: (changelogFilter) => {
         set((state) => {
           state.changelogFilter = changelogFilter
@@ -51,7 +58,15 @@ export const useSelectedEnvironmentStore = create(
           }
         })
       },
-      reset: () => set({ data: null }),
+      isMemberRole: () => {
+        return get()?.data?.userRole === 'MEMBER' ?? null
+      },
+      isAdminRole: () => {
+        return get()?.data?.userRole === 'ADMIN' ?? null
+      },
+      isOwnerRole: () => {
+        return get()?.data?.userRole === 'OWNER' ?? null
+      },
     })),
     {
       store: 'selectedEnv',
