@@ -271,14 +271,18 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
       envName,
       searchParams?.get('only-secrets') === 'true' ? 'only-secrets' : null,
     ]
-    const existingData = queryClient?.getQueryData<{ pages: Array<EnvChangelogItem[]> }>(key)
+    const existingData = queryClient?.getQueryData<{
+      pages: Array<{ data: Array<EnvChangelogItem> }>
+    }>(key)
+    console.log(existingData)
 
     if (existingData) {
       const pageData = existingData?.pages?.[page]
       if (!pageData) return
 
-      const updatedPage = [...pageData]
+      const updatedPage = [...pageData?.data]
       const item = updatedPage?.find((val) => val?.id === changeId)
+      console.log(item)
 
       if (!item) return
       const itemIndex = updatedPage?.findIndex((val) => val?.id === changeId)
@@ -291,7 +295,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
       updatedPage[itemIndex] = updatedItem
 
       const updatedData = { ...existingData }
-      updatedData.pages[page] = updatedPage
+      updatedData.pages[page].data = updatedPage
 
       console.log(updatedData)
 
