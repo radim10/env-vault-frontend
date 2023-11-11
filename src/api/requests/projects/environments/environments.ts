@@ -1,5 +1,6 @@
 import sendRequest, { APIError } from '@/api/instance'
 import { Environment, EnvironmentType } from '@/types/environments'
+import { ProjectRole } from '@/types/projectAccess'
 import { ListEnvironment } from '@/types/projects'
 
 // NOTE: errors
@@ -41,19 +42,26 @@ export function envErrorMsgFromCode(code?: EnvErrorCode | 'workspace_not_found')
 
 // NOTE: requests
 export type GetEnvironmentError = EnvError<'project_not_found' | 'environment_not_found'>
-export type GetEnvironmentData = Environment
+// projecr role
+export type GetEnvironmentData = Environment & { userRole?: ProjectRole }
 
-export async function getEnvironment(args: {
+export type GetEnvironmentArgs = {
   workspaceId: string
   projectName: string
   envName: string
-}) {
-  const { workspaceId, projectName, envName } = args
+  returnProjectRole?: boolean
+}
+
+export async function getEnvironment(args: GetEnvironmentArgs) {
+  const { workspaceId, projectName, envName, returnProjectRole } = args
 
   const response = sendRequest<GetEnvironmentData>({
     method: 'GET',
     basePath: 'workspaces',
     path: `${workspaceId}/projects/${projectName}/environments/${envName}`,
+    params: {
+      role: returnProjectRole,
+    },
   })
   return await response
 }
