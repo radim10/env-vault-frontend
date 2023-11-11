@@ -12,12 +12,13 @@ import { Icons } from '@/components/icons'
 
 interface Props {
   change:
-  | CreatedEnvChange
-  | RenamedEnvChange
-  | UpdatedEnvDescription
-  | LockedEnvChange
-  | EnvTypeChange
+    | CreatedEnvChange
+    | RenamedEnvChange
+    | UpdatedEnvDescription
+    | LockedEnvChange
+    | EnvTypeChange
   createdAt: string
+  readOnly?: boolean
   id?: string
   user?: {
     name: string
@@ -26,19 +27,19 @@ interface Props {
   onRollback: () => void
 }
 
-const ChangelogItem: React.FC<Props> = ({ id, createdAt, user, change, onRollback }) => {
+const ChangelogItem: React.FC<Props> = ({ id, readOnly, createdAt, user, change, onRollback }) => {
   return (
     <div>
       <ChangelogLayout
-        id={id}
+        id={readOnly ? undefined : id}
         user={user}
         createdAt={createdAt}
         rollbackBtn={
-          change?.action !== 'created' && change?.action !== 'description'
+          change?.action !== 'created' && change?.action !== 'description' && !readOnly
             ? {
-              disabled: false,
-              onClick: onRollback,
-            }
+                disabled: false,
+                onClick: onRollback,
+              }
             : undefined
         }
         titleComponent={

@@ -17,6 +17,7 @@ interface Props {
   envName: string
   changeId: string
   valuesLoaded: boolean
+  readOnly?: boolean
 
   //
   id: string
@@ -37,6 +38,7 @@ const ChangelogSecretsItem: React.FC<Props> = ({
   envName,
   changeId,
   valuesLoaded,
+  readOnly,
 
   id,
   user,
@@ -78,7 +80,7 @@ const ChangelogSecretsItem: React.FC<Props> = ({
   return (
     <>
       <ChangelogLayout
-        id={id}
+        id={readOnly ? undefined : id}
         createdAt={createdAt}
         user={user}
         titleComponent={
@@ -89,10 +91,14 @@ const ChangelogSecretsItem: React.FC<Props> = ({
             <Icons.asterisk className="hidden md:block w-4 h-4 text-foreground opacity-80" />
           </div>
         }
-        rollbackBtn={{
-          onClick: onRollback,
-          disabled: isFetching,
-        }}
+        rollbackBtn={
+          !readOnly
+            ? {
+                onClick: onRollback,
+                disabled: isFetching,
+              }
+            : undefined
+        }
         showBtn={{
           hidden,
           loading: isFetching,

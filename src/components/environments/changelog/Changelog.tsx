@@ -19,6 +19,7 @@ import { useToast } from '@/components/ui/use-toast'
 import Error from '@/components/Error'
 import ChangelogItem from './ChangelogItem'
 import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
+import { useSelectedProjectStore } from '@/stores/selectedProject'
 
 dayjs.extend(relativeTime)
 
@@ -36,6 +37,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const selectedEnvironment = useSelectedEnvironmentStore()
+  const selectedProject = useSelectedProjectStore()
 
   const [hasMore, setHasMore] = useState(true)
   const [rollbackDialog, setRollbackDialog] = useState<{ id: string; secrets: boolean } | null>(
@@ -87,10 +89,10 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
           params:
             pageParam || onlySecrets
               ? {
-                date: pageParam?.date ?? undefined,
-                id: pageParam?.id ?? undefined,
-                'only-secrets': onlySecrets ?? undefined,
-              }
+                  date: pageParam?.date ?? undefined,
+                  id: pageParam?.id ?? undefined,
+                  'only-secrets': onlySecrets ?? undefined,
+                }
               : undefined,
         })
 
@@ -348,21 +350,21 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
                     .format('YYYY-MM-DD') &&
                   index > 0) ||
                   index === 0) && (
-                    <div
-                      className={clsx({
-                        'mt-8': index,
-                      })}
-                    >
-                      <TypographyH4>
-                        {dayjs(val?.createdAt).hour(12).format('YYYY-MM-DD') ===
-                          dayjs().format('YYYY-MM-DD')
-                          ? 'Today'
-                          : dayjs(val?.createdAt)?.year() === dayjs().year()
-                            ? dayjs(val?.createdAt).hour(12).format('MMMM DD,  dd')
-                            : dayjs(val?.createdAt).hour(12).format('YYYY  MMM DD,  dd')}
-                      </TypographyH4>
-                    </div>
-                  )}
+                  <div
+                    className={clsx({
+                      'mt-8': index,
+                    })}
+                  >
+                    <TypographyH4>
+                      {dayjs(val?.createdAt).hour(12).format('YYYY-MM-DD') ===
+                      dayjs().format('YYYY-MM-DD')
+                        ? 'Today'
+                        : dayjs(val?.createdAt)?.year() === dayjs().year()
+                        ? dayjs(val?.createdAt).hour(12).format('MMMM DD,  dd')
+                        : dayjs(val?.createdAt).hour(12).format('YYYY  MMM DD,  dd')}
+                    </TypographyH4>
+                  </div>
+                )}
               </div>
 
               {val?.change?.action === 'secrets' && (
@@ -374,6 +376,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
                   envName={envName}
                   user={val?.user}
                   changeId={val?.id}
+                  readOnly={selectedProject?.isMemberRole() ?? false}
                   valuesLoaded={
                     queryClient?.getQueryData(['changelog-secrets', val?.id]) !== undefined
                   }
@@ -403,6 +406,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
               )}
               {val?.change?.action !== 'secrets' && (
                 <ChangelogItem
+                  readOnly={selectedProject.isAdminRole() !== true}
                   user={val?.user}
                   change={val.change}
                   id={
