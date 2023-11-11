@@ -12,7 +12,7 @@ import {
 import { Button } from '../ui/button'
 import { Icons } from '../icons'
 import { useMount, useUnmount, useUpdateEffect } from 'react-use'
-import { QueryClient, useIsMutating } from '@tanstack/react-query'
+import { useIsMutating } from '@tanstack/react-query'
 import clsx from 'clsx'
 import SecretsToolbar from './SecretsToolbar'
 import { SecretAction, StateSecret, useEditedSecretsStore } from '@/stores/secrets'
@@ -22,9 +22,10 @@ import ImportSecretsDrawer from './ImportSecretsDrawer'
 
 interface Props {
   data: Secret[]
+  readOnly?: boolean
 }
 
-const SecretsList: React.FC<Props> = ({ data }) => {
+const SecretsList: React.FC<Props> = ({ data, readOnly }) => {
   const { toast } = useToast()
   const isSaving = useIsMutating({ mutationKey: ['secrets-update'] }) === 1 ? true : false
   const [genereteDialogIndex, setGenerateDialogIndex] = useState<number | null>(null)
@@ -286,16 +287,18 @@ const SecretsList: React.FC<Props> = ({ data }) => {
   if (!data?.length && secrets?.length === 0) {
     return (
       <>
-        <ImportSecretsDrawer
-          opened={importDialogOpened}
-          onClose={() => setImportDialogOpened(false)}
-          onConfirm={(values) => {
-            setImportDialogOpened(false)
-            setTimeout(() => {
-              handleImportedSecrets(values)
-            }, 50)
-          }}
-        />
+        {!readOnly && (
+          <ImportSecretsDrawer
+            opened={importDialogOpened}
+            onClose={() => setImportDialogOpened(false)}
+            onConfirm={(values) => {
+              setImportDialogOpened(false)
+              setTimeout(() => {
+                handleImportedSecrets(values)
+              }, 50)
+            }}
+          />
+        )}
         <div className="flex items-center justify-center mt-16">
           <div className="flex flex-col items-center gap-2">
             <div>
@@ -303,25 +306,33 @@ const SecretsList: React.FC<Props> = ({ data }) => {
             </div>
             <div className="text-center">
               <span className="text-lg font-bold opacity-85">No secrets here...</span>
-              <div className="my-1">Add secrets to this environment</div>
-              <div className="mt-5 flex items-center gap-3 justify-center">
-                <Button
-                  className="gap-2"
-                  onClick={() => addSecret()}
-                  variant="default"
-                  disabled={isSaving}
-                >
-                  <Icons.plus className="h-5 w-5" />
-                  Add secret
-                </Button>
-                <Button
-                  className="gap-2"
-                  onClick={() => setImportDialogOpened(true)}
-                  variant="outline"
-                >
-                  <Icons.upload className="h-4 w-4" />
-                </Button>
-              </div>
+              {!readOnly ? (
+                <>
+                  <div className="my-1">Add secrets to this environment</div>
+                  <div className="mt-5 flex items-center gap-3 justify-center">
+                    <Button
+                      className="gap-2"
+                      onClick={() => addSecret()}
+                      variant="default"
+                      disabled={isSaving}
+                    >
+                      <Icons.plus className="h-5 w-5" />
+                      Add secret
+                    </Button>
+                    <Button
+                      className="gap-2"
+                      onClick={() => setImportDialogOpened(true)}
+                      variant="outline"
+                    >
+                      <Icons.upload className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <div className="my-1 text-muted-foreground">
+                  Only project admins/owners can modify secrets
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -331,26 +342,31 @@ const SecretsList: React.FC<Props> = ({ data }) => {
 
   return (
     <>
-      <GenerateSecretDialog
-        index={genereteDialogIndex ?? 0}
-        opened={genereteDialogIndex !== null}
-        onClose={() => setGenerateDialogIndex(null)}
-        onConfirm={(value) => {
-          handleConfirmGeneratedSecret(genereteDialogIndex ?? 0, value)
-        }}
-      />
+      {!readOnly && (
+        <>
+          <GenerateSecretDialog
+            index={genereteDialogIndex ?? 0}
+            opened={genereteDialogIndex !== null}
+            onClose={() => setGenerateDialogIndex(null)}
+            onConfirm={(value) => {
+              handleConfirmGeneratedSecret(genereteDialogIndex ?? 0, value)
+            }}
+          />
 
-      <ImportSecretsDrawer
-        opened={importDialogOpened}
-        onClose={() => setImportDialogOpened(false)}
-        onConfirm={(values) => {
-          setImportDialogOpened(false)
-          handleImportedSecrets(values)
-        }}
-      />
+          <ImportSecretsDrawer
+            opened={importDialogOpened}
+            onClose={() => setImportDialogOpened(false)}
+            onConfirm={(values) => {
+              setImportDialogOpened(false)
+              handleImportedSecrets(values)
+            }}
+          />
+        </>
+      )}
       {/*  */}
 
       <SecretsToolbar
+        readonly={readOnly}
         secretsCount={secrets.length}
         onImport={() => setImportDialogOpened(true)}
         onCopySecrets={copyEnvSecrets}
@@ -398,7 +414,11 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                     type="text"
                     value={newKey !== undefined ? newKey : key}
                     placeholder="Key"
-                    readOnly={action === SecretAction.Archived || action === SecretAction.Deleted}
+                    readOnly={
+                      action === SecretAction.Archived ||
+                      action === SecretAction.Deleted ||
+                      readOnly
+                    }
                     disabled={isSaving}
                     onChange={(e) => handleUpdateKey({ index, key, value: e.target.value })}
                     className={clsx({
@@ -452,7 +472,8 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                         readOnly={
                           hidden ||
                           action === SecretAction.Archived ||
-                          action === SecretAction.Deleted
+                          action === SecretAction.Deleted ||
+                          readOnly
                         }
                         onChange={(e) => handleUpdateValue({ index, key, value: e.target.value })}
                         className={clsx(['pr-[5.5em]'], {
@@ -469,7 +490,17 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                             newValue !== undefined,
                         })}
                       />
-                      <div className="absolute mr-5 w-10 flex justify-center items-center gap-2 md:gap-3.5">
+                      <div
+                        className={clsx(
+                          [
+                            'absolute mr-5XX w-10 flex justify-center items-center gap-2 md:gap-3.5',
+                          ],
+                          {
+                            'mr-5': !readOnly || (description && description?.length > 0),
+                            'mr-1': !(!readOnly || (description && description?.length > 0)),
+                          }
+                        )}
+                      >
                         <button onClick={() => handleToggleVisibility({ key, index })}>
                           {hidden ? (
                             <Icons.eye className="opacity-50 h-[1.1rem] w-[1.1rem] hover:text-primary hover:opacity-100" />
@@ -477,64 +508,80 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                             <Icons.eyeOff className="opacity-50 h-[1.1rem] w-[1.1rem] hover:text-primary hover:opacity-100" />
                           )}
                         </button>
-                        <button onClick={() => handleToggleDescription({ key, index })}>
-                          <Icons.fileText
-                            className={clsx(
-                              ['opacity-50 h-[1.1rem] w-[1.1rem]  hover:opacity-100'],
-                              {
-                                'opacity-80': showDescription === true,
-                                'opacity-[65%]': !showDescription,
-                                'hover:text-primary':
-                                  (!description &&
-                                    (!newDescription || newDescription?.length === 0)) ||
-                                  (newDescription === description && description?.length !== 0),
-                                'text-primary hover:text-primary':
-                                  (description !== undefined && !newDescription) ||
-                                  (showDescription && !newDescription && !description) ||
+                        {(!readOnly || (description && description?.length > 0)) && (
+                          <button onClick={() => handleToggleDescription({ key, index })}>
+                            <Icons.fileText
+                              className={clsx(
+                                ['opacity-50 h-[1.1rem] w-[1.1rem]  hover:opacity-100'],
+                                {
+                                  'opacity-80': showDescription === true,
+                                  'opacity-[65%]': !showDescription,
+                                  'hover:text-primary':
+                                    (!description &&
+                                      (!newDescription || newDescription?.length === 0)) ||
+                                    (newDescription === description && description?.length !== 0),
+                                  'text-primary hover:text-primary':
+                                    (description !== undefined && !newDescription) ||
+                                    (showDescription && !newDescription && !description) ||
                                     // NEW condition
-                                  (newDescription === description && newDescription && description && 
-                                    description?.length > 0 &&
-                                    newDescription?.length > 0),
-                                'text-green-600/90 dark:text-green-500/80 opacity-70':
-                                  description === undefined &&
-                                  newDescription &&
-                                  newDescription?.length > 0 &&
-                                  action !== SecretAction.Deleted,
-                                'text-orange-600/90 dark:text-orange-500/80 opacity-70':
-                                  description &&
-                                  newDescription &&
-                                  description !== newDescription &&
-                                  newDescription?.length > 0 &&
-                                  action !== SecretAction.Deleted,
-                                'text-red-600/90 dark:text-red-500/80 opacity-70':
-                                  (newDescription?.length === 0 && description) ||
-                                  action === SecretAction.Deleted,
-                              }
-                            )}
-                          />
-                        </button>
+                                    (newDescription === description &&
+                                      newDescription &&
+                                      description &&
+                                      description?.length > 0 &&
+                                      newDescription?.length > 0),
+                                  'text-green-600/90 dark:text-green-500/80 opacity-70':
+                                    description === undefined &&
+                                    newDescription &&
+                                    newDescription?.length > 0 &&
+                                    action !== SecretAction.Deleted,
+                                  'text-orange-600/90 dark:text-orange-500/80 opacity-70':
+                                    description &&
+                                    newDescription &&
+                                    description !== newDescription &&
+                                    newDescription?.length > 0 &&
+                                    action !== SecretAction.Deleted,
+                                  'text-red-600/90 dark:text-red-500/80 opacity-70':
+                                    (newDescription?.length === 0 && description) ||
+                                    action === SecretAction.Deleted,
+                                }
+                              )}
+                            />
+                          </button>
+                        )}
                       </div>
                     </div>
 
                     <div className="hidden md:block">
-                      <Dropdown
-                        disabled={isSaving}
-                        isCreated={action === SecretAction.Created}
-                        onUndo={() => handleUndoChanges({ index, key })}
-                        onDelete={() => handleToggleDeleted({ index, key })}
-                        canDelete={action === null || action === SecretAction.Created}
-                        onArchive={() => handleToggleArchived({ index, key })}
-                        onCopy={() => copyValueToClipboard(value)}
-                        canUndo={
-                          (action !== SecretAction.Created && action !== null) ||
-                          (newDescription?.length === 0 && description) ||
-                          (description && newDescription && newDescription?.length > 0)
-                            ? true
-                            : false
-                        }
-                        onGenerate={() => handleGenerateDialogOpen({ key, index })}
-                        canArchive={action === null}
-                      />
+                      {!readOnly ? (
+                        <Dropdown
+                          disabled={isSaving}
+                          isCreated={action === SecretAction.Created}
+                          onUndo={() => handleUndoChanges({ index, key })}
+                          onDelete={() => handleToggleDeleted({ index, key })}
+                          canDelete={action === null || action === SecretAction.Created}
+                          onArchive={() => handleToggleArchived({ index, key })}
+                          onCopy={() => copyValueToClipboard(value)}
+                          canUndo={
+                            (action !== SecretAction.Created && action !== null) ||
+                            (newDescription?.length === 0 && description) ||
+                            (description && newDescription && newDescription?.length > 0)
+                              ? true
+                              : false
+                          }
+                          onGenerate={() => handleGenerateDialogOpen({ key, index })}
+                          canArchive={action === null}
+                        />
+                      ) : (
+                        <>
+                          <Button
+                            size={'icon'}
+                            variant={'outline'}
+                            onClick={() => copyValueToClipboard(value)}
+                          >
+                            <Icons.copy className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </div>
 
@@ -563,7 +610,11 @@ const SecretsList: React.FC<Props> = ({ data }) => {
                       onChange={(e) =>
                         handleUpdateDescription({ index, key, value: e.target.value })
                       }
-                      readOnly={action === SecretAction.Archived || action === SecretAction.Deleted}
+                      readOnly={
+                        action === SecretAction.Archived ||
+                        action === SecretAction.Deleted ||
+                        readOnly
+                      }
                     />
                   )}
                 </div>
@@ -573,7 +624,7 @@ const SecretsList: React.FC<Props> = ({ data }) => {
       </div>
 
       {/* FOOTER  */}
-      {!search?.length && (
+      {!search?.length && !readOnly && (
         <div className="mt-5">
           <Button
             className="gap-2"

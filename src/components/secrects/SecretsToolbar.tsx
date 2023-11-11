@@ -1,4 +1,3 @@
-import React from 'react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Button } from '../ui/button'
 import { Icons } from '../icons'
@@ -8,11 +7,12 @@ import CopySecretsDropdown from './CopySecretsDropdown'
 
 interface Props {
   secretsCount: number
+  readonly?: boolean
   onImport: () => void
   onCopySecrets: (type: 'env' | 'json') => void
 }
 
-const SecretsToolbar: React.FC<Props> = ({ secretsCount, onImport, onCopySecrets }) => {
+const SecretsToolbar: React.FC<Props> = ({ secretsCount, readonly, onImport, onCopySecrets }) => {
   const { secrets, search, setSearch, toggleVisibilityAll, toggleDescriptionAll } =
     useEditedSecretsStore((state) => {
       return {
@@ -35,16 +35,18 @@ const SecretsToolbar: React.FC<Props> = ({ secretsCount, onImport, onCopySecrets
         {/* */}
         <div className="flex flex-col md:flex-row w-full gap-3 md:items-center justify-end md:mt-0 -mt-8 mb-4 md:mb-0 ">
           <div className="flex items-center gap-2 justify-end md:justify-start">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button variant={'outline'} onClick={() => onImport()}>
-                    <Icons.upload className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Import secret</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            {!readonly && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant={'outline'} onClick={() => onImport()}>
+                      <Icons.upload className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Import secret</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
 
             <div>
               <CopySecretsDropdown onCopy={onCopySecrets} />
