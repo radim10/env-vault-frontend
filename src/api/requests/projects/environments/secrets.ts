@@ -1,7 +1,11 @@
 import sendRequest, { APIError } from '@/api/instance'
 import { Secret, UpdatedSecretsBody } from '@/types/secrets'
 
-type SecretsErrorCode = 'project_not_found' | 'environment_not_found' | 'out_of_sync'
+type SecretsErrorCode =
+  | 'project_not_found'
+  | 'environment_not_found'
+  | 'out_of_sync'
+  | 'missing_permission'
 export type SecretsError<T extends SecretsErrorCode | void> = APIError<T>
 
 export function secretsErrorMsgFromCode(
@@ -19,6 +23,10 @@ export function secretsErrorMsgFromCode(
 
   if (code === 'workspace_not_found') {
     msg = 'Workspace has been deleted'
+  }
+
+  if (code === 'missing_permission') {
+    msg = "You don't have permission to perform this action"
   }
 
   return msg

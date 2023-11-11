@@ -8,6 +8,7 @@ type EnvErrorCode =
   | 'environment_not_found'
   | 'environment_already_exists'
   | 'environment_locked'
+  | 'missing_permission'
 
 export type EnvError<T extends EnvErrorCode | void> = APIError<T>
 
@@ -29,6 +30,10 @@ export function envErrorMsgFromCode(code?: EnvErrorCode | 'workspace_not_found')
 
   if (code === 'workspace_not_found') {
     msg = 'Workspace has been deleted'
+  }
+
+  if (code === 'missing_permission') {
+    msg = "You don't have permission to perform this action"
   }
 
   return msg
