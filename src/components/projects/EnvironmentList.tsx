@@ -225,22 +225,30 @@ const EnvironmentList: React.FC<Props> = ({ projectName, workspaceId }) => {
 
   if ((!data?.length && !groupedEnvironments) || (groupedEnvironments && isGroupedEmpty())) {
     return (
-      <div className="flex items-center justify-center mt-32">
+      <div className="flex items-center justify-center mt-28">
         <div className="flex flex-col items-center gap-2">
           <div>
             <Icons.inbox className="h-20 w-20 opacity-30" />
           </div>
           <div className="text-center">
             <span className="text-lg font-bold opacity-85">No environments here...</span>
-            <div className="my-1">Add environments to your project</div>
-            <div className="mt-5">
-              <CreateEnvironmentDialog
-                workspaceId={workspaceId}
-                projectName={projectName}
-                onSuccess={handleNewEnvironment}
-                btnText="Add environment"
-              />
-            </div>
+            {selectedProject?.userRole === 'OWNER' ? (
+              <>
+                <div className="my-1 text-muted-foreground">Add environments to your project</div>
+                <div className="mt-5">
+                  <CreateEnvironmentDialog
+                    workspaceId={workspaceId}
+                    projectName={projectName}
+                    onSuccess={handleNewEnvironment}
+                    btnText="Add environment"
+                  />
+                </div>
+              </>
+            ) : (
+              <div className="my-1 text-md text-muted-foreground">
+                Only project owners can create environments{' '}
+              </div>
+            )}
           </div>
         </div>
       </div>

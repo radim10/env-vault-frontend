@@ -22,7 +22,7 @@ interface Props {
 }
 
 const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
-  const { data: projectState } = useSelectedProjectStore()
+  const { data: projectState, isOwnerRole: isProjectOwner } = useSelectedProjectStore()
 
   const queryClient = useQueryClient()
   const router = useRouter()
@@ -94,25 +94,29 @@ const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
 
   return (
     <>
-      <DeleteProjectDialog
-        opened={dialog === 'delete'}
-        workspaceId={workspaceId}
-        projectName={projectName}
-        onClose={closeDialog}
-        onSuccess={() => handleRemovedProject()}
-      />
+      {isProjectOwner() && (
+        <>
+          <DeleteProjectDialog
+            opened={dialog === 'delete'}
+            workspaceId={workspaceId}
+            projectName={projectName}
+            onClose={closeDialog}
+            onSuccess={() => handleRemovedProject()}
+          />
 
-      <UpdateProjectDialog
-        opened={dialog === 'edit'}
-        prevDesciption={
-          queryClient.getQueryData<Project>(['project', workspaceId, projectName])?.description ??
-          ''
-        }
-        prevName={projectName}
-        workspaceId={workspaceId}
-        onClose={closeDialog}
-        onSuccess={handleUpdatedProject}
-      />
+          <UpdateProjectDialog
+            opened={dialog === 'edit'}
+            prevDesciption={
+              queryClient.getQueryData<Project>(['project', workspaceId, projectName])
+                ?.description ?? ''
+            }
+            prevName={projectName}
+            workspaceId={workspaceId}
+            onClose={closeDialog}
+            onSuccess={handleUpdatedProject}
+          />
+        </>
+      )}
 
       {/* */}
 
@@ -148,25 +152,23 @@ const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
             {
               icon: Icons.fileText,
               label: 'Name',
-              editBtn:
-                projectState?.userRole === 'OWNER'
-                  ? {
-                      disabled: false,
-                      onClick: () => setDialog('edit'),
-                    }
-                  : undefined,
+              editBtn: isProjectOwner()
+                ? {
+                    disabled: false,
+                    onClick: () => setDialog('edit'),
+                  }
+                : undefined,
               component: <div className="flex items-center gap-2">{projectName}</div>,
             },
             {
               icon: Icons.penSquare,
               label: 'Description',
-              editBtn:
-                projectState?.userRole === 'OWNER'
-                  ? {
-                      disabled: false,
-                      onClick: () => setDialog('edit'),
-                    }
-                  : undefined,
+              editBtn: isProjectOwner()
+                ? {
+                    disabled: false,
+                    onClick: () => setDialog('edit'),
+                  }
+                : undefined,
 
               component: projectState?.description === null ? <></> : undefined,
 
@@ -176,7 +178,7 @@ const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
           ]}
         />
 
-        {projectState?.userRole === 'OWNER' && (
+        {isProjectOwner() && (
           <DangerZone
             btn={{
               onClick: () => setDialog('delete'),
