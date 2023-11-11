@@ -1,4 +1,5 @@
 import {
+  GetEnvironmentArgs,
   GetEnvironmentData,
   GetEnvironmentError,
   GetEnvironmentsData,
@@ -9,11 +10,7 @@ import {
 import { UseQueryOptions, useQuery } from '@tanstack/react-query'
 
 export const useGetEnvironment = (
-  args: {
-    workspaceId: string
-    projectName: string
-    envName: string
-  },
+  args: GetEnvironmentArgs,
   opt?: UseQueryOptions<GetEnvironmentData, GetEnvironmentError>
 ) =>
   useQuery<GetEnvironmentData, GetEnvironmentError>(
