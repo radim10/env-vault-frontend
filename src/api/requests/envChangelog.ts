@@ -50,6 +50,7 @@ export type GetEnvChangelogItemsError = EnvChangelogError<
 export type GetEnvChangelogItemsData = {
   hasMore: boolean
   data: EnvChangelogItem[]
+  offset: number
 }
 
 export async function getEnvChangelogItems(args: {
@@ -57,8 +58,9 @@ export async function getEnvChangelogItems(args: {
   projectName: string
   envName: string
   params?: {
-    id: string
-    date: string
+    offset?: number
+    // id: string
+    // date: string
     ['only-secrets']?: boolean
   }
 }) {
