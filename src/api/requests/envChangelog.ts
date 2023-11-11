@@ -8,13 +8,14 @@ type EnvChangelogErrorCode =
   | 'change_not_found'
   | 'environment_already_exists'
   | 'environment_locked'
+  | 'missing_permission'
 
 export type EnvChangelogError<T extends EnvChangelogErrorCode | void> = APIError<T>
 
 export function envChangelogErrorMsgFromCode(
   code?: EnvChangelogErrorCode | 'workspace_not_found'
 ): string | null {
-  let msg = ''
+  let msg = null
 
   if (code === 'project_not_found') {
     msg = 'Project not found'
@@ -37,7 +38,9 @@ export function envChangelogErrorMsgFromCode(
     msg = 'Workspace has been deleted'
   }
 
-  if (msg === '') msg = 'Something went wrong'
+  if (code === 'missing_permission') {
+    msg = "You don't have permission to perform this action"
+  }
 
   return msg
 }
