@@ -11,6 +11,7 @@ import SaveSecretsToolbar from '@/components/secrects/SaveToolbar'
 import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
 import { useSelectedProjectStore } from '@/stores/selectedProject'
 import { EnvironmentType } from '@/types/environments'
+import { ProjectRole } from '@/types/projectAccess'
 import { useQueryClient } from '@tanstack/react-query'
 import clsx from 'clsx'
 import Link from 'next/link'
@@ -41,11 +42,14 @@ export default function EnvLayout({
       workspaceId: params?.workspace,
       projectName: params?.projectName,
       envName: params?.env,
+      returnProjectRole: !selectedProject,
     },
     {
       enabled:
         queryClient.getQueryData([params?.workspace, params?.projectName, params?.env]) !== null,
       onSuccess: (data) => {
+        const projectRole = (selectedProject?.userRole ?? data?.userRole) as ProjectRole
+
         selectedEnvironment.set({
           workspaceId: params?.workspace,
           projectName: params?.projectName,
@@ -54,6 +58,7 @@ export default function EnvLayout({
           type: data?.type,
           locked: data?.locked,
           createdAt: data?.createdAt,
+          userRole: projectRole,
         })
       },
     }
@@ -138,7 +143,7 @@ export default function EnvLayout({
           </div>
         </div>
 
-        {selectedProject?.userRole !== 'MEMBER' && (
+        {selectedEnvironment?.isMemberRole() !== true && (
           <div className="md:block flex items-center justify-end">
             <SaveSecretsToolbar showBtn={!paramsData?.tab} />
           </div>
