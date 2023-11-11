@@ -128,7 +128,10 @@ const ChangelogLayout: React.FC<Props> = ({
                         'text-primary hover:text-primary opacity-100 cursor-default hover:bg-transparent':
                           showBtn?.loading,
                       })}
-                      onClick={showBtn?.onClick}
+                      onClick={() => {
+                        if (showBtn?.loading) return
+                        showBtn?.onClick()
+                      }}
                     >
                       {!showBtn?.loading && (
                         <>
