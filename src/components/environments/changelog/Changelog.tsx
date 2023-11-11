@@ -2,7 +2,7 @@
 
 import clsx from 'clsx'
 import dayjs from 'dayjs'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import TypographyH4 from '@/components/typography/TypographyH4'
@@ -79,18 +79,20 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
         envName,
         searchParams?.get('only-secrets') === 'true' ? 'only-secrets' : null,
       ],
-      async ({ pageParam = undefined }) => {
+      async ({ pageParam }) => {
         const onlySecrets = searchParams.get('only-secrets') === 'true'
+        const offset = pageParam ? pageParam : undefined
 
         const res = await getEnvChangelogItems({
           workspaceId,
           projectName,
           envName,
           params:
-            pageParam || onlySecrets
+            offset || onlySecrets
               ? {
-                  date: pageParam?.date ?? undefined,
-                  id: pageParam?.id ?? undefined,
+                  offset,
+                  // date: pageParam?.date ?? undefined,
+                  // id: pageParam?.id ?? undefined,
                   'only-secrets': onlySecrets ?? undefined,
                 }
               : undefined,
@@ -98,25 +100,48 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
 
         setHasMore(res?.hasMore ?? false)
 
-        return res.data
+        return res
+        // return res.data
       },
       {
         enabled: true,
         structuralSharing: false,
-        getPreviousPageParam: (firstPage) => {
-          return {
-            id: firstPage?.[0]?.createdAt ?? undefined,
-            date: firstPage?.[0]?.createdAt ?? undefined,
-          }
-        },
-        getNextPageParam: (lastPage) => {
-          return {
-            id: lastPage?.[lastPage.length - 1]?.id ?? undefined,
-            date: lastPage?.[lastPage.length - 1]?.createdAt ?? undefined,
-          }
-        },
+        getPreviousPageParam: (firstPage) => firstPage?.offset,
+        getNextPageParam: (lastPage) => lastPage?.offset,
+        // getPreviousPageParam: (firstPage) => {
+        //   return {
+        //     id: firstPage?.[0]?.createdAt ?? undefined,
+        //     date: firstPage?.[0]?.createdAt ?? undefined,
+        //   }
+        // },
+        // getNextPageParam: (lastPage) => {
+        //   return {
+        //     id: lastPage?.[lastPage.length - 1]?.id ?? undefined,
+        //     date: lastPage?.[lastPage.length - 1]?.createdAt ?? undefined,
+        //   }
+        // },
       }
     )
+
+  const observer = useRef<IntersectionObserver>()
+  const lastElementRef = useCallback(
+    (node: HTMLDivElement) => {
+      if (isLoading) return
+      if (observer.current) observer.current.disconnect()
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore && !isFetching) {
+          fetchNextPage()
+        }
+      })
+      if (node) observer.current.observe(node)
+    },
+    [isLoading, hasMore, fetchNextPage, isFetching]
+  )
+
+  const flattenedData = useMemo(
+    () => (data ? data?.pages.flatMap((item) => item.data) : []),
+    [data]
+  )
 
   const handleRollbackData = (newItem: EnvChangelogItem) => {
     const key = [
@@ -337,15 +362,17 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
         </div>
         {/* //List */}
         <div className="flex flex-col gap-5 md:gap-4">
-          {data?.pages?.flat(1)?.map((val, index) => (
+          {flattenedData?.map((val, index) => (
             <div>
               <div
+                key={index}
+                ref={flattenedData.length === index + 1 ? lastElementRef : null}
                 className={clsx(['mb-6'], {
                   'mt-2': index,
                 })}
               >
                 {((dayjs(val?.createdAt).hour(12).format('YYYY-MM-DD') !==
-                  dayjs(data?.pages?.flat(1)?.[index - 1]?.createdAt)
+                  dayjs(flattenedData?.[index - 1]?.createdAt)
                     .hour(12)
                     .format('YYYY-MM-DD') &&
                   index > 0) ||
