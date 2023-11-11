@@ -152,16 +152,27 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
       envName,
       searchParams?.get('only-secrets') === 'true' ? 'only-secrets' : null,
     ]
-    const existingData = queryClient?.getQueryData<{ pages: Array<EnvChangelogItem[]> }>(key)
+    const existingData = queryClient?.getQueryData<{
+      pages: Array<{ data: Array<EnvChangelogItem> }>
+    }>(key)
 
     if (existingData) {
       const firstPage = existingData?.pages?.[0]
       if (!firstPage) return
 
-      const updatedPage = [newItem, ...firstPage]
-      const updatedData = { ...existingData }
+      // const updatedPage = [newItem, ...firstPage]
+      // const updatedData = { ...existingData }
+      //
+      // updatedData.pages[0] = updatedPage
 
-      updatedData.pages[0] = updatedPage
+      const pageData = existingData?.pages?.[0]
+      const updatedPageState = produce(pageData, (draft) => {
+        draft.data.unshift(newItem)
+      })
+
+      const updatedData = produce(existingData, (draft) => {
+        draft.pages[0] = updatedPageState
+      })
 
       if (newItem?.change?.action === 'secrets') {
         queryClient.setQueryData(key, updatedData)
@@ -199,7 +210,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
     changelogKey: Array<string | null>
     newName: string
     updatedData: {
-      pages: Array<EnvChangelogItem[]>
+      pages: Array<{ data: Array<EnvChangelogItem> }>
     }
   }) => {
     const { changelogKey, updatedData, newName } = args
