@@ -20,6 +20,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { Skeleton } from '@/components/ui/skeleton'
 import SettingsList from '@/components/SettingsList'
 import DangerZone from '@/components/DangerZone'
+import { useSelectedProjectStore } from '@/stores/selectedProject'
 
 dayjs.extend(relativeTime)
 
@@ -27,32 +28,34 @@ const generalItems: Array<{
   label: string
   icon: LucideIcon
 }> = [
-    {
-      icon: Icons.clock4,
-      label: 'Created at',
-    },
-    {
-      icon: Icons.user,
-      label: 'Created by',
-    },
-    {
-      icon: Icons.fileText,
-      label: 'Name',
-    },
-    {
-      icon: Icons.tag,
-      label: 'Type',
-    },
-    {
-      icon: Icons.fileLock2,
-      label: 'Lock status',
-    },
-  ]
+  {
+    icon: Icons.clock4,
+    label: 'Created at',
+  },
+  {
+    icon: Icons.user,
+    label: 'Created by',
+  },
+  {
+    icon: Icons.fileText,
+    label: 'Name',
+  },
+  {
+    icon: Icons.tag,
+    label: 'Type',
+  },
+  {
+    icon: Icons.fileLock2,
+    label: 'Lock status',
+  },
+]
 
 export const EnvSettings = () => {
-  const queryClient = useQueryClient()
   const router = useRouter()
   const { toast } = useToast()
+  const queryClient = useQueryClient()
+
+  const { isOwnerRole: isProjectOwner } = useSelectedProjectStore()
   const { data: selectedEnv, update: updateSelectedEnv } = useSelectedEnvironmentStore()
 
   const [dialog, setDialog] = useState<'rename' | 'delete' | 'lock' | 'changeType' | null>(null)
@@ -280,7 +283,7 @@ export const EnvSettings = () => {
 
   return (
     <>
-      {selectedEnv && (
+      {selectedEnv && isProjectOwner() && (
         <>
           <RenameEnvironmentDialog
             opened={dialog === 'rename'}
@@ -364,18 +367,22 @@ export const EnvSettings = () => {
             {
               icon: Icons.tag,
               label: 'Type',
-              editBtn: {
-                disabled: selectedEnv?.locked,
-                onClick: () => setDialog('changeType'),
-              },
+              editBtn: isProjectOwner()
+                ? {
+                    disabled: selectedEnv?.locked,
+                    onClick: () => setDialog('changeType'),
+                  }
+                : undefined,
               component: <EnvTypeBadge type={selectedEnv?.type ?? EnvironmentType.STAGING} />,
             },
             {
               icon: Icons.fileLock2,
               label: 'Lock status',
-              editBtn: {
-                onClick: () => setDialog('lock'),
-              },
+              editBtn: isProjectOwner()
+                ? {
+                    onClick: () => setDialog('lock'),
+                  }
+                : undefined,
               component: (
                 <div className="flex items-center gap-2">
                   <span>{selectedEnv?.locked ? 'Locked' : 'Unlocked'}</span>
@@ -468,14 +475,16 @@ export const EnvSettings = () => {
         {/* </div> */}
         {/* // DANGER ZONE */}
 
-        <DangerZone
-          btn={{
-            onClick: () => setDialog('delete'),
-            disabled: selectedEnv?.locked,
-          }}
-          title="Delete environment"
-          description="Permanently delete this environment, cannto be undone"
-        />
+        {isProjectOwner() && (
+          <DangerZone
+            btn={{
+              onClick: () => setDialog('delete'),
+              disabled: selectedEnv?.locked,
+            }}
+            title="Delete environment"
+            description="Permanently delete this environment, cannto be undone"
+          />
+        )}
       </div>
     </>
   )
