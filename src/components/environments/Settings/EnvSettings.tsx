@@ -15,48 +15,23 @@ import LockEnvDialog from '../LockEnvDialog'
 import ChangeEnvironmentTypeDialog from '../ChangeEnvironmentTypeDialog'
 import EnvTypeBadge from '../EnvTypeBadge'
 import { Environment, EnvironmentType } from '@/types/environments'
-import { LucideIcon } from 'lucide-react'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { Skeleton } from '@/components/ui/skeleton'
 import SettingsList from '@/components/SettingsList'
 import DangerZone from '@/components/DangerZone'
-import { useSelectedProjectStore } from '@/stores/selectedProject'
 
 dayjs.extend(relativeTime)
-
-const generalItems: Array<{
-  label: string
-  icon: LucideIcon
-}> = [
-  {
-    icon: Icons.clock4,
-    label: 'Created at',
-  },
-  {
-    icon: Icons.user,
-    label: 'Created by',
-  },
-  {
-    icon: Icons.fileText,
-    label: 'Name',
-  },
-  {
-    icon: Icons.tag,
-    label: 'Type',
-  },
-  {
-    icon: Icons.fileLock2,
-    label: 'Lock status',
-  },
-]
 
 export const EnvSettings = () => {
   const router = useRouter()
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
-  const { isOwnerRole: isProjectOwner } = useSelectedProjectStore()
-  const { data: selectedEnv, update: updateSelectedEnv } = useSelectedEnvironmentStore()
+  const {
+    data: selectedEnv,
+    update: updateSelectedEnv,
+    isOwnerRole: isProjectOwner,
+  } = useSelectedEnvironmentStore()
 
   const [dialog, setDialog] = useState<'rename' | 'delete' | 'lock' | 'changeType' | null>(null)
 
@@ -349,10 +324,12 @@ export const EnvSettings = () => {
             {
               icon: Icons.fileText,
               label: 'Name',
-              editBtn: {
-                disabled: selectedEnv?.locked,
-                onClick: () => setDialog('rename'),
-              },
+              editBtn: isProjectOwner()
+                ? {
+                    disabled: selectedEnv?.locked,
+                    onClick: () => setDialog('rename'),
+                  }
+                : undefined,
               component: <div className="flex items-center gap-2">{selectedEnv?.name ?? ''}</div>,
             },
             // {
