@@ -299,7 +299,7 @@ const SecretsList: React.FC<Props> = ({ data, readOnly }) => {
             }}
           />
         )}
-        <div className="flex items-center justify-center mt-16">
+        <div className="flex items-center justify-center mt-24">
           <div className="flex flex-col items-center gap-2">
             <div>
               <Icons.inbox className="h-20 w-20 opacity-30" />
