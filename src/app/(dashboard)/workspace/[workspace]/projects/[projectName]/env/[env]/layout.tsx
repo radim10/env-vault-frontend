@@ -9,6 +9,7 @@ import { Icons } from '@/components/icons'
 import NotFound from '@/components/projects/NotFound'
 import SaveSecretsToolbar from '@/components/secrects/SaveToolbar'
 import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
+import { useSelectedProjectStore } from '@/stores/selectedProject'
 import { EnvironmentType } from '@/types/environments'
 import { useQueryClient } from '@tanstack/react-query'
 import clsx from 'clsx'
@@ -24,12 +25,14 @@ export default function EnvLayout({
   children: React.ReactNode
   params: { workspace: string; projectName: string; env: string }
 }) {
+  const { data: selectedProject } = useSelectedProjectStore()
+
   const queryClient = useQueryClient()
   const { y } = useWindowScroll()
   const selectedEnvironment = useSelectedEnvironmentStore()
   const paramsData = useParams()
 
-  useMount(() => { })
+  useMount(() => {})
 
   useUnmount(() => selectedEnvironment.reset())
 
@@ -135,9 +138,11 @@ export default function EnvLayout({
           </div>
         </div>
 
-        <div className="md:block flex items-center justify-end">
-          <SaveSecretsToolbar showBtn={!paramsData?.tab} />
-        </div>
+        {selectedProject?.userRole !== 'MEMBER' && (
+          <div className="md:block flex items-center justify-end">
+            <SaveSecretsToolbar showBtn={!paramsData?.tab} />
+          </div>
+        )}
       </div>
       {/**/}
       <div className="mt-5">
