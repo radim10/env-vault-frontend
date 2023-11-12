@@ -3,7 +3,7 @@ import sendRequest, { APIError } from '../instance'
 import { WorkspaceToken } from '@/types/tokens/workspace'
 
 // NOTE: error
-type TokensErrorCode = 'user_not_found' | 'token_not_found' | 'permission_denied'
+type TokensErrorCode = 'user_not_found' | 'token_not_found' | 'missing_permission'
 export type TokensError<T extends TokensErrorCode | void> = APIError<T>
 
 export function tokensErrorMsgFromCode(
@@ -23,7 +23,7 @@ export function tokensErrorMsgFromCode(
     msg = 'Current user not found'
   }
 
-  if (code === 'permission_denied') {
+  if (code === 'missing_permission') {
     msg = 'You do not have permission to perform this action'
   }
 

@@ -1,7 +1,7 @@
 import { Workspace, WorkspaceInvitationLinks } from '@/types/workspaces'
 import sendRequest, { APIError } from '../instance'
 
-type WorkspacesErrorCode = 'workspace_not_found'
+type WorkspacesErrorCode = 'workspace_not_found' | 'missing_permission'
 export type WorkspacesError<T extends WorkspacesErrorCode | void> = APIError<T>
 
 export function workspacesErrorMsgFromCode(code?: WorkspacesErrorCode): string | null {
@@ -9,6 +9,10 @@ export function workspacesErrorMsgFromCode(code?: WorkspacesErrorCode): string |
 
   if (code === 'workspace_not_found') {
     msg = 'Workspace has been deleted'
+  }
+
+  if (code === 'missing_permission') {
+    msg = "You don't have permission to perform this action"
   }
 
   return msg

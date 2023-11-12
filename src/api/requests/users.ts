@@ -9,6 +9,7 @@ type UsersErrorCode =
   | 'invitation_already_exists'
   | 'invitation_not_found'
   | 'cannot_delete_yourself'
+  | 'missing_permissions'
 
 export type UsersError<T extends UsersErrorCode | void> = APIError<T>
 
@@ -21,6 +22,10 @@ export function usersErrorMsgFromCode(code?: UsersErrorCode): string | null {
 
   if (code === 'user_not_found') {
     msg = 'User not found in current workspace'
+  }
+
+  if (code === 'missing_permissions') {
+    msg = "You don't have permission to perform this action"
   }
 
   if (code === 'invitation_not_found') {
