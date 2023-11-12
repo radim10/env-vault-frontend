@@ -8,6 +8,8 @@ type UsersErrorCode =
   | 'user_not_found'
   | 'invitation_already_exists'
   | 'invitation_not_found'
+  | 'cannot_delete_yourself'
+
 export type UsersError<T extends UsersErrorCode | void> = APIError<T>
 
 export function usersErrorMsgFromCode(code?: UsersErrorCode): string | null {
@@ -19,6 +21,14 @@ export function usersErrorMsgFromCode(code?: UsersErrorCode): string | null {
 
   if (code === 'user_not_found') {
     msg = 'User not found in current workspace'
+  }
+
+  if (code === 'invitation_not_found') {
+    msg = 'Invitation not found'
+  }
+
+  if (code === 'cannot_delete_yourself') {
+    msg = "You can't delete yourself"
   }
 
   if (code === 'invitation_already_exists') {

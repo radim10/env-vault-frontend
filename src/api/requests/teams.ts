@@ -4,6 +4,7 @@ import { User } from '@/types/users'
 
 type TeamsErrorCode =
   | 'workspace_not_found'
+  | 'permission_denied'
   | 'user_not_found'
   | 'team_already_exists'
   | 'team_not_found'
@@ -15,6 +16,10 @@ export function teamsErrorMsgFromCode(code?: TeamsErrorCode): string | null {
 
   if (code === 'workspace_not_found') {
     msg = 'Workspace has been deleted'
+  }
+
+  if (code === 'permission_denied') {
+    msg = "You don't have permission to perform this action"
   }
 
   if (code === 'user_not_found') {
