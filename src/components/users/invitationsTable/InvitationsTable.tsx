@@ -338,7 +338,8 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
                         'md:w-[29%]': index === 1 && onInviteUser,
                         'md:w-[35%]': index === 1 && !onInviteUser,
                         'w-[23%] bg-red-300X': index === 2 && !onInviteUser,
-                        'md:w-44 2xl:w-44 bg-red-300X': index === 2 && onInviteUser,
+                        // 'md:w-44 2xl:w-44 bg-red-300X': index === 2 && onInviteUser,
+                        'w-[19%]': index === 2 && onInviteUser,
                         'pl-7 bg-red-400X': table.getRowModel().rows?.length === 0 && !isLoading,
                       })}
                     >
