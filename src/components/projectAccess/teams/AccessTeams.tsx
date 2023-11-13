@@ -1,8 +1,8 @@
 'use client'
 
+import useProjectAccessTeamsColums from './table/AccessTeamsColumns'
 import AccessTeamsTable from './table/AccessTeamsTable'
-import { accessTeamsColumns } from './table/AccessTeamsColumns'
-import { selectedProjectStore } from '@/stores/selectedProject'
+import { useSelectedProjectStore } from '@/stores/selectedProject'
 
 interface Props {
   workspaceId: string
@@ -10,8 +10,7 @@ interface Props {
 }
 
 const AccessTeams: React.FC<Props> = ({ workspaceId, projectName }) => {
-  const { getState: getSelectedProjectState } = selectedProjectStore
-  // const { getState: getSelectedProjectState } = selectedProjectStore
+  const { isOwnerRole } = useSelectedProjectStore()
 
   return (
     <>
@@ -19,8 +18,8 @@ const AccessTeams: React.FC<Props> = ({ workspaceId, projectName }) => {
       <AccessTeamsTable
         workspaceId={workspaceId}
         projectName={projectName}
-        columns={accessTeamsColumns}
-        readOnly={!getSelectedProjectState().isOwnerRole()}
+        columns={useProjectAccessTeamsColums()}
+        readOnly={!isOwnerRole()}
       />
     </>
   )
