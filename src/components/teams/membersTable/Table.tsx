@@ -40,7 +40,7 @@ interface DataTableProps {
   teamId: string
   columns: ColumnDef<User>[]
   queryClient: QueryClient
-  onAddMembers: () => void
+  onAddMembers?: () => void
 }
 
 function TeamMembersTable({
@@ -266,6 +266,12 @@ function TeamMembersTable({
       return row.id
     },
 
+    initialState: {
+      columnVisibility: {
+        select: onAddMembers === undefined ? false : true,
+      },
+    },
+
     enableSorting:
       !isFetching || (search?.trim().length > 1 ? totalSearchCount > 1 : totalCount > 1),
     state: {
@@ -331,6 +337,7 @@ function TeamMembersTable({
           search={search}
           loading={isLoading}
           onSearch={setSearch}
+          hideSubmit={!onAddMembers}
           onInviteUser={onAddMembers}
         />
       ) : (
@@ -362,7 +369,8 @@ function TeamMembersTable({
                       className={clsx([''], {
                         // 'w-1': index === 0,
                         // 'bg-red-500X  w-2': index === 1,
-                        'md:w-[50%]': index === 1 || index === 2,
+                        'md:w-[50%]': (index === 1 || index === 2) && onAddMembers,
+                        'md:w-[45%] bg-red-400x': (index === 0 || index === 1) && !onAddMembers,
                         'pl-7 bg-red-400X':
                           table.getRowModel().rows?.length === 0 && !searchLoading && !isLoading,
                       })}
