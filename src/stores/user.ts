@@ -15,20 +15,35 @@ type CurrentUser = {
 
 export interface CurrentUserState {
   data: CurrentUser | null
+  isMemberRole: () => boolean | null
+  isAdminRole: () => boolean | null
+  isOwnerRole: () => boolean | null
 }
 
 interface CurrentUserActions {
   set: (user: CurrentUser | null) => void
 }
 
-export const useSelectedUserStore = create(
+export const useCurrentUserStore = create(
   devtools(
-    immer<CurrentUserState & CurrentUserActions>((set) => ({
+    immer<CurrentUserState & CurrentUserActions>((set, get) => ({
+      // data: { role: WorkspaceUserRole.MEMBER },
       data: null,
       set: (env) => set({ data: env }),
+      isMemberRole: () => {
+        return get()?.data?.role === 'MEMBER' ?? null
+      },
+      isAdminRole: () => {
+        return get()?.data?.role === 'ADMIN' ?? null
+      },
+      isOwnerRole: () => {
+        return get()?.data?.role === 'OWNER' ?? null
+      },
     })),
     {
       store: 'currentUser',
     }
   )
 )
+
+export default useCurrentUserStore
