@@ -39,7 +39,7 @@ interface DataTableProps {
   columns: ColumnDef<ListTeam>[]
   queryClient: QueryClient
   newTeam?: ListTeam
-  onCreateTeam: () => void
+  onCreateTeam?: () => void
 }
 
 function TeamsTable({ columns, workspaceId, queryClient, newTeam, onCreateTeam }: DataTableProps) {
@@ -162,7 +162,7 @@ function TeamsTable({ columns, workspaceId, queryClient, newTeam, onCreateTeam }
         onSearch={(value) => {
           table.getColumn('name')?.setFilterValue(value)
         }}
-        onNewTeam={() => onCreateTeam()}
+        onNewTeam={ !onCreateTeam ? undefined: () => onCreateTeam()}
       />
 
       <div className="rounded-md border">
