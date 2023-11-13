@@ -5,12 +5,13 @@ import { WorkspaceUserRole } from '@/types/users'
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { ColumnDef } from '@tanstack/react-table'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { ProjectAccessUser, ProjectRole } from '@/types/projectAccess'
 import UserRoleBadge from '@/components/users/UserRoleBadge'
+import { selectedProjectStore } from '@/stores/selectedProject'
 
+const { getState: getSelectedProjectState } = selectedProjectStore
 // TODO: role column
 export const accessUsersColumns: ColumnDef<ProjectAccessUser>[] = [
   // TODO: toggle all excpet auto roles with meta event or remove it???
@@ -155,9 +156,15 @@ export const accessUsersColumns: ColumnDef<ProjectAccessUser>[] = [
       const meta = table.options.meta as any
       // is workspace admin/owner
       const isAutoRole = row.original.isAutoRole
+      const canEdit = getSelectedProjectState().isOwnerRole()
 
       return (
-        <div className="w-full flex justify-end items-center pr-2 gap-1.5">
+        <div
+          className={clsx(['w-full flex  items-center pr-2 gap-1.5'], {
+            'justify-center': !canEdit,
+            'justify-end': canEdit,
+          })}
+        >
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
@@ -176,55 +183,59 @@ export const accessUsersColumns: ColumnDef<ProjectAccessUser>[] = [
             </Tooltip>
 
             {/* // change role */}
-            <Tooltip>
-              <TooltipTrigger>
-                <Button
-                  size="sm"
-                  variant={'ghost'}
-                  disabled={false}
-                  onClick={() => {
-                    if (isAutoRole) return
+            {canEdit && (
+              <>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button
+                      size="sm"
+                      variant={'ghost'}
+                      disabled={false}
+                      onClick={() => {
+                        if (isAutoRole) return
 
-                    meta.changeRole({
-                      id: row.original.id,
-                      name: row.original.name,
-                      role: row.original.role,
-                    })
-                  }}
-                  className={clsx([''], {
-                    'opacity-30 hover:bg-transparent cursor-default': isAutoRole,
-                    'opacity-70 hover:opacity-100': !isAutoRole,
-                  })}
-                >
-                  <Icons.userCog className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Change role</TooltipContent>
-            </Tooltip>
+                        meta.changeRole({
+                          id: row.original.id,
+                          name: row.original.name,
+                          role: row.original.role,
+                        })
+                      }}
+                      className={clsx([''], {
+                        'opacity-30 hover:bg-transparent cursor-default': isAutoRole,
+                        'opacity-70 hover:opacity-100': !isAutoRole,
+                      })}
+                    >
+                      <Icons.userCog className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Change role</TooltipContent>
+                </Tooltip>
 
-            <Tooltip>
-              <TooltipTrigger>
-                <Button
-                  size="sm"
-                  variant={'ghost'}
-                  disabled={false}
-                  onClick={() => {
-                    if (isAutoRole) return
-                    meta.delete([{ name: row.original.name, id: row.original.id }])
-                  }}
-                  className={clsx([''], {
-                    'opacity-30 hover:bg-transparent cursor-default': isAutoRole,
-                    'opacity-70 hover:opacity-100 hover:text-red-600 dark:hover:text-red-500':
-                      !isAutoRole,
-                  })}
-                >
-                  <Icons.trash className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                {!isAutoRole ? 'Remove access' : 'Cannot be removed (is workspace admin/owner)'}
-              </TooltipContent>
-            </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button
+                      size="sm"
+                      variant={'ghost'}
+                      disabled={false}
+                      onClick={() => {
+                        if (isAutoRole) return
+                        meta.delete([{ name: row.original.name, id: row.original.id }])
+                      }}
+                      className={clsx([''], {
+                        'opacity-30 hover:bg-transparent cursor-default': isAutoRole,
+                        'opacity-70 hover:opacity-100 hover:text-red-600 dark:hover:text-red-500':
+                          !isAutoRole,
+                      })}
+                    >
+                      <Icons.trash className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {!isAutoRole ? 'Remove access' : 'Cannot be removed (is workspace admin/owner)'}
+                  </TooltipContent>
+                </Tooltip>
+              </>
+            )}
           </TooltipProvider>
         </div>
       )

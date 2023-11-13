@@ -10,8 +10,11 @@ import { ProjectAccessTeam, ProjectRole } from '@/types/projectAccess'
 import UserRoleBadge from '@/components/users/UserRoleBadge'
 import { WorkspaceUserRole } from '@/types/users'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { selectedProjectStore } from '@/stores/selectedProject'
 
 dayjs.extend(relativeTime)
+
+const { getState: getSelectedProjectState } = selectedProjectStore
 
 export const accessTeamsColumns: ColumnDef<ProjectAccessTeam>[] = [
   {
@@ -108,6 +111,7 @@ export const accessTeamsColumns: ColumnDef<ProjectAccessTeam>[] = [
     id: 'actions',
     header: () => <div className="text-center">Actions</div>,
     cell: ({ row, table }) => {
+      const canEdit = getSelectedProjectState().isOwnerRole()
       const meta = table.options.meta as {
         goto: (id: string) => void
         delete: (args: { id: string; name: string }) => void
@@ -120,7 +124,12 @@ export const accessTeamsColumns: ColumnDef<ProjectAccessTeam>[] = [
       }
 
       return (
-        <div className="w-full flex justify-start items-center gap-1.5 bg-red-400X">
+        <div
+          className={clsx(['w-full flex items-center gap-1.5'], {
+            'justify-center': !canEdit,
+            'justify-start': canEdit,
+          })}
+        >
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
@@ -137,45 +146,49 @@ export const accessTeamsColumns: ColumnDef<ProjectAccessTeam>[] = [
             </Tooltip>
 
             {/* // change role */}
-            <Tooltip>
-              <TooltipTrigger>
-                <Button
-                  size="sm"
-                  variant={'ghost'}
-                  disabled={false}
-                  onClick={() => {
-                    meta.changeRole({
-                      id: row.original.id,
-                      name: row.original.name,
-                      membersCount: row.original.membersCount,
-                      role: row.original.role,
-                    })
-                  }}
-                  className={clsx([''], {
-                    'opacity-70 hover:opacity-100': true,
-                  })}
-                >
-                  <Icons.userCog className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Change role</TooltipContent>
-            </Tooltip>
+            {canEdit && (
+              <>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button
+                      size="sm"
+                      variant={'ghost'}
+                      disabled={false}
+                      onClick={() => {
+                        meta.changeRole({
+                          id: row.original.id,
+                          name: row.original.name,
+                          membersCount: row.original.membersCount,
+                          role: row.original.role,
+                        })
+                      }}
+                      className={clsx([''], {
+                        'opacity-70 hover:opacity-100': true,
+                      })}
+                    >
+                      <Icons.userCog className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Change role</TooltipContent>
+                </Tooltip>
 
-            <Tooltip>
-              <TooltipTrigger>
-                <Button
-                  onClick={() => meta.delete({ id: row.original.id, name: row.original.name })}
-                  size={'sm'}
-                  variant="ghost"
-                  className={clsx([
-                    'opacity-70 hover:opacity-100 dark:hover:text-red-500 Xdark:text-red-500 xtext-red-600 hover:text-red-600',
-                  ])}
-                >
-                  <Icons.trash className="h-4 w-4" />
-                </Button>
-                <TooltipContent>Remove access</TooltipContent>
-              </TooltipTrigger>
-            </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button
+                      onClick={() => meta.delete({ id: row.original.id, name: row.original.name })}
+                      size={'sm'}
+                      variant="ghost"
+                      className={clsx([
+                        'opacity-70 hover:opacity-100 dark:hover:text-red-500 Xdark:text-red-500 xtext-red-600 hover:text-red-600',
+                      ])}
+                    >
+                      <Icons.trash className="h-4 w-4" />
+                    </Button>
+                    <TooltipContent>Remove access</TooltipContent>
+                  </TooltipTrigger>
+                </Tooltip>
+              </>
+            )}
           </TooltipProvider>
         </div>
       )

@@ -44,9 +44,15 @@ interface DataTableProps {
   workspaceId: string
   projectName: string
   columns: ColumnDef<ProjectAccessTeam>[]
+  readOnly: boolean
 }
 
-const AccessTeamsTable: React.FC<DataTableProps> = ({ columns, projectName, workspaceId }) => {
+const AccessTeamsTable: React.FC<DataTableProps> = ({
+  columns,
+  projectName,
+  workspaceId,
+  readOnly,
+}) => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
@@ -310,7 +316,7 @@ const AccessTeamsTable: React.FC<DataTableProps> = ({ columns, projectName, work
         <TeamsToolbar
           count={table.getRowModel().rows.length ?? null}
           loading={isLoading}
-          onNewTeam={() => setAddTeamDrawerOpened(true)}
+          onNewTeam={!readOnly ? () => setAddTeamDrawerOpened(true) : undefined}
           submitText="Add team"
           isSearchCount={(table.getColumn('name')?.getFilterValue() as string)?.length > 0}
           search={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
@@ -334,9 +340,9 @@ const AccessTeamsTable: React.FC<DataTableProps> = ({ columns, projectName, work
                       className={clsx([''], {
                         // 'md:w-[45%]': index === 0 || index === 1,
                         'pl-4 md:pl-6': index === 0,
-                        'w-[45%]': index === 0,
+                        'w-[45%]': index === 0 || (index === 2 && !readOnly),
                         'w-[20%]': index === 1,
-                        'w-[45%] ': index === 2,
+                        'w-fit': index === 2 && readOnly,
                         'pl-7 bg-red-400X': table.getRowModel().rows?.length === 0 && !isLoading,
                       })}
                     >
