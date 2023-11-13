@@ -44,9 +44,15 @@ interface DataTableProps {
   workspaceId: string
   projectName: string
   columns: ColumnDef<ProjectAccessUser>[]
+  readOnly: boolean
 }
 
-const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, workspaceId }) => {
+const AccessUsersTable: React.FC<DataTableProps> = ({
+  columns,
+  projectName,
+  workspaceId,
+  readOnly,
+}) => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
@@ -299,11 +305,17 @@ const AccessUsersTable: React.FC<DataTableProps> = ({ columns, projectName, work
         />
       )}
 
-      <div className="pl-3 md:pl-5 pr-1 md:pr-3">
+      <div
+        className={clsx(['pl-3 md:pl-5 '], {
+          'pr-1 md:pr-3': !readOnly,
+          'pr-3 ': readOnly,
+        })}
+      >
         <TableToolbar
           count={table.getRowModel().rows.length ?? null}
           loading={isLoading}
           onInviteUser={() => setAddUsersDrawerOpened(true)}
+          hideSubmit={readOnly}
           submitText="Add users"
           entity="users"
           isSearchCount={(table.getColumn('name')?.getFilterValue() as string)?.length > 0}
