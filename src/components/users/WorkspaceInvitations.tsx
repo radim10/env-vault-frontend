@@ -4,9 +4,9 @@ import { useQueryClient } from '@tanstack/react-query'
 import InviteUserDialog from './InviteUserDialog'
 import { useState } from 'react'
 import InvitationsTable from './invitationsTable/InvitationsTable'
-import { invitationsColumns } from './invitationsTable/Columns'
-import { invitationsStore } from '@/stores/invitations'
 import { useUnmount } from 'react-use'
+import { useInvitationsStore } from '@/stores/invitations'
+import useInvitationsTableColumns from './invitationsTable/Columns'
 
 interface Props {
   workspaceId: string
@@ -15,13 +15,10 @@ interface Props {
 const WorkspaceInvitations: React.FC<Props> = ({ workspaceId }) => {
   const queryClient = useQueryClient()
   const [inviteUserDialog, setInviteUserDialog] = useState(false)
+  const invitationsStore = useInvitationsStore()
 
   useUnmount(() => {
-    invitationsStore.setState({
-      errorIds: [],
-      resentIds: [],
-      resendingIds: [],
-    })
+    invitationsStore.reset()
   })
 
   return (
@@ -31,12 +28,12 @@ const WorkspaceInvitations: React.FC<Props> = ({ workspaceId }) => {
         workspaceId={workspaceId}
         opened={inviteUserDialog}
         onClose={() => setInviteUserDialog(false)}
-        onEmailInvite={() => { }}
+        onEmailInvite={() => {}}
       />
       {/**/}
       <InvitationsTable
         workspaceId={workspaceId}
-        columns={invitationsColumns as any}
+        columns={useInvitationsTableColumns()}
         queryClient={queryClient}
         onInviteUser={() => setInviteUserDialog(true)}
       />
