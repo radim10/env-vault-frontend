@@ -108,26 +108,30 @@ const TeamSettings = () => {
     <>
       {selectedTeam && (
         <>
-          <UpdateTeamDialog
-            opened={dialog === 'edit'}
-            workspaceId={selectedTeam?.workspaceId}
-            teamId={selectedTeam?.id}
-            prevName={selectedTeam?.name}
-            prevDesciption={selectedTeam?.description ?? ''}
-            onSuccess={(updated) => handleUpdatedTeam(updated)}
-            onClose={() => setDialog(null)}
-          />
+          {selectedTeam?.canEdit && (
+            <>
+              <UpdateTeamDialog
+                opened={dialog === 'edit'}
+                workspaceId={selectedTeam?.workspaceId}
+                teamId={selectedTeam?.id}
+                prevName={selectedTeam?.name}
+                prevDesciption={selectedTeam?.description ?? ''}
+                onSuccess={(updated) => handleUpdatedTeam(updated)}
+                onClose={() => setDialog(null)}
+              />
 
-          <DeleteTeamDialog
-            opened={dialog === 'delete'}
-            workspaceId={selectedTeam?.workspaceId}
-            team={{
-              id: selectedTeam?.id,
-              name: selectedTeam?.name,
-            }}
-            onClose={() => setDialog(null)}
-            onSuccess={() => handleRemovedTeam()}
-          />
+              <DeleteTeamDialog
+                opened={dialog === 'delete'}
+                workspaceId={selectedTeam?.workspaceId}
+                team={{
+                  id: selectedTeam?.id,
+                  name: selectedTeam?.name,
+                }}
+                onClose={() => setDialog(null)}
+                onSuccess={() => handleRemovedTeam()}
+              />
+            </>
+          )}
 
           <LeaveTeamDialog
             opened={dialog === 'leave'}
@@ -178,20 +182,24 @@ const TeamSettings = () => {
             {
               icon: Icons.fileText,
               label: 'Name',
-              editBtn: {
-                disabled: false,
-                onClick: () => setDialog('edit'),
-              },
+              editBtn: selectedTeam?.canEdit
+                ? {
+                    disabled: false,
+                    onClick: () => setDialog('edit'),
+                  }
+                : undefined,
               component: <div className="flex items-center gap-2">{selectedTeam?.name}</div>,
             },
 
             {
               icon: Icons.penSquare,
               label: 'Description',
-              editBtn: {
-                disabled: false,
-                onClick: () => setDialog('edit'),
-              },
+              editBtn: selectedTeam?.canEdit
+                ? {
+                    disabled: false,
+                    onClick: () => setDialog('edit'),
+                  }
+                : undefined,
 
               component: selectedTeam?.description === null ? <></> : undefined,
 
@@ -213,14 +221,18 @@ const TeamSettings = () => {
           description="You will not longer be member of this team"
         />
 
-        <DangerZone
-          btn={{
-            onClick: () => setDialog('delete'),
-            disabled: false,
-          }}
-          title="Delete team"
-          description="Permanently delete this team, cannto be undone"
-        />
+        {selectedTeam?.canEdit && (
+          <>
+            <DangerZone
+              btn={{
+                onClick: () => setDialog('delete'),
+                disabled: false,
+              }}
+              title="Delete team"
+              description="Permanently delete this team, cannto be undone"
+            />
+          </>
+        )}
       </div>
     </>
   )
