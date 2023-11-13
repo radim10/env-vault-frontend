@@ -6,6 +6,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import InviteUserDialog from './InviteUserDialog'
 import { useState } from 'react'
 import useUsersTableColumns from './table/Columns'
+import useCurrentUserStore from '@/stores/user'
 
 // const dummyData: WorkspaceUser[] = [
 //   {
@@ -45,7 +46,9 @@ const WorkspaceUsers: React.FC<Props> = ({ workspaceId }) => {
   //   [searchParams]
   // )
   //
+  const { isMemberRole } = useCurrentUserStore()
   const [inviteUserDialog, setInviteUserDialog] = useState(false)
+
   //
   // const handleTab = (value: 'all' | 'invitations') => {
   //   if (value === 'invitations') {
@@ -104,7 +107,7 @@ const WorkspaceUsers: React.FC<Props> = ({ workspaceId }) => {
       {/* <UsersDataTable columns={columns as any} data={dummyData} /> */}
       {/* <TableToolbar userCount={data?.totalCount ?? 0} /> */}
       <UsersDataTable
-        onInviteUser={() => setInviteUserDialog(true)}
+        onInviteUser={isMemberRole() ? undefined : () => setInviteUserDialog(true)}
         columns={useUsersTableColumns()}
         workspaceId={workspaceId}
         queryClient={queryClient}
