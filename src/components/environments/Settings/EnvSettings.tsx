@@ -19,6 +19,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { Skeleton } from '@/components/ui/skeleton'
 import SettingsList from '@/components/SettingsList'
 import DangerZone from '@/components/DangerZone'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 dayjs.extend(relativeTime)
 
@@ -316,10 +317,29 @@ export const EnvSettings = () => {
                 </>
               ),
             },
+            // {
+            //   icon: Icons.user,
+            //   label: 'Created by',
+            //   value: selectedEnv?.createdBy?.name ?? '---',
+            // },
+
             {
               icon: Icons.user,
               label: 'Created by',
-              value: '@dimak00',
+              value: !selectedEnv.createdBy ? '---' : undefined,
+              component: selectedEnv?.createdBy && (
+                <div className="flex items-center gap-2 md:gap-3">
+                  {selectedEnv?.createdBy?.avatarUrl && (
+                    <Avatar className="w-7 h-7 opacity-90">
+                      <AvatarImage src={selectedEnv?.createdBy?.avatarUrl} />
+                      <AvatarFallback className="bg-transparent border-2 text-sm">
+                        {selectedEnv?.createdBy?.name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
+                  <span>{selectedEnv?.createdBy?.name}</span>
+                </div>
+              ),
             },
             {
               icon: Icons.fileText,

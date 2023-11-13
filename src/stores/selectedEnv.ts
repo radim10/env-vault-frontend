@@ -1,5 +1,6 @@
 import { EnvironmentType } from '@/types/environments'
 import { ProjectRole } from '@/types/projectAccess'
+import { User } from '@/types/users'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
@@ -12,6 +13,7 @@ export interface SelectedEnvironment {
   createdAt: string
   locked: boolean
   type: EnvironmentType
+  createdBy?: Pick<User, 'name' | 'avatarUrl'>
   // inherited from project
   userRole: ProjectRole
 }
@@ -33,7 +35,7 @@ interface SelectedEnvironmentActions {
 
 export const useSelectedEnvironmentStore = create(
   devtools(
-    immer<SelectedEnvironmentState & SelectedEnvironmentActions>((set,get) => ({
+    immer<SelectedEnvironmentState & SelectedEnvironmentActions>((set, get) => ({
       data: null,
       changelogFilter: null,
       set: (env) => set({ data: env }),

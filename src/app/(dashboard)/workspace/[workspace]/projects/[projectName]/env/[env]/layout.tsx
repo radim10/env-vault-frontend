@@ -53,6 +53,7 @@ export default function EnvLayout({
         selectedEnvironment.set({
           workspaceId: params?.workspace,
           projectName: params?.projectName,
+          createdBy: data?.createdBy,
           //
           name: params?.env,
           type: data?.type,

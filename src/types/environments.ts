@@ -1,3 +1,5 @@
+import { User } from './users'
+
 export enum EnvironmentType {
   DEVELOPMENT = 'DEVELOPMENT',
   TESTING = 'TESTING',
@@ -10,6 +12,7 @@ export interface Environment {
   name: string
   locked: boolean
   type: EnvironmentType
+  createdBy?: Pick<User, 'name' | 'avatarUrl'>
 }
 
 export enum EnvSortOption {
