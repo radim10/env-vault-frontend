@@ -12,7 +12,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { ListProject, Project, UpdatedProjectData } from '@/types/projects'
 import { toast } from '../ui/use-toast'
 import UpdateProjectDialog from './UpdateProjectDialog'
-import { useSelectedProjectStore } from '@/stores/selectedProject'
+import { selectedProjectStore } from '@/stores/selectedProject'
 
 dayjs.extend(relativeTime)
 
@@ -22,7 +22,7 @@ interface Props {
 }
 
 const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
-  const { data: projectState, isOwnerRole: isProjectOwner } = useSelectedProjectStore()
+  const { getState: getSelectedProjectState } = selectedProjectStore
 
   const queryClient = useQueryClient()
   const router = useRouter()
@@ -94,7 +94,7 @@ const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
 
   return (
     <>
-      {isProjectOwner() && (
+      {getSelectedProjectState().isOwnerRole() && (
         <>
           <DeleteProjectDialog
             opened={dialog === 'delete'}
@@ -152,7 +152,7 @@ const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
             {
               icon: Icons.fileText,
               label: 'Name',
-              editBtn: isProjectOwner()
+              editBtn: getSelectedProjectState().isOwnerRole()
                 ? {
                     disabled: false,
                     onClick: () => setDialog('edit'),
@@ -163,22 +163,24 @@ const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
             {
               icon: Icons.penSquare,
               label: 'Description',
-              editBtn: isProjectOwner()
+              editBtn: getSelectedProjectState().isOwnerRole()
                 ? {
                     disabled: false,
                     onClick: () => setDialog('edit'),
                   }
                 : undefined,
 
-              component: projectState?.description === null ? <></> : undefined,
+              component: getSelectedProjectState()?.data?.description === null ? <></> : undefined,
 
               fullComponent:
-                projectState?.description !== null ? <>{projectState?.description}</> : undefined,
+                getSelectedProjectState()?.data?.description !== null ? (
+                  <>{getSelectedProjectState()?.data?.description}</>
+                ) : undefined,
             },
           ]}
         />
 
-        {isProjectOwner() && (
+        {getSelectedProjectState().isOwnerRole() && (
           <DangerZone
             btn={{
               onClick: () => setDialog('delete'),

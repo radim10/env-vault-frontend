@@ -4,7 +4,7 @@ import { useGetSecrets } from '@/api/queries/projects/environments/secrets'
 import React from 'react'
 import SecretsList from './SecretsList'
 import SecretsListSkeleton from './SecretsListSkeleton'
-import { useSelectedProjectStore } from '@/stores/selectedProject'
+import { selectedProjectStore } from '@/stores/selectedProject'
 
 interface Props {
   workspaceId: string
@@ -13,7 +13,6 @@ interface Props {
 }
 
 const SecretsRoot: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
-  const { isMemberRole } = useSelectedProjectStore()
   const { data: secrets, isLoading, error } = useGetSecrets({ workspaceId, projectName, envName })
 
   if (isLoading) {
@@ -30,7 +29,10 @@ const SecretsRoot: React.FC<Props> = ({ workspaceId, projectName, envName }) => 
 
   return (
     <>
-      <SecretsList data={secrets} readOnly={isMemberRole() === true ? true : false} />
+      <SecretsList
+        data={secrets}
+        readOnly={selectedProjectStore?.getState()?.isMemberRole() === true ? true : false}
+      />
     </>
   )
 }
