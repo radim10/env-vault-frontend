@@ -3,11 +3,12 @@
 import { useState } from 'react'
 import { produce } from 'immer'
 import TeamsTable from './table/TeamsTable'
-import { teamsColumns } from './table/Columns'
 import { useQueryClient } from '@tanstack/react-query'
 import CreateTeamDrawer from './CreateTeamDrawer'
 import { ListTeam } from '@/types/teams'
 import { useToast } from '../ui/use-toast'
+import useTeamsTableColumns from './table/Columns'
+import useCurrentUserStore from '@/stores/user'
 
 interface Props {
   workspaceId: string
@@ -16,6 +17,7 @@ interface Props {
 const WorkspaceTeams: React.FC<Props> = ({ workspaceId }) => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
+  const { isMemberRole } = useCurrentUserStore()
   const [createdDrawerOpened, setCreatedDrawerOpened] = useState(false)
   const [newTeam, setNewTeam] = useState<ListTeam | undefined>()
 
@@ -46,18 +48,21 @@ const WorkspaceTeams: React.FC<Props> = ({ workspaceId }) => {
 
   return (
     <div>
-      <CreateTeamDrawer
-        queryClient={queryClient}
-        workspaceId={workspaceId}
-        opened={createdDrawerOpened}
-        onClose={() => setCreatedDrawerOpened(false)}
-        onCreated={handleNewTeam}
-      />
+      {!isMemberRole() && (
+        <CreateTeamDrawer
+          queryClient={queryClient}
+          workspaceId={workspaceId}
+          opened={createdDrawerOpened}
+          onClose={() => setCreatedDrawerOpened(false)}
+          onCreated={handleNewTeam}
+        />
+      )}
+
       <TeamsTable
-        onCreateTeam={() => setCreatedDrawerOpened(true)}
+        onCreateTeam={isMemberRole() ? undefined : () => setCreatedDrawerOpened(true)}
         newTeam={newTeam}
         workspaceId={workspaceId}
-        columns={teamsColumns}
+        columns={useTeamsTableColumns()}
         queryClient={queryClient}
       />
     </div>
