@@ -9,7 +9,7 @@ import NotFound from '@/components/projects/NotFound'
 import Error from '@/components/Error'
 import { useParams } from 'next/navigation'
 import ProjectSkeleton from '@/components/projects/ProjectSkeleton'
-import { useSelectedProjectStore } from '@/stores/selectedProject'
+import { selectedProjectStore } from '@/stores/selectedProject'
 
 function ProjectLayout({
   children,
@@ -18,7 +18,7 @@ function ProjectLayout({
   children: React.ReactNode
   params: { workspace: string; projectName: string }
 }) {
-  const { set: setProjectState } = useSelectedProjectStore()
+  const { setState: setProjectState } = selectedProjectStore
   const queryClient = useQueryClient()
   const paramValues = useParams<{
     workspace: string
@@ -38,7 +38,7 @@ function ProjectLayout({
     {
       enabled:
         queryClient.getQueryData(['project', params?.workspace, params?.projectName]) !== null,
-      onSuccess: (data) => setProjectState(data),
+      onSuccess: (data) => setProjectState({ data }),
     }
   )
   if (isLoading) {
