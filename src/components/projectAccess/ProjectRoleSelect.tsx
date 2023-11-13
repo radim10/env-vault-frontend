@@ -58,7 +58,9 @@ const ProjectRoleSelect: React.FC<Props> = ({
                 <div className="flex items-center gap-2 md:gap-2.5">
                   <UserRoleBadge role={role?.value as any as WorkspaceUserRole} className="px-4" />
                   {!hideDescription && (
-                    <div className="text-sm text-muted-foreground">{role.description}</div>
+                    <div className="hidden md:block text-sm text-muted-foreground">
+                      {role.description}
+                    </div>
                   )}
                 </div>
               </SelectItem>
