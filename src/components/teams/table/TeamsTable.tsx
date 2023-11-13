@@ -24,13 +24,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
-import { Icons } from '@/components/icons'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useUpdateEffect } from 'react-use'
 import { QueryClient } from '@tanstack/react-query'
-import { invitationsStore } from '@/stores/invitations'
-import { ListWorkspaceInvitationsData } from '@/api/requests/users'
 import useUserTablesPaginationStore from '@/stores/userTables'
 import { useGetTeams } from '@/api/queries/teams'
 import { ListTeam } from '@/types/teams'
@@ -127,32 +123,6 @@ function TeamsTable({ columns, workspaceId, queryClient, newTeam, onCreateTeam }
       setInvitationsPageSize(pageSize)
     }
   }, [pageSize])
-
-  useUpdateEffect(() => {
-    const newInvitation = invitationsStore.getState().newInvitation
-
-    if (newInvitation) {
-      const data = queryClient.getQueryData<ListWorkspaceInvitationsData>(getCurrentKey())
-
-      if (data) {
-        const updatedInvitations = produce(data, (draftData) => {
-          draftData.data.unshift(newInvitation)
-          draftData.totalCount = draftData.totalCount + 1
-        })
-
-        queryClient.setQueryData(getCurrentKey(), updatedInvitations)
-      }
-
-      table.resetSorting()
-
-      // reset state
-      invitationsStore.setState((state) => {
-        return produce(state, (draftState) => {
-          draftState.newInvitation = undefined
-        })
-      })
-    }
-  }, [invitationsStore.getState().newInvitation])
 
   const handleGoToTeam = (teamId: string) => {
     router.push(`/workspace/${workspaceId}/teams/${teamId}/members`)
