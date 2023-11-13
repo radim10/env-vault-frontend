@@ -18,6 +18,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import UserRoleBadge from '../UserRoleBadge'
 import useCurrentUserStore from '@/stores/user'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 dayjs.extend(relativeTime)
 
@@ -169,16 +170,23 @@ const useUsersTableColumns = () => {
             <div className="w-full flex justify-center items-center ">
               {isMemberRole() && (
                 <>
-                  <Button
-                    size={'sm'}
-                    variant="ghost"
-                    className="opacity-70 hover:opacity-100"
-                    onClick={() => {
-                      meta.showProfile(row.original?.id)
-                    }}
-                  >
-                    <Icons.arrowRight className="h-4 w-4 " />
-                  </Button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Button
+                          size={'sm'}
+                          variant="ghost"
+                          className="opacity-70 hover:opacity-100"
+                          onClick={() => {
+                            meta.showProfile(row.original?.id)
+                          }}
+                        >
+                          <Icons.arrowRight className="h-4 w-4 " />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>User profile</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </>
               )}
               {!isMemberRole() && (
@@ -241,7 +249,7 @@ const useUsersTableColumns = () => {
         },
       },
     ],
-    []
+    [isMemberRole]
   )
 
   return cols
