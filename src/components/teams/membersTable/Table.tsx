@@ -387,32 +387,58 @@ function TeamMembersTable({
           <TableBody>
             {isLoading || searchLoading ? (
               <>
-                {Array.from({ length: pageSize }).map((row) => (
+                {Array.from({ length: pageSize }).map((_) => (
                   <TableRow className="h-16 w-full bg-red-400X hover:bg-transparent">
-                    {Array.from({ length: 3 }).map((cell, index) => (
+                    {Array.from({ length: 3 }).map((_, index) => (
                       <TableCell
                         key={index}
                         className={clsx(['py-2 md:py-3'], {
                           'pr-0': index === 0,
                         })}
                       >
-                        {index === 1 && (
-                          <div className="flex items-center gap-5 w-full">
-                            <Skeleton
-                              className={clsx(['w-full'], {
-                                'w-10 h-10 rounded-full': true,
-                              })}
-                            />
-                            <Skeleton className="w-[85%] h-6" />
-                          </div>
+                        {!onAddMembers && (
+                          <>
+                            {index === 0 && (
+                              <div className="flex items-center gap-5 w-full">
+                                <Skeleton
+                                  className={clsx(['w-full'], {
+                                    'w-10 h-10 rounded-full': true,
+                                  })}
+                                />
+                                <Skeleton className="w-[85%] h-6" />
+                              </div>
+                            )}
+                            {index !== 0 && (
+                              <Skeleton
+                                className={clsx(['w-full'], {
+                                  'h-6 w-full': true,
+                                })}
+                              />
+                            )}
+                          </>
                         )}
-                        {index !== 1 && (
-                          <Skeleton
-                            className={clsx(['w-full'], {
-                              'h-6 w-full': index !== 0,
-                              'h-5 w-5': index === 0,
-                            })}
-                          />
+
+                        {onAddMembers && (
+                          <>
+                            {index === 1 && (
+                              <div className="flex items-center gap-5 w-full">
+                                <Skeleton
+                                  className={clsx(['w-full'], {
+                                    'w-10 h-10 rounded-full': true,
+                                  })}
+                                />
+                                <Skeleton className="w-[85%] h-6" />
+                              </div>
+                            )}
+                            {index !== 1 && (
+                              <Skeleton
+                                className={clsx(['w-full'], {
+                                  'h-6 w-full': index !== 0,
+                                  'h-5 w-5': index === 0,
+                                })}
+                              />
+                            )}
+                          </>
                         )}
                       </TableCell>
                     ))}
