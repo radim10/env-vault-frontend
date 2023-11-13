@@ -32,12 +32,12 @@ import { useUpdateEffect } from 'react-use'
 import { QueryClient } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/use-toast'
 import DeleteWorkspaceInvitationDialog from '../DeleteInvitationDialog'
-import { invitationsStore } from '@/stores/invitations'
 import { useResendWorkspaceInvitation } from '@/api/mutations/users'
 import { ListWorkspaceInvitationsData, usersErrorMsgFromCode } from '@/api/requests/users'
 import useUserTablesPaginationStore from '@/stores/userTables'
 import TableFooter from '@/components/tables/TableFooter'
 import TableError from '@/components/TableError'
+import { useInvitationsStore } from '@/stores/invitations'
 
 interface DataTableProps {
   workspaceId: string
@@ -66,6 +66,7 @@ function useSkipper() {
 function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: DataTableProps) {
   const { toast } = useToast()
   const defaultData = useMemo(() => [], [])
+  const invitationsStore = useInvitationsStore()
   const { invitationsPageSize, setInvitationsPageSize } = useUserTablesPaginationStore()
 
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
@@ -107,7 +108,8 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
         variant: 'success',
       })
     },
-    onError: () => {
+    onError: (error) => {
+      console.log('error', error)
       toast({
         title: 'Failed to resend invitation',
         variant: 'destructive',
@@ -131,7 +133,7 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
   }, [pageSize])
 
   useUpdateEffect(() => {
-    const newInvitation = invitationsStore.getState().newInvitation
+    const newInvitation = invitationsStore.newInvitation
 
     if (newInvitation) {
       const data = queryClient.getQueryData<ListWorkspaceInvitationsData>(getCurrentKey())
@@ -148,13 +150,9 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
       table.resetSorting()
 
       // reset state
-      invitationsStore.setState((state) => {
-        return produce(state, (draftState) => {
-          draftState.newInvitation = undefined
-        })
-      })
+      invitationsStore.setNewInvitation(null)
     }
-  }, [invitationsStore.getState().newInvitation])
+  }, [invitationsStore.newInvitation])
 
   const [deleteInvitationDialog, setDeleteInvitationDialog] = useState<Pick<
     WorkspaceInvitation,
@@ -166,32 +164,17 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
   }
 
   const handleResendInvitation = (id: string) => {
-    invitationsStore.setState((state) => {
-      return produce(state, (draftState) => {
-        draftState.resentIds.push(id)
-      })
-    })
+    invitationsStore.addResendingId(id)
 
     resendInvitation(
       { workspaceId, invitationId: id },
       {
         onSuccess: () => {
-          invitationsStore.setState((state) => {
-            return produce(state, (draftState) => {
-              draftState.resendingIds = draftState.resendingIds.filter((item) => item !== id)
-              draftState.resentIds.push(id)
-            })
-          })
-
+          invitationsStore.setResentId(id)
           updateSentAtState(id)
         },
         onError: () => {
-          invitationsStore.setState((state) => {
-            return produce(state, (draftState) => {
-              draftState.resendingIds = draftState.resendingIds.filter((item) => item !== id)
-              draftState.errorIds.push(id)
-            })
-          })
+          invitationsStore.setErrorId(id)
         },
       }
     )
@@ -199,14 +182,17 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
 
   const updateSentAtState = (invitationId: string) => {
     const currentKey = getCurrentKey()
-    const data = queryClient.getQueryData<WorkspaceInvitation[]>(currentKey)
+    const data = queryClient.getQueryData<{ data: WorkspaceInvitation[]; totalCount: number }>(
+      currentKey
+    )
+    console.log('data', data)
 
     if (data) {
       const updData = produce(data, (draftData) => {
-        const itemIndex = data.findIndex((item) => item.id === invitationId)
+        const itemIndex = data.data?.findIndex((item) => item.id === invitationId)
 
         if (itemIndex !== -1) {
-          draftData[itemIndex].lastSentAt = new Date()
+          draftData.data[itemIndex].lastSentAt = new Date()
         }
       })
 
