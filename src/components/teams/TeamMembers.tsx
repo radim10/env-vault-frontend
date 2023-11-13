@@ -3,9 +3,10 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import TeamMembersTable from './membersTable/Table'
-import { columns } from './membersTable/Columns'
 import CreateTeamDrawer from './CreateTeamDrawer'
 import { useToast } from '../ui/use-toast'
+import useTeamMembersTableColumns from './membersTable/Columns'
+import { useSelectedTeamStore } from '@/stores/selectedTeam'
 
 interface Props {
   workspaceId: string
@@ -15,6 +16,8 @@ interface Props {
 const TeamMembers: React.FC<Props> = ({ workspaceId, teamId }) => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
+  const selectedTeam = useSelectedTeamStore()
+
   const [addMembersDrawerOpened, setAddMembersDrawerOpened] = useState(false)
 
   const handleAddedMembers = () => {
@@ -46,8 +49,10 @@ const TeamMembers: React.FC<Props> = ({ workspaceId, teamId }) => {
           workspaceId={workspaceId}
           teamId={teamId}
           queryClient={queryClient}
-          columns={columns}
-          onAddMembers={() => setAddMembersDrawerOpened(true)}
+          columns={useTeamMembersTableColumns(selectedTeam?.data?.canEdit === true)}
+          onAddMembers={
+            selectedTeam?.data?.canEdit !== true ? undefined : () => setAddMembersDrawerOpened(true)
+          }
         />
       </div>
     </>
