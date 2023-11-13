@@ -43,7 +43,7 @@ interface DataTableProps {
   workspaceId: string
   columns: ColumnDef<WorkspaceInvitation>[]
   queryClient: QueryClient
-  onInviteUser: () => void
+  onInviteUser?: () => void
 }
 
 // skipper util
@@ -272,6 +272,11 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
       pagination,
       columnFilters,
     },
+    initialState: {
+      columnVisibility: {
+        actions: onInviteUser === undefined ? false : true,
+      },
+    },
   })
 
   if (error) {
@@ -290,7 +295,7 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
 
   return (
     <div>
-      {deleteInvitationDialog && (
+      {deleteInvitationDialog && onInviteUser && (
         <DeleteWorkspaceInvitationDialog
           workspaceId={workspaceId}
           opened={deleteInvitationDialog?.id !== ''}
@@ -315,6 +320,7 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
         onSearch={(value) => {
           table.getColumn('email')?.setFilterValue(value)
         }}
+        hideSubmit={onInviteUser === undefined}
         onInviteUser={onInviteUser}
       />
 
@@ -329,8 +335,10 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
                       key={header.id}
                       className={clsx([''], {
                         'bg-red-500X  md:w-[23.5%]': index === 0,
-                        'md:w-[29%]': index === 1,
-                        'md:w-36 2xl:w-44 bg-red-300X': index === 2,
+                        'md:w-[29%]': index === 1 && onInviteUser,
+                        'md:w-[35%]': index === 1 && !onInviteUser,
+                        'w-[23%] bg-red-300X': index === 2 && !onInviteUser,
+                        'md:w-44 2xl:w-44 bg-red-300X': index === 2 && onInviteUser,
                         'pl-7 bg-red-400X': table.getRowModel().rows?.length === 0 && !isLoading,
                       })}
                     >
@@ -348,7 +356,7 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
               <>
                 {Array.from({ length: pageSize }).map((_) => (
                   <TableRow className="h-16 w-full bg-red-400X hover:bg-transparent">
-                    {Array.from({ length: 5 }).map((_, index) => (
+                    {Array.from({ length: onInviteUser ? 5 : 4 }).map((_, index) => (
                       <TableCell
                         key={index}
                         className={clsx(['py-2 md:py-3'], {
@@ -369,7 +377,7 @@ function InvitationsTable({ columns, workspaceId, queryClient, onInviteUser }: D
                       {row.getVisibleCells().map((cell, index) => (
                         <TableCell
                           key={cell.id}
-                          className={clsx(['py-2 md:py-3'], {
+                          className={clsx(['py-2 md:py-3 h-16'], {
                             'pr-0': index === 0,
                           })}
                         >
