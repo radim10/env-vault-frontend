@@ -7,7 +7,9 @@ export interface Team {
   name: string
   description: string | null
   createdAt: Date
-  createdBy: Pick<User, 'name' | 'avatarUrl'>
+  // createdBy: Pick<User, 'name' | 'avatarUrl'>
+  createdBy?: Pick<User, 'name' | 'avatarUrl'>
+  canEdit: boolean
 }
 
 export interface ListTeam {
