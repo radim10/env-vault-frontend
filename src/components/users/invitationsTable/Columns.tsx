@@ -150,6 +150,7 @@ const useInvitationsTableColumns = () => {
 
       {
         id: 'actions',
+        header: () => <div className="text-end mr-6">Actions</div>,
         cell: ({ row, table }) => {
           const role = row.getValue('role') as WorkspaceUserRole
           const meta = table.options.meta as any
