@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { Label } from '@/components/ui/label'
-import { produce } from 'immer'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 import { useDebounce, useUpdateEffect } from 'react-use'
@@ -22,8 +21,8 @@ import { Tabs, TabsList, TabsTrigger } from '../ui/tabs'
 import { useCheckWorkspaceUserEmail } from '@/api/queries/users'
 import { useCreateWorkspaceInvitation } from '@/api/mutations/users'
 import { ListWorkspaceInvitationsData, usersErrorMsgFromCode } from '@/api/requests/users'
-import { invitationsStore } from '@/stores/invitations'
 import dayjs from 'dayjs'
+import { useInvitationsStore } from '@/stores/invitations'
 
 interface Props {
   queryClient: QueryClient
@@ -47,6 +46,8 @@ const InviteUserDialog: React.FC<Props> = ({
   onClose,
   onEmailInvite,
 }) => {
+  const invitationsStore = useInvitationsStore()
+
   const [email, setEmail] = useState('')
   const [tab, setTab] = useState<'link' | 'email'>('link')
   const [copied, setCopied] = useState(false)
@@ -197,11 +198,7 @@ const InviteUserDialog: React.FC<Props> = ({
 
     console.log('newInvitaion', newInvitaion)
 
-    invitationsStore.setState(
-      produce(invitationsStore.getState(), (draftData) => {
-        draftData.newInvitation = newInvitaion
-      })
-    )
+    invitationsStore.setNewInvitation(newInvitaion)
 
     // const data = queryClient.getQueryData<ListWorkspaceInvitationsData>(currentKey)
     //
