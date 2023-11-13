@@ -160,21 +160,22 @@ const useUsersTableColumns = () => {
 
       {
         id: 'actions',
+        header: () => <div className="text-center ">Actions</div>,
         cell: ({ row, table }) => {
           const role = row.getValue('role') as WorkspaceUserRole
           const meta = table.options.meta as any
 
           return (
-            <div className="w-full flex justify-end items-center pr-2">
+            <div className="w-full flex justify-center items-center ">
               {isMemberRole() && (
                 <>
                   <Button
                     size={'sm'}
                     variant="ghost"
+                    className="opacity-70 hover:opacity-100"
                     onClick={() => {
                       meta.showProfile(row.original?.id)
                     }}
-                    className=""
                   >
                     <Icons.arrowRight className="h-4 w-4 " />
                   </Button>
