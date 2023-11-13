@@ -9,7 +9,7 @@ import { Icons } from '@/components/icons'
 import NotFound from '@/components/projects/NotFound'
 import SaveSecretsToolbar from '@/components/secrects/SaveToolbar'
 import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
-import { selectedProjectStore } from '@/stores/selectedProject'
+import { useSelectedProjectStore } from '@/stores/selectedProject'
 import { EnvironmentType } from '@/types/environments'
 import { ProjectRole } from '@/types/projectAccess'
 import { useQueryClient } from '@tanstack/react-query'
@@ -26,7 +26,7 @@ export default function EnvLayout({
   children: React.ReactNode
   params: { workspace: string; projectName: string; env: string }
 }) {
-  const { getState: selectedProject } = selectedProjectStore
+  const { data: selectedProject } = useSelectedProjectStore()
 
   const queryClient = useQueryClient()
   const { y } = useWindowScroll()
@@ -42,13 +42,13 @@ export default function EnvLayout({
       workspaceId: params?.workspace,
       projectName: params?.projectName,
       envName: params?.env,
-      returnProjectRole: !selectedProject()?.data,
+      returnProjectRole: !selectedProject,
     },
     {
       enabled:
         queryClient.getQueryData([params?.workspace, params?.projectName, params?.env]) !== null,
       onSuccess: (data) => {
-        const projectRole = (selectedProject()?.data?.userRole ?? data?.userRole) as ProjectRole
+        const projectRole = (selectedProject?.userRole ?? data?.userRole) as ProjectRole
 
         selectedEnvironment.set({
           workspaceId: params?.workspace,
