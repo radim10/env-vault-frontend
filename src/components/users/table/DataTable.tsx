@@ -374,7 +374,7 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
                         'bg-red-500X  w-8': index === 0,
                         'md:w-[27%]': index === 2 || index === 1,
                         'md:w-44 2xl:w-56 bg-red-300X': index === 3 && onInviteUser,
-                        'md:w-[18%] g-red-300X': index === 3 && !onInviteUser,
+                        'md:w-[16%] bg-red-300X': index === 3 && !onInviteUser,
                         'pl-7 bg-red-400X':
                           table.getRowModel().rows?.length === 0 && !searchLoading && !isLoading,
                       })}
