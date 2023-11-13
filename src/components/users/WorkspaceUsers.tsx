@@ -1,10 +1,11 @@
 'use client'
 
-import { columns } from './table/Columns'
+import userUsersColumns from './table/Columns'
 import UsersDataTable from './table/DataTable'
 import { useQueryClient } from '@tanstack/react-query'
 import InviteUserDialog from './InviteUserDialog'
 import { useState } from 'react'
+import useUsersTableColumns from './table/Columns'
 
 // const dummyData: WorkspaceUser[] = [
 //   {
@@ -63,7 +64,7 @@ const WorkspaceUsers: React.FC<Props> = ({ workspaceId }) => {
         workspaceId={workspaceId}
         opened={inviteUserDialog}
         onClose={() => setInviteUserDialog(false)}
-        onEmailInvite={() => { }}
+        onEmailInvite={() => {}}
       />
       {/**/}
       {/* <Tabs onValueChange={handleTab as any} value={tab}> */}
@@ -104,7 +105,7 @@ const WorkspaceUsers: React.FC<Props> = ({ workspaceId }) => {
       {/* <TableToolbar userCount={data?.totalCount ?? 0} /> */}
       <UsersDataTable
         onInviteUser={() => setInviteUserDialog(true)}
-        columns={columns as any}
+        columns={useUsersTableColumns()}
         workspaceId={workspaceId}
         queryClient={queryClient}
       />
