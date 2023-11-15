@@ -20,7 +20,6 @@ import { useToast } from '@/components/ui/use-toast'
 import Error from '@/components/Error'
 import ChangelogItem from './ChangelogItem'
 import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
-import { useSelectedProjectStore } from '@/stores/selectedProject'
 
 dayjs.extend(relativeTime)
 
@@ -38,7 +37,6 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const selectedEnvironment = useSelectedEnvironmentStore()
-  const selectedProject = useSelectedProjectStore()
 
   const [hasMore, setHasMore] = useState(true)
   const [rollbackDialog, setRollbackDialog] = useState<{ id: string; secrets: boolean } | null>(
@@ -435,7 +433,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
                   envName={envName}
                   user={val?.user}
                   changeId={val?.id}
-                  readOnly={selectedProject?.isMemberRole() ?? false}
+                  readOnly={selectedEnvironment?.isMemberRole() ?? false}
                   valuesLoaded={
                     queryClient?.getQueryData(['changelog-secrets', val?.id]) !== undefined
                   }
@@ -465,7 +463,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
               )}
               {val?.change?.action !== 'secrets' && (
                 <ChangelogItem
-                  readOnly={selectedProject.isAdminRole() !== true}
+                  readOnly={selectedEnvironment.isOwnerRole() !== true}
                   user={val?.user}
                   change={val.change}
                   id={
