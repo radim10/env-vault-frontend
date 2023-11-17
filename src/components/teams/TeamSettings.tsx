@@ -133,16 +133,18 @@ const TeamSettings = () => {
             </>
           )}
 
-          <LeaveTeamDialog
-            opened={dialog === 'leave'}
-            workspaceId={selectedTeam?.workspaceId}
-            team={{
-              id: selectedTeam?.id,
-              name: selectedTeam?.name,
-            }}
-            onClose={() => setDialog(null)}
-            onLeave={() => handleLeaveTeam()}
-          />
+          {selectedTeam?.isMember && (
+            <LeaveTeamDialog
+              opened={dialog === 'leave'}
+              workspaceId={selectedTeam?.workspaceId}
+              team={{
+                id: selectedTeam?.id,
+                name: selectedTeam?.name,
+              }}
+              onClose={() => setDialog(null)}
+              onLeave={() => handleLeaveTeam()}
+            />
+          )}
         </>
       )}
 
@@ -211,15 +213,17 @@ const TeamSettings = () => {
 
         {/* // TODO: leave team if not owner */}
 
-        <DangerZone
-          btn={{
-            onClick: () => setDialog('leave'),
-            disabled: false,
-            text: 'Leave',
-          }}
-          title="Leave team"
-          description="You will not longer be member of this team"
-        />
+        {selectedTeam?.isMember && (
+          <DangerZone
+            btn={{
+              onClick: () => setDialog('leave'),
+              disabled: false,
+              text: 'Leave',
+            }}
+            title="Leave team"
+            description="You will not longer be member of this team"
+          />
+        )}
 
         {selectedTeam?.canEdit && (
           <>

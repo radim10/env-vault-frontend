@@ -10,6 +10,7 @@ export interface Team {
   // createdBy: Pick<User, 'name' | 'avatarUrl'>
   createdBy?: Pick<User, 'name' | 'avatarUrl'>
   canEdit: boolean
+  isMember?: boolean
 }
 
 export interface ListTeam {
