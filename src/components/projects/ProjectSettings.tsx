@@ -13,6 +13,7 @@ import { ListProject, Project, UpdatedProjectData } from '@/types/projects'
 import { toast } from '../ui/use-toast'
 import UpdateProjectDialog from './UpdateProjectDialog'
 import { useSelectedProjectStore } from '@/stores/selectedProject'
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 
 dayjs.extend(relativeTime)
 
@@ -22,7 +23,7 @@ interface Props {
 }
 
 const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
-  const { data: projectState, isOwnerRole: isProjectOwner } = useSelectedProjectStore()
+  const { data: selectedProject, isOwnerRole: isProjectOwner } = useSelectedProjectStore()
 
   const queryClient = useQueryClient()
   const router = useRouter()
@@ -92,6 +93,11 @@ const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
     }
   }
 
+  if (!selectedProject) {
+    // return <Skeleton className="mt-2 border-2 h-48 w-full" />
+    return <></>
+  }
+
   return (
     <>
       {isProjectOwner() && (
@@ -144,10 +150,24 @@ const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
                 </>
               ),
             },
+
             {
               icon: Icons.user,
               label: 'Created by',
-              value: '@dimak00',
+              value: !selectedProject.createdBy ? '---' : undefined,
+              component: selectedProject?.createdBy && (
+                <div className="flex items-center gap-2 md:gap-3">
+                  {selectedProject?.createdBy?.avatarUrl && (
+                    <Avatar className="w-7 h-7 opacity-90">
+                      <AvatarImage src={selectedProject?.createdBy?.avatarUrl} />
+                      <AvatarFallback className="bg-transparent border-2 text-sm">
+                        {selectedProject?.createdBy?.name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
+                  <span>{selectedProject?.createdBy?.name}</span>
+                </div>
+              ),
             },
             {
               icon: Icons.fileText,
@@ -170,10 +190,12 @@ const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
                   }
                 : undefined,
 
-              component: projectState?.description === null ? <></> : undefined,
+              component: selectedProject?.description === null ? <></> : undefined,
 
               fullComponent:
-                projectState?.description !== null ? <>{projectState?.description}</> : undefined,
+                selectedProject?.description !== null ? (
+                  <>{selectedProject?.description}</>
+                ) : undefined,
             },
           ]}
         />
