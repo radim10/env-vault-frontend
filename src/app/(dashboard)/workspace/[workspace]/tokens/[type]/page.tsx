@@ -1,7 +1,6 @@
-import AccessTable from '@/components/environments/access/AccessTable'
 import CliTokens from '@/components/tokens/CliTokens'
 import EnvTokens from '@/components/tokens/EnvTokens'
-import WorkspaceTokens from '@/components/tokens/WorkspaceTokens'
+import WorkspaceTokensRoot from '@/components/tokens/WorkspaceTokens'
 import { Metadata, ResolvingMetadata } from 'next'
 import { redirect } from 'next/navigation'
 
@@ -27,7 +26,7 @@ export default function TokensPage({ params }: { params: { workspace: string; ty
   return (
     <>
       {params?.type === 'environments' && <EnvTokens workspaceId={params?.workspace} />}
-      {params?.type === 'workspace' && <WorkspaceTokens workspaceId={params?.workspace} />}
+      {params?.type === 'workspace' && <WorkspaceTokensRoot workspaceId={params?.workspace} />}
       {params?.type === 'cli' && <CliTokens workspaceId={params?.workspace} />}
     </>
   )

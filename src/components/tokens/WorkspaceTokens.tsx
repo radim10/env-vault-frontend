@@ -14,9 +14,37 @@ import { useToast } from '../ui/use-toast'
 import { useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import RevokeTokenDialog from '../environments/access/RevokeTokenDialog'
+import useCurrentUserStore from '@/stores/user'
 
 interface Props {
   workspaceId: string
+}
+
+const WorkspaceTokensRoot: React.FC<Props> = ({ workspaceId }) => {
+  const { isMemberRole } = useCurrentUserStore()
+
+  const currentView = {
+    Admin: <WorkspaceTokens workspaceId={workspaceId} />,
+    Member: (
+      <>
+        <div>
+          <div className="flex items-center justify-center mt-28">
+            <div className="flex flex-col items-center gap-2">
+              <div>
+                <Icons.ban className="h-20 w-20 opacity-30" />
+              </div>
+              <div className="text-center">
+                <span className="text-lg font-bold opacity-85">Missing permission</span>
+                <div className="my-1">Yout must be admin/owner to access workspace tokens</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    ),
+  }[isMemberRole() ? 'Member' : 'Admin']
+
+  return <>{currentView}</>
 }
 
 const WorkspaceTokens: React.FC<Props> = ({ workspaceId }) => {
@@ -144,4 +172,4 @@ const WorkspaceTokens: React.FC<Props> = ({ workspaceId }) => {
   )
 }
 
-export default WorkspaceTokens
+export default WorkspaceTokensRoot
