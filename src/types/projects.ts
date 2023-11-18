@@ -1,11 +1,13 @@
 import { Environment } from './environments'
 import { ProjectRole } from './projectAccess'
+import { User } from './users'
 
 export interface Project {
   createdAt: string
   description: string | null
   name: string
   userRole: ProjectRole
+  createdBy?: Pick<User, 'name' | 'avatarUrl'>
   // environments: ListEnvironment[]
 }
 
