@@ -2,11 +2,21 @@ import {
   getEnvTokens,
   GetEnvTokensData,
   GetEnvTokensError,
+  getWorkspaceToken,
+  GetWorkspaceTokenData,
+  GetWorkspaceTokenError,
   getWorkspaceTokens,
   GetWorkspaceTokensData,
   GetWorkspaceTokensError,
 } from '@/api/requests/tokens'
-import { getCliTokens, GetCliTokensData, GetCliTokensError } from '@/api/requests/tokens/cli'
+import {
+  getCliToken,
+  GetCliTokenData,
+  GetCliTokenError,
+  getCliTokens,
+  GetCliTokensData,
+  GetCliTokensError,
+} from '@/api/requests/tokens/cli'
 import { UseQueryOptions, useQuery } from '@tanstack/react-query'
 
 export const useGetEnvTokens = (
@@ -38,6 +48,21 @@ export const useGetWorkspaceTokens = (
     opt
   )
 
+export const useGetWorkspaceToken = (
+  args: {
+    workspaceId: string
+    tokenId: string
+  },
+  opt?: UseQueryOptions<GetWorkspaceTokenData, GetWorkspaceTokenError>
+) =>
+  useQuery<GetWorkspaceTokenData, GetWorkspaceTokenError>(
+    [args.workspaceId, 'workspace-tokens', args.tokenId],
+    () => {
+      return getWorkspaceToken(args)
+    },
+    opt
+  )
+
 export const useGetCliTokens = (
   args: {
     workspaceId: string
@@ -48,6 +73,21 @@ export const useGetCliTokens = (
     [args.workspaceId, 'cli-tokens'],
     () => {
       return getCliTokens(args.workspaceId)
+    },
+    opt
+  )
+
+export const useGetCliToken = (
+  args: {
+    workspaceId: string
+    tokenId: string
+  },
+  opt?: UseQueryOptions<GetCliTokenData, GetCliTokenError>
+) =>
+  useQuery<GetCliTokenData, GetCliTokenError>(
+    [args.workspaceId, 'cli-tokens', args.tokenId],
+    () => {
+      return getCliToken(args)
     },
     opt
   )
