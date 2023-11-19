@@ -13,6 +13,7 @@ import { CliToken } from '@/types/tokens/cli'
 import { useToast } from '../ui/use-toast'
 import { useQueryClient } from '@tanstack/react-query'
 import CreateCliTokenDialog from './GenerateCliTokenDialog'
+import { FullToken } from '@/types/tokens/token'
 
 interface Props {
   workspaceId: string
@@ -50,8 +51,8 @@ const CliTokens: React.FC<Props> = ({ workspaceId }) => {
     })
   }
 
-  const handleNewToken = (args: { id: string; value: string; name: string }) => {
-    setDialogOpened(false)
+  const handleNewToken = (newData: Omit<CliToken, 'tokenPreview'> & { fullToken: string }) => {
+    // setDialogOpened(false)
 
     const data = getCacheData()
 
@@ -60,21 +61,25 @@ const CliTokens: React.FC<Props> = ({ workspaceId }) => {
         [workspaceId, 'cli-tokens'],
         (oldData: CliToken[] | any) => {
           if (oldData) {
-            return [{ ...args }, ...oldData]
+            return [{ ...newData, tokenPreview: newData?.fullToken?.slice(0, 10) }, ...oldData]
           } else {
-            return [args]
+            return [newData]
           }
         }
       )
     }
-
-    toast({
-      title: 'New token created!',
-      description: 'Token has been copied to clipboard',
-      variant: 'success',
+    // full value
+    queryClient.setQueryData<FullToken>([workspaceId, 'cli-tokens', newData?.id], {
+      token: newData?.fullToken,
     })
 
-    copyToken(args.value, false)
+    // toast({
+    //   title: 'New token created!',
+    //   description: 'Token has been copied to clipboard',
+    //   variant: 'success',
+    // })
+    //
+    // copyToken(args.value, false)
   }
 
   const copyToken = (token: string, showToast: boolean) => {
