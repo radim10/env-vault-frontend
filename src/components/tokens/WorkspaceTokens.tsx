@@ -8,13 +8,13 @@ import { Icons } from '../icons'
 import { CreateWorkspaceTokenDialog } from './CreateWorkspaceTokenDialog'
 import { useGetWorkspaceTokens } from '@/api/queries/projects/tokens'
 import { Skeleton } from '../ui/skeleton'
-import AccessTable from '../environments/access/AccessTable'
 import { WorkspaceToken } from '@/types/tokens/workspace'
 import { useToast } from '../ui/use-toast'
 import { useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import RevokeTokenDialog from '../environments/access/RevokeTokenDialog'
 import useCurrentUserStore from '@/stores/user'
+import WorkspceTokensTable from './WorkspceTokensTable'
 
 interface Props {
   workspaceId: string
@@ -165,7 +165,12 @@ const WorkspaceTokens: React.FC<Props> = ({ workspaceId }) => {
             </div>
           </div>
           {/* // TABLE */}
-          <AccessTable data={data} onRevoke={setRevokeDialog} />
+          <WorkspceTokensTable
+            queryClient={queryClient}
+            workspaceId={workspaceId}
+            data={data}
+            onRevoke={setRevokeDialog}
+          />
         </div>
       </div>
     </>
