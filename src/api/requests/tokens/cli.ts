@@ -57,7 +57,7 @@ export async function getCliToken(args: { workspaceId: string; tokenId: string }
 
 // create
 export type CreateCliTokenError = CliTokensError<'user_not_found'>
-export type CreateCliTokenResData = { id: string; value: string }
+export type CreateCliTokenResData = { id: string; token: string }
 
 export type CreateCliTokenArgs = {
   workspaceId: string
