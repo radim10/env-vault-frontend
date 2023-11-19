@@ -1,12 +1,13 @@
 'use client'
 
+import clsx from 'clsx'
 import React from 'react'
 import Link from 'next/link'
-import { usePathname, useParams } from 'next/navigation'
 import { Icons } from './icons'
 import { Separator } from './ui/separator'
 import WorkspaceSelect from './WorkspaceSelect'
-import clsx from 'clsx'
+import { usePathname, useParams } from 'next/navigation'
+import { useLockBodyScroll, useToggle } from 'react-use'
 
 const navItems = [
   { label: 'Projects', href: 'projects', icon: Icons.folder },
@@ -24,10 +25,17 @@ const helpNavItems = [
 
 const Sidebar = () => {
   const [opened, setOpened] = React.useState(false)
+  const [scrollLocked, setSrcollLocked] = useToggle(false)
+
   const pathname = usePathname()
   const params = useParams()
 
-  const toggle = () => setOpened(!opened)
+  const toggle = () => {
+    setSrcollLocked(!opened)
+    setOpened(!opened)
+  }
+
+  useLockBodyScroll(scrollLocked)
 
   return (
     <div className="h-full md:border-r-[1.2px]  border-b-[1.2px] dark:border-gray-800 bg-background z-50">
@@ -59,6 +67,9 @@ const Sidebar = () => {
             {navItems.map((item, index) => (
               <>
                 <Link
+                  onClick={() => {
+                    if (opened) setOpened(false)
+                  }}
                   href={`/workspace/${params.workspace}/${item.href}`}
                   className={clsx(
                     [
