@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -16,8 +16,8 @@ import dayjs, { Dayjs } from 'dayjs'
 import { useCreateEnvironmentToken } from '@/api/mutations/tokens/environment'
 import { Icons } from '@/components/icons'
 import { EnvTokenGrant } from '@/types/tokens/environment'
-import { tokensErrorMsgFromCode } from '@/api/requests/tokens'
 import { envTokensErrorMsgFromCode } from '@/api/requests/projects/environments/tokens'
+import clsx from 'clsx'
 
 enum Grant {
   Read = 'Read',
@@ -31,6 +31,7 @@ interface Props {
   workspaceId: string
   projectName: string
   envName: string
+  readOnly?: boolean
 
   opened: boolean
   onClose: () => void
@@ -46,6 +47,7 @@ interface Props {
 export const GenerateEnvTokenDialog: React.FC<Props> = ({
   workspaceId,
   projectName,
+  readOnly,
   envName,
   opened,
   onClose,
@@ -233,11 +235,11 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
                 <span className="font-semibold">Grant</span>
 
                 <div className="mt-2 flex flex-col gap-2.5 px-2">
-                  {grantTypes.map((g) => (
+                  {grantTypes.map((g, index) => (
                     <div className="items-top flex space-x-3">
                       <Checkbox
                         id={g.toString()}
-                        disabled={isLoading}
+                        disabled={isLoading || (readOnly && index === 1)}
                         checked={grant[g.toString() as 'Read' | 'Write'] ?? false}
                         onCheckedChange={(ch) => {
                           setGrant((draft) => {
@@ -254,7 +256,14 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
                       <div className="grid gap-1.5 leading-none">
                         <label
                           htmlFor={g.toString()}
-                          className="text-[0.9rem] font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          className={clsx(
+                            [
+                              'text-[0.9rem] font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+                            ],
+                            {
+                              'opacity-50 cursor-not-allowed': readOnly && index === 1,
+                            }
+                          )}
                         >
                           {g}
                         </label>
