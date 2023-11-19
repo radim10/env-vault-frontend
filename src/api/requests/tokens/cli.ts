@@ -1,7 +1,8 @@
 import sendRequest, { APIError } from '@/api/instance'
 import { CliToken } from '@/types/tokens/cli'
+import { FullToken } from '@/types/tokens/token'
 
-type CliTokensErrorCode = 'token_not_found' | 'user_not_found'
+type CliTokensErrorCode = 'token_not_found' | 'user_not_found' | 'workspace_not_found'
 export type CliTokensError<T extends CliTokensErrorCode | void> = APIError<T>
 
 export function cliTokensErrorMsgFromCode(
@@ -33,6 +34,23 @@ export async function getCliTokens(workspaceId: string) {
     method: 'GET',
     basePath: 'workspaces',
     path: `${workspaceId}/tokens/cli`,
+  })
+  return await response
+}
+
+// get value
+export type GetCliTokenError = CliTokensError<
+  'user_not_found' | 'workspace_not_found' | 'token_not_found'
+>
+export type GetCliTokenData = FullToken
+
+export async function getCliToken(args: { workspaceId: string; tokenId: string }) {
+  const { workspaceId, tokenId } = args
+
+  const response = sendRequest<GetCliTokenData>({
+    method: 'GET',
+    basePath: 'workspaces',
+    path: `${workspaceId}/tokens/cli/${tokenId}`,
   })
   return await response
 }
