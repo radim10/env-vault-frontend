@@ -1,8 +1,7 @@
-import React from 'react'
+import { useState } from 'react'
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -11,22 +10,61 @@ import {
 import { EnvironmentToken } from '@/types/tokens/environment'
 import dayjs from 'dayjs'
 import { Icons } from '@/components/icons'
-import { Button } from '@/components/ui/button'
 import clsx from 'clsx'
 import { useToast } from '@/components/ui/use-toast'
 import { TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Tooltip } from '@radix-ui/react-tooltip'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { useGetEnvironmentToken } from '@/api/queries/projects/environments/tokens'
+import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
+import { QueryClient } from '@tanstack/react-query'
+import { FullToken } from '@/types/tokens/token'
+import { envTokensErrorMsgFromCode } from '@/api/requests/projects/environments/tokens'
 
 dayjs.extend(relativeTime)
 
 interface Props {
+  queryClient: QueryClient
   data: EnvironmentToken[]
-  onRevoke: (args: { id: string; name: string }) => void
+  disableRevokeWriteAccess?: boolean
+  onRevoke?: (args: { id: string; name: string }) => void
 }
 
-const AccessTable: React.FC<Props> = ({ data, onRevoke }) => {
+const AccessTable: React.FC<Props> = ({
+  queryClient,
+  data,
+  disableRevokeWriteAccess,
+  onRevoke,
+}) => {
   const { toast } = useToast()
+
+  // for diplaying full value
+  const { data: selectedEnvironment } = useSelectedEnvironmentStore()
+  const [selectedTokenId, setSelectedTokenId] = useState<string | null>(null)
+
+  const { isLoading } = useGetEnvironmentToken(
+    {
+      envName: selectedEnvironment?.name as string,
+      tokenId: selectedTokenId as string,
+      projectName: selectedEnvironment?.projectName as string,
+      workspaceId: selectedEnvironment?.workspaceId as string,
+    },
+    {
+      enabled: selectedTokenId !== null,
+      onSettled: () => setSelectedTokenId(null),
+      onSuccess: (data) => {
+        copyToken(data.token)
+      },
+      onError: (error) => {
+        const err = envTokensErrorMsgFromCode(error?.code) ?? 'Something went wrong'
+
+        toast({
+          title: err,
+          variant: 'destructive',
+        })
+      },
+    }
+  )
 
   const copyToken = (token: string) => {
     navigator.clipboard.writeText(token)
@@ -34,6 +72,20 @@ const AccessTable: React.FC<Props> = ({ data, onRevoke }) => {
       title: 'Token copied to clipboard!',
       variant: 'success',
     })
+  }
+
+  const handleGetFullTokenValue = (id: string) => {
+    const data = queryClient.getQueryData<FullToken>([
+      selectedEnvironment?.workspaceId as string,
+      selectedEnvironment?.projectName as string,
+      selectedEnvironment?.name as string,
+      'tokens',
+      id,
+    ])
+
+    if (data) {
+      copyToken(data?.token)
+    } else setSelectedTokenId(id)
   }
 
   return (
@@ -47,11 +99,11 @@ const AccessTable: React.FC<Props> = ({ data, onRevoke }) => {
             <TableHead>Grant</TableHead>
             <TableHead>Created</TableHead>
             <TableHead>Expires</TableHead>
-            <TableHead>Action</TableHead>
+            {onRevoke && <TableHead>Action</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(({ id, name, value, grant, revoked, createdAt, expiresAt }) => (
+          {data.map(({ id, name, tokenPreview, grant, revoked, createdAt, expiresAt }) => (
             <TableRow>
               <>
                 <TableCell>
@@ -68,13 +120,29 @@ const AccessTable: React.FC<Props> = ({ data, onRevoke }) => {
                 <TableCell>
                   <div className="min-w-[100px]">
                     <div className="w-36 lg:w-44 flex gap-1.5">
-                      <div className="truncate w-32">{value.slice(0, 12)}...</div>
-                      <button
-                        className="opacity-60 hover:opacity-100 hover:text-primary"
-                        onClick={() => copyToken(value)}
-                      >
-                        <Icons.copy className="h-3.5 w-3.5 " />
-                      </button>
+                      {/* <div className="truncate w-32">{value.slice(0, 12)}...</div> */}
+                      <div className="w-24">{tokenPreview}...</div>
+                      {selectedTokenId === null ? (
+                        <button
+                          className="opacity-60 hover:opacity-100 hover:text-primary"
+                          // onClick={() => copyToken(tokenPreview)}
+                          onClick={() => handleGetFullTokenValue(id)}
+                        >
+                          <Icons.copy className="h-3.5 w-3.5 " />
+                        </button>
+                      ) : (
+                        <>
+                          {selectedTokenId === id && isLoading ? (
+                            <Icons.loader2 className="h-3.5 w-3.5 animate-spin text-primary mt-0.5" />
+                          ) : (
+                            <>
+                              <button disabled className="opacity-50 cursor-not-allowed">
+                                <Icons.copy className="h-3.5 w-3.5 " />
+                              </button>
+                            </>
+                          )}
+                        </>
+                      )}
                     </div>
                   </div>
                 </TableCell>
@@ -112,18 +180,27 @@ const AccessTable: React.FC<Props> = ({ data, onRevoke }) => {
                     <span className="opacity-70">-----</span>
                   )}
                 </TableCell>
-                <TableCell>
-                  {!revoked && !dayjs(expiresAt).isBefore(dayjs()) ? (
-                    <button
-                      onClick={() => onRevoke({ id, name })}
-                      className="text-red-600 dark:text-red-600 opacity-80 hover:opacity-100 ease duration-150"
-                    >
-                      Revoke
-                    </button>
-                  ) : (
-                    <span className="opacity-70">-----</span>
-                  )}
-                </TableCell>
+                {onRevoke && (
+                  <TableCell>
+                    {!revoked && !dayjs(expiresAt).isBefore(dayjs()) ? (
+                      <button
+                        disabled={disableRevokeWriteAccess && grant?.toString() !== 'READ'}
+                        onClick={() => onRevoke({ id, name })}
+                        className={clsx(['text-red-600 dark:text-red-600  ease duration-150'], {
+                          'cursor-not-allowed opacity-50':
+                            disableRevokeWriteAccess && grant?.toString() !== 'READ',
+                          'opacity-80 hover:opacity-100': !(
+                            disableRevokeWriteAccess && grant?.toString() !== 'READ'
+                          ),
+                        })}
+                      >
+                        Revoke
+                      </button>
+                    ) : (
+                      <span className="opacity-70">-----</span>
+                    )}
+                  </TableCell>
+                )}
               </>
             </TableRow>
           ))}
