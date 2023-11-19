@@ -1,6 +1,7 @@
 import sendRequest, { APIError } from '@/api/instance'
 import { RenameEnvironmentError } from './environments'
 import { EnvTokenGrant, EnvironmentToken } from '@/types/tokens/environment'
+import { FullToken } from '@/types/tokens/token'
 
 // NOTE: error
 type EnvTokensErrorCode = 'project_not_found' | 'environment_not_found' | 'token_not_found'
@@ -79,6 +80,30 @@ export async function getEnvironmentTokens(args: GetEnvironmentTokensArgs) {
   })
   return await response
 }
+
+// get single
+export type GetEnvironmentTokenError = EnvTokensError<
+  'project_not_found' | 'environment_not_found' | 'token_not_found'
+>
+export type GetEnvironmentTokenData = FullToken
+
+export type GetEnvironmentTokenArgs = Pick<
+  CreateEnvironmentTokenArgs,
+  'workspaceId' | 'projectName' | 'envName'
+> & { tokenId: string }
+
+export async function getEnvironmentToken(args: GetEnvironmentTokenArgs) {
+  const { workspaceId, projectName, envName, tokenId } = args
+
+  const response = sendRequest<GetEnvironmentTokenData>({
+    method: 'GET',
+    basePath: 'workspaces',
+    path: `${workspaceId}/projects/${projectName}/environments/${envName}/tokens/${tokenId}`,
+  })
+  return await response
+}
+
+//
 
 // revoke (delete)
 export type RevokeEnvironmentTokenError = EnvTokensError<
