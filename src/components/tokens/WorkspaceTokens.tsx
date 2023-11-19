@@ -14,7 +14,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import RevokeTokenDialog from '../environments/access/RevokeTokenDialog'
 import useCurrentUserStore from '@/stores/user'
-import WorkspceTokensTable from './WorkspceTokensTable'
+import WorkspaceTokensTable from './WorkspaceTokensTable'
 
 interface Props {
   workspaceId: string
@@ -165,7 +165,7 @@ const WorkspaceTokens: React.FC<Props> = ({ workspaceId }) => {
             </div>
           </div>
           {/* // TABLE */}
-          <WorkspceTokensTable
+          <WorkspaceTokensTable
             queryClient={queryClient}
             workspaceId={workspaceId}
             data={data}
