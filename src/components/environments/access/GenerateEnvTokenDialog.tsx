@@ -108,8 +108,14 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
   }, [opened])
 
   useUpdateEffect(() => {
-    if (!opened && error) {
+    if (!opened) {
       setTimeout(() => reset(), 150)
+      if (name?.length > 0) setName('')
+      if (grant?.Read || grant?.Write) setGrant({ Read: false, Write: false })
+      if (expiration?.hours || expiration?.days) {
+        setExpiration({ hours: undefined, days: undefined })
+        setExpirationDate(null)
+      }
     }
   }, [opened])
 
@@ -321,7 +327,7 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
                 </Button>
               )}
               {newTokenData && (
-                <Button type="submit" onClick={() => onClose()}>
+                <Button type="submit" onClick={() => onClose()} variant="outline">
                   Close
                 </Button>
               )}
