@@ -50,7 +50,7 @@ const CliTokens: React.FC<Props> = ({ workspaceId }) => {
     })
   }
 
-  const handleNewToken = (args: { id: string; value: string, name: string }) => {
+  const handleNewToken = (args: { id: string; value: string; name: string }) => {
     setDialogOpened(false)
 
     const data = getCacheData()
@@ -158,6 +158,8 @@ const CliTokens: React.FC<Props> = ({ workspaceId }) => {
           {/* // TABLE */}
           <CliTokensTable
             data={data}
+            queryClient={queryClient}
+            workspaceId={workspaceId}
             onRevoke={(id) => setRevokeDialog({ id })}
             onCopyToken={(token) => copyToken(token, true)}
           />
