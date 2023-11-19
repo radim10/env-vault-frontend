@@ -121,7 +121,7 @@ const AccessTable: React.FC<Props> = ({
                   <div className="min-w-[100px]">
                     <div className="w-36 lg:w-44 flex gap-1.5">
                       {/* <div className="truncate w-32">{value.slice(0, 12)}...</div> */}
-                      <div className="w-24">{tokenPreview}...</div>
+                      <div className="w-28">{tokenPreview}...</div>
                       {selectedTokenId === null ? (
                         <button
                           className="opacity-60 hover:opacity-100 hover:text-primary"
