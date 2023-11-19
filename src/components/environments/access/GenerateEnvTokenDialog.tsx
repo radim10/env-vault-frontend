@@ -103,7 +103,7 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
     },
   })
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     if (opened && copied) setCopied(false)
   }, [opened])
 
