@@ -1,15 +1,24 @@
 import { EnvTokenGrant, ReadOnlyEnvToken } from '@/types/tokens/environment'
 import sendRequest, { APIError } from '../instance'
 import { WorkspaceToken } from '@/types/tokens/workspace'
+import { FullToken } from '@/types/tokens/token'
 
 // NOTE: error
-type TokensErrorCode = 'user_not_found' | 'token_not_found' | 'missing_permission'
+type TokensErrorCode =
+  | 'workspace_not_found'
+  | 'user_not_found'
+  | 'token_not_found'
+  | 'missing_permission'
 export type TokensError<T extends TokensErrorCode | void> = APIError<T>
 
 export function tokensErrorMsgFromCode(
   code?: TokensErrorCode | 'workspace_not_found'
 ): string | null {
   let msg = null
+
+  if (code === 'workspace_not_found') {
+    msg = 'Current workspace not found'
+  }
 
   if (code === 'token_not_found') {
     msg = 'Token not found'
@@ -46,7 +55,7 @@ export async function getEnvTokens(args: { workspaceId: string }) {
 }
 
 // NOTE: workspaces
-// get
+// get many
 export type GetWorkspaceTokensError = TokensError<undefined>
 export type GetWorkspaceTokensData = Array<WorkspaceToken>
 
@@ -57,6 +66,23 @@ export async function getWorkspaceTokens(args: { workspaceId: string }) {
     method: 'GET',
     basePath: 'workspaces',
     path: `${workspaceId}/tokens/workspace`,
+  })
+  return await response
+}
+
+// get full value
+export type GetWorkspaceTokenError = TokensError<
+  'user_not_found' | 'token_not_found' | 'workspace_not_found'
+>
+export type GetWorkspaceTokenData = FullToken
+
+export async function getWorkspaceToken(args: { workspaceId: string; tokenId: string }) {
+  const { workspaceId, tokenId } = args
+
+  const response = sendRequest<GetWorkspaceTokenData>({
+    method: 'GET',
+    basePath: 'workspaces',
+    path: `${workspaceId}/tokens/workspace/${tokenId}`,
   })
   return await response
 }
