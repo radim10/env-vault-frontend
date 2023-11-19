@@ -112,7 +112,7 @@ const CliTokensTable: React.FC<Props> = ({
                             <Icons.loader2 className="h-3.5 w-3.5 animate-spin text-primary mt-0.5" />
                           ) : (
                             <>
-                              <button disabled className="cursor-not-allowed">
+                              <button disabled className="opacity-60 cursor-not-allowed">
                                 <Icons.copy className="h-3.5 w-3.5 " />
                               </button>
                             </>
