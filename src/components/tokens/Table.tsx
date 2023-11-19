@@ -45,7 +45,8 @@ const EnvTokensTable: React.FC<Props> = ({ workspaceId, data }) => {
             <TableRow>
               <>
                 <TableCell>
-                  <div className="flex gap-2.5 items-center py-1 min-w-[100px]">
+                  {/* <div className="flex gap-2.5 items-center py-1 min-w-[100px]"> */}
+                  <div className="flex gap-2.5 items-center py-1 min-w-[100px] xl:min-w-[140px] 2xl:min-w-[190px]">
                     <div
                       className={clsx(['h-2.5 w-2.5 rounded-full mt-[1.5px]'], {
                         'bg-primary': !revoked,
@@ -57,11 +58,7 @@ const EnvTokensTable: React.FC<Props> = ({ workspaceId, data }) => {
                 </TableCell>
                 <TableCell>
                   <div className="min-w-[100px]">
-                    <div
-                      className={clsx(['w-36 flex gap-1.5'], {
-                        'lg:w-36': true,
-                      })}
-                    >
+                    <div className="w-36 lg:w-44 flex gap-1.5">
                       <div className="truncate w-32">{tokenPreview}...</div>
                     </div>
                   </div>

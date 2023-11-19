@@ -107,7 +107,7 @@ const AccessTable: React.FC<Props> = ({
             <TableRow>
               <>
                 <TableCell>
-                  <div className="flex gap-2.5 items-center py-1 min-w-[100px]">
+                  <div className="flex gap-2.5 items-center py-1 min-w-[100px] xl:min-w-[140px] 2xl:min-w-[190px]">
                     <div
                       className={clsx(['h-2.5 w-2.5 rounded-full mt-[1.5px]'], {
                         'bg-primary': !revoked,

@@ -91,7 +91,7 @@ const WorkspceTokensTable: React.FC<Props> = ({ workspaceId, queryClient, data, 
             <TableRow>
               <>
                 <TableCell>
-                  <div className="flex gap-2.5 items-center py-1 min-w-[100px]">
+                  <div className="flex gap-2.5 items-center py-1 min-w-[100px] xl:min-w-[150px] 2xl:min-w-[200px]">
                     <div
                       className={clsx(['h-2.5 w-2.5 rounded-full mt-[1.5px]'], {
                         'bg-primary': !revoked,
@@ -103,7 +103,8 @@ const WorkspceTokensTable: React.FC<Props> = ({ workspaceId, queryClient, data, 
                 </TableCell>
                 <TableCell>
                   <div className="min-w-[100px]">
-                    <div className="w-36 lg:w-44 flex gap-1.5">
+                    {/* <div className="w-36 lg:w-44 flex gap-1.5"> */}
+                    <div className="w-56 lg:w-56 2xl:w-56 flex gap-1.5">
                       {/* <div className="truncate w-32">{value.slice(0, 12)}...</div> */}
                       <div className="w-28">{tokenPreview}...</div>
                       {selectedTokenId === null ? (

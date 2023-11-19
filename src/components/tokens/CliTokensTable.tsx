@@ -90,14 +90,14 @@ const CliTokensTable: React.FC<Props> = ({
             <TableRow>
               <>
                 <TableCell>
-                  <div className="flex gap-2.5 items-center py-1 min-w-[150px]">
+                  <div className="flex gap-2.5 items-center py-1 min-w-[200px] xl:min-w-[200px] 2xl:min-w-[250px]">
                     <span>{name}</span>
                   </div>
                 </TableCell>
                 <TableCell>
                   <div className="min-w-[80px]">
-                    <div className="w-56 lg:w-64 2xl:w-72 flex gap-1.5">
-                      <div className="truncate w-24">{tokenPreview}...</div>
+                    <div className="w-56 lg:w-56 2xl:w-64 flex gap-1.5">
+                      <div className="truncate w-28">{tokenPreview}...</div>
                       {selectedTokenId === null ? (
                         <button
                           className="opacity-60 hover:opacity-100 hover:text-primary"
