@@ -15,6 +15,7 @@ import { useToast } from '@/components/ui/use-toast'
 import RevokeTokenDialog from './RevokeTokenDialog'
 import Error from '@/components/Error'
 import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
+import { FullToken } from '@/types/tokens/token'
 
 interface Props {
   workspaceId: string
@@ -74,9 +75,10 @@ const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
     ])
   }
 
-  const handleNewToken = (args: { name: string; value: string; expiresAt: string | null }) => {
-    setDialogOpened(false)
-
+  const handleNewToken = (
+    tokenData: Omit<EnvironmentToken, 'tokenPreview'> & { fullToken: string }
+  ) => {
+    // setDialogOpened(false)
     const data = getCacheData()
 
     if (data) {
@@ -84,18 +86,26 @@ const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
         [workspaceId, projectName, envName, 'tokens'],
         (oldData: EnvironmentToken[] | any) => {
           if (oldData) {
-            return [{ ...args, revoked: false, createdAt: dayjs().toDate() }, ...oldData]
+            return [{ ...tokenData, tokenPreview: tokenData?.fullToken?.slice(0, 10) }, ...oldData]
           } else {
-            return [args]
+            return [tokenData]
           }
         }
       )
     }
 
-    toast({
-      title: 'New token created!',
-      variant: 'success',
-    })
+    // full value
+    queryClient.setQueryData<FullToken>(
+      [workspaceId, projectName, envName, 'tokens', tokenData?.id],
+      {
+        token: tokenData?.fullToken,
+      }
+    )
+
+    // toast({
+    //   title: 'New token created!',
+    //   variant: 'success',
+    // })
   }
 
   const handleRevokedToken = (tokenId: string) => {
