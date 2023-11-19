@@ -31,14 +31,14 @@ const AccessRoot: React.FC<Props> = (props) => {
     Member: (
       <>
         <div>
-          <div className="flex items-center justify-center mt-28">
+          <div className="flex items-center justify-center mt-24">
             <div className="flex flex-col items-center gap-2">
               <div>
                 <Icons.ban className="h-20 w-20 opacity-30" />
               </div>
               <div className="text-center">
                 <span className="text-lg font-bold opacity-85">Missing permission</span>
-                <div className="my-1">
+                <div className="my-1 text-muted-foreground">
                   Yout must be project admin/owner to access environment tokens
                 </div>
               </div>

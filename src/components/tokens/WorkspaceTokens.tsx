@@ -11,7 +11,6 @@ import { Skeleton } from '../ui/skeleton'
 import { WorkspaceToken } from '@/types/tokens/workspace'
 import { useToast } from '../ui/use-toast'
 import { useQueryClient } from '@tanstack/react-query'
-import dayjs from 'dayjs'
 import RevokeTokenDialog from '../environments/access/RevokeTokenDialog'
 import useCurrentUserStore from '@/stores/user'
 import WorkspaceTokensTable from './WorkspaceTokensTable'
@@ -36,7 +35,9 @@ const WorkspaceTokensRoot: React.FC<Props> = ({ workspaceId }) => {
               </div>
               <div className="text-center">
                 <span className="text-lg font-bold opacity-85">Missing permission</span>
-                <div className="my-1">Yout must be admin/owner to access workspace tokens</div>
+                <div className="my-1 text-muted-foreground">
+                  Yout must be admin/owner to access workspace tokens
+                </div>
               </div>
             </div>
           </div>
