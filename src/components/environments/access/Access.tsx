@@ -14,6 +14,7 @@ import dayjs from 'dayjs'
 import { useToast } from '@/components/ui/use-toast'
 import RevokeTokenDialog from './RevokeTokenDialog'
 import Error from '@/components/Error'
+import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
 
 interface Props {
   workspaceId: string
@@ -21,7 +22,38 @@ interface Props {
   envName: string
 }
 
+const AccessRoot: React.FC<Props> = (props) => {
+  const { isMemberRole } = useSelectedEnvironmentStore()
+
+  const currentView = {
+    Admin: <Access {...props} />,
+    Member: (
+      <>
+        <div>
+          <div className="flex items-center justify-center mt-28">
+            <div className="flex flex-col items-center gap-2">
+              <div>
+                <Icons.ban className="h-20 w-20 opacity-30" />
+              </div>
+              <div className="text-center">
+                <span className="text-lg font-bold opacity-85">Missing permission</span>
+                <div className="my-1">
+                  Yout must be project admin/owner to access environment tokens
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    ),
+  }[isMemberRole() ? 'Member' : 'Admin']
+
+  return <>{currentView}</>
+}
+//
 const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
+  const { isMemberRole, isAdminRole, isOwnerRole, data } = useSelectedEnvironmentStore()
+
   const queryClient = useQueryClient()
   const { toast } = useToast()
   const [dialogOpened, setDialogOpened] = useState(false)
@@ -112,6 +144,7 @@ const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
         opened={dialogOpened}
         onClose={() => setDialogOpened(false)}
         onSuccess={handleNewToken}
+        readOnly={!isOwnerRole()}
       />
 
       {revokeDialog && (
@@ -130,35 +163,47 @@ const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
         <div className="px-3 py-3 md:px-5 md:py-4">
           <div className="flex items-center justify-between">
             <TypographyH4>Environment tokens (for SDKs)</TypographyH4>
-            <Button
-              variant={'outline'}
-              size={'sm'}
-              className="gap-2 hidden md:flex"
-              onClick={() => setDialogOpened(true)}
-            >
-              <Icons.plus className="h-4 w-4" />
-              Add new
-            </Button>
+            {!isMemberRole() && (
+              <>
+                <Button
+                  variant={'outline'}
+                  size={'sm'}
+                  className="gap-2 hidden md:flex"
+                  onClick={() => setDialogOpened(true)}
+                >
+                  <Icons.plus className="h-4 w-4" />
+                  Add new
+                </Button>
+              </>
+            )}
           </div>
           {/* // */}
           <div className="text-[0.95rem] text-muted-foreground mt-1 md:mt-0">
             Environment tokens are used with SDKs to access only selected environments.
           </div>
 
-          <Button
-            size={'sm'}
-            variant={'outline'}
-            className="mt-3.5 mb-2 gap-2 md:hidden flex w-full"
-            onClick={() => setDialogOpened(true)}
-          >
-            <Icons.plus className="h-4 w-4" />
-            Add new
-          </Button>
+          {!isMemberRole() && (
+            <Button
+              size={'sm'}
+              variant={'outline'}
+              className="mt-3.5 mb-2 gap-2 md:hidden flex w-full"
+              onClick={() => setDialogOpened(true)}
+            >
+              <Icons.plus className="h-4 w-4" />
+              Add new
+            </Button>
+          )}
         </div>
-        <AccessTable data={tokens} onRevoke={setRevokeDialog} />
+        {/* <AccessTable data={tokens} onRevoke={!isMemberRole() ? setRevokeDialog : undefined} /> */}
+        <AccessTable
+          queryClient={queryClient}
+          data={tokens}
+          onRevoke={setRevokeDialog}
+          disableRevokeWriteAccess={!isOwnerRole()}
+        />
       </div>
     </>
   )
 }
 
-export default Access
+export default AccessRoot
