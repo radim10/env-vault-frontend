@@ -9,5 +9,6 @@ export interface WorkspaceToken {
   grant: WorkspaceTokenGrant
   expiresAt: string | null
   createdAt: string
-  value: string
+  // value: string
+  tokenPreview: string
 }
