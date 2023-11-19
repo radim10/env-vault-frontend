@@ -15,6 +15,7 @@ import dayjs from 'dayjs'
 import RevokeTokenDialog from '../environments/access/RevokeTokenDialog'
 import useCurrentUserStore from '@/stores/user'
 import WorkspaceTokensTable from './WorkspaceTokensTable'
+import { FullToken } from '@/types/tokens/token'
 
 interface Props {
   workspaceId: string
@@ -61,9 +62,10 @@ const WorkspaceTokens: React.FC<Props> = ({ workspaceId }) => {
     return queryClient.getQueryData<WorkspaceToken[]>([workspaceId, 'workspace-tokens'])
   }
 
-  const handleNewToken = (args: { name: string; value: string; expiresAt: string | null }) => {
-    setDialogOpened(false)
-
+  const handleNewToken = (
+    tokenData: Omit<WorkspaceToken, 'tokenPreview'> & { fullToken: string }
+  ) => {
+    // setDialogOpened(false)
     const data = getCacheData()
 
     if (data) {
@@ -71,18 +73,22 @@ const WorkspaceTokens: React.FC<Props> = ({ workspaceId }) => {
         [workspaceId, 'workspace-tokens'],
         (oldData: WorkspaceToken[] | any) => {
           if (oldData) {
-            return [{ ...args, revoked: false, createdAt: dayjs().toDate() }, ...oldData]
+            return [{ ...tokenData, tokenPreview: tokenData?.fullToken?.slice(0, 10) }, ...oldData]
           } else {
-            return [args]
+            return [tokenData]
           }
         }
       )
     }
 
-    toast({
-      title: 'New token created!',
-      variant: 'success',
+    queryClient.setQueryData<FullToken>([workspaceId, 'workspace-tokens', tokenData?.id], {
+      token: tokenData?.fullToken,
     })
+
+    // toast({
+    //   title: 'New token created!',
+    //   variant: 'success',
+    // })
   }
 
   const handleRevokedToken = (tokenId: string) => {
@@ -163,6 +169,16 @@ const WorkspaceTokens: React.FC<Props> = ({ workspaceId }) => {
               Workspace tokens are used with SDKs to access selected projects in the workspace and
               all content in those projects (environments, secrets).
             </div>
+
+            <Button
+              size={'sm'}
+              variant={'outline'}
+              className="mt-3.5 mb-2 gap-2 md:hidden flex w-full"
+              onClick={() => setDialogOpened(true)}
+            >
+              <Icons.plus className="h-4 w-4" />
+              Add new
+            </Button>
           </div>
           {/* // TABLE */}
           <WorkspaceTokensTable
