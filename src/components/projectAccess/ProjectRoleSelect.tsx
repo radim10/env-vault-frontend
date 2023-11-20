@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import UserRoleBadge from '../users/UserRoleBadge'
 import { WorkspaceUserRole } from '@/types/users'
 import { cn } from '@/lib/utils'
+import ProjectRoleBadge from '../projects/ProjectRoleBadge'
 
 interface Props {
   selected: ProjectRole
@@ -15,9 +16,9 @@ interface Props {
 }
 
 const roles: Array<{ value: ProjectRole; description: string }> = [
-  { value: ProjectRole.MEMBER, description: 'Read only access' },
-  { value: ProjectRole.ADMIN, description: 'Read/write access to environments' },
-  { value: ProjectRole.OWNER, description: 'Full access to project and environments' },
+  { value: ProjectRole.VIEWER, description: 'Read only access' },
+  { value: ProjectRole.EDITOR, description: 'Read/write access to environments' },
+  { value: ProjectRole.ADMIN, description: 'Full access to project and environments' },
 ]
 
 const ProjectRoleSelect: React.FC<Props> = ({
@@ -56,7 +57,7 @@ const ProjectRoleSelect: React.FC<Props> = ({
                 onFocus={(e) => e.stopPropagation()}
               >
                 <div className="flex items-center gap-2 md:gap-2.5">
-                  <UserRoleBadge role={role?.value as any as WorkspaceUserRole} className="px-4" />
+                  <ProjectRoleBadge role={role?.value} className="px-4" />
                   {!hideDescription && (
                     <div className="hidden md:block text-sm text-muted-foreground">
                       {role.description}
