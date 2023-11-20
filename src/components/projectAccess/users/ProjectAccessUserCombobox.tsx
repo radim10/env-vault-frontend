@@ -256,15 +256,15 @@ const ProjectAccessUserCombobox: React.FC<Props> = ({
 
                             'text-blue-600 dark:text-blue-500':
                               selectedUsers.find((val) => item.id === val.id)?.role ===
-                              ProjectRole.MEMBER,
+                              ProjectRole.VIEWER,
 
                             'text-green-600 dark:text-green-600':
                               selectedUsers.find((val) => item.id === val.id)?.role ===
-                              ProjectRole.ADMIN,
+                              ProjectRole.EDITOR,
 
                             'text-red-600 dark:text-red-600':
                               selectedUsers.find((val) => item.id === val.id)?.role ===
-                              ProjectRole.OWNER,
+                              ProjectRole.ADMIN,
 
                             'font-bold': selectedItem === item,
                             'cursor-pointer': item.hasProjectAccess !== true,
@@ -304,13 +304,13 @@ const ProjectAccessUserCombobox: React.FC<Props> = ({
                               'cursor-not-allowed w-full': item.hasProjectAccess === true,
                               'text-blue-600 dark:text-blue-600':
                                 selectedUsers.find((val) => item.id === val.id)?.role ===
-                                ProjectRole.MEMBER,
+                                ProjectRole.VIEWER,
                               'text-green-600 dark:text-green-700':
                                 selectedUsers.find((val) => item.id === val.id)?.role ===
-                                ProjectRole.ADMIN,
+                                ProjectRole.EDITOR,
                               'text-red-600 dark:text-red-700':
                                 selectedUsers.find((val) => item.id === val.id)?.role ===
-                                ProjectRole.OWNER,
+                                ProjectRole.ADMIN,
                             })}
                           >
                             <Icons.check className="h-4 w-4" />
