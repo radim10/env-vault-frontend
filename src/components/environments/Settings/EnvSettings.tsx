@@ -31,7 +31,7 @@ export const EnvSettings = () => {
   const {
     data: selectedEnv,
     update: updateSelectedEnv,
-    isOwnerRole: isProjectOwner,
+    isAdminRole: isProjectAdmin,
   } = useSelectedEnvironmentStore()
 
   const [dialog, setDialog] = useState<'rename' | 'delete' | 'lock' | 'changeType' | null>(null)
@@ -259,7 +259,7 @@ export const EnvSettings = () => {
 
   return (
     <>
-      {selectedEnv && isProjectOwner() && (
+      {selectedEnv && isProjectAdmin() && (
         <>
           <RenameEnvironmentDialog
             opened={dialog === 'rename'}
@@ -344,7 +344,7 @@ export const EnvSettings = () => {
             {
               icon: Icons.fileText,
               label: 'Name',
-              editBtn: isProjectOwner()
+              editBtn: isProjectAdmin()
                 ? {
                     disabled: selectedEnv?.locked,
                     onClick: () => setDialog('rename'),
@@ -364,7 +364,7 @@ export const EnvSettings = () => {
             {
               icon: Icons.tag,
               label: 'Type',
-              editBtn: isProjectOwner()
+              editBtn: isProjectAdmin()
                 ? {
                     disabled: selectedEnv?.locked,
                     onClick: () => setDialog('changeType'),
@@ -375,7 +375,7 @@ export const EnvSettings = () => {
             {
               icon: Icons.fileLock2,
               label: 'Lock status',
-              editBtn: isProjectOwner()
+              editBtn: isProjectAdmin()
                 ? {
                     onClick: () => setDialog('lock'),
                   }
@@ -472,7 +472,7 @@ export const EnvSettings = () => {
         {/* </div> */}
         {/* // DANGER ZONE */}
 
-        {isProjectOwner() && (
+        {isProjectAdmin() && (
           <DangerZone
             btn={{
               onClick: () => setDialog('delete'),
