@@ -72,7 +72,7 @@ const EnvLayoutSkeleton: React.FC<Props> = ({ isSecrets }) => {
             ],
             {
               'mt-9': !isSecrets,
-              'mt-7': isSecrets,
+              'mt-12': isSecrets,
             }
           )}
         >
