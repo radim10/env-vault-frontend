@@ -1,15 +1,63 @@
+import clsx from 'clsx'
 import { cn } from '@/lib/utils'
 import { Badge } from '../ui/badge'
-import clsx from 'clsx'
 import { ProjectRole } from '@/types/projectAccess'
 import { Icons } from '../icons'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 interface Props {
   className?: string
   role: ProjectRole
+  envToolbar?: boolean
+  tooltip?: boolean
 }
 
-const ProjectRoleBadge: React.FC<Props> = ({ className, role }) => {
+const ProjectRoleRoot: React.FC<Props> = (props) => {
+  if (props.tooltip === true) {
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <ProjectRoleBadge {...props}></ProjectRoleBadge>
+          </TooltipTrigger>
+          <TooltipContent>Your project role</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    )
+  } else {
+    return <ProjectRoleBadge {...props}></ProjectRoleBadge>
+  }
+}
+
+const ProjectRoleBadge: React.FC<Props> = ({ className, role, envToolbar }) => {
+  if (envToolbar === true) {
+    return (
+      <div className="text-[0.825rem] text-muted-foreground font-medium">
+        {role === ProjectRole.VIEWER && (
+          <div className="flex items-center gap-1.5">
+            {/* <Icons.user className="w-3.5 h-3.5" /> */}
+            <Icons.eye className="w-3.5 h-3.5" />
+            <span>Viewer</span>
+          </div>
+        )}
+        {role === ProjectRole.EDITOR && (
+          <div className="flex items-center gap-1.5">
+            {/* <Icons.user className="w-3.5 h-3.5" /> */}
+            <Icons.penLine className="w-3.5 h-3.5" />
+            <span>Editor</span>
+          </div>
+        )}
+        {role === ProjectRole.ADMIN && (
+          <div className="flex items-center gap-1.5">
+            {/* <Icons.user className="w-3.5 h-3.5" /> */}
+            <Icons.settings2 className="w-3.5 h-3.5" />
+            <span>Admin</span>
+          </div>
+        )}
+      </div>
+    )
+  }
+
   return (
     <Badge
       variant="default"
@@ -47,4 +95,4 @@ const ProjectRoleBadge: React.FC<Props> = ({ className, role }) => {
   )
 }
 
-export default ProjectRoleBadge
+export default ProjectRoleRoot
