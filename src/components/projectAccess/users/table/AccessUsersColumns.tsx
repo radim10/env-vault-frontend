@@ -1,7 +1,7 @@
 'use client'
 
 import clsx from 'clsx'
-import { WorkspaceUserRole } from '@/types/users'
+import { useMemo } from 'react'
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { ColumnDef } from '@tanstack/react-table'
@@ -9,11 +9,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { ProjectAccessUser, ProjectRole } from '@/types/projectAccess'
 import { useSelectedProjectStore } from '@/stores/selectedProject'
-import { useMemo } from 'react'
 import ProjectRoleBadge from '@/components/projects/ProjectRoleBadge'
 
 const useProjectAccessUsersColums = () => {
-  const { isOwnerRole } = useSelectedProjectStore()
+  const { isAdminRole } = useSelectedProjectStore()
 
   const cols = useMemo<Array<ColumnDef<ProjectAccessUser>>>(
     () => [
@@ -123,7 +122,7 @@ const useProjectAccessUsersColums = () => {
           const meta = table.options.meta as any
           // is workspace admin/owner
           const isAutoRole = row.original.isAutoRole
-          const canEdit = isOwnerRole()
+          const canEdit = isAdminRole()
 
           return (
             <div
@@ -211,7 +210,7 @@ const useProjectAccessUsersColums = () => {
         },
       },
     ],
-    [isOwnerRole]
+    [isAdminRole]
   )
 
   return cols

@@ -53,7 +53,7 @@ interface Props {
 // }
 //
 const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
-  const { isMemberRole, isAdminRole, isOwnerRole } = useSelectedEnvironmentStore()
+  const { isAdminRole } = useSelectedEnvironmentStore()
 
   const queryClient = useQueryClient()
   const { toast } = useToast()
@@ -154,7 +154,7 @@ const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
         opened={dialogOpened}
         onClose={() => setDialogOpened(false)}
         onSuccess={handleNewToken}
-        readOnly={!isOwnerRole()}
+        readOnly={!isAdminRole()}
       />
 
       {revokeDialog && (
@@ -205,7 +205,7 @@ const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
           queryClient={queryClient}
           data={tokens}
           onRevoke={setRevokeDialog}
-          disableRevokeWriteAccess={!isOwnerRole()}
+          disableRevokeWriteAccess={!isAdminRole()}
         />
       </div>
     </>

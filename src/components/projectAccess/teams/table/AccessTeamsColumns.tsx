@@ -17,7 +17,7 @@ import ProjectRoleBadge from '@/components/projects/ProjectRoleBadge'
 dayjs.extend(relativeTime)
 
 const useProjectAccessTeamsColums = () => {
-  const { isOwnerRole } = useSelectedProjectStore()
+  const { isAdminRole } = useSelectedProjectStore()
 
   const cols = useMemo<Array<ColumnDef<ProjectAccessTeam>>>(
     () => [
@@ -115,7 +115,7 @@ const useProjectAccessTeamsColums = () => {
         id: 'actions',
         header: () => <div className="text-center">Actions</div>,
         cell: ({ row, table }) => {
-          const canEdit = isOwnerRole()
+          const canEdit = isAdminRole()
 
           const meta = table.options.meta as {
             goto: (id: string) => void
@@ -202,7 +202,7 @@ const useProjectAccessTeamsColums = () => {
         },
       },
     ],
-    [isOwnerRole]
+    [isAdminRole]
   )
 
   return cols

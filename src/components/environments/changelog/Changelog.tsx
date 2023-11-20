@@ -433,7 +433,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
                   envName={envName}
                   user={val?.user}
                   changeId={val?.id}
-                  readOnly={selectedEnvironment?.isMemberRole() ?? false}
+                  readOnly={selectedEnvironment?.isViewerRole() ?? false}
                   valuesLoaded={
                     queryClient?.getQueryData(['changelog-secrets', val?.id]) !== undefined
                   }
@@ -463,7 +463,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
               )}
               {val?.change?.action !== 'secrets' && (
                 <ChangelogItem
-                  readOnly={selectedEnvironment.isOwnerRole() !== true}
+                  readOnly={selectedEnvironment.isAdminRole() !== true}
                   user={val?.user}
                   change={val.change}
                   id={
