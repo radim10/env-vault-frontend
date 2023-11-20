@@ -318,6 +318,7 @@ const AccessUsersTable: React.FC<DataTableProps> = ({
           hideSubmit={readOnly}
           submitText="Add users"
           entity="users"
+          searchPlaceholder='Search by name'
           isSearchCount={(table.getColumn('name')?.getFilterValue() as string)?.length > 0}
           search={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
           onSearch={(value) => {

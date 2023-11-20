@@ -14,6 +14,7 @@ interface Props {
   loading: boolean
   disabledSearch?: boolean
   search: string
+  searchPlaceholder?: string
   onSearch: (search: string) => void
   onInviteUser?: () => void
 }
@@ -27,6 +28,7 @@ const TableToolbar: React.FC<Props> = ({
   hideSubmit,
   loading,
   disabledSearch,
+  searchPlaceholder,
   onSearch,
   onInviteUser,
 }) => {
@@ -83,7 +85,9 @@ const TableToolbar: React.FC<Props> = ({
               // readOnly={loading}
               disabled={disabledSearch}
               placeholder={
-                entity === 'invitations'
+                searchPlaceholder
+                  ? searchPlaceholder
+                  : entity === 'invitations'
                   ? 'Search by email'
                   : entity === 'user-access'
                   ? 'Search projects'
