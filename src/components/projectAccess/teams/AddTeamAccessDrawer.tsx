@@ -16,6 +16,8 @@ import { useImmer } from 'use-immer'
 import ProjectAccessTeamCombobox from './ProjectAccessTeamCombobox'
 import { Badge } from '@/components/ui/badge'
 import ProjectRoleSelect from '../ProjectRoleSelect'
+import ProjectRoleBadge from '@/components/projects/ProjectRoleBadge'
+import { useUpdateEffect } from 'react-use'
 
 interface Props {
   workspaceId: string
@@ -37,7 +39,7 @@ const AddTeamAccessDrawer: React.FC<Props> = ({
   const [selectedTeams, setSelectedTeams] = useImmer<ProjectAccessTeam[]>([])
   const [selectedRole, setSelectedRole] = useState<ProjectRole>(ProjectRole.VIEWER)
 
-  const { mutate, isLoading, error } = useUpdateProjectAccessTeams({
+  const { mutate, isLoading, error, reset } = useUpdateProjectAccessTeams({
     onSuccess: () => {
       onAdded(selectedTeams?.map((val) => ({ ...val, role: selectedRole })))
     },
@@ -68,6 +70,16 @@ const AddTeamAccessDrawer: React.FC<Props> = ({
       draft.splice(wholeIndex, 1)
     })
   }
+
+  useUpdateEffect(() => {
+    if (!opened) {
+      setTimeout(() => {
+        setSelectedTeams([])
+        setSelectedRole(ProjectRole.VIEWER)
+        reset()
+      }, 200)
+    }
+  }, [opened])
 
   return (
     <>
@@ -141,12 +153,12 @@ const AddTeamAccessDrawer: React.FC<Props> = ({
             />
           )}
 
-          {selectedTeams?.filter((val) => val?.role === ProjectRole.EDITOR).length > 0 && (
+          {selectedTeams?.filter((val) => val?.role === ProjectRole.VIEWER).length > 0 && (
             <SelectedRoleSection
-              teams={selectedTeams?.filter((val) => val?.role === ProjectRole.EDITOR)}
-              role={ProjectRole.EDITOR}
+              teams={selectedTeams?.filter((val) => val?.role === ProjectRole.VIEWER)}
+              role={ProjectRole.VIEWER}
               isLoading={isLoading}
-              onRemove={(user) => handleRemovedTeam(user, ProjectRole.EDITOR)}
+              onRemove={(user) => handleRemovedTeam(user, ProjectRole.VIEWER)}
             />
           )}
         </div>
@@ -167,7 +179,7 @@ const SelectedRoleSection = ({ role, teams, isLoading, onRemove }: SectionProps)
     <>
       <div className="flex flex-col gap-3">
         <div className="w-fit">
-          <UserRoleBadge role={role as any as WorkspaceUserRole} className="px-4" />
+          <ProjectRoleBadge role={role} className="px-4" />
         </div>
         <div className="flex flex-row gap-2 items-center flex-wrap Xbg-red-400">
           {teams.map((team, index) => (

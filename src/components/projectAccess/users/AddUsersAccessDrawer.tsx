@@ -15,6 +15,7 @@ import clsx from 'clsx'
 import ProjectAccessUserCombobox from './ProjectAccessUserCombobox'
 import ProjectRoleSelect from '../ProjectRoleSelect'
 import ProjectRoleBadge from '@/components/projects/ProjectRoleBadge'
+import { useUpdateEffect } from 'react-use'
 
 interface Props {
   workspaceId: string
@@ -33,7 +34,7 @@ const AddUsersAccessDrawer: React.FC<Props> = ({
 }) => {
   const queryClient = useQueryClient()
 
-  const { mutate, isLoading, error } = useUpdateProjectAccessUsers({
+  const { mutate, isLoading, error, reset } = useUpdateProjectAccessUsers({
     onSuccess: () => onAdded(selectedUsers),
   })
 
@@ -65,6 +66,16 @@ const AddUsersAccessDrawer: React.FC<Props> = ({
       draft.splice(wholeIndex, 1)
     })
   }
+
+  useUpdateEffect(() => {
+    if (!opened) {
+      setTimeout(() => {
+        setSelectedUsers([])
+        setSelectedRole(ProjectRole.VIEWER)
+        reset()
+      }, 200)
+    }
+  }, [opened])
 
   return (
     <>
