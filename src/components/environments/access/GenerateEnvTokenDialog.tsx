@@ -97,7 +97,7 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
           grant.Read && grant.Write
             ? EnvTokenGrant.READ_WRITE
             : grant.Read
-            ? EnvTokenGrant.READ_WRITE
+            ? EnvTokenGrant.READ
             : EnvTokenGrant.WRITE,
       })
     },
