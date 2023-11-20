@@ -36,7 +36,7 @@ const ProjectSkeleton: React.FC = () => {
         <div className="flex justify-between items-center mt-0">
           <div className="flex gap-2 items-center">
             <div className="font-semibold ">
-              <Skeleton className="h-8 w-44 md:w-64 " />
+              <Skeleton className="h-8 w-44 md:w-72" />
             </div>
           </div>
         </div>
