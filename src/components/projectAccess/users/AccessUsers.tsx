@@ -8,7 +8,7 @@ interface Props {
 }
 
 const AccessUsers: React.FC<Props> = ({ workspaceId, projectName }) => {
-  const { isOwnerRole } = useSelectedProjectStore()
+  const { isAdminRole } = useSelectedProjectStore()
 
   return (
     <>
@@ -16,7 +16,7 @@ const AccessUsers: React.FC<Props> = ({ workspaceId, projectName }) => {
         workspaceId={workspaceId}
         projectName={projectName}
         columns={useProjectAccessUsersColums()}
-        readOnly={!isOwnerRole()}
+        readOnly={!isAdminRole()}
       />
     </>
   )
