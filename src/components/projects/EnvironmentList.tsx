@@ -28,7 +28,7 @@ interface Props {
 }
 
 const EnvironmentList: React.FC<Props> = ({ projectName, workspaceId }) => {
-  const { isOwnerRole } = useSelectedProjectStore()
+  const { isAdminRole } = useSelectedProjectStore()
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
@@ -232,7 +232,7 @@ const EnvironmentList: React.FC<Props> = ({ projectName, workspaceId }) => {
           </div>
           <div className="text-center">
             <span className="text-lg font-bold opacity-85">No environments here...</span>
-            {isOwnerRole() ? (
+            {isAdminRole() ? (
               <>
                 <div className="my-1 text-muted-foreground">Add environments to your project</div>
                 <div className="mt-5">
@@ -357,7 +357,7 @@ const EnvironmentList: React.FC<Props> = ({ projectName, workspaceId }) => {
                   0
                 )
           }
-          onCreated={isOwnerRole() ? handleNewEnvironment : undefined}
+          onCreated={isAdminRole() ? handleNewEnvironment : undefined}
         />
 
         {/* List */}
@@ -399,7 +399,7 @@ const EnvironmentList: React.FC<Props> = ({ projectName, workspaceId }) => {
                       type={type}
                       name={name}
                       secretsCount={secretsCount}
-                      disableActions={isOwnerRole() !== true}
+                      disableActions={isAdminRole() !== true}
                       onLock={() => {
                         setDialog({ type: 'lock', lock: !locked, environmentName: name })
                       }}
@@ -430,7 +430,7 @@ const EnvironmentList: React.FC<Props> = ({ projectName, workspaceId }) => {
               type={type}
               name={name}
               secretsCount={secretsCount}
-              disableActions={isOwnerRole() !== true}
+              disableActions={isAdminRole() !== true}
               onLock={() => {
                 setDialog({ type: 'lock', lock: !locked, environmentName: name })
               }}

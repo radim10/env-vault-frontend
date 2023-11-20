@@ -23,7 +23,7 @@ interface Props {
 }
 
 const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
-  const { data: selectedProject, isOwnerRole: isProjectOwner } = useSelectedProjectStore()
+  const { data: selectedProject, isAdminRole } = useSelectedProjectStore()
 
   const queryClient = useQueryClient()
   const router = useRouter()
@@ -100,7 +100,7 @@ const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
 
   return (
     <>
-      {isProjectOwner() && (
+      {isAdminRole() && (
         <>
           <DeleteProjectDialog
             opened={dialog === 'delete'}
@@ -172,7 +172,7 @@ const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
             {
               icon: Icons.fileText,
               label: 'Name',
-              editBtn: isProjectOwner()
+              editBtn: isAdminRole()
                 ? {
                     disabled: false,
                     onClick: () => setDialog('edit'),
@@ -183,7 +183,7 @@ const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
             {
               icon: Icons.penSquare,
               label: 'Description',
-              editBtn: isProjectOwner()
+              editBtn: isAdminRole()
                 ? {
                     disabled: false,
                     onClick: () => setDialog('edit'),
@@ -200,7 +200,7 @@ const ProjectSettings: React.FC<Props> = ({ workspaceId, projectName }) => {
           ]}
         />
 
-        {isProjectOwner() && (
+        {isAdminRole() && (
           <DangerZone
             btn={{
               onClick: () => setDialog('delete'),
