@@ -2,9 +2,9 @@ import { ListTeam } from './teams'
 import { User } from './users'
 
 export enum ProjectRole {
-  MEMBER = 'MEMBER',
+  VIEWER = 'VIEWER',
+  EDITOR = 'EDITOR',
   ADMIN = 'ADMIN',
-  OWNER = 'OWNER',
 }
 
 export type ProjectAccessTeam = ListTeam & {
