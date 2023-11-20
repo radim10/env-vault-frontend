@@ -157,7 +157,7 @@ export default function EnvLayout({
           </div>
         </div>
 
-        {selectedEnvironment?.isEditorRole() !== true && !paramsData?.tab && (
+        {selectedEnvironment?.isViewerRole() !== true && !paramsData?.tab && (
           <div className="md:block flex items-center justify-end mt-3 md:mt-0">
             <SaveSecretsToolbar showBtn={!paramsData?.tab} />
           </div>
