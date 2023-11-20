@@ -116,7 +116,7 @@ const SaveConfirmDialog: React.FC<Props> = ({
               <Button
                 variant="default"
                 className="px-6"
-                disabled={isLoading}
+                loading={isLoading}
                 onClick={handleUpdateSecrets}
               >
                 Save
