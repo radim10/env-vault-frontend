@@ -14,6 +14,7 @@ import { UpdateProjectAccessUsersData } from '@/api/requests/projectAccess'
 import clsx from 'clsx'
 import ProjectAccessUserCombobox from './ProjectAccessUserCombobox'
 import ProjectRoleSelect from '../ProjectRoleSelect'
+import ProjectRoleBadge from '@/components/projects/ProjectRoleBadge'
 
 interface Props {
   workspaceId: string
@@ -37,7 +38,7 @@ const AddUsersAccessDrawer: React.FC<Props> = ({
   })
 
   const [selectedUsers, setSelectedUsers] = useImmer<Array<ProjectAccessUser>>([])
-  const [selectedRole, setSelectedRole] = useState<ProjectRole>(ProjectRole.MEMBER)
+  const [selectedRole, setSelectedRole] = useState<ProjectRole>(ProjectRole.VIEWER)
 
   const handleSelectedUsers = (users: User[], role: ProjectRole) => {
     const existingUsers = selectedUsers.filter((user) => {
@@ -130,15 +131,6 @@ const AddUsersAccessDrawer: React.FC<Props> = ({
             }}
           />
 
-          {selectedUsers?.filter((val) => val?.role === ProjectRole.OWNER).length > 0 && (
-            <SelectedRoleSection
-              users={selectedUsers?.filter((val) => val?.role === ProjectRole.OWNER)}
-              role={ProjectRole.OWNER}
-              isLoading={isLoading}
-              onRemove={(user) => handleRemovedUser(user, ProjectRole.OWNER)}
-            />
-          )}
-
           {selectedUsers?.filter((val) => val?.role === ProjectRole.ADMIN).length > 0 && (
             <SelectedRoleSection
               users={selectedUsers?.filter((val) => val?.role === ProjectRole.ADMIN)}
@@ -148,12 +140,21 @@ const AddUsersAccessDrawer: React.FC<Props> = ({
             />
           )}
 
-          {selectedUsers?.filter((val) => val?.role === ProjectRole.MEMBER).length > 0 && (
+          {selectedUsers?.filter((val) => val?.role === ProjectRole.EDITOR).length > 0 && (
             <SelectedRoleSection
-              users={selectedUsers?.filter((val) => val?.role === ProjectRole.MEMBER)}
-              role={ProjectRole.MEMBER}
+              users={selectedUsers?.filter((val) => val?.role === ProjectRole.EDITOR)}
+              role={ProjectRole.EDITOR}
               isLoading={isLoading}
-              onRemove={(user) => handleRemovedUser(user, ProjectRole.MEMBER)}
+              onRemove={(user) => handleRemovedUser(user, ProjectRole.EDITOR)}
+            />
+          )}
+
+          {selectedUsers?.filter((val) => val?.role === ProjectRole.VIEWER).length > 0 && (
+            <SelectedRoleSection
+              users={selectedUsers?.filter((val) => val?.role === ProjectRole.VIEWER)}
+              role={ProjectRole.VIEWER}
+              isLoading={isLoading}
+              onRemove={(user) => handleRemovedUser(user, ProjectRole.VIEWER)}
             />
           )}
         </div>
@@ -174,7 +175,7 @@ const SelectedRoleSection = ({ role, users, isLoading, onRemove }: SectionProps)
     <>
       <div className="flex flex-col gap-3">
         <div className="w-fit">
-          <UserRoleBadge role={role as any as WorkspaceUserRole} className="px-4" />
+          <ProjectRoleBadge role={role} className="px-4" />
         </div>
         <div className="flex flex-row gap-2 items-center flex-wrap Xbg-red-400">
           {users.map((user, index) => (
