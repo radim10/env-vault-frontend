@@ -8,9 +8,9 @@ import { ColumnDef } from '@tanstack/react-table'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { ProjectAccessUser, ProjectRole } from '@/types/projectAccess'
-import UserRoleBadge from '@/components/users/UserRoleBadge'
 import { useSelectedProjectStore } from '@/stores/selectedProject'
 import { useMemo } from 'react'
+import ProjectRoleBadge from '@/components/projects/ProjectRoleBadge'
 
 const useProjectAccessUsersColums = () => {
   const { isOwnerRole } = useSelectedProjectStore()
@@ -109,7 +109,7 @@ const useProjectAccessUsersColums = () => {
 
           return (
             <div>
-              <UserRoleBadge role={role as any as WorkspaceUserRole} />
+              <ProjectRoleBadge role={role} />
             </div>
           )
         },

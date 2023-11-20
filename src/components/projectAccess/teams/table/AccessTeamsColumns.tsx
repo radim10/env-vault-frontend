@@ -12,6 +12,7 @@ import UserRoleBadge from '@/components/users/UserRoleBadge'
 import { WorkspaceUserRole } from '@/types/users'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useSelectedProjectStore } from '@/stores/selectedProject'
+import ProjectRoleBadge from '@/components/projects/ProjectRoleBadge'
 
 dayjs.extend(relativeTime)
 
@@ -104,7 +105,7 @@ const useProjectAccessTeamsColums = () => {
           const role = row.original.role
           return (
             <div className="text-left">
-              <UserRoleBadge role={role as any as WorkspaceUserRole} />
+              <ProjectRoleBadge role={role} />
             </div>
           )
         },

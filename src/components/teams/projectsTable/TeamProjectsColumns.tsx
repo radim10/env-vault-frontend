@@ -9,6 +9,7 @@ import { TeamProjectAccess } from '@/types/teams'
 import UserRoleBadge from '@/components/users/UserRoleBadge'
 import { WorkspaceUserRole } from '@/types/users'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import ProjectRoleBadge from '@/components/projects/ProjectRoleBadge'
 
 dayjs.extend(relativeTime)
 
@@ -71,7 +72,7 @@ export const teamProjectsColumns: ColumnDef<TeamProjectAccess>[] = [
 
       return (
         <div className="text-left">
-          <UserRoleBadge role={role as any as WorkspaceUserRole} />
+          <ProjectRoleBadge role={role} />
         </div>
       )
     },

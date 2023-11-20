@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { UserAccessProject } from '@/types/userAccess'
-import UserRoleBadge from '@/components/users/UserRoleBadge'
 import { WorkspaceUserRole } from '@/types/users'
+import ProjectRoleBadge from '@/components/projects/ProjectRoleBadge'
 
 dayjs.extend(relativeTime)
 
@@ -67,7 +67,7 @@ export const userAccessProjectColumns: ColumnDef<UserAccessProject>[] = [
 
       return (
         <div className="text-left">
-          <UserRoleBadge role={role as any as WorkspaceUserRole} />
+          <ProjectRoleBadge role={role} />
         </div>
       )
     },
