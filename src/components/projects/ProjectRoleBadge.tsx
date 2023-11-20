@@ -28,7 +28,7 @@ const ProjectRoleBadge: React.FC<Props> = ({ className, role }) => {
       {role === ProjectRole.VIEWER && (
         <div className="flex items-center gap-1.5">
           <Icons.eye className="w-3.5 h-3.5" />
-          <span>VIEWER</span>
+          <span>Viewer</span>
         </div>
       )}
       {role === ProjectRole.EDITOR && (
