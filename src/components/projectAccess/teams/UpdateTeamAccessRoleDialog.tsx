@@ -16,8 +16,9 @@ import {
 } from '@/components/ui/select'
 import UserRoleBadge from '@/components/users/UserRoleBadge'
 import { WorkspaceUserRole } from '@/types/users'
+import ProjectRoleSelect from '../ProjectRoleSelect'
 
-const roles: ProjectRole[] = [ProjectRole.MEMBER, ProjectRole.ADMIN, ProjectRole.OWNER]
+// const roles: ProjectRole[] = [ProjectRole.VIEWER, ProjectRole.ADMIN, ProjectRole.OWNER]
 
 interface Props {
   opened: boolean
@@ -98,32 +99,47 @@ const UpdateTeamAccessRoleDialog: React.FC<Props> = ({
           </div>
 
           <div className="flex flex-col gap-1 items-start justify-center">
-            <div>
-              <Label htmlFor="Role" className="text-right pl-1">
-                Project role
-              </Label>
-            </div>
-            <Select
-              value={selectedRole}
-              onValueChange={(value) => setSelectedRole(value as ProjectRole)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select type" />
-              </SelectTrigger>
-              <SelectContent>
-                {roles.map((role) => (
-                  <SelectItem
-                    value={role}
-                    key={role}
-                    className="px-10"
-                    onFocus={(e) => e.stopPropagation()}
-                  >
-                    <UserRoleBadge role={role as any as WorkspaceUserRole} />
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="Role" className="text-right pl-1">
+              Project role
+            </Label>
+
+            <ProjectRoleSelect
+              className="mt-1.5"
+              selected={selectedRole}
+              onValueChange={setSelectedRole}
+              disabled={isLoading}
+              hideDescription
+              hideLabel
+            />
           </div>
+
+          {/* <div className="flex flex-col gap-1 items-start justify-center"> */}
+          {/*   <div> */}
+          {/*     <Label htmlFor="Role" className="text-right pl-1"> */}
+          {/*       Project role */}
+          {/*     </Label> */}
+          {/*   </div> */}
+          {/*   <Select */}
+          {/*     value={selectedRole} */}
+          {/*     onValueChange={(value) => setSelectedRole(value as ProjectRole)} */}
+          {/*   > */}
+          {/*     <SelectTrigger className="w-full"> */}
+          {/*       <SelectValue placeholder="Select type" /> */}
+          {/*     </SelectTrigger> */}
+          {/*     <SelectContent> */}
+          {/*       {roles.map((role) => ( */}
+          {/*         <SelectItem */}
+          {/*           value={role} */}
+          {/*           key={role} */}
+          {/*           className="px-10" */}
+          {/*           onFocus={(e) => e.stopPropagation()} */}
+          {/*         > */}
+          {/*           <UserRoleBadge role={role as any as WorkspaceUserRole} /> */}
+          {/*         </SelectItem> */}
+          {/*       ))} */}
+          {/*     </SelectContent> */}
+          {/*   </Select> */}
+          {/* </div> */}
         </div>
       </DialogComponent>
     </>

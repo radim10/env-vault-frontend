@@ -247,15 +247,15 @@ const ProjectAccessTeamCombobox: React.FC<Props> = ({
 
                             'text-blue-600 dark:text-blue-500':
                               selectedTeams.find((val) => item.id === val.id)?.role ===
-                              ProjectRole.MEMBER,
+                              ProjectRole.VIEWER,
 
                             'text-green-600 dark:text-green-600':
                               selectedTeams.find((val) => item.id === val.id)?.role ===
-                              ProjectRole.ADMIN,
+                              ProjectRole.EDITOR,
 
                             'text-red-600 dark:text-red-600':
                               selectedTeams.find((val) => item.id === val.id)?.role ===
-                              ProjectRole.OWNER,
+                              ProjectRole.ADMIN,
 
                             'font-bold': selectedItem === item,
                             'cursor-pointer': item.projectAccess !== true,
@@ -285,13 +285,13 @@ const ProjectAccessTeamCombobox: React.FC<Props> = ({
                                 'cursor-not-allowed w-full': item.projectAccess === true,
                                 'text-blue-600 dark:text-blue-600':
                                   selectedTeams.find((val) => item.id === val.id)?.role ===
-                                  ProjectRole.MEMBER,
+                                  ProjectRole.VIEWER,
                                 'text-green-600 dark:text-green-700':
                                   selectedTeams.find((val) => item.id === val.id)?.role ===
-                                  ProjectRole.ADMIN,
+                                  ProjectRole.EDITOR,
                                 'text-red-600 dark:text-red-700':
                                   selectedTeams.find((val) => item.id === val.id)?.role ===
-                                  ProjectRole.OWNER,
+                                  ProjectRole.ADMIN,
                               })}
                             >
                               <Icons.check className="h-4 w-4" />

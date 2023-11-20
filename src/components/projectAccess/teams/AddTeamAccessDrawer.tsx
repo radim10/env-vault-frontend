@@ -35,7 +35,7 @@ const AddTeamAccessDrawer: React.FC<Props> = ({
   const queryClient = useQueryClient()
 
   const [selectedTeams, setSelectedTeams] = useImmer<ProjectAccessTeam[]>([])
-  const [selectedRole, setSelectedRole] = useState<ProjectRole>(ProjectRole.MEMBER)
+  const [selectedRole, setSelectedRole] = useState<ProjectRole>(ProjectRole.VIEWER)
 
   const { mutate, isLoading, error } = useUpdateProjectAccessTeams({
     onSuccess: () => {
@@ -123,15 +123,6 @@ const AddTeamAccessDrawer: React.FC<Props> = ({
           />
 
           {/* // SELECTED */}
-          {selectedTeams?.filter((val) => val?.role === ProjectRole.OWNER).length > 0 && (
-            <SelectedRoleSection
-              teams={selectedTeams?.filter((val) => val?.role === ProjectRole.OWNER)}
-              role={ProjectRole.OWNER}
-              isLoading={isLoading}
-              onRemove={(user) => handleRemovedTeam(user, ProjectRole.OWNER)}
-            />
-          )}
-
           {selectedTeams?.filter((val) => val?.role === ProjectRole.ADMIN).length > 0 && (
             <SelectedRoleSection
               teams={selectedTeams?.filter((val) => val?.role === ProjectRole.ADMIN)}
@@ -141,12 +132,21 @@ const AddTeamAccessDrawer: React.FC<Props> = ({
             />
           )}
 
-          {selectedTeams?.filter((val) => val?.role === ProjectRole.MEMBER).length > 0 && (
+          {selectedTeams?.filter((val) => val?.role === ProjectRole.EDITOR).length > 0 && (
             <SelectedRoleSection
-              teams={selectedTeams?.filter((val) => val?.role === ProjectRole.MEMBER)}
-              role={ProjectRole.MEMBER}
+              teams={selectedTeams?.filter((val) => val?.role === ProjectRole.EDITOR)}
+              role={ProjectRole.EDITOR}
               isLoading={isLoading}
-              onRemove={(user) => handleRemovedTeam(user, ProjectRole.MEMBER)}
+              onRemove={(user) => handleRemovedTeam(user, ProjectRole.EDITOR)}
+            />
+          )}
+
+          {selectedTeams?.filter((val) => val?.role === ProjectRole.EDITOR).length > 0 && (
+            <SelectedRoleSection
+              teams={selectedTeams?.filter((val) => val?.role === ProjectRole.EDITOR)}
+              role={ProjectRole.EDITOR}
+              isLoading={isLoading}
+              onRemove={(user) => handleRemovedTeam(user, ProjectRole.EDITOR)}
             />
           )}
         </div>
