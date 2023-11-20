@@ -7,6 +7,7 @@ import EnvTabs from '@/components/environments/EnvTabs'
 import EnvTypeBadge from '@/components/environments/EnvTypeBadge'
 import { Icons } from '@/components/icons'
 import NotFound from '@/components/projects/NotFound'
+import ProjectRoleBadge from '@/components/projects/ProjectRoleBadge'
 import SaveSecretsToolbar from '@/components/secrects/SaveToolbar'
 import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
 import { useSelectedProjectStore } from '@/stores/selectedProject'
@@ -65,7 +66,7 @@ export default function EnvLayout({
     }
   )
 
-  if (isLoading) {
+  if (isLoading || !selectedEnvironment?.data) {
     return (
       <>
         <EnvLayoutSkeleton isSecrets={paramsData?.tab === undefined} />
@@ -116,7 +117,7 @@ export default function EnvLayout({
           }
         )}
       >
-        <div className="flex md:flex-row flex-col gap-2 md:items-center ">
+        <div className="flex md:flex-row flex-col md:gap-2 md:items-center ">
           <div className="flex md:gap-2 items-center flex-wrap">
             <Link
               href={`/workspace/${params?.workspace}/projects/${params?.projectName}/environments`}
@@ -136,16 +137,28 @@ export default function EnvLayout({
               {selectedEnvironment?.data?.locked && <Icons.lock className="h-4 w-4" />}
             </div>
 
-            <EnvTypeBadge type={selectedEnvironment?.data?.type as EnvironmentType} />
+            <EnvTypeBadge type={selectedEnvironment?.data?.type} />
 
-            <div className="block md:hidden">
-              {selectedEnvironment?.data?.locked && <Icons.lock className="h-4 w-4" />}
+            <div className="hidden md:flex items-center gap-3">
+              <div className="h-6 w-[1px] dark:bg-gray-800 bg-gray-300" />
+              <ProjectRoleBadge role={selectedEnvironment?.data?.userRole} envToolbar tooltip />
+            </div>
+
+            {selectedEnvironment?.data?.locked && (
+              <div className="block md:hidden">
+                <Icons.lock className="h-4 w-4" />
+              </div>
+            )}
+
+            <div className="flex md:hidden items-center gap-3">
+              <div className="h-6 w-[1px] dark:bg-gray-800 bg-gray-300" />
+              <ProjectRoleBadge role={selectedEnvironment?.data?.userRole} envToolbar />
             </div>
           </div>
         </div>
 
-        {selectedEnvironment?.isMemberRole() !== true && (
-          <div className="md:block flex items-center justify-end">
+        {selectedEnvironment?.isEditorRole() !== true && !paramsData?.tab && (
+          <div className="md:block flex items-center justify-end mt-3 md:mt-0">
             <SaveSecretsToolbar showBtn={!paramsData?.tab} />
           </div>
         )}

@@ -10,6 +10,7 @@ import Error from '@/components/Error'
 import { useParams } from 'next/navigation'
 import ProjectSkeleton from '@/components/projects/ProjectSkeleton'
 import { useSelectedProjectStore } from '@/stores/selectedProject'
+import ProjectRoleBadge from '@/components/projects/ProjectRoleBadge'
 
 function ProjectLayout({
   children,
@@ -75,7 +76,7 @@ function ProjectLayout({
     <>
       <div>
         <div className="flex justify-between items-center px-6 lg:px-10 mt-1 pb-2">
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-2 items-center flex-wrap">
             <Link
               href={`/workspace/${params.workspace}/projects`}
               className="text-primary hover:text-primary hover:underline underline-offset-4 underline-offset-[6px] hover:decoration-2"
@@ -86,7 +87,13 @@ function ProjectLayout({
             <div className="dark:text-gray-400">
               <Icons.chevronRight className="mt-1" />
             </div>
-            <div className="font-semibold text-2xl ">{project.name}</div>
+
+            <div className="flex items-center gap-4 md:gap-5">
+              <div className="font-semibold text-2xl ">{project.name}</div>
+              <ProjectRoleBadge role={project?.userRole} tooltip />
+            </div>
+            {/* // User role  */}
+            <div className="flex items-center gap-3 ml-1"></div>
           </div>
           {/* // FLEX END */}
         </div>
