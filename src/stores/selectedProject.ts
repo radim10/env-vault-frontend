@@ -12,9 +12,9 @@ export interface SelectedProjectState {
 interface SelectedProjectAction {
   set: (project: SelectedProject) => void
   update: (data: Partial<SelectedProject>) => void
-  isOwnerRole: () => boolean | null
   isAdminRole: () => boolean | null
-  isMemberRole: () => boolean | null
+  isEditorRole: () => boolean | null
+  isViewerRole: () => boolean | null
   reset: () => void
 }
 
@@ -32,14 +32,14 @@ export const useSelectedProjectStore = create(
       update: (data) => {
         // TODO :???
       },
-      isMemberRole: () => {
-        return get()?.data?.userRole === 'MEMBER' ?? null
+      isViewerRole: () => {
+        return get()?.data?.userRole === 'VIEWER' ?? null
+      },
+      isEditorRole: () => {
+        return get()?.data?.userRole === 'EDITOR' ?? null
       },
       isAdminRole: () => {
         return get()?.data?.userRole === 'ADMIN' ?? null
-      },
-      isOwnerRole: () => {
-        return get()?.data?.userRole === 'OWNER' ?? null
       },
     }))
   )

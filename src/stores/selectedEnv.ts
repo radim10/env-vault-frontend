@@ -28,9 +28,9 @@ interface SelectedEnvironmentActions {
   set: (env: SelectedEnvironment) => void
   update: (locked: Partial<{ name: string; locked: boolean; type: EnvironmentType }>) => void
   setChangelogFilter: (envChangelogFilter: 'secrets' | null) => void
-  isOwnerRole: () => boolean | null
   isAdminRole: () => boolean | null
-  isMemberRole: () => boolean | null
+  isEditorRole: () => boolean | null
+  isViewerRole: () => boolean | null
 }
 
 export const useSelectedEnvironmentStore = create(
@@ -60,14 +60,14 @@ export const useSelectedEnvironmentStore = create(
           }
         })
       },
-      isMemberRole: () => {
-        return get()?.data?.userRole === 'MEMBER' ?? null
+      isViewerRole: () => {
+        return get()?.data?.userRole === 'VIEWER' ?? null
+      },
+      isEditorRole: () => {
+        return get()?.data?.userRole === 'EDITOR' ?? null
       },
       isAdminRole: () => {
         return get()?.data?.userRole === 'ADMIN' ?? null
-      },
-      isOwnerRole: () => {
-        return get()?.data?.userRole === 'OWNER' ?? null
       },
     })),
     {
