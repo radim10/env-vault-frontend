@@ -7,6 +7,7 @@ import { Icons } from '../icons'
 import { Input } from '../ui/input'
 import { useWindowScroll } from 'react-use'
 import clsx from 'clsx'
+import useCurrentUserStore from '@/stores/user'
 
 interface Props {
   workspaceId: string
@@ -27,6 +28,7 @@ const ProjectsToolbar: React.FC<Props> = ({
   setSearch,
   setSort,
 }) => {
+  const { isMemberRole } = useCurrentUserStore()
   const { y } = useWindowScroll()
 
   return (
@@ -68,9 +70,11 @@ const ProjectsToolbar: React.FC<Props> = ({
         </div>
 
         <ProjectsSortSelect sort={sort} setSort={setSort} disabled={disabled} />
-        <div className="hidden md:block">
-          <CreateProject workspaceId={workspaceId} />
-        </div>
+        {!isMemberRole() && (
+          <div className="hidden md:block">
+            <CreateProject workspaceId={workspaceId} />
+          </div>
+        )}
       </div>
     </div>
   )
