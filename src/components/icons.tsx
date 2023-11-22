@@ -90,6 +90,8 @@ import {
   Ban,
   PenLine,
   AlertTriangle,
+  Github,
+  Rocket,
 } from 'lucide-react'
 
 export const Icons = {
@@ -186,4 +188,6 @@ export const Icons = {
   penLine: PenLine,
   ban: Ban,
   alertTriangle: AlertTriangle,
+  github: Github,
+  rocket: Rocket,
 }
