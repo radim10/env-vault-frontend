@@ -89,6 +89,7 @@ import {
   DoorOpen,
   Ban,
   PenLine,
+  AlertTriangle,
 } from 'lucide-react'
 
 export const Icons = {
@@ -184,4 +185,5 @@ export const Icons = {
   doorOpen: DoorOpen,
   penLine: PenLine,
   ban: Ban,
+  alertTriangle: AlertTriangle,
 }
