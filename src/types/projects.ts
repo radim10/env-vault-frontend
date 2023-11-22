@@ -20,6 +20,7 @@ export type ListProject = Pick<Project, 'createdAt' | 'description' | 'name'> & 
 export interface NewProject {
   name: string
   description?: string
+  environments?: Array<Pick<Environment, 'name' | 'type'>>
 }
 
 export interface UpdatedProjectData {
