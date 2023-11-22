@@ -111,3 +111,19 @@ export async function deleteProject(args: { workspaceId: string; name: string })
   })
   return await response
 }
+
+// check if already exists
+export type CheckProjectNameError = APIError<undefined>
+export type CheckProjectNameData = { exists: boolean }
+
+export async function checkProjectName(args: { workspaceId: string; name: string }) {
+  const { workspaceId, name } = args
+
+  const response = sendRequest<CheckProjectNameData>({
+    method: 'GET',
+    basePath: 'workspaces',
+    path: `${workspaceId}/projects/${name}/exists`,
+  })
+
+  return await response
+}

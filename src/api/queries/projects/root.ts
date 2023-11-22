@@ -1,4 +1,7 @@
 import {
+  checkProjectName,
+  CheckProjectNameData,
+  CheckProjectNameError,
   getProject,
   GetProjectData,
   GetProjectError,
@@ -33,6 +36,21 @@ export const useGetProject = (
     ['project', args.workspaceId, args.projectName],
     () => {
       return getProject(args)
+    },
+    opt
+  )
+
+export const useCheckProjectName = (
+  args: {
+    workspaceId: string
+    name: string
+  },
+  opt?: UseQueryOptions<CheckProjectNameData, CheckProjectNameError>
+) =>
+  useQuery<CheckProjectNameData, CheckProjectNameError>(
+    ['project-name', args.workspaceId, args.name],
+    () => {
+      return checkProjectName(args)
     },
     opt
   )
