@@ -28,7 +28,7 @@ export const useCurrentUserStore = create(
   devtools(
     immer<CurrentUserState & CurrentUserActions>((set, get) => ({
       // data: { role: WorkspaceUserRole.OWNER },
-      data: { role: WorkspaceUserRole.MEMBER },
+      data: { role: WorkspaceUserRole.OWNER },
       set: (env) => set({ data: env }),
       isMemberRole: () => {
         return get()?.data?.role === 'MEMBER' ?? null
