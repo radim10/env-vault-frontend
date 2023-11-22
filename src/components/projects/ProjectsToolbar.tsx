@@ -8,6 +8,8 @@ import { Input } from '../ui/input'
 import { useWindowScroll } from 'react-use'
 import clsx from 'clsx'
 import useCurrentUserStore from '@/stores/user'
+import { Button } from '../ui/button'
+import Link from 'next/link'
 
 interface Props {
   workspaceId: string
@@ -72,7 +74,12 @@ const ProjectsToolbar: React.FC<Props> = ({
         <ProjectsSortSelect sort={sort} setSort={setSort} disabled={disabled} />
         {!isMemberRole() && (
           <div className="hidden md:block">
-            <CreateProject workspaceId={workspaceId} />
+            {/* <CreateProject workspaceId={workspaceId} /> */}
+            <Link href={`/workspace/${workspaceId}/create-project`}>
+              <Button size={'sm'}>
+                <Icons.plus />
+              </Button>
+            </Link>
           </div>
         )}
       </div>
