@@ -83,7 +83,8 @@ const Sidebar = () => {
                         (pathname?.split('/')?.[3] === item.href?.split('/')[0] && index === 2) ||
                         (pathname?.split('/')?.[3] === item.href?.split('/')[0] && index === 4) ||
                         (pathname?.split('/')?.[3] === 'teams' && index === 2) ||
-                        (pathname?.split('/')?.[3] === 'user' && index === 2),
+                        (pathname?.split('/')?.[3] === 'user' && index === 2) ||
+                        (pathname?.split('/')?.[3] === 'create-project' && index === 0),
                     }
                   )}
                 >
