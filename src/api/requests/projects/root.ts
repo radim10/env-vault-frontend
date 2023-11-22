@@ -2,7 +2,11 @@ import sendRequest, { APIError } from '@/api/instance'
 import { ListProject, NewProject, Project, UpdatedProjectData } from '@/types/projects'
 
 // NOTE: errors
-type ProjectsErrorCode = 'project_not_found' | 'project_already_exists' | 'missing_permission'
+type ProjectsErrorCode =
+  | 'project_not_found'
+  | 'project_already_exists'
+  | 'missing_permission'
+  | 'duplicate_environment_names'
 export type ProjectsError<T extends ProjectsErrorCode | void> = APIError<T | 'workspace_not_found'>
 
 export function projectErrorMsgFromCode(
@@ -18,6 +22,10 @@ export function projectErrorMsgFromCode(
   }
   if (code === 'workspace_not_found') {
     msg = 'Workspace has been deleted'
+  }
+
+  if (code === 'duplicate_environment_names') {
+    msg = 'Duplicate environment names'
   }
 
   if (code === 'missing_permission') {
@@ -59,7 +67,9 @@ export async function getProject(args: { workspaceId: string; projectName: strin
 }
 
 // create project
-export type CreateProjectError = ProjectsError<'project_already_exists'>
+export type CreateProjectError = ProjectsError<
+  'project_already_exists' | 'duplicate_environment_names'
+>
 export type CreateProjectResData = Awaited<ReturnType<typeof createProject>>
 
 export async function createProject(args: { workspaceId: string; data: NewProject }) {
