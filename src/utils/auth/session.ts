@@ -11,8 +11,7 @@ export const getSession = async (): Promise<UserSession | null> => {
 
   const session = encryptedSession
     ? await unsealData<{
-        userId: string
-        name: string
+        accessToken: string
       }>(encryptedSession, {
         password: '44b87b09-59c8-4d5a-9ac8-fbb39b14988d',
       })
@@ -22,10 +21,9 @@ export const getSession = async (): Promise<UserSession | null> => {
   return JSON.parse(session as any)
 }
 
-export const createSession = async (): Promise<string> => {
+export const createSession = async (accessToken: string): Promise<string> => {
   const session = JSON.stringify({
-    userId: 1,
-    name: 'john doe',
+    accessToken,
   })
   console.log(session)
 
