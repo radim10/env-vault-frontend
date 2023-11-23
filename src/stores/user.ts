@@ -1,3 +1,4 @@
+import { UserSession } from '@/types/session'
 import { User, WorkspaceUserRole } from '@/types/users'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
@@ -11,6 +12,8 @@ import { immer } from 'zustand/middleware/immer'
 // NOTE: for testing
 type CurrentUser = {
   role: WorkspaceUserRole
+  email: string
+  name: string
 }
 
 export interface CurrentUserState {
@@ -28,7 +31,8 @@ export const useCurrentUserStore = create(
   devtools(
     immer<CurrentUserState & CurrentUserActions>((set, get) => ({
       // data: { role: WorkspaceUserRole.OWNER },
-      data: { role: WorkspaceUserRole.OWNER },
+      // data: { role: WorkspaceUserRole.OWNER, email:  },
+      data: null,
       set: (env) => set({ data: env }),
       isMemberRole: () => {
         return get()?.data?.role === 'MEMBER' ?? null
