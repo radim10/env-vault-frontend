@@ -1,4 +1,5 @@
 import { CookieAuth } from '@/components/CookieAuth'
+import { UserSession } from '@/types/session'
 import { createSession } from '@/utils/auth/session'
 
 // import { Session } from '@/types/auth'
@@ -25,7 +26,7 @@ export default async function Page({ searchParams }: { searchParams: { code: str
   // console.log(searchParams)
   // console.log(searchParams?.code)
   //
-  const res = (await getGithubUser(searchParams?.code)) as { token: string }
+  const res = (await getGithubUser(searchParams?.code)) as UserSession
   // console.log(res)
   // const res = await fetch('http://localhost:3000/api', { method: 'POST' })
   // console.log(res)
@@ -62,5 +63,5 @@ export default async function Page({ searchParams }: { searchParams: { code: str
   //     // redirect("/")
   //   }
 
-  return <CookieAuth token={res?.token} />
+  return <CookieAuth data={res} />
 }
