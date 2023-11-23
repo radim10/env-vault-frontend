@@ -1,19 +1,19 @@
 'use client'
 
 import { saveSession } from '@/app/actions'
+import { UserSession } from '@/types/session'
 import { useRouter } from 'next/navigation'
 import { useMount } from 'react-use'
 
 interface Props {
-  token: string
+  data: UserSession
 }
 
-export const CookieAuth: React.FC<Props> = ({ token }) => {
+export const CookieAuth: React.FC<Props> = ({ data }) => {
   const router = useRouter()
-  console.log(token)
 
   useMount(async () => {
-    await saveSession(token)
+    await saveSession(data)
     router.replace('/workspace/4ef8a291-024e-4ed8-924b-1cc90d01315e/projects', { scroll: false })
   })
 
