@@ -10,9 +10,7 @@ export const getSession = async (): Promise<UserSession | null> => {
   console.log(encryptedSession)
 
   const session = encryptedSession
-    ? await unsealData<{
-        accessToken: string
-      }>(encryptedSession, {
+    ? await unsealData<UserSession>(encryptedSession, {
         password: '44b87b09-59c8-4d5a-9ac8-fbb39b14988d',
       })
     : null
@@ -21,10 +19,8 @@ export const getSession = async (): Promise<UserSession | null> => {
   return JSON.parse(session as any)
 }
 
-export const createSession = async (accessToken: string): Promise<string> => {
-  const session = JSON.stringify({
-    accessToken,
-  })
+export const createSession = async (sessionData: UserSession): Promise<string> => {
+  const session = JSON.stringify(sessionData)
   console.log(session)
 
   const encryptedSession = await sealData(session, {
