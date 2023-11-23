@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useContext } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import {
   DropdownMenu,
@@ -11,6 +11,7 @@ import {
 import clsx from 'clsx'
 import { Icons } from './icons'
 import { ThemeToggle } from './ui/theme-toggle'
+import { AuthContext } from './SessionProvider'
 
 const dropdownItems = [
   { text: 'Account', icon: Icons.user },
@@ -18,11 +19,18 @@ const dropdownItems = [
 ]
 
 const Header = () => {
+  const session = useContext(AuthContext)
+
+  const handleSignOut = async () => {
+    await fetch('/api/logout', { method: 'POST' })
+  }
+
   return (
     <div className="flex flex-row justify-between items-center">
       <div>Workspace name or search input</div>
       <div className="flex items-center gap-2 md:gap-3">
         <ThemeToggle />
+        {session?.name}
         <DropdownMenu>
           <DropdownMenuTrigger className="flex gap-2 items-center">
             <Avatar>
@@ -34,6 +42,12 @@ const Header = () => {
             {dropdownItems?.map((item, index) => (
               <>
                 <DropdownMenuItem
+                  onClick={() => {
+                    if (index === 1) {
+                      alert(4)
+                      handleSignOut()
+                    }
+                  }}
                   className={clsx(['flex gap-3 items-center'], {
                     'hover:text-red-500 text-red-500': index === 1,
                   })}
