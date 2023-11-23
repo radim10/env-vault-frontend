@@ -25,7 +25,7 @@ export default async function Page({ searchParams }: { searchParams: { code: str
   // console.log(searchParams)
   // console.log(searchParams?.code)
   //
-  // const res = (await getGithubUser(searchParams?.code)) as { token: string }
+  const res = (await getGithubUser(searchParams?.code)) as { token: string }
   // console.log(res)
   // const res = await fetch('http://localhost:3000/api', { method: 'POST' })
   // console.log(res)
@@ -62,6 +62,5 @@ export default async function Page({ searchParams }: { searchParams: { code: str
   //     // redirect("/")
   //   }
 
-  const session = await createSession()
-  return <CookieAuth encryptedSession={session} />
+  return <CookieAuth token={res?.token} />
 }
