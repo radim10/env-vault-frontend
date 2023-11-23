@@ -1,4 +1,35 @@
+import { saveSession } from '@/app/actions'
+import sessionStore from '@/stores/session'
+import useCurrentUserStore from '@/stores/user'
+import { UserSession } from '@/types/session'
 import axios from 'axios'
+import dayjs from 'dayjs'
+
+const refreshSessionRequest = async (currentSession: UserSession) => {
+  try {
+    const { data } = await axios.post<{ accessToken: string; accessTokenExpiresAt: number }>(
+      'http://localhost:8080/api/v1/auth/refresh',
+      {
+        refreshToken: currentSession?.refreshToken ?? undefined,
+      }
+    )
+    if (data?.accessToken) {
+      const { accessToken: newAccessToken, accessTokenExpiresAt } = data
+      const newSessionData = {
+        ...currentSession,
+        accessToken: newAccessToken,
+        accessTokenExpiresAt,
+      }
+
+      saveSession(newSessionData)
+
+      sessionStore.setState({ data: newSessionData })
+    }
+  } catch (e) {
+    // TODO: logout on known error
+    console.log(e)
+  }
+}
 
 export type APIError<T> = {
   code: T | 'workspace_not_found'
@@ -18,6 +49,19 @@ export default async function sendRequest<ResponseType>(config: {
   // const baseURL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/${config.basePath}`
   // const baseURL = `http://localhost:8080/api/v1/${config.basePath}`
   const baseURL = `${process.env.API_URL}/${config.basePath}`
+
+  const session = sessionStore.getState().data
+  console.log(session)
+
+  if (
+    session?.accessTokenExpiresAt &&
+    dayjs.unix(session?.accessTokenExpiresAt).diff(dayjs(), 's') < 5 &&
+    session?.refreshToken &&
+    dayjs.unix(session?.accessTokenExpiresAt).diff(dayjs(), 's') < 5
+  ) {
+    console.log('refreshing session')
+    await refreshSessionRequest(session)
+  }
 
   try {
     const req = await axios.request<ResponseType>({
