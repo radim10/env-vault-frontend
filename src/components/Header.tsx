@@ -25,12 +25,14 @@ const Header = () => {
     await fetch('/api/logout', { method: 'POST' })
   }
 
+  console.log(session)
+
   return (
     <div className="flex flex-row justify-between items-center">
       <div>Workspace name or search input</div>
       <div className="flex items-center gap-2 md:gap-3">
         <ThemeToggle />
-        {session?.name}
+        {session?.accessToken}
         <DropdownMenu>
           <DropdownMenuTrigger className="flex gap-2 items-center">
             <Avatar>
@@ -44,7 +46,6 @@ const Header = () => {
                 <DropdownMenuItem
                   onClick={() => {
                     if (index === 1) {
-                      alert(4)
                       handleSignOut()
                     }
                   }}
