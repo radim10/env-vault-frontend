@@ -3,8 +3,8 @@
 import { createSession } from '@/utils/auth/session'
 import { cookies } from 'next/headers'
 
-export async function saveSession() {
-  const session =await createSession()
+export async function saveSession(accessToken: string) {
+  const session = await createSession(accessToken)
 
   cookies().set('session', session, {
     httpOnly: true,
