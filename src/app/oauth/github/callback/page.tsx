@@ -1,6 +1,5 @@
-'use server'
-import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
+import { CookieAuth } from '@/components/CookieAuth'
+import { createSession } from '@/utils/auth/session'
 
 // import { Session } from '@/types/auth'
 //
@@ -21,14 +20,28 @@ async function getGithubUser(code: string) {
   return body
 }
 
-export default async function Page({ params }: { params: { code: string } }) {
-  cookies().set('name', 'lee')
-
+export default async function Page({ searchParams }: { searchParams: { code: string } }) {
+  // setCookie('key', 'value')
+  // console.log(searchParams)
+  // console.log(searchParams?.code)
+  //
+  // const res = (await getGithubUser(searchParams?.code)) as { token: string }
+  // console.log(res)
+  // const res = await fetch('http://localhost:3000/api', { method: 'POST' })
+  // console.log(res)
+  // return (
+  //   <button
+  //     onClick={async () => {
+  //       const res = await fetch('http://localhost:3000/api', { method: 'POST' })
+  //       console.log(res)
+  //     }}
+  //   >
+  //     button
+  //   </button>
+  // )
+  // cookies().set('name', 'lee')
   // const { code } = params
-  // const res = await getGithubUser(code)
-  // console.log(code)
   // redirect('/')
-
   //
   //   const userData = (await getGithubUser(code)) as Session
   //   if (!userData) {
@@ -48,4 +61,7 @@ export default async function Page({ params }: { params: { code: string } }) {
   //     //await login
   //     // redirect("/")
   //   }
+
+  const session = await createSession()
+  return <CookieAuth encryptedSession={session} />
 }
