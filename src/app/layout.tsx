@@ -34,20 +34,22 @@ const getCurrentUserData = async () => {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession()
+  // const session = {}
+  console.log('layout running')
 
-  let userEmail: string | null = null
-  let name: string | null = null
+  let userEmail: string | null = ''
+  let name: string | null = ''
 
   // FIX: running if layout loaded
-  if (session) {
-    const currentUser = (await getCurrentUserData()) as { email: string; name: string }
-    console.log(currentUser)
-    if (currentUser) {
-      userEmail = currentUser.email
-      name = currentUser.name
-    }
-
-    if (!userEmail) redirect('/auth/login')
+  if (false) {
+    // const currentUser = (await getCurrentUserData()) as { email: string; name: string }
+    // console.log(currentUser)
+    // if (currentUser) {
+    //   userEmail = currentUser.email
+    //   name = currentUser.name
+    // }
+    //
+    // if (!userEmail) redirect('/auth/login')
   }
 
   return (
@@ -57,7 +59,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <GlobalQueryClientProvider>
             <Toaster />
             <AuthProvider
-              user={{ email: userEmail as string, name: name as string }}
+              // user={{ email: userEmail as string, name: name as string }}
               session={session as UserSession}
             >
               <main className="flex w-full items-center justify-center">
