@@ -23,3 +23,7 @@ export interface WorkspaceInvitation {
   role: WorkspaceUserRole
   createdBy: Pick<User, 'name' | 'avatarUrl'>
 }
+
+export type CurrentUser = User & {
+  role: WorkspaceUserRole
+}

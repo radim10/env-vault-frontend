@@ -1,5 +1,5 @@
 import { UserSession } from '@/types/session'
-import { User, WorkspaceUserRole } from '@/types/users'
+import { CurrentUser, User, WorkspaceUserRole } from '@/types/users'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
@@ -8,13 +8,6 @@ import { immer } from 'zustand/middleware/immer'
 // type CurrentUser = User & {
 //   role: WorkspaceUserRole
 // }
-
-// NOTE: for testing
-type CurrentUser = {
-  role: WorkspaceUserRole
-  email: string
-  name: string
-}
 
 export interface CurrentUserState {
   data: CurrentUser | null
