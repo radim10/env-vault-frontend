@@ -16,3 +16,18 @@ export async function saveSession(data: UserSession) {
 export const deleteSession = () => {
   cookies().delete('session')
 }
+
+export const getCurrentUserData = async () => {
+  const res = await fetch(`http://localhost:8080/api/v1/workspaces/3434/users/me`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    cache: 'no-store',
+  })
+
+  console.log(res.status)
+  if (!res.ok) return undefined
+  let body = res.json()
+  return body
+}
