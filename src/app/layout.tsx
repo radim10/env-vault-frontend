@@ -33,24 +33,24 @@ const getCurrentUserData = async () => {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const session = await getSession()
-  // const session = {}
-  console.log('layout running')
-
-  let userEmail: string | null = ''
-  let name: string | null = ''
-
-  // FIX: running if layout loaded
-  if (false) {
-    // const currentUser = (await getCurrentUserData()) as { email: string; name: string }
-    // console.log(currentUser)
-    // if (currentUser) {
-    //   userEmail = currentUser.email
-    //   name = currentUser.name
-    // }
-    //
-    // if (!userEmail) redirect('/auth/login')
-  }
+  // const session = await getSession()
+  // // const session = {}
+  // console.log('layout running')
+  //
+  // let userEmail: string | null = ''
+  // let name: string | null = ''
+  //
+  // // FIX: running if layout loaded
+  // if (false) {
+  //   // const currentUser = (await getCurrentUserData()) as { email: string; name: string }
+  //   // console.log(currentUser)
+  //   // if (currentUser) {
+  //   //   userEmail = currentUser.email
+  //   //   name = currentUser.name
+  //   // }
+  //   //
+  //   // if (!userEmail) redirect('/auth/login')
+  // }
 
   return (
     <html lang="en">
@@ -58,14 +58,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <ThemeProvider attribute="class" defaultTheme="dark">
           <GlobalQueryClientProvider>
             <Toaster />
-            <AuthProvider
-              // user={{ email: userEmail as string, name: name as string }}
-              session={session as UserSession}
-            >
-              <main className="flex w-full items-center justify-center">
-                <div className="max-w-[1800px] w-full">{children}</div>
-              </main>
-            </AuthProvider>
+            <main className="flex w-full items-center justify-center">
+              <div className="max-w-[1800px] w-full">{children}</div>
+            </main>
           </GlobalQueryClientProvider>
         </ThemeProvider>
       </body>
