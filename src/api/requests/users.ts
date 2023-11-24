@@ -49,28 +49,6 @@ export function usersErrorMsgFromCode(code?: UsersErrorCode): string | null {
   return msg
 }
 
-// TODO:
-export type GetCurrentUserError = UsersError<'workspace_not_found'>
-export type GetCurrentUserData = CurrentUser & { defaultWorkspace?: string }
-
-export type GetCurrentUserArgs = {
-  workspaceId: string
-  workspace?: boolean
-}
-
-export async function getCurrentUser(args: GetCurrentUserArgs) {
-  const { workspaceId, workspace } = args
-
-  return await sendRequest<GetCurrentUserData>({
-    method: 'GET',
-    basePath: `workspaces`,
-    path: `${workspaceId}/users/me`,
-    params: workspace && {
-      workspace,
-    },
-  })
-}
-
 // NOTE: requests
 export type GetWorkspaceUsersError = UsersError<undefined>
 export type GetWorkspaceUsersData = { data: WorkspaceUser[]; totalCount: number }
