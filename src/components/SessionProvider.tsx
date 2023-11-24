@@ -1,5 +1,6 @@
 'use client'
 
+import { useGetCurrentUser } from '@/api/queries/users'
 import { getCurrentUserData } from '@/app/actions'
 import sessionStore from '@/stores/session'
 import useCurrentUserStore from '@/stores/user'
@@ -25,21 +26,24 @@ export const AuthContext = createContext<{ email: string; name: string } | null>
 
 const AuthProvider: React.FC<Props> = ({ session, children }) => {
   const { set, data } = useCurrentUserStore()
-  const [user, setUser] = useState<{ email: string; name: string }>()
+  const { isLoading } = useGetCurrentUser(
+    {
+      // TODO: workspaceId???
+      workspaceId: '4ef8a291-024e-4ed8-924b-1cc90d01315e',
+    },
+    {
+      onSuccess: (user) => {
+        set(user)
+      },
+    }
+  )
 
-  useMount(async () => {
-    const user = await getCurrentUserData()
-    console.log(user)
-    set({
-      email: user?.email,
-      role: WorkspaceUserRole.ADMIN,
-      name: user?.name,
-    })
+  useMount(() => {
     sessionStore.setState({ data: session })
   })
 
   // TODO: get current user from database and set state
-  if (data === null) {
+  if (isLoading) {
     return (
       <>
         <div className="h-screen w-screen flex justify-center items-center">
