@@ -15,6 +15,7 @@ import { AuthContext } from './SessionProvider'
 import { useRouter } from 'next/navigation'
 import sessionStore from '@/stores/session'
 import { deleteSession } from '@/app/actions'
+import useCurrentUserStore from '@/stores/user'
 
 const dropdownItems = [
   { text: 'Account', icon: Icons.user },
@@ -23,7 +24,8 @@ const dropdownItems = [
 
 const Header = () => {
   const router = useRouter()
-  const auth = useContext(AuthContext)
+  // const auth = useContext(AuthContext)
+  const user = useCurrentUserStore()
   const session = sessionStore?.getState().data
 
   const handleSignOut = async () => {
@@ -31,14 +33,12 @@ const Header = () => {
     router.replace('/login', { scroll: false })
   }
 
-  console.log(auth)
-
   return (
     <div className="flex flex-row justify-between items-center">
       <div>Workspace name or search input</div>
       <div className="flex items-center gap-2 md:gap-3">
         <ThemeToggle />
-        {session?.accessToken}
+        {/* {session?.accessToken} */}
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger className="flex gap-2 items-center">
@@ -68,8 +68,8 @@ const Header = () => {
             </DropdownMenuContent>
           </DropdownMenu>
           <div className="flex flex-col">
-            <div className="text-[0.9rem] font-medium">{auth?.name}</div>
-            <div className="text-sm">{auth?.email}</div>
+            <div className="text-[0.9rem] font-medium">{user?.data?.name}</div>
+            <div className="text-sm">{user?.data?.email}</div>
           </div>
         </div>
       </div>
