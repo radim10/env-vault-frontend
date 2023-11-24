@@ -3,6 +3,9 @@ import {
   CheckWorkspaceUserEmailArgs,
   CheckWorkspaceUserEmailError,
   CheckWorkspaceUserEmailResData,
+  GetCurrentUserArgs,
+  GetCurrentUserData,
+  GetCurrentUserError,
   GetUserAccessProjectsArgs,
   GetUserAccessProjectsData,
   GetUserAccessProjectsError,
@@ -25,6 +28,7 @@ import {
   SearchWorkspaceUsersData,
   SearchWorkspaceUsersError,
   checkWorkspaceUserEmail,
+  getCurrentUser,
   getUserAccessProjects,
   getUserAccessTeamProjects,
   getUserTeams,
@@ -33,6 +37,20 @@ import {
   listWorkspaceInvitations,
   searchWorkspaceUsers,
 } from '../requests/users'
+
+export const useGetCurrentUser = (
+  args: GetCurrentUserArgs,
+  opt?: UseQueryOptions<GetCurrentUserData, GetCurrentUserError>
+) =>
+  useQuery<GetCurrentUserData, GetCurrentUserError>(
+    ['current-user'],
+    () => {
+      return getCurrentUser(args)
+    },
+    opt
+  )
+
+//
 
 type UserGetWorkspaceUserArg = GetWorkspaceUserArgs
 

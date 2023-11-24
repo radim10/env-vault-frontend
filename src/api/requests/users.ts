@@ -1,6 +1,12 @@
 import { ListTeam } from '@/types/teams'
 import sendRequest, { APIError } from '../instance'
-import { User, WorkspaceInvitation, WorkspaceUser, WorkspaceUserRole } from '@/types/users'
+import {
+  CurrentUser,
+  User,
+  WorkspaceInvitation,
+  WorkspaceUser,
+  WorkspaceUserRole,
+} from '@/types/users'
 import { UserAccessProject, UserAccessTeamProject } from '@/types/userAccess'
 
 type UsersErrorCode =
@@ -41,6 +47,24 @@ export function usersErrorMsgFromCode(code?: UsersErrorCode): string | null {
   }
 
   return msg
+}
+
+// TODO:
+export type GetCurrentUserError = UsersError<'workspace_not_found'>
+export type GetCurrentUserData = CurrentUser
+
+export type GetCurrentUserArgs = {
+  workspaceId: string
+}
+
+export async function getCurrentUser(args: GetCurrentUserArgs) {
+  const { workspaceId } = args
+
+  return await sendRequest<GetCurrentUserData>({
+    method: 'GET',
+    basePath: `workspaces`,
+    path: `${workspaceId}/users/me`,
+  })
 }
 
 // NOTE: requests
