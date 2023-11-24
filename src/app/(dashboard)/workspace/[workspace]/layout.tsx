@@ -6,13 +6,28 @@ import { UserSession } from '@/types/session'
 import { getSession } from '@/utils/auth/session'
 import { redirect } from 'next/navigation'
 
-export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+const uuidRegex = new RegExp(
+  /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
+)
+
+export default async function DashboardLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode
+  params: { workspace: string }
+}) {
   console.log('dashboard layout running')
   const session = await getSession()
   console.log(session)
 
   if (!session) {
     redirect('/login')
+  }
+
+  // TODO: verify uuid
+  if (!uuidRegex.test(params.workspace)) {
+    redirect('/workspace')
   }
 
   return (
