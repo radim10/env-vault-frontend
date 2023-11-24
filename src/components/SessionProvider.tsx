@@ -1,11 +1,9 @@
 'use client'
 
-import { useGetCurrentUser } from '@/api/queries/users'
-import { getCurrentUserData } from '@/app/actions'
+import { useGetCurrentUser } from '@/api/queries/currentUser'
 import sessionStore from '@/stores/session'
 import useCurrentUserStore from '@/stores/user'
 import { UserSession } from '@/types/session'
-import { WorkspaceUserRole } from '@/types/users'
 import { useParams, useRouter } from 'next/navigation'
 import { createContext, useState } from 'react'
 import { useMount } from 'react-use'
@@ -29,6 +27,8 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
   const params = useParams()
   const router = useRouter()
   const { set, data } = useCurrentUserStore()
+
+  // NOTE: or use server action but implment retry + error handling
   const { isLoading } = useGetCurrentUser(
     {
       // TODO: workspaceId???
