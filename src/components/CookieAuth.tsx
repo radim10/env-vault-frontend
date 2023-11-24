@@ -7,14 +7,15 @@ import { useMount } from 'react-use'
 
 interface Props {
   data: UserSession
+  workspaceId: string
 }
 
-export const CookieAuth: React.FC<Props> = ({ data }) => {
+export const CookieAuth: React.FC<Props> = ({ data, workspaceId }) => {
   const router = useRouter()
 
   useMount(async () => {
     await saveSession(data)
-    router.replace('/workspace/4ef8a291-024e-4ed8-924b-1cc90d01315e/projects', { scroll: false })
+    router.replace(`/workspace/${workspaceId}/projects`, { scroll: false })
   })
 
   return (
