@@ -28,7 +28,7 @@ export async function getCurrentUser(args: GetCurrentUserArgs) {
   return await sendRequest<GetCurrentUserData>({
     method: 'GET',
     basePath: `workspaces`,
-    path: `${workspaceId}/users/me`,
+    path: `${workspaceId}/me`,
     params: workspace && {
       workspace,
     },
