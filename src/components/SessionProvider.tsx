@@ -6,6 +6,7 @@ import sessionStore from '@/stores/session'
 import useCurrentUserStore from '@/stores/user'
 import { UserSession } from '@/types/session'
 import { WorkspaceUserRole } from '@/types/users'
+import { useParams, useRouter } from 'next/navigation'
 import { createContext, useState } from 'react'
 import { useMount } from 'react-use'
 
@@ -25,14 +26,20 @@ interface Props {
 export const AuthContext = createContext<{ email: string; name: string } | null>(null)
 
 const AuthProvider: React.FC<Props> = ({ session, children }) => {
+  const params = useParams()
+  const router = useRouter()
   const { set, data } = useCurrentUserStore()
   const { isLoading } = useGetCurrentUser(
     {
       // TODO: workspaceId???
-      workspaceId: '4ef8a291-024e-4ed8-924b-1cc90d01315e',
+      // workspaceId: '4ef8a291-024e-4ed8-924b-1cc90d01315e',
+      workspaceId: params?.workspace as string,
     },
     {
       onSuccess: (user) => {
+        if (user?.defaultWorkspace) {
+          router.replace(`/workspace/${user.defaultWorkspace}/projects`)
+        }
         set(user)
       },
     }
