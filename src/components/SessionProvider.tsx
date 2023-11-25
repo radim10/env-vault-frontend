@@ -37,8 +37,12 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
     },
     {
       onSuccess: (user) => {
-        if (user?.defaultWorkspace) {
-          router.replace(`/workspace/${user.defaultWorkspace}/projects`)
+        if (user?.defaultWorkspace !== undefined) {
+          if (user?.defaultWorkspace === null) {
+            router.replace(`/welcome`)
+          } else {
+            router.replace(`/workspace/${user.defaultWorkspace}/projects`)
+          }
         }
         set(user)
       },

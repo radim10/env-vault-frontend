@@ -14,18 +14,21 @@ const getDefaultWorkspace = async (session?: UserSession) => {
 
   console.log(res.status)
   if (!res.ok) return undefined
-  let body = (await res.json()) as { id: string }
+  let body = (await res.json()) as { id: string | null }
 
   return body
 }
 
-// TODO: get default workspace and redirect
-const WorkspacePage = async (props: {}) => {
+const WorkspacePage = async () => {
   await validateServerSession('/login')
 
   const workspaceData = await getDefaultWorkspace()
 
-  redirect(`/workspace/${workspaceData?.id}/projects`)
+  if (!workspaceData?.id) {
+    redirect('/welcome')
+  } else {
+    redirect(`/workspace/${workspaceData?.id}/projects`)
+  }
 
   // redirect(`/workspace/4ef8a291-024e-4ed8-924b-1cc90d01315e/projects`)
 }
