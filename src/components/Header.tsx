@@ -1,6 +1,5 @@
 'use client'
 
-import { useContext } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import {
   DropdownMenu,
@@ -11,11 +10,10 @@ import {
 import clsx from 'clsx'
 import { Icons } from './icons'
 import { ThemeToggle } from './ui/theme-toggle'
-import { AuthContext } from './SessionProvider'
 import { useRouter } from 'next/navigation'
-import sessionStore from '@/stores/session'
 import { deleteSession } from '@/app/actions'
 import useCurrentUserStore from '@/stores/user'
+import { useLogout } from '@/api/mutations/auth'
 
 const dropdownItems = [
   { text: 'Account', icon: Icons.user },
@@ -24,14 +22,18 @@ const dropdownItems = [
 
 const Header = () => {
   const router = useRouter()
-  // const auth = useContext(AuthContext)
   const user = useCurrentUserStore()
-  const session = sessionStore?.getState().data
 
-  const handleSignOut = async () => {
-    deleteSession()
-    router.replace('/login', { scroll: false })
-  }
+  const { mutate: logout } = useLogout({
+    onSuccess: () => {
+      deleteSession()
+      router.replace('/login', { scroll: false })
+    },
+    onError: (err) => {
+      // TODO: error toast
+      console.log(err)
+    },
+  })
 
   return (
     <div className="flex flex-row justify-between items-center">
@@ -53,7 +55,7 @@ const Header = () => {
                   <DropdownMenuItem
                     onClick={() => {
                       if (index === 1) {
-                        handleSignOut()
+                        logout({ id: true })
                       }
                     }}
                     className={clsx(['flex gap-3 items-center'], {
