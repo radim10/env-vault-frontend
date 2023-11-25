@@ -7,7 +7,7 @@ import { useMount } from 'react-use'
 
 interface Props {
   data: UserSession
-  workspaceId: string
+  workspaceId: string | null
 }
 
 export const CookieAuth: React.FC<Props> = ({ data, workspaceId }) => {
@@ -15,7 +15,12 @@ export const CookieAuth: React.FC<Props> = ({ data, workspaceId }) => {
 
   useMount(async () => {
     await saveSession(data)
-    router.replace(`/workspace/${workspaceId}/projects`, { scroll: false })
+
+    if (!workspaceId) {
+      router.replace(`/welcome`)
+    } else {
+      router.replace(`/workspace/${workspaceId}/projects`, { scroll: false })
+    }
   })
 
   return (
