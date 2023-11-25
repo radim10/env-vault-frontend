@@ -92,6 +92,7 @@ import {
   AlertTriangle,
   Github,
   Rocket,
+  Blocks,
 } from 'lucide-react'
 
 export const Icons = {
@@ -190,4 +191,5 @@ export const Icons = {
   alertTriangle: AlertTriangle,
   github: Github,
   rocket: Rocket,
+  blocks: Blocks,
 }
