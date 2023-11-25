@@ -14,3 +14,17 @@ export async function logout() {
     basePath: 'auth',
   })
 }
+
+// google
+export type GetGoogleLinkError = AuthError<any>
+export type GetGoogleLinkResData = {
+  link: string
+}
+
+export async function getGoogleLink() {
+  return await sendRequest<GetGoogleLinkResData>({
+    method: 'GET',
+    path: 'google',
+    basePath: 'auth',
+  })
+}
