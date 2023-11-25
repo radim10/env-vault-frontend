@@ -31,6 +31,21 @@ export async function getWorkspace(id: string) {
   return await response
 }
 
+export type CreateWorkspaceError = WorkspacesError<any>
+export type CreateWorkspaceData = Pick<Workspace, 'name'>
+export type CreateWorkspaceResData = { id: string }
+
+export async function createWorkspace(name: string) {
+  const response = sendRequest<CreateWorkspaceResData>({
+    method: 'POST',
+    basePath: 'workspaces',
+    body: {
+      name,
+    },
+  })
+  return await response
+}
+
 // get links
 export type GetWorkspaceInvitationLinksError = WorkspacesError<'workspace_not_found'>
 export type GetWorkspaceInvitationLinksData = WorkspaceInvitationLinks
