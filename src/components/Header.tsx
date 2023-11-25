@@ -45,8 +45,8 @@ const Header = () => {
           <DropdownMenu>
             <DropdownMenuTrigger className="flex gap-2 items-center">
               <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarImage src={user?.data?.avatarUrl ?? ''} />
+                <AvatarFallback>{user?.data?.name?.charAt(0)?.toUpperCase()}</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="mt-2.5 mr-8 text-md">
