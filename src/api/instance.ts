@@ -78,7 +78,7 @@ export default async function sendRequest<ResponseType>(config: {
       data: config?.body ?? undefined,
       headers: {
         Authorization: `Bearer ${session?.accessToken}`,
-        // ...config.headers,
+        ...config.headers,
       },
     })
 
