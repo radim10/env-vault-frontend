@@ -5,25 +5,28 @@ import { UserSession } from '@/types/session'
 import axios from 'axios'
 import dayjs from 'dayjs'
 
-const refreshSessionRequest = async (currentSession: UserSession) => {
+const refreshSessionRequest = async (currentSession: UserSession): Promise<string | undefined> => {
   try {
-    const { data } = await axios.post<{ accessToken: string; accessTokenExpiresAt: number }>(
-      'http://localhost:8080/api/v1/auth/refresh',
-      {
-        refreshToken: currentSession?.refreshToken ?? undefined,
-      }
-    )
+    const { data } = await axios.post<{
+      accessToken: string
+      accessTokenExpiresAt: number
+      refreshToken: string
+      refreshTokenExpiresAt: number
+    }>('http://localhost:8080/api/v1/auth/refresh', {
+      refreshToken: currentSession?.refreshToken ?? undefined,
+    })
     if (data?.accessToken) {
-      const { accessToken: newAccessToken, accessTokenExpiresAt } = data
-      const newSessionData = {
-        ...currentSession,
-        accessToken: newAccessToken,
-        accessTokenExpiresAt,
-      }
+      // const { accessToken: newAccessToken, accessTokenExpiresAt } = data
+      // const newSessionData = {
+      //   ...currentSession,
+      //   accessToken: newAccessToken,
+      //   accessTokenExpiresAt,
+      // }
+      //
+      saveSession(data)
+      sessionStore.setState({ data: data })
 
-      saveSession(newSessionData)
-
-      sessionStore.setState({ data: newSessionData })
+      return data?.accessToken
     }
   } catch (e) {
     // TODO: logout on known error
@@ -39,7 +42,7 @@ export type APIError<T> = {
 export default async function sendRequest<ResponseType>(config: {
   returnStatus?: boolean
   method: 'GET' | 'POST' | 'PATCH' | 'DELETE'
-  basePath: 'projects' | 'workspaces'
+  basePath: 'projects' | 'workspaces' | 'auth'
   path?: string | number
   body?: Record<string, unknown> | unknown
   params?: Record<string, string | number> | unknown
@@ -53,6 +56,8 @@ export default async function sendRequest<ResponseType>(config: {
   const session = sessionStore.getState().data
   console.log(session)
 
+  let accessToken = session?.accessToken
+
   if (
     session?.accessTokenExpiresAt &&
     dayjs.unix(session?.accessTokenExpiresAt).diff(dayjs(), 's') < 5 &&
@@ -60,7 +65,8 @@ export default async function sendRequest<ResponseType>(config: {
     dayjs.unix(session?.accessTokenExpiresAt).diff(dayjs(), 's') < 5
   ) {
     console.log('refreshing session')
-    await refreshSessionRequest(session)
+    const newAccessToken = await refreshSessionRequest(session)
+    if (newAccessToken) accessToken = newAccessToken
   }
 
   try {
@@ -70,6 +76,10 @@ export default async function sendRequest<ResponseType>(config: {
       baseURL,
       params: config.params ?? undefined,
       data: config?.body ?? undefined,
+      headers: {
+        Authorization: `Bearer ${session?.accessToken}`,
+        // ...config.headers,
+      },
     })
 
     if (config.returnStatus) {
