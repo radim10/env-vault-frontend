@@ -9,7 +9,8 @@ export async function saveSession(data: UserSession) {
 
   cookies().set('session', session, {
     httpOnly: true,
-    maxAge: 60 * 60,
+    // maxAge: 60 * 60,
+    maxAge: 86400 * 14,
   })
 }
 
