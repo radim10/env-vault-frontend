@@ -18,6 +18,7 @@ export type GetCurrentUserError = CurrentUserError<'user_not_found'>
 export type GetCurrentUserData = CurrentUser & { defaultWorkspace?: string }
 
 export type GetCurrentUserArgs = {
+  accessToken: string
   workspaceId: string
   workspace?: boolean
 }
@@ -31,6 +32,9 @@ export async function getCurrentUser(args: GetCurrentUserArgs) {
     path: `${workspaceId}/me`,
     params: workspace && {
       workspace,
+    },
+    headers: {
+      Authorization: `Bearer ${args.accessToken}`,
     },
   })
 }
