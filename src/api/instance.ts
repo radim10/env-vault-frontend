@@ -42,7 +42,7 @@ export type APIError<T> = {
 export default async function sendRequest<ResponseType>(config: {
   returnStatus?: boolean
   method: 'GET' | 'POST' | 'PATCH' | 'DELETE'
-  basePath: 'projects' | 'workspaces' | 'auth'
+  basePath: 'projects' | 'workspaces' | 'auth' | 'me'
   path?: string | number
   body?: Record<string, unknown> | unknown
   params?: Record<string, string | number> | unknown
