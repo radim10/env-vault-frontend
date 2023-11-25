@@ -1,5 +1,6 @@
 'use client'
 
+import { useGetGoogleLink } from '@/api/queries/auth'
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -11,6 +12,14 @@ const LoginPage = (props: {}) => {
   const githubRedirect = () => {
     window.location.replace(process.env.NEXT_PUBLIC_GITHUB_URL as string)
   }
+
+  const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGoogleLink({
+    enabled: false,
+
+    onSuccess: ({ link }) => {
+      window.location.replace(link)
+    },
+  })
 
   return (
     <div className="flex justify-center mt-[10%]  w-full">
@@ -86,7 +95,14 @@ const LoginPage = (props: {}) => {
                     Github
                   </Button>
 
-                  <Button variant="outline" size={'sm'} type="button" disabled={false}>
+                  <Button
+                    disabled={getGoogleLinkLoading}
+                    loading={getGoogleLinkLoading}
+                    onClick={() => getGoogleLink()}
+                    variant="outline"
+                    size={'sm'}
+                    type="button"
+                  >
                     Google
                   </Button>
                 </div>
