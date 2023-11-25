@@ -47,7 +47,8 @@ export async function POST(request: NextRequest) {
     name: 'session',
     value: encryptedSession,
     httpOnly: true,
-    maxAge: 60 * 60,
+    // maxAge: 60 * 60,
+    maxAge: 86400 * 14,
   })
 
   return response
