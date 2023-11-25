@@ -28,12 +28,15 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
   const router = useRouter()
   const { set, data } = useCurrentUserStore()
 
+  // TODO: check if accessToken is expired and refresh
+
   // NOTE: or use server action but implment retry + error handling
   const { isLoading } = useGetCurrentUser(
     {
       // TODO: workspaceId???
       // workspaceId: '4ef8a291-024e-4ed8-924b-1cc90d01315e',
       workspaceId: params?.workspace as string,
+      accessToken: session?.accessToken,
     },
     {
       onSuccess: (user) => {
