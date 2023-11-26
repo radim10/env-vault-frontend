@@ -21,7 +21,7 @@ export type GetGoogleLinkResData = {
   link: string
 }
 
-export async function getGoogleLink(invitationId?: string) {
+export async function getGoogleLink(invitationId: string | null) {
   return await sendRequest<GetGoogleLinkResData>({
     method: 'GET',
     path: 'google',
