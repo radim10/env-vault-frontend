@@ -11,18 +11,17 @@ import { useGetGoogleLink } from '@/api/queries/auth'
 
 interface InvitationProps {
   id: string
-  name: string
+  workspace: string
   role: WorkspaceUserRole
 }
 
-export const Invitation: React.FC<InvitationProps> = ({ id, name, role }) => {
+export const Invitation: React.FC<InvitationProps> = ({ id, workspace, role }) => {
   const githubRedirect = () => {
     window.location.replace(process.env.NEXT_PUBLIC_GITHUB_URL as string)
   }
 
-  const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGoogleLink({
+  const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGoogleLink(id, {
     enabled: false,
-
     onSuccess: ({ link }) => {
       window.location.replace(link)
     },
@@ -61,7 +60,7 @@ export const Invitation: React.FC<InvitationProps> = ({ id, name, role }) => {
                   <div className="flex flex-col gap-1.5 mb-2">
                     <div className="flex flex-row gap-2 flex-wrap">
                       <div className="font-medium">Workspace:</div>
-                      <div>{name}</div>
+                      <div>{workspace}</div>
                     </div>
 
                     <div className="flex flex-row gap-2">
