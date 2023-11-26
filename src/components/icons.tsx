@@ -93,6 +93,7 @@ import {
   Github,
   Rocket,
   Blocks,
+  Frown,
 } from 'lucide-react'
 
 export const Icons = {
@@ -192,4 +193,5 @@ export const Icons = {
   github: Github,
   rocket: Rocket,
   blocks: Blocks,
+  frown: Frown,
 }
