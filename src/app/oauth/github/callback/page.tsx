@@ -1,14 +1,15 @@
-import { CookieAuth } from '@/components/CookieAuth'
 import { UserSession } from '@/types/session'
-import { createSession } from '@/utils/auth/session'
+import { CookieAuth } from '@/components/CookieAuth'
 
-// import { Session } from '@/types/auth'
-//
-async function getGithubUser(code: string) {
-  // const res = await fetch(`${process.env.API_URL}/auth/github`, {
+async function handleGithubAuth(code: string, invitation?: string) {
+  const payload = {
+    code,
+    invitation,
+  }
+
   const res = await fetch(`http://localhost:8080/api/v1/auth/github`, {
     method: 'POST',
-    body: JSON.stringify({ code }),
+    body: JSON.stringify(payload),
     headers: {
       'Content-Type': 'application/json',
     },
@@ -16,12 +17,14 @@ async function getGithubUser(code: string) {
   })
 
   console.log(res.status)
+  console.log(res)
   if (!res.ok) return undefined
-  let body = res.json()
+  let body = (await res.json()) as { session: UserSession; workspaceId?: string }
   return body
 }
 
-async function getDefaultWorkspace() {
+// TODO:
+async function getDefaultWorkspace(accessToken: string) {
   const { data } = await new Promise((resolve) => setTimeout(resolve, 250)).then(() => ({
     data: { id: '4ef8a291-024e-4ed8-924b-1cc90d01315e' },
   }))
@@ -29,48 +32,38 @@ async function getDefaultWorkspace() {
   return data
 }
 
-export default async function Page({ searchParams }: { searchParams: { code: string } }) {
-  // setCookie('key', 'value')
-  // console.log(searchParams)
-  // console.log(searchParams?.code)
-  //
-  const res = (await getGithubUser(searchParams?.code)) as UserSession
-  const workspaceData = await getDefaultWorkspace()
-  // console.log(res)
-  // const res = await fetch('http://localhost:3000/api', { method: 'POST' })
-  // console.log(res)
-  // return (
-  //   <button
-  //     onClick={async () => {
-  //       const res = await fetch('http://localhost:3000/api', { method: 'POST' })
-  //       console.log(res)
-  //     }}
-  //   >
-  //     button
-  //   </button>
-  // )
-  // cookies().set('name', 'lee')
-  // const { code } = params
-  // redirect('/')
-  //
-  //   const userData = (await getGithubUser(code)) as Session
-  //   if (!userData) {
-  //     redirect("/auth/login")
-  //   } else {
-  //     const { ok, status, headers } = await fetch(
-  //       "http://localhost:3000/api/login",
-  //       {
-  //         method: "POST",
-  //         body: JSON.stringify(userData),
-  //       }
-  //     )
-  //     console.log("LOGIN OK: ", ok)
-  //     console.log("LOGIN STATUS: ", status)
-  //     console.log("LOGIN header: ", headers)
-  //
-  //     //await login
-  //     // redirect("/")
-  //   }
+const uuidRegex =
+  /[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[89aAbB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}/
 
-  return <CookieAuth data={res} workspaceId={workspaceData?.id} />
+function extractUUIDv4(inputString: string) {
+  const match = inputString.match(uuidRegex)
+
+  return match ? match[0] : null
+}
+
+export default async function Page({
+  searchParams: { code, state },
+}: {
+  searchParams: { code: string; state: string }
+}) {
+  const invitationId = extractUUIDv4(state) ?? undefined
+  console.log('INVITATION ID: ', invitationId)
+
+  const res = await handleGithubAuth(code, invitationId)
+
+  if (!res) {
+    return <>Something went wrong</>
+  }
+
+  const workspaceData = res?.workspaceId
+    ? { id: res.workspaceId }
+    : await getDefaultWorkspace(res?.session?.accessToken)
+
+  if (workspaceData === undefined) {
+    return <>Something went wrong</>
+  }
+
+  const session = res?.session
+
+  return <CookieAuth data={session} workspaceId={workspaceData?.id} />
 }
