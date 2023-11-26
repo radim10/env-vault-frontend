@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { useGetGithubUrl, useGetGoogleUrl } from '@/api/queries/auth'
 
 const LoginPage = () => {
-  const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGithubUrl(null, {
+  const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGoogleUrl(null, {
     enabled: false,
 
     onSuccess: ({ url }) => {
