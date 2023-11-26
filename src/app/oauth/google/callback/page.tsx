@@ -56,12 +56,21 @@ async function getInvitationWorkspaceId(id: string) {
   return { id: body.workspace }
 }
 
+const uuidRegex =
+  /[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[89aAbB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}/
+
+function extractUUIDv4(inputString: string) {
+  const match = inputString.match(uuidRegex)
+
+  return match ? match[0] : null
+}
+
 // state = invitaation
 // TODO: verify that is is uuid (regex??)
 export default async function Page({
   searchParams: { code, state },
 }: {
-  searchParams: { code: string; state?: string }
+  searchParams: { code: string; state: string }
 }) {
   // let invitationId!: string | undefined
   // let workspaceId!: string | undefined | null
@@ -87,7 +96,9 @@ export default async function Page({
   //   return <>Something went wrong</>
   // }
   //
-  const res = (await handleGoogleAuth(code, state)) as UserSession & { workspaceId?: string }
+  const invitationId = extractUUIDv4(state) ?? undefined
+  console.log('INVITATION ID: ', invitationId)
+  const res = (await handleGoogleAuth(code, invitationId)) as UserSession & { workspaceId?: string }
 
   const workspaceData = res?.workspaceId
     ? { id: res.workspaceId }
