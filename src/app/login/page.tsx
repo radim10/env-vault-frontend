@@ -13,7 +13,7 @@ const LoginPage = (props: {}) => {
     window.location.replace(process.env.NEXT_PUBLIC_GITHUB_URL as string)
   }
 
-  const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGoogleLink({
+  const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGoogleLink(null, {
     enabled: false,
 
     onSuccess: ({ link }) => {
