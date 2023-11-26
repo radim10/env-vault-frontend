@@ -21,10 +21,15 @@ export type GetGoogleLinkResData = {
   link: string
 }
 
-export async function getGoogleLink() {
+export async function getGoogleLink(invitationId?: string) {
   return await sendRequest<GetGoogleLinkResData>({
     method: 'GET',
     path: 'google',
     basePath: 'auth',
+    params: invitationId
+      ? {
+          invitation: invitationId,
+        }
+      : undefined,
   })
 }
