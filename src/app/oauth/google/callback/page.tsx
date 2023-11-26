@@ -1,13 +1,19 @@
 import { CookieAuth } from '@/components/CookieAuth'
 import { UserSession } from '@/types/session'
+import { WorkspaceUserRole } from '@/types/users'
 
 // import { Session } from '@/types/auth'
 //
-async function handleGoogleAuth(code: string) {
+async function handleGoogleAuth(code: string, invitation?: string) {
   // const res = await fetch(`${process.env.API_URL}/auth/github`, {
+  const payload = {
+    code,
+    invitation,
+  }
+
   const res = await fetch(`http://localhost:8080/api/v1/auth/google`, {
     method: 'POST',
-    body: JSON.stringify({ code }),
+    body: JSON.stringify(payload),
     headers: {
       'Content-Type': 'application/json',
     },
@@ -20,19 +26,12 @@ async function handleGoogleAuth(code: string) {
   return body
 }
 
-// async function getDefaultWorkspace() {
-//   const { data } = await new Promise((resolve) => setTimeout(resolve, 250)).then(() => ({
-//     data: { id: '4ef8a291-024e-4ed8-924b-1cc90d01315e' },
-//   }))
-//
-//   return data
-// }
-//
-const getDefaultWorkspace = async (session?: UserSession) => {
+const getDefaultWorkspace = async (accessToken: string) => {
   const res = await fetch(`http://localhost:8080/api/v1/me/default-workspace`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
     },
     cache: 'no-store',
   })
@@ -44,14 +43,61 @@ const getDefaultWorkspace = async (session?: UserSession) => {
   return body
 }
 
-export default async function Page({ searchParams }: { searchParams: { code: string } }) {
-  console.log('Code: ', searchParams?.code)
-  const res = (await handleGoogleAuth(searchParams?.code)) as UserSession
-  const workspaceData = await getDefaultWorkspace()
+async function getInvitationWorkspaceId(id: string) {
+  const res = await fetch(`http://localhost:8080/api/v1/invitations/${id}/workspace`, {
+    method: 'GET',
+    cache: 'no-store',
+  })
 
-  if (!workspaceData) {
+  console.log(res.status)
+  if (!res.ok) return undefined
+  let body = (await res.json()) as { workspace: string; role: WorkspaceUserRole }
+
+  return { id: body.workspace }
+}
+
+// state = invitaation
+// TODO: verify that is is uuid (regex??)
+export default async function Page({
+  searchParams: { code, state },
+}: {
+  searchParams: { code: string; state?: string }
+}) {
+  // let invitationId!: string | undefined
+  // let workspaceId!: string | undefined | null
+  //
+  // if (state) {
+  //   const workspaceData = await getInvitation(state)
+  //
+  //   if (workspaceData) {
+  //     invitationId = state
+  //     workspaceId = workspaceData.id
+  //   }
+  // }
+  //
+  // console.log('Code: ', code)
+  // const res = (await handleGoogleAuth(code, state)) as UserSession
+  //
+  // if (!workspaceId) {
+  //   const workspaceData = await getDefaultWorkspace(res?.accessToken)
+  //   if (workspaceData) workspaceId = workspaceData.id
+  // }
+  //
+  // if (workspaceId === undefined) {
+  //   return <>Something went wrong</>
+  // }
+  //
+  const res = (await handleGoogleAuth(code, state)) as UserSession & { workspaceId?: string }
+
+  const workspaceData = res?.workspaceId
+    ? { id: res.workspaceId }
+    : await getDefaultWorkspace(res?.accessToken)
+
+  if (workspaceData === undefined) {
     return <>Something went wrong</>
   }
 
-  return <CookieAuth data={res} workspaceId={workspaceData?.id} />
+  const session = { ...res, workspaceId: undefined }
+
+  return <CookieAuth data={session} workspaceId={workspaceData?.id} />
 }
