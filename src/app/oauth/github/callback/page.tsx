@@ -1,5 +1,6 @@
 import { UserSession } from '@/types/session'
 import { CookieAuth } from '@/components/CookieAuth'
+import OauthError from '@/components/OAuthError'
 
 async function handleGithubAuth(code: string, invitation?: string) {
   const payload = {
@@ -52,7 +53,7 @@ export default async function Page({
   const res = await handleGithubAuth(code, invitationId)
 
   if (!res) {
-    return <>Something went wrong</>
+    return <OauthError />
   }
 
   const workspaceData = res?.workspaceId
@@ -60,7 +61,7 @@ export default async function Page({
     : await getDefaultWorkspace(res?.session?.accessToken)
 
   if (workspaceData === undefined) {
-    return <>Something went wrong</>
+    return <OauthError />
   }
 
   const session = res?.session

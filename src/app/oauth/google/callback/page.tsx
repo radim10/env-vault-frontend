@@ -1,4 +1,5 @@
 import { CookieAuth } from '@/components/CookieAuth'
+import OauthError from '@/components/OAuthError'
 import { UserSession } from '@/types/session'
 import { WorkspaceUserRole } from '@/types/users'
 
@@ -75,7 +76,7 @@ export default async function Page({
   const res = await handleGoogleAuth(code, invitationId)
 
   if (!res) {
-    return <>Something went wrong</>
+    return <OauthError />
   }
 
   const workspaceData = res?.workspaceId
@@ -83,7 +84,7 @@ export default async function Page({
     : await getDefaultWorkspace(res?.session?.accessToken)
 
   if (workspaceData === undefined) {
-    return <>Something went wrong</>
+    return <OauthError />
   }
 
   const session = res?.session
