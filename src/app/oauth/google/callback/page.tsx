@@ -22,7 +22,7 @@ async function handleGoogleAuth(code: string, invitation?: string) {
 
   console.log(res.status)
   if (!res.ok) return undefined
-  let body = res.json()
+  let body = (await res.json()) as { session: UserSession; workspaceId?: string }
   return body
 }
 
@@ -65,50 +65,28 @@ function extractUUIDv4(inputString: string) {
   return match ? match[0] : null
 }
 
-// state = invitaation
-// TODO: verify that is is uuid (regex??)
 export default async function Page({
   searchParams: { code, state },
 }: {
   searchParams: { code: string; state: string }
 }) {
-  // let invitationId!: string | undefined
-  // let workspaceId!: string | undefined | null
-  //
-  // if (state) {
-  //   const workspaceData = await getInvitation(state)
-  //
-  //   if (workspaceData) {
-  //     invitationId = state
-  //     workspaceId = workspaceData.id
-  //   }
-  // }
-  //
-  // console.log('Code: ', code)
-  // const res = (await handleGoogleAuth(code, state)) as UserSession
-  //
-  // if (!workspaceId) {
-  //   const workspaceData = await getDefaultWorkspace(res?.accessToken)
-  //   if (workspaceData) workspaceId = workspaceData.id
-  // }
-  //
-  // if (workspaceId === undefined) {
-  //   return <>Something went wrong</>
-  // }
-  //
   const invitationId = extractUUIDv4(state) ?? undefined
   console.log('INVITATION ID: ', invitationId)
-  const res = (await handleGoogleAuth(code, invitationId)) as UserSession & { workspaceId?: string }
+  const res = await handleGoogleAuth(code, invitationId)
+
+  if (!res) {
+    return <>Something went wrong</>
+  }
 
   const workspaceData = res?.workspaceId
     ? { id: res.workspaceId }
-    : await getDefaultWorkspace(res?.accessToken)
+    : await getDefaultWorkspace(res?.session?.accessToken)
 
   if (workspaceData === undefined) {
     return <>Something went wrong</>
   }
 
-  const session = { ...res, workspaceId: undefined }
+  const session = res?.session
 
   return <CookieAuth data={session} workspaceId={workspaceData?.id} />
 }
