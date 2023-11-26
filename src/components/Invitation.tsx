@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import UserRoleBadge from './users/UserRoleBadge'
 import { WorkspaceUserRole } from '@/types/users'
 import { Card, CardContent } from '@/components/ui/card'
-import { useGetGithubUrl, useGetGoogleLink } from '@/api/queries/auth'
+import { useGetGithubUrl, useGetGoogleUrl } from '@/api/queries/auth'
 
 interface InvitationProps {
   id: string
@@ -16,10 +16,10 @@ interface InvitationProps {
 }
 
 export const Invitation: React.FC<InvitationProps> = ({ id, workspace, role }) => {
-  const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGoogleLink(id, {
+  const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGoogleUrl(id, {
     enabled: false,
-    onSuccess: ({ link }) => {
-      window.location.replace(link)
+    onSuccess: ({ url }) => {
+      window.location.replace(url)
     },
   })
 

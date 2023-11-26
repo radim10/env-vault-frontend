@@ -2,19 +2,19 @@ import { UseQueryOptions, useQuery } from '@tanstack/react-query'
 import {
   GetGithubUrlError,
   GetGithubUrlResData,
-  GetGoogleLinkError,
-  GetGoogleLinkResData,
+  GetGoogleUrlError,
+  GetGoogleUrlResData,
   getGithubUrl,
-  getGoogleLink,
+  getGoogleUrl,
 } from '../requests/auth'
 
-export const useGetGoogleLink = (
+export const useGetGoogleUrl = (
   ivnitationId: string | null,
-  opt?: UseQueryOptions<GetGoogleLinkResData, GetGoogleLinkError>
+  opt?: UseQueryOptions<GetGoogleUrlResData, GetGoogleUrlError>
 ) =>
-  useQuery<GetGoogleLinkResData, GetGoogleLinkError>(
+  useQuery<GetGoogleUrlResData, GetGoogleUrlError>(
     ['google-link'],
-    () => getGoogleLink(ivnitationId),
+    () => getGoogleUrl(ivnitationId),
     { ...opt, cacheTime: 0 }
   )
 

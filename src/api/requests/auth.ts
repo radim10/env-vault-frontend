@@ -16,13 +16,13 @@ export async function logout() {
 }
 
 // google
-export type GetGoogleLinkError = AuthError<any>
-export type GetGoogleLinkResData = {
-  link: string
+export type GetGoogleUrlError = AuthError<any>
+export type GetGoogleUrlResData = {
+  url: string
 }
 
-export async function getGoogleLink(invitationId: string | null) {
-  return await sendRequest<GetGoogleLinkResData>({
+export async function getGoogleUrl(invitationId: string | null) {
+  return await sendRequest<GetGoogleUrlResData>({
     method: 'GET',
     path: 'google',
     basePath: 'auth',
@@ -35,10 +35,8 @@ export async function getGoogleLink(invitationId: string | null) {
 }
 
 // github
-export type GetGithubUrlError = GetGoogleLinkError
-export type GetGithubUrlResData = {
-  url: string
-}
+export type GetGithubUrlError = GetGoogleUrlError
+export type GetGithubUrlResData = GetGoogleUrlResData
 
 export async function getGithubUrl(invitationId: string | null) {
   return await sendRequest<GetGithubUrlResData>({

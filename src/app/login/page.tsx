@@ -4,14 +4,14 @@ import Link from 'next/link'
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { useGetGithubUrl, useGetGoogleLink } from '@/api/queries/auth'
+import { useGetGithubUrl, useGetGoogleUrl } from '@/api/queries/auth'
 
 const LoginPage = () => {
-  const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGoogleLink(null, {
+  const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGithubUrl(null, {
     enabled: false,
 
-    onSuccess: ({ link }) => {
-      window.location.replace(link)
+    onSuccess: ({ url }) => {
+      window.location.replace(url)
     },
   })
 
