@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import UserRoleBadge from './users/UserRoleBadge'
 import { WorkspaceUserRole } from '@/types/users'
 import { Card, CardContent } from '@/components/ui/card'
-import { useGetGoogleLink } from '@/api/queries/auth'
+import { useGetGithubUrl, useGetGoogleLink } from '@/api/queries/auth'
 
 interface InvitationProps {
   id: string
@@ -16,14 +16,17 @@ interface InvitationProps {
 }
 
 export const Invitation: React.FC<InvitationProps> = ({ id, workspace, role }) => {
-  const githubRedirect = () => {
-    window.location.replace(process.env.NEXT_PUBLIC_GITHUB_URL as string)
-  }
-
   const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGoogleLink(id, {
     enabled: false,
     onSuccess: ({ link }) => {
       window.location.replace(link)
+    },
+  })
+
+  const { refetch: getGithubUrl, isRefetching: getGithubUrlLoading } = useGetGithubUrl(id, {
+    enabled: false,
+    onSuccess: ({ url }) => {
+      window.location.replace(url)
     },
   })
 
@@ -71,7 +74,7 @@ export const Invitation: React.FC<InvitationProps> = ({ id, workspace, role }) =
                     </div>
                   </div>
 
-                  <Button disabled={false} size={'sm'}>
+                  <Button disabled={getGithubUrlLoading || getGoogleLinkLoading} size={'sm'}>
                     Login with email
                   </Button>
                   <div className="relative">
@@ -86,18 +89,19 @@ export const Invitation: React.FC<InvitationProps> = ({ id, workspace, role }) =
                   </div>
                   <div className="flex flex-col gap-2">
                     <Button
-                      variant="outline"
                       size={'sm'}
                       type="button"
-                      disabled={false}
-                      onClick={githubRedirect}
+                      variant="outline"
+                      disabled={getGithubUrlLoading || getGoogleLinkLoading}
+                      loading={getGithubUrlLoading}
+                      onClick={() => getGithubUrl()}
                     >
                       <Icons.github className="mr-2 h-4 w-4" />
                       Github
                     </Button>
 
                     <Button
-                      disabled={getGoogleLinkLoading}
+                      disabled={getGoogleLinkLoading || getGithubUrlLoading}
                       loading={getGoogleLinkLoading}
                       onClick={() => getGoogleLink()}
                       variant="outline"
