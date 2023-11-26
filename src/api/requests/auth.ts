@@ -33,3 +33,22 @@ export async function getGoogleLink(invitationId: string | null) {
       : undefined,
   })
 }
+
+// github
+export type GetGithubUrlError = GetGoogleLinkError
+export type GetGithubUrlResData = {
+  url: string
+}
+
+export async function getGithubUrl(invitationId: string | null) {
+  return await sendRequest<GetGithubUrlResData>({
+    method: 'GET',
+    basePath: 'auth',
+    path: 'github',
+    params: invitationId
+      ? {
+          invitation: invitationId,
+        }
+      : undefined,
+  })
+}
