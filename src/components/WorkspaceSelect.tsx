@@ -49,22 +49,27 @@ const WorkspaceSelect: React.FC<Props> = ({ currentWorkspace, allWorkspaces, onC
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
-          {allWorkspaces.map(({ id, name, selected }) => (
-            <DropdownMenuItem className="w-full cursor-pointer">
-              {selected ? (
-                <div className="flex gap-2 justify-between items-center truncate">
-                  <div className="text-primary w-[85%] ">
-                    <div className="truncate">{name}</div>
+          <div className="flex flex-col gap-1 max-h-40 overflow-y-scroll">
+            {allWorkspaces.map(({ id, name, selected }) => (
+              <DropdownMenuItem className="w-full cursor-pointer h-full p-0">
+                {selected ? (
+                  <div className="flex gap-2 justify-between items-center truncate h-full py-1 px-2 md:px-3.5">
+                    <div className="text-primary w-[85%] ">
+                      <div className="truncate">{name}</div>
+                    </div>
+                    <Icons.check className="h-4 w-4 text-primary" />
                   </div>
-                  <Icons.check className="h-4 w-4 text-primary" />
-                </div>
-              ) : (
-                <Link href={`/workspace/${id}/projects`} className="w-full cursor-pointer">
-                  <div className="truncate">{name}</div>
-                </Link>
-              )}
-            </DropdownMenuItem>
-          ))}
+                ) : (
+                  <Link
+                    href={`/workspace/${id}/projects`}
+                    className="w-full cursor-pointer h-full bg-blue-400x py-1 px-2 md:px-3.5"
+                  >
+                    <div className="truncate">{name}</div>
+                  </Link>
+                )}
+              </DropdownMenuItem>
+            ))}
+          </div>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
