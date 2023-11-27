@@ -20,9 +20,10 @@ interface Props {
     name: string
     selected?: boolean
   }>
+  onCreate: () => void
 }
 
-const WorkspaceSelect: React.FC<Props> = ({ currentWorkspace, allWorkspaces }) => {
+const WorkspaceSelect: React.FC<Props> = ({ currentWorkspace, allWorkspaces, onCreate }) => {
   return (
     <div>
       <DropdownMenu>
@@ -34,12 +35,15 @@ const WorkspaceSelect: React.FC<Props> = ({ currentWorkspace, allWorkspaces }) =
               <div className="text-sm text-muted-foreground">Enterprise</div>
             </div>
             <div>
-              <Icons.chevronDown className="h-5 w-5 opacity-80" />
+              <Icons.chevronDown className="h-5 w-5 opacity-60" />
             </div>
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="text-md w-[218px]">
-          <DropdownMenuItem className="cursor-pointer w-full flex items-center gap-2 font-medium">
+          <DropdownMenuItem
+            className="cursor-pointer w-full flex items-center gap-2 font-medium"
+            onClick={onCreate}
+          >
             <Icons.plus className="h-4 w-4" />
             <div>Create new</div>
           </DropdownMenuItem>
