@@ -54,7 +54,11 @@ interface Props {
 const ProjectsSortSelect: React.FC<Props> = ({ disabled, sort, setSort }) => {
   return (
     <div>
-      <Select value={sort} onValueChange={(value) => setSort(value as ProjectSort)}>
+      <Select
+        value={sort}
+        onValueChange={(value) => setSort(value as ProjectSort)}
+        disabled={disabled}
+      >
         <SelectTrigger
           className={clsx(['w-[180px] ease duration-500'], {
             'opacity-60': disabled,
