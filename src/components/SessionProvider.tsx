@@ -7,7 +7,7 @@ import { UserSession } from '@/types/session'
 import { produce } from 'immer'
 import { useParams, useRouter } from 'next/navigation'
 import { createContext, useState } from 'react'
-import { useMount, useUpdateEffect } from 'react-use'
+import { useMount } from 'react-use'
 
 // interface Props {
 //   session: UserSession | null
@@ -27,7 +27,7 @@ export const AuthContext = createContext<{ email: string; name: string } | null>
 const AuthProvider: React.FC<Props> = ({ session, children }) => {
   const params = useParams()
   const router = useRouter()
-  const { set, data } = useCurrentUserStore()
+  const { set } = useCurrentUserStore()
 
   // TODO: check if accessToken is expired and refresh
 
