@@ -95,6 +95,9 @@ import {
   Blocks,
   Frown,
   FolderOpen,
+  BookKey,
+  Key,
+  Asterisk,
 } from 'lucide-react'
 
 export const Icons = {
@@ -164,7 +167,7 @@ export const Icons = {
   minus: Minus,
   arrowDown: ArrowDown,
   arrowUp: ArrowUp,
-  asterisk: SquareAsterisk,
+  asterisk: Asterisk,
   undo2: Undo2,
   curlyBraces: CurlyBraces,
   plusCircle: PlusCircle,
@@ -196,4 +199,6 @@ export const Icons = {
   blocks: Blocks,
   frown: Frown,
   folderOpen: FolderOpen,
+  bookKey: BookKey,
+  key: Key,
 }
