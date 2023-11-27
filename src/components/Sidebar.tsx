@@ -8,6 +8,7 @@ import { Separator } from './ui/separator'
 import WorkspaceSelect from './WorkspaceSelect'
 import { usePathname, useParams } from 'next/navigation'
 import { useLockBodyScroll, useToggle } from 'react-use'
+import useCurrentUserStore from '@/stores/user'
 
 const navItems = [
   { label: 'Projects', href: 'projects', icon: Icons.folder },
@@ -24,6 +25,7 @@ const helpNavItems = [
 ]
 
 const Sidebar = () => {
+  const currentUser = useCurrentUserStore((state) => state.data)
   const [opened, setOpened] = React.useState(false)
   const [scrollLocked, setSrcollLocked] = useToggle(false)
 
@@ -59,7 +61,12 @@ const Sidebar = () => {
       >
         <div className="-ml-1 pr-4">
           <div className="pl-6 pr-1">
-            <WorkspaceSelect />
+            <WorkspaceSelect
+              currentWorkspace={
+                currentUser?.workspaces?.find((val) => val?.selected === true) as any
+              }
+              allWorkspaces={currentUser?.workspaces as any}
+            />
           </div>
         </div>
         <div className="mt-5 py-5 pl-9 pr-6">
