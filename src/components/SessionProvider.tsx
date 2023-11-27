@@ -4,9 +4,10 @@ import { useGetCurrentUser } from '@/api/queries/currentUser'
 import sessionStore from '@/stores/session'
 import useCurrentUserStore from '@/stores/user'
 import { UserSession } from '@/types/session'
+import { produce } from 'immer'
 import { useParams, useRouter } from 'next/navigation'
 import { createContext, useState } from 'react'
-import { useMount } from 'react-use'
+import { useMount, useUpdateEffect } from 'react-use'
 
 // interface Props {
 //   session: UserSession | null
@@ -37,9 +38,27 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
       // workspaceId: '4ef8a291-024e-4ed8-924b-1cc90d01315e',
       workspaceId: params?.workspace as string,
       accessToken: session?.accessToken,
+      workspaces: true,
     },
+
     {
+      refetchOnMount: true,
+      cacheTime: 5000,
       onSuccess: (user) => {
+        const selectedWorkspaceId = user?.defaultWorkspace ?? params?.workspace
+        const selectedWorkspace = user?.workspaces?.findIndex(
+          (workspace) => workspace.id === selectedWorkspaceId
+        )
+
+        const updatedUser = produce(user, (draft) => {
+          draft.workspaces[selectedWorkspace] = {
+            ...draft.workspaces[selectedWorkspace],
+            selected: true,
+          }
+        })
+
+        set(updatedUser)
+
         if (user?.defaultWorkspace !== undefined) {
           if (user?.defaultWorkspace === null) {
             router.replace(`/welcome`)
@@ -47,10 +66,13 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
             router.replace(`/workspace/${user.defaultWorkspace}/projects`)
           }
         }
-        set(user)
       },
     }
   )
+
+  // useUpdateEffect(() => {
+  //   alert(4)
+  // }, [params?.workspace])
 
   useMount(() => {
     sessionStore.setState({ data: session })
