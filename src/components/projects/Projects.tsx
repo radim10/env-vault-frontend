@@ -22,7 +22,7 @@ const Projects: React.FC<Props> = ({ workspaceId }) => {
       <div>
         <ProjectsToolbar
           workspaceId={workspaceId}
-          disabled={loaded === false}
+          disabled={loaded === null || loaded?.empty === true}
           sort={sort}
           setSort={setSort}
           search={search}
