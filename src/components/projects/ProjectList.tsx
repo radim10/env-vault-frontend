@@ -7,6 +7,7 @@ import { Icons } from '../icons'
 import Error from '../Error'
 import { ListProject, ProjectSort } from '@/types/projects'
 import { useQueryClient } from '@tanstack/react-query'
+import useCurrentUserStore from '@/stores/user'
 
 interface Props {
   // id
@@ -14,10 +15,12 @@ interface Props {
   sort: ProjectSort
 
   search?: string
-  setLoaded: (loaded: boolean) => void
+  setLoaded: (data: { empty: boolean }) => void
 }
 
 const ProjectList: React.FC<Props> = ({ workspace, sort, search, setLoaded }) => {
+  const { isMemberRole } = useCurrentUserStore()
+
   const sortProjects = (data: ListProject[]): ListProject[] => {
     let sorted: ListProject[] = []
 
@@ -92,7 +95,7 @@ const ProjectList: React.FC<Props> = ({ workspace, sort, search, setLoaded }) =>
     },
     {
       select: sortProjects,
-      onSuccess: () => setLoaded(true),
+      onSuccess: (data) => setLoaded({ empty: data?.length === 0 }),
     }
   )
 
@@ -108,6 +111,26 @@ const ProjectList: React.FC<Props> = ({ workspace, sort, search, setLoaded }) =>
 
   if (error) {
     return <Error />
+  }
+
+  if (data?.length === 0) {
+    return (
+      <div className="px-6 lg:px-10">
+        <div className="h-64">
+          <div className="flex flex-col items-center justify-center gap-3 md:gap-4 h-full">
+            <Icons.folderOpen className="w-12 h-12 opacity-40" />
+            <div className="flex flex-col gap-1 items-center">
+              <div className="text-lg font-medium">No projects here</div>
+              <div className="text-[0.9rem] text-muted-foreground">
+                {isMemberRole()
+                  ? 'Ask your workspace owner to give you necessary permissions.'
+                  : 'Start by creating one'}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
