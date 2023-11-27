@@ -7,6 +7,8 @@ import { Label } from '../ui/label'
 import { Button } from '../ui/button'
 import { useImmer } from 'use-immer'
 import PersonalSettingsLayout from './Layout'
+import { useCreateAccountPassword } from '@/api/mutations/userAccount'
+import { userAccountErrorMsgFromCode } from '@/api/requests/userAccount'
 
 const upperCaseRegex = /[A-Z]/
 const lowerCaseRegex = /[a-z]/
@@ -47,6 +49,16 @@ const PasswordSection = () => {
     value: '',
     visible: false,
   })
+
+  const {
+    mutate: createAccountPassword,
+    isLoading: createAccountPasswordLoading,
+    error: createAccountPasswordError,
+  } = useCreateAccountPassword()
+
+  const handleCreatePassword = () => {
+    createAccountPassword({ password: password.value })
+  }
 
   return (
     <div>
@@ -97,6 +109,7 @@ const PasswordSection = () => {
             </div>
             <div className="w-full flex justify-end items-center relative">
               <Input
+                disabled={createAccountPasswordLoading}
                 type={password.visible ? 'text' : 'password'}
                 placeholder="Enter your password"
                 className="pr-10"
@@ -138,6 +151,7 @@ const PasswordSection = () => {
             </div>
             <div className="w-full flex justify-end items-center relative">
               <Input
+                disabled={createAccountPasswordLoading}
                 type={confirmPassword.visible ? 'text' : 'password'}
                 placeholder="Enter your password again"
                 value={confirmPassword.value}
@@ -173,11 +187,23 @@ const PasswordSection = () => {
             </div>
           </div>
 
+          {createAccountPasswordError && (
+            <div className="flex flex-col md:flex-row gap-2 items-center lg:w-2/3">
+              <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mt-0 md:ml-[28%]">
+                <Icons.xCircle className="h-4 w-4" />
+                {userAccountErrorMsgFromCode(createAccountPasswordError?.code) ??
+                  'Something went wrong'}
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-col md:flex-row gap-2 items-center lg:w-2/3">
             <Button
-              onClick={() => {}}
-              variant="outline"
-              className="ml-auto gap-3"
+              onClick={handleCreatePassword}
+              loading={createAccountPasswordLoading}
+              className="ml-auto gap-2"
+              variant="default"
+              size={'sm'}
               disabled={
                 password?.value !== confirmPassword?.value ||
                 !upperCaseRegex.test(password.value) ||
@@ -190,7 +216,7 @@ const PasswordSection = () => {
                 confirmPassword.value.length < 8
               }
             >
-              <Icons.save className="h-4 w-4" />
+              {!createAccountPasswordLoading && <Icons.save className="h-4 w-4" />}
               Save
             </Button>
           </div>
