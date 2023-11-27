@@ -1,3 +1,4 @@
+import AuthSettings from '@/components/personalSettings/AuthSettings'
 import UserProfileSettings from '@/components/personalSettings/ProfileSettings'
 import { validateServerSession } from '@/utils/auth/session'
 import { Metadata } from 'next'
@@ -15,7 +16,12 @@ const PersonalSettingsPage = async ({ params }: { params: { tab: string; workspa
     redirect(`/workspace/${params.workspace}/personal-settings/general`)
   }
 
-  return <>{params?.tab === 'general' && <UserProfileSettings />}</>
+  return (
+    <>
+      {tab === 'general' && <UserProfileSettings />}
+      {tab === 'authentication' && <AuthSettings />}
+    </>
+  )
 }
 
 export default PersonalSettingsPage
