@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation'
 import { deleteSession } from '@/app/actions'
 import useCurrentUserStore from '@/stores/user'
 import { useLogout } from '@/api/mutations/auth'
+import WorkspaceSelect from './WorkspaceSelect'
 
 const dropdownItems = [
   { text: 'Account', icon: Icons.user },
@@ -22,7 +23,7 @@ const dropdownItems = [
 
 const Header = () => {
   const router = useRouter()
-  const user = useCurrentUserStore()
+  const user = useCurrentUserStore((user) => user?.data)
 
   const { mutate: logout } = useLogout({
     onSuccess: () => {
@@ -38,6 +39,7 @@ const Header = () => {
   return (
     <div className="flex flex-row justify-between items-center">
       <div>Workspace name or search input</div>
+
       <div className="flex items-center gap-2 md:gap-3">
         <ThemeToggle />
         {/* {session?.accessToken} */}
@@ -45,8 +47,8 @@ const Header = () => {
           <DropdownMenu>
             <DropdownMenuTrigger className="flex gap-2 items-center">
               <Avatar>
-                <AvatarImage src={user?.data?.avatarUrl ?? ''} />
-                <AvatarFallback>{user?.data?.name?.charAt(0)?.toUpperCase()}</AvatarFallback>
+                <AvatarImage src={user?.avatarUrl ?? ''} />
+                <AvatarFallback>{user?.name?.charAt(0)?.toUpperCase()}</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="mt-2.5 mr-8 text-md">
@@ -70,8 +72,8 @@ const Header = () => {
             </DropdownMenuContent>
           </DropdownMenu>
           <div className="flex flex-col">
-            <div className="text-[0.9rem] font-medium">{user?.data?.name}</div>
-            <div className="text-sm">{user?.data?.email}</div>
+            <div className="text-[0.9rem] font-medium">{user?.name}</div>
+            <div className="text-sm">{user?.email}</div>
           </div>
         </div>
       </div>
