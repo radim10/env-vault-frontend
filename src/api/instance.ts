@@ -34,8 +34,9 @@ const refreshSessionRequest = async (currentSession: UserSession): Promise<strin
   }
 }
 
-export type APIError<T> = {
-  code: T | 'workspace_not_found'
+export type APIError<T, W extends true | void = void> = {
+  // code: T | 'workspace_not_found'
+  code: W extends true ? T | 'workspace_not_found' : T
   status: number
 }
 
