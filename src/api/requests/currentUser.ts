@@ -15,23 +15,26 @@ export function currentUserErrorMsgFromCode(code?: CurrentUserErrorCode): string
 }
 
 export type GetCurrentUserError = CurrentUserError<'user_not_found'>
-export type GetCurrentUserData = CurrentUser & { defaultWorkspace?: string }
+export type GetCurrentUserData = CurrentUser & {
+  defaultWorkspace?: string
+  workspaces?: Array<{ id: string; name: string }>
+}
 
 export type GetCurrentUserArgs = {
   accessToken: string
   workspaceId: string
-  workspace?: boolean
+  workspaces?: boolean
 }
 
 export async function getCurrentUser(args: GetCurrentUserArgs) {
-  const { workspaceId, workspace } = args
+  const { workspaceId, workspaces } = args
 
   return await sendRequest<GetCurrentUserData>({
     method: 'GET',
     basePath: `workspaces`,
     path: `${workspaceId}/me`,
-    params: workspace && {
-      workspace,
+    params: workspaces && {
+      workspaces,
     },
     headers: {
       Authorization: `Bearer ${args.accessToken}`,
