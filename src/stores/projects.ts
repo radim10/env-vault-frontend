@@ -6,11 +6,11 @@ import { immer } from 'zustand/middleware/immer'
 export interface ProjectsState {
   sort: ProjectSort
   search: string
-  loaded: boolean
+  loaded: null | { empty: boolean }
 }
 
 interface ProjectsActions {
-  setLoaded: (loaded: boolean) => void
+  setLoaded: (data: null | { empty: boolean }) => void
   setSort: (sort: ProjectSort) => void
   setSearch: (search: string) => void
 }
@@ -20,7 +20,7 @@ export const useProjectsStore = create(
     persist(
       immer<ProjectsState & ProjectsActions>((set, _) => ({
         sort: ProjectSort.CreatedDesc,
-        loaded: false,
+        loaded: null,
         search: '',
         setSort: (sort) => {
           set((state) => {
