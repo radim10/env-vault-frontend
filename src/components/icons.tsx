@@ -94,6 +94,7 @@ import {
   Rocket,
   Blocks,
   Frown,
+  FolderOpen,
 } from 'lucide-react'
 
 export const Icons = {
@@ -194,4 +195,5 @@ export const Icons = {
   rocket: Rocket,
   blocks: Blocks,
   frown: Frown,
+  folderOpen: FolderOpen,
 }
