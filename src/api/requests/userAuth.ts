@@ -1,14 +1,14 @@
 import sendRequest, { APIError } from '../instance'
 
-type UserAccountErrorCode =
+type UserAuthErrorCode =
   | 'user_not_found'
   | 'email_not_confirmed'
   | 'invalid_password_format'
   | 'password_already_set'
 
-export type UserAccountError<T extends UserAccountErrorCode | void> = APIError<T>
+export type UserAuthError<T extends UserAuthErrorCode | void> = APIError<T>
 
-export function userAccountErrorMsgFromCode(code: UserAccountErrorCode): string | null {
+export function userAuthErrorMsgFromCode(code: UserAuthErrorCode): string | null {
   let msg = null
 
   if (code === 'user_not_found') {
@@ -31,7 +31,7 @@ export function userAccountErrorMsgFromCode(code: UserAccountErrorCode): string 
 }
 
 // auth
-export type CreateAccountPasswordError = UserAccountError<
+export type CreateAccountPasswordError = UserAuthError<
   'user_not_found' | 'email_not_confirmed' | 'password_already_set' | 'invalid_password_format'
 >
 export type CreateAccountPasswordResData = undefined
