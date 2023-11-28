@@ -5,3 +5,14 @@ export interface UserSession {
   accessTokenExpiresAt: number
   refreshTokenExpiresAt: number
 }
+
+export interface ListSession {
+  id: string
+  createdAt: string
+  lastActive: string
+  metadata: {
+    ip: string
+    os: string
+    browser: string
+  }
+}
