@@ -6,6 +6,7 @@ import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import PersonalSettingsLayout from './Layout'
 import PasswordSection from './PasswordSection'
+import SessionsSection from './SessionsSection'
 
 const loginMethods: {
   text: string
@@ -56,6 +57,9 @@ const AuthSettings = (props: {}) => {
       </PersonalSettingsLayout>
       {/* // */}
       <PasswordSection />
+
+      {/* // */}
+      <SessionsSection />
     </div>
   )
 }
