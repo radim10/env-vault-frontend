@@ -2,8 +2,11 @@ import {
   CreateAccountPasswordData,
   CreateAccountPasswordError,
   CreateAccountPasswordResData,
+  ListUserSessionsData,
+  ListUserSessionsError,
   createAccountPassword,
-} from '../requests/userAccount'
+  listUserSessions,
+} from '../requests/userAuth'
 import { MutOpt } from './mutOpt'
 import { useMutation } from '@tanstack/react-query'
 
