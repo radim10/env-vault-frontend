@@ -61,3 +61,15 @@ export async function listUserSessions() {
     path: `auth/sessions`,
   })
 }
+
+// TODO :error codes
+export type RevokeUserSessionError = UserAuthError<'user_not_found'>
+export type RevokeUserSessionResData = undefined
+
+export async function revokeUserSession(sessionId: string) {
+  return await sendRequest<RevokeUserSessionResData>({
+    method: 'DELETE',
+    basePath: `me`,
+    path: `auth/sessions/${sessionId}`,
+  })
+}
