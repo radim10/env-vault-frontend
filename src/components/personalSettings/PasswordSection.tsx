@@ -68,7 +68,7 @@ const PasswordSection = () => {
         icon={Icons.squareAsterisk}
       >
         <div className="flex flex-col gap-4 justify-center w-full">
-          <div className="md:mb-2 flex flex-col md:flex-row gap-2 md:items-center lg:w-2/3 w-full">
+          <div className="md:mb-2 flex flex-col md:flex-row gap-2 md:items-center xl:w-2/3 w-full">
             <div className="md:w-[35%]">
               <Label>Rules</Label>
             </div>
@@ -103,7 +103,7 @@ const PasswordSection = () => {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-2 md:items-center lg:w-2/3">
+          <div className="flex flex-col md:flex-row gap-2 md:items-center xl:w-2/3">
             <div className="md:w-[35%]">
               <Label>Password</Label>
             </div>
@@ -145,7 +145,7 @@ const PasswordSection = () => {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-2 md:items-center lg:w-2/3">
+          <div className="flex flex-col md:flex-row gap-2 md:items-center xl:w-2/3">
             <div className="md:w-[35%]">
               <Label>Confirm password</Label>
             </div>
@@ -188,7 +188,7 @@ const PasswordSection = () => {
           </div>
 
           {createAccountPasswordError && (
-            <div className="flex flex-col md:flex-row gap-2 items-center lg:w-2/3">
+            <div className="flex flex-col md:flex-row gap-2 items-center xl:w-2/3">
               <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mt-0 md:ml-[28%]">
                 <Icons.xCircle className="h-4 w-4" />
                 {userAuthErrorMsgFromCode(createAccountPasswordError?.code) ??
@@ -197,7 +197,7 @@ const PasswordSection = () => {
             </div>
           )}
 
-          <div className="flex flex-col md:flex-row gap-2 items-center lg:w-2/3">
+          <div className="flex flex-col md:flex-row gap-2 items-center xl:w-2/3">
             <Button
               onClick={handleCreatePassword}
               loading={createAccountPasswordLoading}
