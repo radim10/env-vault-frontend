@@ -1,3 +1,4 @@
+import { ListSession } from '@/types/session'
 import sendRequest, { APIError } from '../instance'
 
 type UserAuthErrorCode =
@@ -46,5 +47,17 @@ export async function createAccountPassword(args: CreateAccountPasswordData) {
     basePath: `me`,
     path: `auth/password`,
     body: args,
+  })
+}
+
+// sessions
+export type ListUserSessionsError = UserAuthError<'user_not_found'>
+export type ListUserSessionsData = ListSession[]
+
+export async function listUserSessions() {
+  return await sendRequest<ListUserSessionsData>({
+    method: 'GET',
+    basePath: `me`,
+    path: `auth/sessions`,
   })
 }
