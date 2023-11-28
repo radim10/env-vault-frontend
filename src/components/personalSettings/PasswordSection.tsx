@@ -7,8 +7,8 @@ import { Label } from '../ui/label'
 import { Button } from '../ui/button'
 import { useImmer } from 'use-immer'
 import PersonalSettingsLayout from './Layout'
-import { useCreateAccountPassword } from '@/api/mutations/userAccount'
-import { userAccountErrorMsgFromCode } from '@/api/requests/userAccount'
+import { userAuthErrorMsgFromCode } from '@/api/requests/userAuth'
+import { useCreateAccountPassword } from '@/api/mutations/userAuth'
 
 const upperCaseRegex = /[A-Z]/
 const lowerCaseRegex = /[a-z]/
@@ -191,7 +191,7 @@ const PasswordSection = () => {
             <div className="flex flex-col md:flex-row gap-2 items-center lg:w-2/3">
               <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mt-0 md:ml-[28%]">
                 <Icons.xCircle className="h-4 w-4" />
-                {userAccountErrorMsgFromCode(createAccountPasswordError?.code) ??
+                {userAuthErrorMsgFromCode(createAccountPasswordError?.code) ??
                   'Something went wrong'}
               </div>
             </div>
