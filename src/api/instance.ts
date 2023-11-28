@@ -1,9 +1,32 @@
-import { saveSession } from '@/app/actions'
-import sessionStore from '@/stores/session'
-import useCurrentUserStore from '@/stores/user'
-import { UserSession } from '@/types/session'
-import axios from 'axios'
 import dayjs from 'dayjs'
+import axios, { AxiosError } from 'axios'
+import sessionStore from '@/stores/session'
+import { UserSession } from '@/types/session'
+import { deleteSession, saveSession } from '@/app/actions'
+
+export type APIError<T, W extends true | void = void> = {
+  // code: T | 'workspace_not_found'
+  code: W extends true ? T | 'workspace_not_found' : T
+  status: number
+}
+
+export const apiClient = axios.create()
+
+apiClient.interceptors.response.use(
+  function (response) {
+    return response
+  },
+  function (error: AxiosError) {
+    const status = error?.response?.status
+
+    if (status === 401) {
+      deleteSession()
+      window.location.replace('/login')
+      return Promise.reject(error)
+    }
+    return Promise.reject(error)
+  }
+)
 
 const refreshSessionRequest = async (currentSession: UserSession): Promise<string | undefined> => {
   try {
@@ -29,15 +52,17 @@ const refreshSessionRequest = async (currentSession: UserSession): Promise<strin
       return data?.accessToken
     }
   } catch (e) {
-    // TODO: logout on known error
     console.log(e)
-  }
-}
 
-export type APIError<T, W extends true | void = void> = {
-  // code: T | 'workspace_not_found'
-  code: W extends true ? T | 'workspace_not_found' : T
-  status: number
+    if (e instanceof AxiosError) {
+      const status = e?.response?.status
+
+      if (status === 401 || status === 400) {
+        deleteSession()
+        window.location.replace('/login')
+      }
+    }
+  }
 }
 
 export default async function sendRequest<ResponseType>(config: {
@@ -71,7 +96,7 @@ export default async function sendRequest<ResponseType>(config: {
   }
 
   try {
-    const req = await axios.request<ResponseType>({
+    const req = await apiClient.request<ResponseType>({
       url: config?.path ? `/${config?.path}` : '',
       method: config.method,
       baseURL,
