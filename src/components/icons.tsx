@@ -98,6 +98,7 @@ import {
   BookKey,
   Key,
   Asterisk,
+  Shield,
 } from 'lucide-react'
 
 export const Icons = {
@@ -201,4 +202,5 @@ export const Icons = {
   folderOpen: FolderOpen,
   bookKey: BookKey,
   key: Key,
+  shield: Shield,
 }
