@@ -8,6 +8,7 @@ export interface UserSession {
 
 export interface ListSession {
   id: string
+  isCurrent: boolean
   createdAt: string
   lastActive: string
   metadata: {
