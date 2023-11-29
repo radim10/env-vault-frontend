@@ -41,3 +41,25 @@ export async function getCurrentUser(args: GetCurrentUserArgs) {
     },
   })
 }
+
+//  workspaces
+//  TODO: error
+export type UpdateDefaultWorkspaceError = CurrentUserError<'user_not_found'>
+export type UpdateDefaultWorkspaceData = {
+  workspaceId: string
+}
+
+export type UpdateDefaultWorkspaceResData = undefined
+
+export async function updateDefaultWorkspace(args: UpdateDefaultWorkspaceData) {
+  const { workspaceId } = args
+
+  return await sendRequest<UpdateDefaultWorkspaceResData>({
+    method: 'PATCH',
+    basePath: `me`,
+    path: `default-workspace`,
+    body: {
+      workspaceId,
+    },
+  })
+}
