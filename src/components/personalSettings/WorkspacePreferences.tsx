@@ -151,7 +151,7 @@ const WorkspacePreferences = (props: {}) => {
                   if (!selectedWorkspace) return
                   updateDefaultWorkspace({ workspaceId: selectedWorkspace })
                 }}
-                size={'default'}
+                size={'sm'}
                 variant="default"
                 className={clsx(['ml-auto'], {
                   'gap-2': !isUpdating,
