@@ -1,15 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import TypographyH4 from '../typography/TypographyH4'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Icons } from '../icons'
 import DangerZone from '../DangerZone'
 import { Button } from '@/components/ui/button'
-import { Separator } from '../ui/separator'
 import WorkspacePreferences from './WorkspacePreferences'
+import PersonalSettingsLayout from './Layout'
 
 const UserProfileSettings = (props: {}) => {
   const [editActive, setEditActive] = useState(false)
@@ -17,18 +16,12 @@ const UserProfileSettings = (props: {}) => {
   return (
     <>
       <div className="flex flex-col gap-7 mt-6">
-        <div className="rounded-md w-full border-2 px-3 py-3 md:px-5 md:py-4 md:pb-6">
-          <div className="gap-3 flex items-center">
-            <TypographyH4>Proflie</TypographyH4>
-            <Icons.userCircle className="h-5 w-5 opacity-80" />
-          </div>
-          <Separator className="mt-3" />
-
-          <div className="flex flex-col mt-5 px-3">
+        <PersonalSettingsLayout icon={Icons.userCircle} title="Profile">
+          <div className="flex flex-col">
             <div className="flex flex-col gap-4 justify-center w-full">
               {/* // */}
               <div className="flex flex-row gap-5 md:gap-2 items-center xl:w-2/3">
-                <div className="md:w-[20%]">
+                <div className="md:w-[18%]">
                   <Label>Avatar</Label>
                 </div>
                 <Avatar className="w-10 h-10">
@@ -62,7 +55,7 @@ const UserProfileSettings = (props: {}) => {
               </div>
             </div>
           </div>
-        </div>
+        </PersonalSettingsLayout>
         {/* // */}
 
         <WorkspacePreferences />
