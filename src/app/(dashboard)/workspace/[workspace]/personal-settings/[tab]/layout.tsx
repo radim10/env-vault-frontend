@@ -33,7 +33,7 @@ export default function SettingsLayout({
       </div>
       <div className="mt-5">
         <Tabs workspaceId={params?.workspace} />
-        <div className="mt-4 px-6 lg:px-10">{children}</div>
+        <div className="mt-4 px-6 lg:px-10 pb-10">{children}</div>
       </div>
     </>
   )
