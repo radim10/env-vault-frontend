@@ -26,7 +26,7 @@ export const useListUserWorkspaces = (
   opt?: UseQueryOptions<ListUserWorkspacesData, ListUserWorkspacesError>
 ) =>
   useQuery<ListUserWorkspacesData, ListUserWorkspacesError>(
-    [args.userId, 'workspaces'],
+    [args.userId, 'user-workspaces'],
     listUserWorkspaces,
     opt
   )
