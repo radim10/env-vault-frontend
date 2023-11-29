@@ -9,6 +9,7 @@ import { Icons } from '../icons'
 import DangerZone from '../DangerZone'
 import { Button } from '@/components/ui/button'
 import { Separator } from '../ui/separator'
+import WorkspacePreferences from './WorkspacePreferences'
 
 const UserProfileSettings = (props: {}) => {
   const [editActive, setEditActive] = useState(false)
@@ -62,6 +63,11 @@ const UserProfileSettings = (props: {}) => {
             </div>
           </div>
         </div>
+        {/* // */}
+
+        <WorkspacePreferences />
+
+        {/* // */}
         <DangerZone
           btn={{
             onClick: () => {},
