@@ -124,10 +124,11 @@ const PasswordSection = () => {
                 disabled={password?.value?.length === 0}
                 className={clsx(
                   [
-                    'cursor-pointer absolute ease duration-200 hover:text-primary w-8 h-8 mr-2 flex justify-center items-center gap-2 md:gap-3.5',
+                    'absolute ease duration-200 w-8 h-8 mr-2 flex justify-center items-center gap-2 md:gap-3.5',
                   ],
                   {
                     'opacity-50': password?.value?.length === 0,
+                    'cursor-pointer hover:text-primary': password?.value?.length !== 0,
                   }
                 )}
                 onClick={() =>
@@ -166,10 +167,11 @@ const PasswordSection = () => {
                 disabled={password?.value?.length === 0}
                 className={clsx(
                   [
-                    'cursor-pointer absolute ease duration-200 hover:text-primary w-8 h-8 mr-2 flex justify-center items-center gap-2 md:gap-3.5',
+                    ' absolute ease duration-200 w-8 h-8 mr-2 flex justify-center items-center gap-2 md:gap-3.5',
                   ],
                   {
                     'opacity-50': confirmPassword?.value?.length === 0,
+                    'cursor-pointer hover:text-primary ': confirmPassword?.value?.length !== 0,
                   }
                 )}
                 onClick={() =>
