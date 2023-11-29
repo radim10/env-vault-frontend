@@ -38,7 +38,7 @@ const AuthSettings = (props: {}) => {
         <div className="flex flex-col gap-4 justify-center w-full">
           {/* // */}
           {loginMethods.map(({ text, value, icon }) => (
-            <div className="flex flex-col md:flex-row gap-2 md:items-center lg:w-2/3">
+            <div className="flex flex-col md:flex-row gap-2 md:items-center xl:w-2/3">
               <div className="flex items-center gap-3 md:w-[23%]">
                 <span>{icon}</span>
                 <div className="font-semibold text-[0.98rem] text-muted-foreground">{text}</div>
