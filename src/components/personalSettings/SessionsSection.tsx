@@ -20,6 +20,8 @@ import RevokeSessionDialog from './RevokeSessionDialog'
 import { useToast } from '../ui/use-toast'
 import { useQueryClient } from '@tanstack/react-query'
 import clsx from 'clsx'
+import { Skeleton } from '../ui/skeleton'
+import { Button } from '../ui/button'
 
 dayjs.extend(relativeTime)
 
@@ -52,7 +54,7 @@ const SessionsSection = (props: {}) => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
-  const { data, isLoading, error } = useListUserSessions()
+  const { data, isLoading, isRefetching, error, refetch } = useListUserSessions()
   const [revokeDialog, setRevokeDialog] = useState<{ id: string } | null>(null)
 
   const closeRevokeDialog = () => {
@@ -82,14 +84,6 @@ const SessionsSection = (props: {}) => {
     })
   }
 
-  if (isLoading) {
-    return <>Loading</>
-  }
-
-  if (error) {
-    return <>Error</>
-  }
-
   return (
     <>
       {revokeDialog !== null && (
@@ -114,7 +108,25 @@ const SessionsSection = (props: {}) => {
           </div>
         </div>
         {/* // TABLE */}
-        <TableComponent data={data} onRevoke={(id) => setRevokeDialog({ id })} />
+        {isLoading && <Skeleton className="h-44 w-full rounded-b-md rounded-t-none" />}
+        {!isLoading && (
+          <>
+            {error && (
+              <div className="h-44 flex flex-row items-center">
+                <div className="flex flex-col gap-2 w-full items-center">
+                  <div className="text-red-600 text-[0.92rem]">Something went wrong</div>
+                  <div>
+                    <Button size={'sm'} variant="outline" onClick={() => refetch()}>
+                      Try again
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {!error && <TableComponent data={data} onRevoke={(id) => setRevokeDialog({ id })} />}
+          </>
+        )}
       </div>
     </>
   )
