@@ -11,7 +11,7 @@ interface Props {
 const items = [
   { label: 'General', href: 'general' },
   { label: 'Authentication', href: 'authentication' },
-  { label: 'preferences', href: 'preferences' },
+  { label: 'Preferences', href: 'preferences' },
 ]
 
 const SettingsTabs: React.FC<Props> = ({ workspaceId }) => {
