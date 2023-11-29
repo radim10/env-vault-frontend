@@ -50,3 +50,21 @@ export async function getGithubUrl(invitationId: string | null) {
       : undefined,
   })
 }
+
+// email
+// TODO: error
+export type EmailSignUpError = AuthError<any>
+export type EmailSignUpResData = undefined
+export type EmailSignUpData = {
+  email: string
+  password: string
+}
+
+export async function emailSignUp(data: EmailSignUpData) {
+  return await sendRequest<EmailSignUpResData>({
+    method: 'POST',
+    basePath: 'auth',
+    path: 'email/signup',
+    body: data,
+  })
+}
