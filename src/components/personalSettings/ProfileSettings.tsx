@@ -28,7 +28,7 @@ const UserProfileSettings = (props: {}) => {
             <div className="flex flex-col gap-4 justify-center w-full">
               {/* // */}
               <div className="flex flex-row gap-5 md:gap-2 items-center xl:w-2/3">
-                <div className="md:w-[15%]">
+                <div className="md:w-[20%]">
                   <Label>Avatar</Label>
                 </div>
                 <Avatar className="w-10 h-10">
@@ -38,7 +38,7 @@ const UserProfileSettings = (props: {}) => {
               </div>
 
               <div className="flex flex-col md:flex-row gap-2 md:items-center xl:w-2/3">
-                <div className="md:w-[15%]">
+                <div className="md:w-[20%]">
                   <Label>Full name</Label>
                 </div>
                 <Input value={'Radim Hofer'} readOnly={!editActive} />
@@ -48,7 +48,7 @@ const UserProfileSettings = (props: {}) => {
               </div>
 
               <div className="flex flex-col md:flex-row gap-2 md:items-center xl:w-2/3">
-                <div className="md:w-[15%]">
+                <div className="md:w-[20%]">
                   <Label>Email</Label>
                 </div>
                 <Input value={'radimhofer@me.com'} readOnly={!editActive} />
