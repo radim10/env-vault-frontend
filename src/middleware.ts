@@ -37,14 +37,20 @@ export async function middleware(request: NextRequest) {
       }),
     })
 
-    // TODO: handle error
-    let body = (await res.json()) as UserSession
-    const newSession = await createSession(body)
+    const status = res.status
 
-    response.cookies.set('session', newSession, {
-      httpOnly: true,
-      maxAge: 86400 * 14,
-    })
+    if (status === 400 || status === 401) {
+      response.cookies.delete('session')
+      //
+    } else {
+      let body = (await res.json()) as UserSession
+      const newSession = await createSession(body)
+
+      response.cookies.set('session', newSession, {
+        httpOnly: true,
+        maxAge: 86400 * 14,
+      })
+    }
   }
 
   return response
