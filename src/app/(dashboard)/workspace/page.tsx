@@ -3,11 +3,12 @@ import { validateServerSession } from '@/utils/auth/session'
 import { redirect } from 'next/navigation'
 
 // TODO: check session -> refresh
-const getDefaultWorkspace = async (session?: UserSession) => {
+const getDefaultWorkspace = async (accessToken: string) => {
   const res = await fetch(`http://localhost:8080/api/v1/me/default-workspace`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
     },
     cache: 'no-store',
   })
@@ -19,10 +20,12 @@ const getDefaultWorkspace = async (session?: UserSession) => {
   return body
 }
 
+// TODO: handle redirect + delete cookies if revoked access token
 const WorkspacePage = async () => {
-  await validateServerSession('/login')
+  const session = (await validateServerSession('/login')) as UserSession
+  const workspaceData = await getDefaultWorkspace(session?.accessToken)
 
-  const workspaceData = await getDefaultWorkspace()
+  console.log(workspaceData)
 
   if (!workspaceData?.id) {
     redirect('/welcome')
