@@ -25,7 +25,7 @@ const PersonalSettingsLayout: React.FC<Props> = ({ title, icon: Icon, descriptio
           )}
           <Separator className="mt-3" />
 
-          <div className="flex flex-col mt-5 px-3">{children}</div>
+          <div className="flex flex-col mt-5 px-3 mb-2 md:mb-0">{children}</div>
         </div>
       </div>
     </div>
