@@ -3,7 +3,10 @@ import {
   GetCurrentUserArgs,
   GetCurrentUserData,
   GetCurrentUserError,
+  ListUserWorkspacesData,
+  ListUserWorkspacesError,
   getCurrentUser,
+  listUserWorkspaces,
 } from '../requests/currentUser'
 
 export const useGetCurrentUser = (
@@ -15,5 +18,15 @@ export const useGetCurrentUser = (
     () => {
       return getCurrentUser(args)
     },
+    opt
+  )
+
+export const useListUserWorkspaces = (
+  args: { userId: string },
+  opt?: UseQueryOptions<ListUserWorkspacesData, ListUserWorkspacesError>
+) =>
+  useQuery<ListUserWorkspacesData, ListUserWorkspacesError>(
+    [args.userId, 'workspaces'],
+    listUserWorkspaces,
     opt
   )

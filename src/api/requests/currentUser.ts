@@ -43,6 +43,18 @@ export async function getCurrentUser(args: GetCurrentUserArgs) {
 }
 
 //  workspaces
+export type ListUserWorkspacesError = CurrentUserError<'user_not_found'>
+export type ListUserWorkspacesData = Array<{ id: string; name: string; default?: true }>
+
+export async function listUserWorkspaces() {
+  return await sendRequest<ListUserWorkspacesData>({
+    method: 'GET',
+    basePath: `me`,
+    path: `workspaces`,
+  })
+}
+
+// update
 //  TODO: error
 export type UpdateDefaultWorkspaceError = CurrentUserError<'user_not_found'>
 export type UpdateDefaultWorkspaceData = {
