@@ -100,6 +100,7 @@ import {
   Asterisk,
   Shield,
   Boxes,
+  ArrowLeft,
 } from 'lucide-react'
 
 export const Icons = {
@@ -205,4 +206,5 @@ export const Icons = {
   key: Key,
   shield: Shield,
   boxes: Boxes,
+  arrowLeft: ArrowLeft,
 }
