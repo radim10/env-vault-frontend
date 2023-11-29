@@ -190,7 +190,7 @@ const PasswordSection = () => {
           </div>
 
           {createAccountPasswordError && (
-            <div className="flex flex-col md:flex-row gap-2 items-center xl:w-2/3">
+            <div className="flex flex-col md:flex-row gap-2 md:items-center xl:w-2/3">
               <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mt-0 md:ml-[28%]">
                 <Icons.xCircle className="h-4 w-4" />
                 {userAuthErrorMsgFromCode(createAccountPasswordError?.code) ??
