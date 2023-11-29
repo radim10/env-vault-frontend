@@ -1,5 +1,6 @@
 import AuthSettings from '@/components/personalSettings/AuthSettings'
 import UserProfileSettings from '@/components/personalSettings/ProfileSettings'
+import PreferencesSettings from '@/components/personalSettings/PreferencesSettings'
 import { validateServerSession } from '@/utils/auth/session'
 import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
@@ -20,6 +21,7 @@ const PersonalSettingsPage = async ({ params }: { params: { tab: string; workspa
     <>
       {tab === 'general' && <UserProfileSettings />}
       {tab === 'authentication' && <AuthSettings />}
+      {tab === 'preferences' && <PreferencesSettings />}
     </>
   )
 }
