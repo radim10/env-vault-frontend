@@ -259,8 +259,8 @@ const EmailSignUp: React.FC<Props> = ({ onCancel }) => {
                     !upperCaseRegex.test(confirmPassword.value) ||
                     !lowerCaseRegex.test(confirmPassword.value) ||
                     !numberRegex.test(confirmPassword.value) ||
-                    password.value.length < 8 ||
-                    confirmPassword.value.length < 8
+                    password.value.length < 10 ||
+                    confirmPassword.value.length < 10
                   }
                   onClick={() => {
                     handleSignUp({ email, password: password.value })
