@@ -1,7 +1,16 @@
+import { UserSession } from '@/types/session'
 import sendRequest, { APIError } from '../instance'
 
 type AuthErrorCode = 'user_not_found'
-export type AuthError<T extends AuthErrorCode | void> = APIError<T>
+
+type EmailLoginErrorCode =
+  | 'user_banned'
+  | 'invalid_password_format'
+  | 'invalid_credentials'
+  | 'email_not_confirmed'
+  | 'method_not_available'
+
+export type AuthError<T extends AuthErrorCode | EmailLoginErrorCode | void> = APIError<T>
 
 // logout
 export type LogoutError = AuthError<any>
@@ -12,6 +21,24 @@ export async function logout() {
     method: 'POST',
     path: 'logout',
     basePath: 'auth',
+  })
+}
+
+// email login
+export type EmailLoginError = AuthError<EmailLoginErrorCode>
+export type EmailLoginResData = UserSession
+
+export type EmailLoginData = {
+  email: string
+  password: string
+}
+
+export async function emailLogin(data: EmailLoginData) {
+  return await sendRequest<EmailLoginResData>({
+    method: 'POST',
+    basePath: 'auth',
+    path: 'email/login',
+    body: data,
   })
 }
 
