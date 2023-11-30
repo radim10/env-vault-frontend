@@ -8,6 +8,9 @@ import { Input } from '../ui/input'
 import { useState } from 'react'
 import { useCreateWorkspace } from '@/api/mutations/workspaces'
 import Link from 'next/link'
+import { UserSession } from '@/types/session'
+import { useMount } from 'react-use'
+import useSessionStore from '@/stores/session'
 
 const nextItems = [
   {
@@ -36,9 +39,16 @@ const nextItems = [
   },
 ]
 
-const Welcome = () => {
+interface Props {
+  session: UserSession
+}
+
+const Welcome: React.FC<Props> = ({ session }) => {
+  const setSession = useSessionStore((state) => state.set)
   const [workspaceName, setWorkspaceName] = useState('')
-  const { data, isLoading, error, status, mutate: createWorkspace } = useCreateWorkspace()
+  const { data, isLoading, error, mutate: createWorkspace } = useCreateWorkspace()
+
+  useMount(() => setSession(session))
 
   return (
     <div>
