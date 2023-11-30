@@ -102,6 +102,7 @@ export async function getGithubUrl(invitationId: string | null) {
 export type EmailSignUpError = AuthError<any>
 export type EmailSignUpResData = undefined
 export type EmailSignUpData = {
+  name: string
   email: string
   password: string
 }

@@ -263,7 +263,7 @@ const EmailSignUp: React.FC<Props> = ({ onCancel }) => {
                     confirmPassword.value.length < 10
                   }
                   onClick={() => {
-                    handleSignUp({ email, password: password.value })
+                    handleSignUp({ name, email, password: password.value })
                   }}
                 >
                   Confirm
