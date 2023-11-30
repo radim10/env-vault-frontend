@@ -11,6 +11,7 @@ import clsx from 'clsx'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { saveSession } from '@/app/actions'
+import { emailLoginErrorMsgFromCode } from '@/api/requests/auth'
 
 interface Props {
   onCancel: () => void
@@ -26,6 +27,7 @@ const EmailLoginCard: React.FC<Props> = ({ onCancel }) => {
   const router = useRouter()
 
   const [email, setEmail] = useState('')
+  const [passwordValid, setPasswordValid] = useState<boolean | null>(null)
 
   const [password, setPassword] = useImmer<{
     value: string
@@ -48,6 +50,15 @@ const EmailLoginCard: React.FC<Props> = ({ onCancel }) => {
 
   const handleLogin = () => {
     //  check if password is valid
+    const passsValid =
+      upperCaseRegex.test(password.value) &&
+      lowerCaseRegex.test(password.value) &&
+      numberRegex.test(password.value) &&
+      password.value.length >= 10
+
+    setPasswordValid(passsValid)
+
+    if (!passsValid) return
 
     login({ email, password: password.value })
   }
@@ -132,6 +143,20 @@ const EmailLoginCard: React.FC<Props> = ({ onCancel }) => {
                 </div>
               </div>
             </div>
+
+            {error && (
+              <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mt-0">
+                <Icons.xCircle className="h-4 w-4" />
+                {emailLoginErrorMsgFromCode(error?.code) ?? 'Something went wrong'}
+              </div>
+            )}
+
+            {passwordValid === false && !error && (
+              <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mt-0">
+                <Icons.xCircle className="h-4 w-4" />
+                Invalid email or password
+              </div>
+            )}
             <Button
               size={'sm'}
               type="submit"
@@ -144,6 +169,26 @@ const EmailLoginCard: React.FC<Props> = ({ onCancel }) => {
               Log in
             </Button>
             {/**/}
+
+            <div className="mt-2 flex items-center justify-between text-muted-foreground text-[0.9rem]">
+              <div className="">
+                Don't have an account?
+                <span>
+                  <Link href="/signup">
+                    <Button variant="link" className="pl-1.5">
+                      Sign up
+                    </Button>
+                  </Link>
+                </span>
+              </div>
+              <div>
+                <Link href="/reset-password">
+                  <Button variant="link" className="pl-1.5">
+                    Reset password
+                  </Button>
+                </Link>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
