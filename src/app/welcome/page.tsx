@@ -13,5 +13,5 @@ export default async function WelcomePage() {
 
   // TODO: check if already has default workspace
 
-  return <Welcome />
+  return <Welcome session={session} />
 }
