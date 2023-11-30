@@ -6,6 +6,9 @@ type UserAuthErrorCode =
   | 'email_not_confirmed'
   | 'invalid_password_format'
   | 'password_already_set'
+  // update
+  | 'invalid_new_password_format'
+  | 'password_not_set'
 
 export type UserAuthError<T extends UserAuthErrorCode | void> = APIError<T>
 
@@ -47,6 +50,29 @@ export async function createAccountPassword(args: CreateAccountPasswordData) {
     basePath: `me`,
     path: `auth/password`,
     body: args,
+  })
+}
+
+export type UpdateAccountPasswordError = UserAuthError<
+  | 'user_not_found'
+  | 'email_not_confirmed'
+  | 'password_not_set'
+  | 'invalid_password_format'
+  | 'invalid_new_password_format'
+>
+export type UpdateAccountPasswordResData = undefined
+
+export type UpdateAccountPasswordData = {
+  password: string
+  newPassword: string
+}
+
+export async function updateAccountPassword(data: UpdateAccountPasswordData) {
+  return await sendRequest<UpdateAccountPasswordResData>({
+    method: 'PATCH',
+    basePath: `me`,
+    path: `auth/password`,
+    body: data,
   })
 }
 
