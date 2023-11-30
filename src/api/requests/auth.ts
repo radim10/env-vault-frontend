@@ -16,6 +16,25 @@ export type AuthError<T extends AuthErrorCode | EmailLoginErrorCode | void> = AP
 export type LogoutError = AuthError<any>
 export type LogoutResData = undefined
 
+export const emailLoginErrorMsgFromCode = (code: string) => {
+  switch (code) {
+    case 'user_banned':
+      return 'User is banned'
+    case 'invalid_password_format':
+      return 'Invalid password format'
+    case 'invalid_credentials':
+      return 'Invalid email or password'
+    // TODO: navigate user to email confirmation send
+    case 'email_not_confirmed':
+      return 'Email not confirmed'
+    //
+    case 'method_not_available':
+      return 'Password login is not available'
+    default:
+      return 'Something went wrong'
+  }
+}
+
 export async function logout() {
   return await sendRequest<LogoutResData>({
     method: 'POST',

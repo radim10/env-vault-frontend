@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import {
   EmailLoginData,
+  EmailLoginError,
   EmailLoginResData,
   EmailSignUpData,
   EmailSignUpError,
@@ -20,4 +21,4 @@ export const useEmaiLSignUp = (opt?: MutOpt<EmailSignUpResData>) =>
   useMutation<EmailSignUpResData, EmailSignUpError, EmailSignUpData>(emailSignUp, opt)
 
 export const useEmailLogin = (opt?: MutOpt<EmailLoginResData>) =>
-  useMutation<EmailLoginResData, EmailLoginData, EmailLoginData>(emailLogin, opt)
+  useMutation<EmailLoginResData, EmailLoginError, EmailLoginData>(emailLogin, opt)
