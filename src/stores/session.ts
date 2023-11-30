@@ -9,17 +9,19 @@ export interface SessionActions {
   set: (user: UserSession | null) => void
 }
 
-// export const useSession = create<UseSessionState & UseSessionActions>((set) => ({
-//   data: null,
-//   set: (user) => set({ data: user }),
-// }))
-
-import { createStore } from 'zustand/vanilla'
-
-const sessionStore = createStore<SessionState & SessionActions>((set) => ({
+const useSessionStore = create<SessionState & SessionActions>((set) => ({
   data: null,
   set: (user) => set({ data: user }),
 }))
-const { getState, setState, subscribe } = sessionStore
 
-export default sessionStore
+export default useSessionStore
+
+// import { createStore } from 'zustand/vanilla'
+//
+// const sessionStore = createStore<SessionState & SessionActions>((set) => ({
+//   data: null,
+//   set: (user) => set({ data: user }),
+// }))
+// const { getState, setState, subscribe } = sessionStore
+
+// export default sessionStore
