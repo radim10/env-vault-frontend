@@ -1,12 +1,17 @@
 'use client'
 
-import Link from 'next/link'
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useGetGithubUrl, useGetGoogleUrl } from '@/api/queries/auth'
+import { useState } from 'react'
+import EmailLoginCard from './EmailLoginCard'
 
-const LoginCard = (props: {}) => {
+interface Props {
+  onEmailSelect: () => void
+}
+
+const LoginCard: React.FC<Props> = ({ onEmailSelect }) => {
   const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGoogleUrl(null, {
     enabled: false,
 
@@ -53,7 +58,11 @@ const LoginCard = (props: {}) => {
             {/*     </Button> */}
             {/*   </div> */}
             {/* </form> */}
-            <Button disabled={getGithubUrlLoading || getGoogleLinkLoading} size={'sm'}>
+            <Button
+              size={'sm'}
+              onClick={onEmailSelect}
+              disabled={getGithubUrlLoading || getGoogleLinkLoading}
+            >
               Login with email
             </Button>
             <div className="relative">
