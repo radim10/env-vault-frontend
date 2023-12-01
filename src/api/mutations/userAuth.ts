@@ -2,12 +2,16 @@ import {
   CreateAccountPasswordData,
   CreateAccountPasswordError,
   CreateAccountPasswordResData,
+  RemoveAuthMethodData,
+  RemoveAuthMethodError,
+  RemoveAuthMethodResData,
   RevokeUserSessionError,
   RevokeUserSessionResData,
   UpdateAccountPasswordData,
   UpdateAccountPasswordError,
   UpdateAccountPasswordResData,
   createAccountPassword,
+  removeAuthMethod,
   revokeUserSession,
   updateAccountPassword,
 } from '../requests/userAuth'
@@ -40,5 +44,14 @@ export const useUpdateAccountPassword = (opt?: MutOpt<UpdateAccountPasswordResDa
 export const useRevokeUserSession = (opt?: MutOpt<RevokeUserSessionResData>) =>
   useMutation<RevokeUserSessionResData, RevokeUserSessionError, RevokeUserSessionVariables>(
     ({ sessionId }) => revokeUserSession(sessionId),
+    opt
+  )
+
+//
+type RemoveAccountAuthMethod = RemoveAuthMethodData
+
+export const useRemoveAccountAuthMethod = (opt?: MutOpt<RemoveAuthMethodResData>) =>
+  useMutation<RemoveAuthMethodResData, RemoveAuthMethodError, RemoveAccountAuthMethod>(
+    removeAuthMethod,
     opt
   )

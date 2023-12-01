@@ -4,7 +4,6 @@ import {
   GetAuthMethodsResData,
   ListUserSessionsData,
   ListUserSessionsError,
-  UserAuthError,
   getAuthMethods,
   listUserSessions,
 } from '../requests/userAuth'
@@ -17,4 +16,9 @@ export const useListUserSessions = (
 export const useGetAuthMethods = (
   userId: string,
   opt?: UseQueryOptions<GetAuthMethodsResData, GetAuthMethodsError>
-) => useQuery<GetAuthMethodsResData, GetAuthMethodsError>([userId, 'auth'], getAuthMethods, opt)
+) =>
+  useQuery<GetAuthMethodsResData, GetAuthMethodsError>(
+    [userId, 'auth-methods'],
+    getAuthMethods,
+    opt
+  )

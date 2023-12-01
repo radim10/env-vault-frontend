@@ -10,26 +10,53 @@ type UserAuthErrorCode =
   // update
   | 'invalid_new_password_format'
   | 'password_not_set'
+  | AuthMethodErrorCode
+
+type AuthMethodErrorCode =
+  | 'auth_method_not_connected'
+  | 'cannot_delete_only_auth_method'
+  | 'password_confirmation_required'
+  | 'invalid_password'
 
 export type UserAuthError<T extends UserAuthErrorCode | void> = APIError<T>
 
-export function userAuthErrorMsgFromCode(code: UserAuthErrorCode): string | null {
-  let msg = null
+export function userAuthErrorMsgFromCode(code?: UserAuthErrorCode): string {
+  let msg = 'Something went wrong'
 
-  if (code === 'user_not_found') {
-    msg = 'User not found in current workspace'
-  }
+  switch (code) {
+    case 'user_not_found':
+      msg = 'User not found in current workspace'
+      break
+    case 'email_not_confirmed':
+      msg = 'Email not confirmed'
+      break
+    case 'invalid_password_format':
+      msg = 'Invalid password format'
+      break
+    case 'password_already_set':
+      msg = 'Password already set'
+      break
+    case 'invalid_new_password_format':
+      msg = 'Invalid new password format'
+      break
+    case 'password_not_set':
+      msg = 'Password not set'
+      break
+    case 'auth_method_not_connected':
+      msg = 'Auth method not connected'
+      break
 
-  if (code === 'email_not_confirmed') {
-    msg = 'Email not confirmed'
-  }
+    case 'cannot_delete_only_auth_method':
+      msg = 'Cannot delete only auth method'
+      break
 
-  if (code === 'invalid_password_format') {
-    msg = 'Invalid password format'
-  }
+    case 'password_confirmation_required':
+      msg = 'Password confirmation required'
+      break
 
-  if (code === 'password_already_set') {
-    msg = 'Password already set'
+    case 'invalid_password':
+      msg = 'Invalid password'
+      break
   }
 
   return msg
@@ -45,6 +72,24 @@ export async function getAuthMethods() {
     method: 'GET',
     basePath: `me`,
     path: `auth/methods`,
+  })
+}
+
+// TODO: Error
+export type RemoveAuthMethodError = UserAuthError<AuthMethodErrorCode>
+export type RemoveAuthMethodResData = undefined
+export type RemoveAuthMethodData = {
+  method: AuthType
+  password?: string
+}
+
+export async function removeAuthMethod(data: RemoveAuthMethodData) {
+  return await sendRequest<RemoveAuthMethodResData>({
+    method: 'POST',
+    basePath: `me`,
+    // path: `auth/methods/${data.method.toLowerCase()}`,
+    path: `auth/methods/${data.method.toLowerCase()}/remove`,
+    body: data,
   })
 }
 
