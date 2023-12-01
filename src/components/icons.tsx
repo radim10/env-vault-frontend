@@ -102,6 +102,7 @@ import {
   Boxes,
   ArrowLeft,
   Unlink,
+  CircleSlash,
 } from 'lucide-react'
 
 export const Icons = {
@@ -209,4 +210,5 @@ export const Icons = {
   boxes: Boxes,
   arrowLeft: ArrowLeft,
   unlink: Unlink,
+  circleSlash: CircleSlash,
 }
