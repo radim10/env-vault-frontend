@@ -1,5 +1,6 @@
 import { ListSession } from '@/types/session'
 import sendRequest, { APIError } from '../instance'
+import { AuthType } from '@/types/auth'
 
 type UserAuthErrorCode =
   | 'user_not_found'
@@ -32,6 +33,19 @@ export function userAuthErrorMsgFromCode(code: UserAuthErrorCode): string | null
   }
 
   return msg
+}
+
+export type GetAuthMethodsError = UserAuthError<'user_not_found'>
+export type GetAuthMethodsResData = {
+  methods: AuthType[]
+}
+
+export async function getAuthMethods() {
+  return await sendRequest<GetAuthMethodsResData>({
+    method: 'GET',
+    basePath: `me`,
+    path: `auth/methods`,
+  })
 }
 
 // auth
