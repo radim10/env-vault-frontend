@@ -101,6 +101,7 @@ import {
   Shield,
   Boxes,
   ArrowLeft,
+  Unlink,
 } from 'lucide-react'
 
 export const Icons = {
@@ -207,4 +208,5 @@ export const Icons = {
   shield: Shield,
   boxes: Boxes,
   arrowLeft: ArrowLeft,
+  unlink: Unlink,
 }
