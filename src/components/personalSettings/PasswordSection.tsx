@@ -7,8 +7,14 @@ import { Label } from '../ui/label'
 import { Button } from '../ui/button'
 import { useImmer } from 'use-immer'
 import PersonalSettingsLayout from './Layout'
-import { userAuthErrorMsgFromCode } from '@/api/requests/userAuth'
-import { useCreateAccountPassword } from '@/api/mutations/userAuth'
+import { GetAuthMethodsResData, userAuthErrorMsgFromCode } from '@/api/requests/userAuth'
+import { useCreateAccountPassword, useUpdateAccountPassword } from '@/api/mutations/userAuth'
+import { useQueryClient } from '@tanstack/react-query'
+import useCurrentUserStore from '@/stores/user'
+import { Skeleton } from '../ui/skeleton'
+import TypographyH4 from '../typography/TypographyH4'
+import { AuthType } from '@/types/auth'
+import { useToast } from '../ui/use-toast'
 
 const upperCaseRegex = /[A-Z]/
 const lowerCaseRegex = /[a-z]/
@@ -34,6 +40,23 @@ const passwordRules = [
 ]
 
 const PasswordSection = () => {
+  const { toast } = useToast()
+  const queryClient = useQueryClient()
+  const currentUser = useCurrentUserStore((state) => state.data)
+
+  const authMethods = queryClient.getQueryState<{ methods: AuthType[] }, any>([
+    currentUser?.id,
+    'auth-methods',
+  ])
+
+  const [oldPassword, setOldPassword] = useImmer<{
+    value: string
+    visible: boolean
+  }>({
+    value: '',
+    visible: false,
+  })
+
   const [password, setPassword] = useImmer<{
     value: string
     visible: boolean
@@ -54,10 +77,78 @@ const PasswordSection = () => {
     mutate: createAccountPassword,
     isLoading: createAccountPasswordLoading,
     error: createAccountPasswordError,
-  } = useCreateAccountPassword()
+  } = useCreateAccountPassword({
+    onSuccess: () => {
+      resetInputState()
+      toast({
+        title: 'Password created',
+        variant: 'success',
+      })
+
+      const data = queryClient.getQueryData<GetAuthMethodsResData>([
+        currentUser?.id,
+        'auth-methods',
+      ])
+
+      if (data) {
+        const newData = [...data.methods, 'EMAIL'] as AuthType[]
+        queryClient.setQueryData<GetAuthMethodsResData>([currentUser?.id, 'auth-methods'], {
+          methods: newData,
+        })
+      }
+    },
+  })
+
+  const {
+    mutate: updateAccountPassword,
+    isLoading: updateAccountPasswordLoading,
+    error: updateAccountPasswordError,
+  } = useUpdateAccountPassword({
+    onSuccess: () => {
+      resetInputState()
+      toast({
+        title: 'Password updated',
+        variant: 'success',
+      })
+    },
+  })
+
+  const resetInputState = () => {
+    setPassword({ value: '', visible: false })
+    setOldPassword({ value: '', visible: false })
+    setConfirmPassword({ value: '', visible: false })
+  }
 
   const handleCreatePassword = () => {
     createAccountPassword({ password: password.value })
+  }
+
+  if (authMethods?.data === undefined) {
+    return (
+      <div className="rounded-md border-2">
+        <div className=" w-full px-3 py-3 md:px-5 md:py-4 md:pb-6">
+          <div className="gap-3 flex items-center">
+            <TypographyH4>Password</TypographyH4>
+            <Icons.squareAsterisk className="h-5 w-5 opacity-80" />
+          </div>
+          <div className="text-[0.95rem] text-muted-foreground mt-1">
+            If you set password you will be able to use it to login
+          </div>
+        </div>
+        <div className="-mt-2">
+          {!authMethods?.error && <Skeleton className="h-56 rounded-t-none" />}
+          {authMethods?.error && (
+            <>
+              <div className="h-28 flex flex-row items-center">
+                <div className="flex flex-col gap-2 w-full items-center">
+                  <div className="text-red-600 text-[0.92rem]">Something went wrong</div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -103,15 +194,66 @@ const PasswordSection = () => {
             </div>
           </div>
 
+          {authMethods?.data?.methods?.includes('EMAIL') && (
+            <div className="flex flex-col md:flex-row gap-2 md:items-center xl:w-2/3">
+              <div className="md:w-[35%]">
+                <Label>Current password</Label>
+              </div>
+              <div className="w-full flex justify-end items-center relative">
+                <Input
+                  disabled={createAccountPasswordLoading || updateAccountPasswordLoading}
+                  type={oldPassword.visible ? 'text' : 'password'}
+                  placeholder="Enter your current password"
+                  className="pr-10"
+                  value={oldPassword.value}
+                  onChange={(e) =>
+                    setOldPassword((draft) => {
+                      draft.value = e.target.value
+                    })
+                  }
+                />
+                <button
+                  disabled={oldPassword?.value?.length === 0}
+                  className={clsx(
+                    [
+                      'absolute ease duration-200 w-8 h-8 mr-2 flex justify-center items-center gap-2 md:gap-3.5',
+                    ],
+                    {
+                      'opacity-50': oldPassword?.value?.length === 0,
+                      'cursor-pointer hover:text-primary': oldPassword?.value?.length !== 0,
+                    }
+                  )}
+                  onClick={() =>
+                    setOldPassword((draft) => {
+                      draft.visible = !draft.visible
+                    })
+                  }
+                >
+                  {password?.visible ? (
+                    <Icons.eyeOff className="h-4 w-4 opacity-80" />
+                  ) : (
+                    <Icons.eye className="h-4 w-4 opacity-80" />
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-col md:flex-row gap-2 md:items-center xl:w-2/3">
             <div className="md:w-[35%]">
-              <Label>Password</Label>
+              <Label>
+                {authMethods?.data?.methods?.includes('EMAIL') ? 'New Password' : 'Password'}
+              </Label>
             </div>
             <div className="w-full flex justify-end items-center relative">
               <Input
-                disabled={createAccountPasswordLoading}
+                disabled={createAccountPasswordLoading || updateAccountPasswordLoading}
                 type={password.visible ? 'text' : 'password'}
-                placeholder="Enter your password"
+                placeholder={
+                  authMethods?.data?.methods?.includes('EMAIL')
+                    ? 'Enter your new password'
+                    : 'Enter your password'
+                }
                 className="pr-10"
                 value={password.value}
                 onChange={(e) =>
@@ -152,9 +294,13 @@ const PasswordSection = () => {
             </div>
             <div className="w-full flex justify-end items-center relative">
               <Input
-                disabled={createAccountPasswordLoading}
+                disabled={createAccountPasswordLoading || updateAccountPasswordLoading}
                 type={confirmPassword.visible ? 'text' : 'password'}
-                placeholder="Enter your password again"
+                placeholder={
+                  authMethods?.data?.methods?.includes('EMAIL')
+                    ? 'Enter your new password again'
+                    : 'Enter your password again'
+                }
                 value={confirmPassword.value}
                 onChange={(e) =>
                   setConfirmPassword((draft) => {
@@ -199,10 +345,29 @@ const PasswordSection = () => {
             </div>
           )}
 
+          {updateAccountPasswordError && (
+            <div className="flex flex-col md:flex-row gap-2 md:items-center xl:w-2/3">
+              <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mt-0 md:ml-[28%]">
+                <Icons.xCircle className="h-4 w-4" />
+                {userAuthErrorMsgFromCode(updateAccountPasswordError?.code) ??
+                  'Something went wrong'}
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-col md:flex-row gap-2 items-center xl:w-2/3">
             <Button
-              onClick={handleCreatePassword}
-              loading={createAccountPasswordLoading}
+              onClick={() => {
+                if (!authMethods?.data?.methods?.includes('EMAIL')) {
+                  handleCreatePassword()
+                } else {
+                  updateAccountPassword({
+                    password: oldPassword.value,
+                    newPassword: confirmPassword.value,
+                  })
+                }
+              }}
+              loading={createAccountPasswordLoading || updateAccountPasswordLoading}
               className="ml-auto gap-2"
               variant="default"
               size={'sm'}
