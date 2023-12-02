@@ -8,9 +8,11 @@ import { Icons } from '../icons'
 import DangerZone from '../DangerZone'
 import { Button } from '@/components/ui/button'
 import WorkspacePreferences from './WorkspacePreferences'
+import useCurrentUserStore from '@/stores/user'
 import PersonalSettingsLayout from './Layout'
 
 const UserProfileSettings = () => {
+  const currentUser = useCurrentUserStore((state) => state.data)
   const [editActive, setEditActive] = useState(false)
 
   return (
@@ -24,9 +26,9 @@ const UserProfileSettings = () => {
                 <div className="md:w-[18%]">
                   <Label>Avatar</Label>
                 </div>
-                <Avatar className="w-10 h-10">
-                  <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback>CN</AvatarFallback>
+                <Avatar className="w-12 h-12 border-[1.5px]">
+                  <AvatarImage src={currentUser?.avatarUrl ?? ''} />
+                  <AvatarFallback>{currentUser?.name?.charAt(0)?.toUpperCase()}</AvatarFallback>
                 </Avatar>
               </div>
 
