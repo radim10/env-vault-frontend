@@ -18,14 +18,18 @@ import dayjs from 'dayjs'
 import { useState } from 'react'
 import RevokeSessionDialog from './RevokeSessionDialog'
 import { useToast } from '../ui/use-toast'
-import { useQueryClient } from '@tanstack/react-query'
+import { QueryClient, useQueryClient } from '@tanstack/react-query'
 import clsx from 'clsx'
 import { Skeleton } from '../ui/skeleton'
 import { Button } from '../ui/button'
 
 dayjs.extend(relativeTime)
 
-const SessionsSection = (props: {}) => {
+interface Props {
+  queryClient: QueryClient
+}
+
+const SessionsSection: React.FC<Props> = ({ queryClient }) => {
   // const data: ListSession[] = [
   //   {
   //     id: 'UUID',
@@ -52,7 +56,6 @@ const SessionsSection = (props: {}) => {
   // ]
   //
   const { toast } = useToast()
-  const queryClient = useQueryClient()
 
   const { data, isLoading, isRefetching, error, refetch } = useListUserSessions()
   const [revokeDialog, setRevokeDialog] = useState<{ id: string } | null>(null)
