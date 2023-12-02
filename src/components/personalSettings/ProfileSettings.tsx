@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import WorkspacePreferences from './WorkspacePreferences'
 import PersonalSettingsLayout from './Layout'
 
-const UserProfileSettings = (props: {}) => {
+const UserProfileSettings = () => {
   const [editActive, setEditActive] = useState(false)
 
   return (

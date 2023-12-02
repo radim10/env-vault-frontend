@@ -21,7 +21,7 @@ import clsx from 'clsx'
 import { produce } from 'immer'
 import { useQueryClient } from '@tanstack/react-query'
 
-const WorkspacePreferences = (props: {}) => {
+const WorkspacePreferences = () => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
