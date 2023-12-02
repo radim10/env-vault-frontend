@@ -9,12 +9,14 @@ import { useImmer } from 'use-immer'
 import PersonalSettingsLayout from './Layout'
 import { GetAuthMethodsResData, userAuthErrorMsgFromCode } from '@/api/requests/userAuth'
 import { useCreateAccountPassword, useUpdateAccountPassword } from '@/api/mutations/userAuth'
-import { useQueryClient } from '@tanstack/react-query'
-import useCurrentUserStore from '@/stores/user'
+import { QueryClient } from '@tanstack/react-query'
 import { Skeleton } from '../ui/skeleton'
 import TypographyH4 from '../typography/TypographyH4'
 import { AuthType } from '@/types/auth'
 import { useToast } from '../ui/use-toast'
+import { CurrentUser } from '@/types/users'
+import { useEffect } from 'react'
+import { useGetAuthMethods } from '@/api/queries/userAuth'
 
 const upperCaseRegex = /[A-Z]/
 const lowerCaseRegex = /[a-z]/
@@ -39,15 +41,15 @@ const passwordRules = [
   },
 ]
 
-const PasswordSection = () => {
-  const { toast } = useToast()
-  const queryClient = useQueryClient()
-  const currentUser = useCurrentUserStore((state) => state.data)
+interface Props {
+  currentUser: CurrentUser
+  queryClient: QueryClient
 
-  const authMethods = queryClient.getQueryState<{ methods: AuthType[] }, any>([
-    currentUser?.id,
-    'auth-methods',
-  ])
+  authMethods: ReturnType<typeof useGetAuthMethods>
+}
+
+const PasswordSection: React.FC<Props> = ({ currentUser, queryClient, authMethods }) => {
+  const { toast } = useToast()
 
   const [oldPassword, setOldPassword] = useImmer<{
     value: string
