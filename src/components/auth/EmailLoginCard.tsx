@@ -182,7 +182,7 @@ const EmailLoginCard: React.FC<Props> = ({ onCancel }) => {
                 </span>
               </div>
               <div>
-                <Link href="/reset-password">
+                <Link href="/forgot-password">
                   <Button variant="link" className="pl-1.5">
                     Reset password
                   </Button>
