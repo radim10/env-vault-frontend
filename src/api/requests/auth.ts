@@ -3,6 +3,7 @@ import sendRequest, { APIError } from '../instance'
 
 type AuthErrorCode = 'user_not_found'
 
+type EmailSignUpErrorCode = 'invalid_password_format' | 'email_not_available'
 type EmailLoginErrorCode =
   | 'user_banned'
   | 'invalid_password_format'
@@ -15,7 +16,12 @@ type ResetPasswordErrorCode =
   'invalid_token' | 'token_expired' | 'invalid_password_format'
 
 export type AuthError<
-  T extends AuthErrorCode | EmailLoginErrorCode | ResetPasswordErrorCode | void
+  T extends
+    | AuthErrorCode
+    | EmailLoginErrorCode
+    | ResetPasswordErrorCode
+    | EmailSignUpErrorCode
+    | void
 > = APIError<T>
 
 // logout
@@ -36,6 +42,17 @@ export const emailLoginErrorMsgFromCode = (code: string) => {
     //
     case 'method_not_available':
       return 'Password login is not available'
+    default:
+      return 'Something went wrong'
+  }
+}
+
+export const emailSignUpErrorMsgFromCode = (code: string) => {
+  switch (code) {
+    case 'invalid_password_format':
+      return 'Invalid password format'
+    case 'email_not_available':
+      return 'Email not available'
     default:
       return 'Something went wrong'
   }
@@ -120,7 +137,7 @@ export async function getGithubUrl(invitationId: string | null) {
 
 // email
 // TODO: error
-export type EmailSignUpError = AuthError<any>
+export type EmailSignUpError = AuthError<EmailSignUpErrorCode>
 export type EmailSignUpResData = undefined
 export type EmailSignUpData = {
   name: string

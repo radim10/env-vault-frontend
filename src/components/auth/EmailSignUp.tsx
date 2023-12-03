@@ -11,6 +11,7 @@ import clsx from 'clsx'
 import { useImmer } from 'use-immer'
 import { useEmaiLSignUp } from '@/api/mutations/auth'
 import { authRegex, passwordRules } from '@/utils/auth/auth'
+import { emailSignUpErrorMsgFromCode } from '@/api/requests/auth'
 
 interface Props {
   onCancel: () => void
@@ -38,7 +39,14 @@ const EmailSignUp: React.FC<Props> = ({ onCancel }) => {
     visible: false,
   })
 
-  const { mutate: handleSignUp, isLoading, error, reset } = useEmaiLSignUp()
+  const {
+    mutate: handleSignUp,
+    isLoading,
+    error,
+    reset,
+  } = useEmaiLSignUp({
+    onSuccess: () => setStep(3),
+  })
 
   return (
     <div>
@@ -46,20 +54,22 @@ const EmailSignUp: React.FC<Props> = ({ onCancel }) => {
         <CardContent className="pt-5 px-8">
           <div className="flex flex-col gap-5">
             <div className="flex justify-center items-center">LOGO</div>
-            <button
-              className="mb-0 flex gap-2 items-center opacity-70 hover:opacity-100 hover:text-primary ease duration-100 text-[0.9rem]"
-              onClick={() => {
-                if (step === 1) {
-                  onCancel()
-                } else setStep(step - 1)
-              }}
-            >
-              <span>
-                <Icons.arrowLeft className="h-4 w-4" />
-              </span>
+            {step !== 3 && (
+              <button
+                className="mb-0 flex gap-2 items-center opacity-70 hover:opacity-100 hover:text-primary ease duration-100 text-[0.9rem]"
+                onClick={() => {
+                  if (step === 1) {
+                    onCancel()
+                  } else setStep(step - 1)
+                }}
+              >
+                <span>
+                  <Icons.arrowLeft className="h-4 w-4" />
+                </span>
 
-              <span>Go back</span>
-            </button>
+                <span>Go back</span>
+              </button>
+            )}
 
             {step === 1 && (
               <>
@@ -223,6 +233,13 @@ const EmailSignUp: React.FC<Props> = ({ onCancel }) => {
                 </div>
                 {/* // TODO: ERROR */}
 
+                {error && (
+                  <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mt-0">
+                    <Icons.xCircle className="h-4 w-4" />
+                    {emailSignUpErrorMsgFromCode(error?.code)}
+                  </div>
+                )}
+
                 <Button
                   size={'sm'}
                   type="submit"
@@ -247,17 +264,39 @@ const EmailSignUp: React.FC<Props> = ({ onCancel }) => {
               </>
             )}
 
-            {step === 3 && <>STEP 3</>}
-            <div className="text-muted-foreground text-[0.9rem]">
-              Already have an account?
-              <span>
-                <Link href="/login">
-                  <Button variant="link" className="pl-1.5">
-                    Login
-                  </Button>
-                </Link>
-              </span>
-            </div>
+            {step === 3 && (
+              <>
+                <div>
+                  <div className="flex gap-2 items-center md:justify-center">
+                    <div className="font-semibold text-lg">Please check your inbox</div>
+                    <Icons.mailOpen className="h-5 w-5" />
+                  </div>
+                  <div className="text-muted-foreground text-[0.9rem] md:text-center mt-2">
+                    We have just sent you confirmation email (it may take up to few minutes to
+                    arrive)
+                  </div>
+                </div>
+
+                <div className="mt-2 flex justify-center">
+                  <Link href="/login" className="">
+                    <Button variant={'link'}>Back to login</Button>
+                  </Link>
+                </div>
+              </>
+            )}
+
+            {step !== 3 && (
+              <div className="text-muted-foreground text-[0.9rem]">
+                Already have an account?
+                <span>
+                  <Link href="/login">
+                    <Button variant="link" className="pl-1.5">
+                      Login
+                    </Button>
+                  </Link>
+                </span>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
