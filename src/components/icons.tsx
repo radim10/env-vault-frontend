@@ -103,6 +103,7 @@ import {
   ArrowLeft,
   Unlink,
   CircleSlash,
+  MailOpen,
 } from 'lucide-react'
 
 export const Icons = {
@@ -211,4 +212,5 @@ export const Icons = {
   arrowLeft: ArrowLeft,
   unlink: Unlink,
   circleSlash: CircleSlash,
+  mailOpen: MailOpen,
 }
