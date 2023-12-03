@@ -10,7 +10,13 @@ type EmailLoginErrorCode =
   | 'email_not_confirmed'
   | 'method_not_available'
 
-export type AuthError<T extends AuthErrorCode | EmailLoginErrorCode | void> = APIError<T>
+type ResetPasswordErrorCode =
+  // | 'user_banned'
+  'invalid_token' | 'token_expired' | 'invalid_password_format'
+
+export type AuthError<
+  T extends AuthErrorCode | EmailLoginErrorCode | ResetPasswordErrorCode | void
+> = APIError<T>
 
 // logout
 export type LogoutError = AuthError<any>
@@ -30,6 +36,21 @@ export const emailLoginErrorMsgFromCode = (code: string) => {
     //
     case 'method_not_available':
       return 'Password login is not available'
+    default:
+      return 'Something went wrong'
+  }
+}
+
+export const resetPasswordErrorMsgFromCode = (code: string) => {
+  switch (code) {
+    // case 'user_banned':
+    //   return 'User is banned'
+    case 'invalid_token':
+      return 'Invalid token'
+    case 'token_expired':
+      return 'Token expired'
+    case 'invalid_password_format':
+      return 'Invalid password format'
     default:
       return 'Something went wrong'
   }
@@ -112,6 +133,39 @@ export async function emailSignUp(data: EmailSignUpData) {
     method: 'POST',
     basePath: 'auth',
     path: 'email/signup',
+    body: data,
+  })
+}
+
+// forgot password
+export type ForgotPasswordError = AuthError<any>
+export type ForgotPasswordResData = undefined
+export type ForgotPasswordData = {
+  email: string
+}
+
+export async function forgotPassword(data: ForgotPasswordData) {
+  return await sendRequest<ForgotPasswordResData>({
+    method: 'POST',
+    basePath: 'auth',
+    // TODO: path without email???
+    path: 'forgot-password',
+    body: data,
+  })
+}
+
+export type ResetPasswordError = AuthError<ResetPasswordErrorCode>
+export type ResetPasswordResData = undefined
+export type ResetPasswordData = {
+  token: string
+  password: string
+}
+
+export async function resetPassword(data: ResetPasswordData) {
+  return await sendRequest<ResetPasswordResData>({
+    method: 'POST',
+    basePath: 'auth',
+    path: 'reset-password',
     body: data,
   })
 }

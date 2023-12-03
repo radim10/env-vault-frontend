@@ -6,11 +6,19 @@ import {
   EmailSignUpData,
   EmailSignUpError,
   EmailSignUpResData,
+  ForgotPasswordData,
+  ForgotPasswordError,
+  ForgotPasswordResData,
   LogoutError,
   LogoutResData,
+  ResetPasswordData,
+  ResetPasswordError,
+  ResetPasswordResData,
   emailLogin,
   emailSignUp,
+  forgotPassword,
   logout,
+  resetPassword,
 } from '../requests/auth'
 import { MutOpt } from './mutOpt'
 
@@ -22,3 +30,9 @@ export const useEmaiLSignUp = (opt?: MutOpt<EmailSignUpResData>) =>
 
 export const useEmailLogin = (opt?: MutOpt<EmailLoginResData>) =>
   useMutation<EmailLoginResData, EmailLoginError, EmailLoginData>(emailLogin, opt)
+
+export const useForgotPassword = (opt?: MutOpt<ForgotPasswordResData>) =>
+  useMutation<ForgotPasswordResData, ForgotPasswordError, ForgotPasswordData>(forgotPassword, opt)
+
+export const useResetPassword = (opt?: MutOpt<ResetPasswordResData>) =>
+  useMutation<ResetPasswordResData, ResetPasswordError, ResetPasswordData>(resetPassword, opt)
