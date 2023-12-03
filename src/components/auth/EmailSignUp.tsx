@@ -10,31 +10,7 @@ import { useState } from 'react'
 import clsx from 'clsx'
 import { useImmer } from 'use-immer'
 import { useEmaiLSignUp } from '@/api/mutations/auth'
-
-const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-
-const upperCaseRegex = /[A-Z]/
-const lowerCaseRegex = /[a-z]/
-const numberRegex = /\d/
-
-const passwordRules = [
-  {
-    name: 'Minimum 10 characters',
-    check: (password: string) => password.length >= 10,
-  },
-  {
-    name: 'At least 1 uppercase letter',
-    check: (password: string) => upperCaseRegex.test(password),
-  },
-  {
-    name: 'At least 1 lowercase letter',
-    check: (password: string) => lowerCaseRegex.test(password),
-  },
-  {
-    name: 'At least 1 number',
-    check: (password: string) => numberRegex.test(password),
-  },
-]
+import { authRegex, passwordRules } from '@/utils/auth/auth'
 
 interface Props {
   onCancel: () => void
@@ -127,9 +103,9 @@ const EmailSignUp: React.FC<Props> = ({ onCancel }) => {
                 <Button
                   size={'sm'}
                   type="submit"
-                  disabled={!emailRegex.test(email) || name?.trim()?.length === 0}
+                  disabled={!authRegex.email.test(email) || name?.trim()?.length === 0}
                   onClick={() => {
-                    if (emailRegex.test(email) && name?.trim()?.length > 0) {
+                    if (authRegex.email.test(email) && name?.trim()?.length > 0) {
                       setStep(2)
                     }
                   }}
@@ -253,12 +229,12 @@ const EmailSignUp: React.FC<Props> = ({ onCancel }) => {
                   loading={isLoading}
                   disabled={
                     password?.value !== confirmPassword?.value ||
-                    !upperCaseRegex.test(password.value) ||
-                    !lowerCaseRegex.test(password.value) ||
-                    !numberRegex.test(password.value) ||
-                    !upperCaseRegex.test(confirmPassword.value) ||
-                    !lowerCaseRegex.test(confirmPassword.value) ||
-                    !numberRegex.test(confirmPassword.value) ||
+                    !authRegex.password.upperCase.test(password.value) ||
+                    !authRegex.password.lowerCase.test(password.value) ||
+                    !authRegex.password.number.test(password.value) ||
+                    !authRegex.password.upperCase.test(confirmPassword.value) ||
+                    !authRegex.password.lowerCase.test(confirmPassword.value) ||
+                    !authRegex.password.number.test(confirmPassword.value) ||
                     password.value.length < 10 ||
                     confirmPassword.value.length < 10
                   }
@@ -270,6 +246,8 @@ const EmailSignUp: React.FC<Props> = ({ onCancel }) => {
                 </Button>
               </>
             )}
+
+            {step === 3 && <>STEP 3</>}
             <div className="text-muted-foreground text-[0.9rem]">
               Already have an account?
               <span>

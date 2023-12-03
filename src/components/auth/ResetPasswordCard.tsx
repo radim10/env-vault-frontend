@@ -49,9 +49,9 @@ const ResetPasswordCard: React.FC<Props> = ({ token }) => {
   const handleResetPassword = () => {
     //  check if password is valid
     const passsValid =
-      authRegex.passwordUpperCase.test(password.value) &&
-      authRegex.passwordLowerCase.test(password.value) &&
-      authRegex.passwordNumber.test(password.value) &&
+      authRegex.password.upperCase.test(password.value) &&
+      authRegex.password.lowerCase.test(password.value) &&
+      authRegex.password.number.test(password.value) &&
       password.value.length >= 10
 
     if (!passsValid) return
@@ -245,24 +245,24 @@ const ResetPasswordCard: React.FC<Props> = ({ token }) => {
               loading={isLoading}
               disabled={
                 password?.value !== confirmPassword?.value ||
-                !authRegex.passwordUpperCase.test(password.value) ||
-                !authRegex.passwordLowerCase.test(password.value) ||
-                !authRegex.passwordNumber.test(password.value) ||
-                !authRegex.passwordUpperCase.test(confirmPassword.value) ||
-                !authRegex.passwordLowerCase.test(confirmPassword.value) ||
-                !authRegex.passwordNumber.test(confirmPassword.value) ||
+                !authRegex.password.upperCase.test(password.value) ||
+                !authRegex.password.lowerCase.test(password.value) ||
+                !authRegex.password.number.test(password.value) ||
+                !authRegex.password.upperCase.test(confirmPassword.value) ||
+                !authRegex.password.lowerCase.test(confirmPassword.value) ||
+                !authRegex.password.number.test(confirmPassword.value) ||
                 password.value.length < 10 ||
                 confirmPassword.value.length < 10
               }
               onClick={() => {
                 if (
                   password?.value !== confirmPassword?.value ||
-                  !authRegex.passwordUpperCase.test(password.value) ||
-                  !authRegex.passwordLowerCase.test(password.value) ||
-                  !authRegex.passwordNumber.test(password.value) ||
-                  !authRegex.passwordUpperCase.test(confirmPassword.value) ||
-                  !authRegex.passwordLowerCase.test(confirmPassword.value) ||
-                  !authRegex.passwordNumber.test(confirmPassword.value) ||
+                  !authRegex.password.upperCase.test(password.value) ||
+                  !authRegex.password.lowerCase.test(password.value) ||
+                  !authRegex.password.number.test(password.value) ||
+                  !authRegex.password.upperCase.test(confirmPassword.value) ||
+                  !authRegex.password.lowerCase.test(confirmPassword.value) ||
+                  !authRegex.password.number.test(confirmPassword.value) ||
                   password.value.length < 10 ||
                   confirmPassword.value.length < 10
                 )

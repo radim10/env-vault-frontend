@@ -25,7 +25,12 @@ export const passwordRules = [
 
 export const authRegex = {
   email: emailRegex,
-  passwordUpperCase: upperCaseRegex,
-  passwordLowerCase: lowerCaseRegex,
-  passwordNumber: numberRegex,
+  password: {
+    upperCase: upperCaseRegex,
+    lowerCase: lowerCaseRegex,
+    number: numberRegex,
+  },
+  // passwordUpperCase: upperCaseRegex,
+  // passwordLowerCase: lowerCaseRegex,
+  // passwordNumber: numberRegex,
 }
