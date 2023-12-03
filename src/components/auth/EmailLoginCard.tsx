@@ -160,7 +160,8 @@ const EmailLoginCard: React.FC<Props> = ({ onCancel }) => {
             <Button
               size={'sm'}
               type="submit"
-              disabled={!emailRegex.test(email)}
+              loading={isLoading}
+              disabled={!emailRegex.test(email) || password?.value?.length === 0}
               onClick={() => {
                 if (!emailRegex.test(email)) return
                 handleLogin()
