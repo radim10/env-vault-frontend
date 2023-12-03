@@ -39,6 +39,7 @@ const ResetPasswordCard: React.FC<Props> = ({ token }) => {
     error,
     isLoading,
     mutate: login,
+    status,
   } = useResetPassword({
     onSuccess: async (data) => {
       // router.replace(`/log`)
@@ -62,23 +63,37 @@ const ResetPasswordCard: React.FC<Props> = ({ token }) => {
     router.replace('/login')
   }
 
-  if (error && error?.code) {
+  if ((error && error?.code) || status === 'success') {
     return (
       <Card className="sm:w-[460px] w-[90vw]">
         <CardContent className="pt-5 md:px-8">
           <div className="flex flex-col gap-5">
             <div className="flex justify-center items-center">LOGO</div>
 
-            <div className="flex flex-col gap-3">
-              <div className="flex flex-row gap-2 items-center">
-                <div className="font-semibold text-lg text-red-600">Password reset failed</div>
-                <Icons.xCircle className="text-red-600 h-5 w-5" />
-              </div>
+            {error && (
+              <div className="flex flex-col gap-3">
+                <div className="flex flex-row gap-2 items-center">
+                  <div className="font-semibold text-lg text-red-600">Password reset failed</div>
+                  <Icons.xCircle className="text-red-600 h-5 w-5" />
+                </div>
 
-              <div className="mt-0 text-[1rem] opacity-90">
-                {resetPasswordErrorMsgFromCode(error?.code)}
+                <div className="mt-0 text-[1rem] opacity-90">
+                  {resetPasswordErrorMsgFromCode(error?.code)}
+                </div>
               </div>
-            </div>
+            )}
+
+            {!error && (
+              <div className="flex flex-col gap-3">
+                <div className="flex flex-row gap-2 items-center">
+                  <div className="font-semibold text-lg text-green-600">Password reseted</div>
+                  <Icons.checkCircle2 className="text-green-600 h-5 w-5" />
+                </div>
+                <div className="mt-0 text-[1rem] opacity-90">
+                  Now you can login with your new password
+                </div>
+              </div>
+            )}
 
             <div className="mt-5">
               <Button size={'sm'} className="w-full" onClick={goToLogin}>
