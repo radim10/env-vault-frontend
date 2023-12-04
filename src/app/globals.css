@@ -119,3 +119,27 @@
     --ring: 224.3 76.3% 48%;
   }
 }
+.shake {
+  -webkit-animation: action 0.1s alternate ease-out;
+  animation: action 0.1s alternate ease-out;
+  animation-iteration-count: 4;
+}
+
+@-webkit-keyframes action {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-6px);
+  }
+}
+
+@keyframes action {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-6px);
+  }
+}
