@@ -120,7 +120,7 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ onEmailSelect }) => {
               disabled={getGithubUrlLoading || getGoogleLinkLoading}
               className="gap-3"
             >
-              <Icons.mail className="h-4 w-4" />
+              <Icons.mail className="h-4 w-4 opacity-70" />
               Continue with email
             </Button>
 
