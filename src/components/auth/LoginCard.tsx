@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { useGetGithubUrl, useGetGoogleUrl } from '@/api/queries/auth'
 import { useState } from 'react'
 import EmailLoginCard from './EmailLoginCard'
+import GoogleIcon from './GoogleIcon'
 
 interface Props {
   onEmailSelect: () => void
@@ -33,57 +34,37 @@ const LoginCard: React.FC<Props> = ({ onEmailSelect }) => {
         <CardContent className="pt-5">
           <div className="flex flex-col gap-5">
             <div className="flex flex-row items-center justify-center gap-2 w-full opacity-80">
-              Continue building amazing apps
+              Continue running amazing apps
               <Icons.rocket className="w-4 h-4 mt-1" />
             </div>
 
-            {/* <form onSubmit={() => {}}> */}
-            {/*   <div className="grid gap-4"> */}
-            {/*     <div className="grid gap-1"> */}
-            {/*       <Label className="sr-only" htmlFor="email"> */}
-            {/*         Email */}
-            {/*       </Label> */}
-            {/*       <Input */}
-            {/*         id="email" */}
-            {/*         placeholder="name@example.com" */}
-            {/*         type="email" */}
-            {/*         autoCapitalize="none" */}
-            {/*         autoComplete="email" */}
-            {/*         autoCorrect="off" */}
-            {/*         disabled={false} */}
-            {/*       /> */}
-            {/*     </div> */}
-            {/*     <Button disabled={false} size={'sm'}> */}
-            {/*       Login with email */}
-            {/*     </Button> */}
+            {/* <Button */}
+            {/*   size={'sm'} */}
+            {/*   onClick={onEmailSelect} */}
+            {/*   disabled={getGithubUrlLoading || getGoogleLinkLoading} */}
+            {/* > */}
+            {/*   Login with email */}
+            {/* </Button> */}
+            {/* <div className="relative"> */}
+            {/*   <div className="absolute inset-0 flex items-center"> */}
+            {/*     <span className="w-full border-t" /> */}
             {/*   </div> */}
-            {/* </form> */}
-            <Button
-              size={'sm'}
-              onClick={onEmailSelect}
-              disabled={getGithubUrlLoading || getGoogleLinkLoading}
-            >
-              Login with email
-            </Button>
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-              </div>
-            </div>
+            {/*   <div className="relative flex justify-center text-xs uppercase"> */}
+            {/*     <span className="bg-background px-2 text-muted-foreground">Or continue with</span> */}
+            {/*   </div> */}
+            {/* </div> */}
             <div className="flex flex-col gap-2">
               <Button
-                size={'sm'}
+                size={'default'}
                 variant="outline"
                 type="button"
+                className="gap-3"
                 disabled={getGithubUrlLoading || getGoogleLinkLoading}
                 loading={getGithubUrlLoading}
                 onClick={() => getGithubUrl()}
               >
-                <Icons.github className="mr-2 h-4 w-4" />
-                Github
+                <Icons.github className="h-4 w-4" />
+                Continue with Github
               </Button>
 
               <Button
@@ -91,12 +72,33 @@ const LoginCard: React.FC<Props> = ({ onEmailSelect }) => {
                 loading={getGoogleLinkLoading}
                 onClick={() => getGoogleLink()}
                 variant="outline"
-                size={'sm'}
+                size={'default'}
                 type="button"
+                className="gap-3"
               >
-                Google
+                <GoogleIcon />
+                Continue with Google
               </Button>
             </div>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">OR</span>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size={'default'}
+              onClick={() => onEmailSelect()}
+              disabled={getGithubUrlLoading || getGoogleLinkLoading}
+              className="gap-3"
+            >
+              <Icons.mail className="h-4 w-4" />
+              Login with email
+            </Button>
           </div>
         </CardContent>
       </Card>
