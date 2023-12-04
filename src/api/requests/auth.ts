@@ -15,6 +15,12 @@ type ResetPasswordErrorCode =
   // | 'user_banned'
   'invalid_token' | 'token_expired' | 'invalid_password_format'
 
+type ResendEmailConfirmationErrorCode =
+  | 'invalid_password_format'
+  | 'invalid_credentials'
+  | 'email_already_confirmed'
+  | 'max_resend_count_reached'
+
 export type AuthError<
   T extends
     | AuthErrorCode
@@ -74,6 +80,23 @@ export const resetPasswordErrorMsgFromCode = (code: string) => {
   }
 }
 
+export const resendEmailConfirmationErrorMsgFromCode = (
+  code?: ResendEmailConfirmationErrorCode
+) => {
+  switch (code) {
+    case 'invalid_password_format':
+      return 'Invalid password format'
+    case 'invalid_credentials':
+      return 'Invalid email or password'
+    case 'email_already_confirmed':
+      return 'Email already confirmed'
+    case 'max_resend_count_reached':
+      return 'Max resend count reached'
+    default:
+      return 'Something went wrong'
+  }
+}
+
 export async function logout() {
   return await sendRequest<LogoutResData>({
     method: 'POST',
@@ -86,7 +109,7 @@ export async function logout() {
 // export type EmailLoginError = AuthError<EmailLoginErrorCode, { canResend?: boolean }>
 export type EmailLoginError =
   | APIError<EmailLoginErrorCode>
-  | APIError<'email_not_confirmed', { canResend: boolean }>
+  | APIError<'email_not_confirmed', { remainingResends?: number } | undefined>
 
 export type EmailLoginResData = UserSession
 
@@ -106,6 +129,24 @@ export async function emailLogin(data: EmailLoginData) {
     method: 'POST',
     basePath: 'auth',
     path: 'email/login',
+    body: data,
+  })
+}
+
+// resend email confirmation
+export type ResendEmailConfirmationError = APIError<ResendEmailConfirmationErrorCode>
+export type ResendEmailConfirmationResData = undefined
+
+export type ResendEmailConfirmationData = {
+  email: string
+  password: string
+}
+
+export async function resendEmailConfirmation(data: ResendEmailConfirmationData) {
+  return await sendRequest<ResendEmailConfirmationResData>({
+    method: 'POST',
+    basePath: 'auth',
+    path: 'email/resend-confirmation',
     body: data,
   })
 }
