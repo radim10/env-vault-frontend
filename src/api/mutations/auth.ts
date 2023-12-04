@@ -11,6 +11,9 @@ import {
   ForgotPasswordResData,
   LogoutError,
   LogoutResData,
+  ResendEmailConfirmationData,
+  ResendEmailConfirmationError,
+  ResendEmailConfirmationResData,
   ResetPasswordData,
   ResetPasswordError,
   ResetPasswordResData,
@@ -18,6 +21,7 @@ import {
   emailSignUp,
   forgotPassword,
   logout,
+  resendEmailConfirmation,
   resetPassword,
 } from '../requests/auth'
 import { MutOpt } from './mutOpt'
@@ -36,3 +40,10 @@ export const useForgotPassword = (opt?: MutOpt<ForgotPasswordResData>) =>
 
 export const useResetPassword = (opt?: MutOpt<ResetPasswordResData>) =>
   useMutation<ResetPasswordResData, ResetPasswordError, ResetPasswordData>(resetPassword, opt)
+
+export const useResendEmailConfirmation = (opt?: MutOpt<ResendEmailConfirmationResData>) =>
+  useMutation<
+    ResendEmailConfirmationResData,
+    ResendEmailConfirmationError,
+    ResendEmailConfirmationData
+  >(resendEmailConfirmation, opt)
