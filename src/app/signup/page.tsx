@@ -6,15 +6,19 @@ import SignUpCard from '@/components/auth/SignUpCard'
 import { useState } from 'react'
 import EmailSignUp from '@/components/auth/EmailSignUp'
 import clsx from 'clsx'
+import AuthFooter from '@/components/auth/Footer'
 
 const SignUpPage = () => {
   const [emailSignUp, setEmailSignUp] = useState<boolean>(false)
 
   return (
     <div
-      className={clsx(['flex justify-center w-full bg-red-400X h-screen items-center'], {
-        '-mt-10': !emailSignUp,
-      })}
+      className={clsx(
+        ['flex flex-col gap-4 justify-center w-full bg-red-400X h-screen items-center'],
+        {
+          // '-mt-10': !emailSignUp,
+        }
+      )}
     >
       <div className="flex flex-col items-center gap-6">
         {!emailSignUp && (
@@ -42,6 +46,8 @@ const SignUpPage = () => {
         )}
         {emailSignUp && <EmailSignUp onCancel={() => setEmailSignUp(false)} />}
       </div>
+      {/* // */}
+      {!emailSignUp && <AuthFooter />}
     </div>
   )
 }

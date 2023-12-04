@@ -6,6 +6,7 @@ import LoginCard from '@/components/auth/LoginCard'
 import { useState } from 'react'
 import EmailLoginCard from '@/components/auth/EmailLoginCard'
 import clsx from 'clsx'
+import AuthFooter from '@/components/auth/Footer'
 
 const LoginPage = () => {
   const [emailLogin, setEmailLogin] = useState<boolean>(false)
@@ -13,7 +14,7 @@ const LoginPage = () => {
   return (
     <div
       className={clsx(['flex justify-center w-full bg-red-400X h-screen items-center'], {
-        '-mt-10': !emailLogin || true,
+        // '-mt-10': !emailLogin || true,
       })}
     >
       <div className="flex flex-col items-center gap-6">
@@ -41,6 +42,8 @@ const LoginPage = () => {
           </>
         )}
         {emailLogin && <EmailLoginCard onCancel={() => setEmailLogin(false)} />}
+
+        {!emailLogin && <AuthFooter />}
       </div>
     </div>
   )
