@@ -111,7 +111,7 @@ const EmailSignUp: React.FC<Props> = ({ onCancel }) => {
                   </div>
                 </div>
                 <Button
-                  size={'sm'}
+                  size={'default'}
                   type="submit"
                   disabled={!authRegex.email.test(email) || name?.trim()?.length === 0}
                   onClick={() => {
@@ -241,7 +241,7 @@ const EmailSignUp: React.FC<Props> = ({ onCancel }) => {
                 )}
 
                 <Button
-                  size={'sm'}
+                  size={'default'}
                   type="submit"
                   loading={isLoading}
                   disabled={
