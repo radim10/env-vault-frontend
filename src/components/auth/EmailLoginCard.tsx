@@ -12,6 +12,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { saveSession } from '@/app/actions'
 import { emailLoginErrorMsgFromCode } from '@/api/requests/auth'
+import ResendEmailConfirmationCard from './ResendEmailConfirmationCard'
 
 interface Props {
   onCancel: () => void
@@ -61,6 +62,17 @@ const EmailLoginCard: React.FC<Props> = ({ onCancel }) => {
     if (!passsValid) return
 
     login({ email, password: password.value })
+  }
+
+  if (error?.code === 'email_not_confirmed') {
+    return (
+      <ResendEmailConfirmationCard
+        email={email}
+        password={password.value}
+        remainingResends={error?.details?.remainingResends}
+        onGoBack={onCancel}
+      />
+    )
   }
 
   return (
