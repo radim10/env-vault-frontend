@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useState } from 'react'
 import { Separator } from './ui/separator'
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
@@ -8,6 +9,8 @@ import UserRoleBadge from './users/UserRoleBadge'
 import { WorkspaceUserRole } from '@/types/users'
 import { Card, CardContent } from '@/components/ui/card'
 import { useGetGithubUrl, useGetGoogleUrl } from '@/api/queries/auth'
+import clsx from 'clsx'
+import { Checkbox } from './ui/checkbox'
 
 interface InvitationProps {
   id: string
@@ -16,6 +19,9 @@ interface InvitationProps {
 }
 
 export const Invitation: React.FC<InvitationProps> = ({ id, workspace, role }) => {
+  const [checked, setChecked] = useState(false)
+  const [animateCheck, setAnimateCheck] = useState(false)
+
   const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGoogleUrl(id, {
     enabled: false,
     onSuccess: ({ url }) => {
@@ -29,6 +35,26 @@ export const Invitation: React.FC<InvitationProps> = ({ id, workspace, role }) =
       window.location.replace(url)
     },
   })
+
+  const handleButtonClick = (type: 'github' | 'google' | 'email') => {
+    if (!checked) {
+      setAnimateCheck(true)
+      setTimeout(() => {
+        setAnimateCheck(false)
+      }, 400)
+
+      return
+    }
+
+    if (type === 'github') {
+      getGithubUrl()
+    } else if (type === 'google') {
+      getGoogleLink()
+    } else if (type === 'email') {
+      // TODO:
+      // onEmailSelect()
+    }
+  }
 
   return (
     <div>
@@ -74,29 +100,30 @@ export const Invitation: React.FC<InvitationProps> = ({ id, workspace, role }) =
                     </div>
                   </div>
 
-                  <Button disabled={getGithubUrlLoading || getGoogleLinkLoading} size={'sm'}>
-                    Login with email
-                  </Button>
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-background px-2 text-muted-foreground">
-                        Or continue with
-                      </span>
-                    </div>
-                  </div>
+                  {/* <Button disabled={getGithubUrlLoading || getGoogleLinkLoading} size={'sm'}> */}
+                  {/*   Login with email */}
+                  {/* </Button> */}
+                  {/* <div className="relative"> */}
+                  {/*   <div className="absolute inset-0 flex items-center"> */}
+                  {/*     <span className="w-full border-t" /> */}
+                  {/*   </div> */}
+                  {/*   <div className="relative flex justify-center text-xs uppercase"> */}
+                  {/*     <span className="bg-background px-2 text-muted-foreground"> */}
+                  {/*       Or continue with */}
+                  {/*     </span> */}
+                  {/*   </div> */}
+                  {/* </div> */}
                   <div className="flex flex-col gap-2">
                     <Button
-                      size={'sm'}
                       type="button"
+                      size={'default'}
                       variant="outline"
+                      className="gap-3"
                       disabled={getGithubUrlLoading || getGoogleLinkLoading}
                       loading={getGithubUrlLoading}
                       onClick={() => getGithubUrl()}
                     >
-                      <Icons.github className="mr-2 h-4 w-4" />
+                      <Icons.github className="h-4 w-4 opacity-70" />
                       Github
                     </Button>
 
@@ -105,11 +132,56 @@ export const Invitation: React.FC<InvitationProps> = ({ id, workspace, role }) =
                       loading={getGoogleLinkLoading}
                       onClick={() => getGoogleLink()}
                       variant="outline"
-                      size={'sm'}
+                      className="gap-3"
                       type="button"
+                      size={'sm'}
                     >
-                      Google
+                      <Icons.mail className="h-4 w-4" />
+                      Continue with email
                     </Button>
+                  </div>
+
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-background px-2 text-muted-foreground">OR</span>
+                    </div>
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size={'default'}
+                    onClick={() => handleButtonClick('email')}
+                    disabled={getGithubUrlLoading || getGoogleLinkLoading}
+                    className="gap-3"
+                  >
+                    <Icons.mail className="h-4 w-4 opacity-70" />
+                    Continue with email
+                  </Button>
+
+                  <div className={clsx(['flex items-center w-full justify-end  mt-2'], {})}>
+                    <div
+                      className={clsx(['flex space-x-3'], {
+                        shake: animateCheck === true && checked === false,
+                      })}
+                    >
+                      <label
+                        htmlFor="terms"
+                        className="cursor-pointer text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        Accept terms and conditions
+                      </label>
+                      <Checkbox
+                        id="terms"
+                        checked={checked}
+                        onCheckedChange={() => setChecked(!checked)}
+                        className={clsx(['dark:border-gray-600 border-gray-800'], {
+                          'border-primary dark:border-primary': checked,
+                        })}
+                      />
+                    </div>
                   </div>
                 </div>
               </CardContent>
