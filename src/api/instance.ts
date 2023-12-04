@@ -4,10 +4,15 @@ import sessionStore from '@/stores/session'
 import { UserSession } from '@/types/session'
 import { deleteSession, saveSession } from '@/app/actions'
 
-export type APIError<T, W extends true | void = void> = {
+export type APIError<
+  T,
+  D extends Record<string, unknown> | undefined = undefined,
+  W extends true | void = void
+> = {
   // code: T | 'workspace_not_found'
   code: W extends true ? T | 'workspace_not_found' : T
   status: number
+  details: D
 }
 
 export const apiClient = axios.create()
@@ -123,6 +128,10 @@ export default async function sendRequest<ResponseType>(config: {
       const error = new Error() as any
       error.message = errorData
       error.code = errorData?.code
+
+      if (errorData?.details) {
+        error.details = errorData?.details
+      }
       // Attach extra info to the error object.
       error.status = err?.response?.status
       throw error
