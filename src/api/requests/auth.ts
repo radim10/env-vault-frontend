@@ -21,8 +21,9 @@ export type AuthError<
     | EmailLoginErrorCode
     | ResetPasswordErrorCode
     | EmailSignUpErrorCode
-    | void
-> = APIError<T>
+    | void,
+  D extends Record<string, any> | undefined = undefined
+> = APIError<T, D>
 
 // logout
 export type LogoutError = AuthError<any>
@@ -82,9 +83,19 @@ export async function logout() {
 }
 
 // email login
-export type EmailLoginError = AuthError<EmailLoginErrorCode>
+// export type EmailLoginError = AuthError<EmailLoginErrorCode, { canResend?: boolean }>
+export type EmailLoginError =
+  | APIError<EmailLoginErrorCode>
+  | APIError<'email_not_confirmed', { canResend: boolean }>
+
 export type EmailLoginResData = UserSession
 
+// export function isEmailNotConfirmedError(
+//   obj: any
+// ): obj is { error: 'email_not_confirmed'; canResend: boolean } {
+//   return typeof obj === 'object' && obj !== null && 'error' in obj && 'canResend' in obj
+// }
+//
 export type EmailLoginData = {
   email: string
   password: string
