@@ -81,7 +81,7 @@ export const Invitation: React.FC<InvitationProps> = ({ type, id, workspace, rol
           'lg:mt-[7%]': !emailSelected,
         })}
       >
-        <div className="flex flex-col items-center gap-6">
+        <div className="flex flex-col items-center gap-4">
           <div className="flex flex-col gap-1 items-center">
             {!emailSelected && (
               <h1 className="dark:text-gray-200 scroll-m-20 text-4xl font-semibold tracking-tight transition-colors first:mt-0">
