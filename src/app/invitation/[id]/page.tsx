@@ -19,13 +19,15 @@ const InvitaionPage = async ({ params }: { params: { id: string } }) => {
   const session = await getSession()
   if (session) redirect('/workspace')
 
-  const invitation = await getInvitation(params.id)
+  // const invitation = await getInvitation(params.id)
+  //
+  // if (!invitation) {
+  //   redirect('/login')
+  // }
 
-  if (!invitation) {
-    redirect('/login')
-  }
-
-  return <Invitation id={params?.id} workspace={invitation?.workspace} role={invitation?.role} />
+  return <></>
+  // return <Invitation id={'dsdsa'} workspace={'dsad'} role={'ADMIN' as any} />
+  // return <Invitation id={params?.id} workspace={invitation?.workspace} role={invitation?.role} />
 }
 
 export default InvitaionPage
