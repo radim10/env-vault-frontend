@@ -65,7 +65,22 @@ export const Invitation: React.FC<InvitationProps> = ({ type, id, workspace, rol
 
   return (
     <div>
-      <div className="flex justify-center mt-[6%]  w-full">
+      {!emailSelected && (
+        <div className="absolute left-10 top-10">
+          <Link href={`/login`}>
+            <Button className="flex items-center gap-2 " variant="outline">
+              <Icons.arrowLeft className="w-4 h-4" />
+              <span>Login</span>
+            </Button>
+          </Link>
+        </div>
+      )}
+      <div
+        className={clsx(['flex justify-center mt-[25%] md:mt-[10%]   w-full'], {
+          'lg:mt-[8%]': !emailSelected,
+          'lg:mt-[7%]': !emailSelected,
+        })}
+      >
         <div className="flex flex-col items-center gap-6">
           <div className="flex flex-col gap-1 items-center">
             {!emailSelected && (
@@ -74,11 +89,12 @@ export const Invitation: React.FC<InvitationProps> = ({ type, id, workspace, rol
               </h1>
             )}
 
-            {emailSelected && (
-              <h1 className="dark:text-gray-200 scroll-m-20 text-2xl font-semibold tracking-tight transition-colors first:mt-0">
-                ZenEnv invitation
-              </h1>
-            )}
+            {/* {emailSelected && ( */}
+            {/*   <h1 className="dark:text-gray-200 scroll-m-20 text-2xl font-semibold tracking-tight transition-colors first:mt-0"> */}
+            {/*     ZenEnv invitation */}
+            {/*   </h1> */}
+            {/* )} */}
+
             {type !== 'login' && !emailSelected && (
               <div className="text-muted-foreground">
                 Already have an account?
