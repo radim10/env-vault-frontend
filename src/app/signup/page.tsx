@@ -20,7 +20,7 @@ const SignUpPage = () => {
         }
       )}
     >
-      <div className="flex flex-col items-center gap-6">
+      <div className="flex flex-col items-center gap-4">
         {!emailSignUp && (
           <>
             <div className="flex flex-col gap-1 items-center">

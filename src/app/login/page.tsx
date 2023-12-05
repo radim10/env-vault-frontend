@@ -17,7 +17,7 @@ const LoginPage = () => {
         // '-mt-10': !emailLogin || true,
       })}
     >
-      <div className="flex flex-col items-center gap-6">
+      <div className="flex flex-col items-center gap-4">
         {!emailLogin && (
           <>
             <div className="flex flex-col gap-1 items-center">
