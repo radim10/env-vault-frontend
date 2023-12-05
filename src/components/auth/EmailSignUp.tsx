@@ -14,10 +14,11 @@ import { authRegex, passwordRules } from '@/utils/auth/auth'
 import { emailSignUpErrorMsgFromCode } from '@/api/requests/auth'
 
 interface Props {
+  invitation?: string
   onCancel: () => void
 }
 
-const EmailSignUp: React.FC<Props> = ({ onCancel }) => {
+const EmailSignUp: React.FC<Props> = ({ invitation, onCancel }) => {
   const [step, setStep] = useState(1)
 
   const [name, setName] = useState('')
