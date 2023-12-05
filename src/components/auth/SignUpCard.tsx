@@ -9,6 +9,7 @@ import { useState } from 'react'
 import clsx from 'clsx'
 import GoogleIcon from './GoogleIcon'
 import { WorkspaceUserRole } from '@/types/users'
+import InvitationHeader from './InvitationHeader'
 
 interface SignUpCardProps {
   invitation?: {
@@ -61,11 +62,18 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ invitation, onEmailSelect }) =>
     <div>
       <Card className="sm:w-[420px] w-[90vw]">
         <CardContent className="pt-5">
-          <div className="flex flex-col gap-5">
-            <div className="flex flex-row items-center justify-center gap-2 w-full opacity-80">
-              Start managing your secrets for free
-              <Icons.rocket className="w-4 h-4 mt-1" />
-            </div>
+          <div
+            className={clsx(['flex flex-col'], {
+              'gap-3': invitation,
+              'gap-5': !invitation,
+            })}
+          >
+            {!invitation && (
+              <div className="flex flex-row items-center justify-center gap-2 w-full opacity-80">
+                Start managing your secrets for free
+                <Icons.rocket className="w-4 h-4 mt-1" />
+              </div>
+            )}
 
             {/* <Button */}
             {/*   size={'default'} */}
@@ -82,6 +90,10 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ invitation, onEmailSelect }) =>
             {/*     <span className="bg-background px-2 text-muted-foreground">Or continue with</span> */}
             {/*   </div> */}
             {/* </div> */}
+
+            {invitation && (
+              <InvitationHeader workspace={invitation.workspace} role={invitation.role} />
+            )}
 
             <div className="flex flex-col gap-2">
               <Button

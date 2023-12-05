@@ -4,13 +4,10 @@ import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useGetGithubUrl, useGetGoogleUrl } from '@/api/queries/auth'
-import { useState } from 'react'
-import EmailLoginCard from './EmailLoginCard'
 import GoogleIcon from './GoogleIcon'
 import { WorkspaceUserRole } from '@/types/users'
-import UserRoleBadge from '../users/UserRoleBadge'
-import { Separator } from '../ui/separator'
 import clsx from 'clsx'
+import InvitationHeader from './InvitationHeader'
 
 interface Props {
   onEmailSelect: () => void
@@ -54,27 +51,7 @@ const LoginCard: React.FC<Props> = ({ invitation, onEmailSelect }) => {
               </div>
             )}
             {invitation && (
-              <>
-                <div className="flex flex-row items-center justify-center gap-2 w-full opacity-80">
-                  You have been invited to ZenEnv
-                  <Icons.userPlus className="w-4 h-4" />
-                </div>
-
-                <Separator />
-                <div className="flex flex-col gap-1.5 mb-2">
-                  <div className="flex flex-row gap-2 flex-wrap">
-                    <div className="font-medium">Workspace:</div>
-                    <div>{invitation.workspace}</div>
-                  </div>
-
-                  <div className="flex flex-row gap-2">
-                    <div className="font-medium">User role:</div>
-                    <div>
-                      <UserRoleBadge role={invitation.role} />
-                    </div>
-                  </div>
-                </div>
-              </>
+              <InvitationHeader workspace={invitation.workspace} role={invitation.role} />
             )}
 
             <div className="flex flex-col gap-2">
