@@ -7,12 +7,21 @@ import { useGetGithubUrl, useGetGoogleUrl } from '@/api/queries/auth'
 import { useState } from 'react'
 import EmailLoginCard from './EmailLoginCard'
 import GoogleIcon from './GoogleIcon'
+import { WorkspaceUserRole } from '@/types/users'
+import UserRoleBadge from '../users/UserRoleBadge'
+import { Separator } from '../ui/separator'
+import clsx from 'clsx'
 
 interface Props {
   onEmailSelect: () => void
+  invitation?: {
+    id: string
+    workspace: string
+    role: WorkspaceUserRole
+  }
 }
 
-const LoginCard: React.FC<Props> = ({ onEmailSelect }) => {
+const LoginCard: React.FC<Props> = ({ invitation, onEmailSelect }) => {
   const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGoogleUrl(null, {
     enabled: false,
 
@@ -32,27 +41,42 @@ const LoginCard: React.FC<Props> = ({ onEmailSelect }) => {
     <div>
       <Card className="sm:w-[420px] w-[90vw]">
         <CardContent className="pt-5">
-          <div className="flex flex-col gap-5">
-            <div className="flex flex-row items-center justify-center gap-2 w-full opacity-80">
-              Continue running amazing apps
-              <Icons.rocket className="w-4 h-4 mt-1" />
-            </div>
+          <div
+            className={clsx(['flex flex-col'], {
+              'gap-3': invitation,
+              'gap-5': !invitation,
+            })}
+          >
+            {!invitation && (
+              <div className="flex flex-row items-center justify-center gap-2 w-full opacity-80">
+                Continue running amazing apps
+                <Icons.rocket className="w-4 h-4 mt-1" />
+              </div>
+            )}
+            {invitation && (
+              <>
+                <div className="flex flex-row items-center justify-center gap-2 w-full opacity-80">
+                  You have been invited to ZenEnv
+                  <Icons.userPlus className="w-4 h-4" />
+                </div>
 
-            {/* <Button */}
-            {/*   size={'sm'} */}
-            {/*   onClick={onEmailSelect} */}
-            {/*   disabled={getGithubUrlLoading || getGoogleLinkLoading} */}
-            {/* > */}
-            {/*   Login with email */}
-            {/* </Button> */}
-            {/* <div className="relative"> */}
-            {/*   <div className="absolute inset-0 flex items-center"> */}
-            {/*     <span className="w-full border-t" /> */}
-            {/*   </div> */}
-            {/*   <div className="relative flex justify-center text-xs uppercase"> */}
-            {/*     <span className="bg-background px-2 text-muted-foreground">Or continue with</span> */}
-            {/*   </div> */}
-            {/* </div> */}
+                <Separator />
+                <div className="flex flex-col gap-1.5 mb-2">
+                  <div className="flex flex-row gap-2 flex-wrap">
+                    <div className="font-medium">Workspace:</div>
+                    <div>{invitation.workspace}</div>
+                  </div>
+
+                  <div className="flex flex-row gap-2">
+                    <div className="font-medium">User role:</div>
+                    <div>
+                      <UserRoleBadge role={invitation.role} />
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
             <div className="flex flex-col gap-2">
               <Button
                 size={'default'}

@@ -15,6 +15,10 @@ import { emailLoginErrorMsgFromCode } from '@/api/requests/auth'
 import ResendEmailConfirmationCard from './ResendEmailConfirmationCard'
 
 interface Props {
+  invitation?: {
+    id: string
+  }
+
   onCancel: () => void
 }
 
@@ -24,7 +28,7 @@ const upperCaseRegex = /[A-Z]/
 const lowerCaseRegex = /[a-z]/
 const numberRegex = /\d/
 
-const EmailLoginCard: React.FC<Props> = ({ onCancel }) => {
+const EmailLoginCard: React.FC<Props> = ({ invitation, onCancel }) => {
   const router = useRouter()
 
   const [email, setEmail] = useState('')
@@ -81,18 +85,18 @@ const EmailLoginCard: React.FC<Props> = ({ onCancel }) => {
         <CardContent className="pt-5 md:px-8">
           <div className="flex flex-col gap-5">
             <div className="flex justify-center items-center">LOGO</div>
-            <Link href="/login">
-              <button
-                className="mb-0 flex gap-2 items-center opacity-70 hover:opacity-100 hover:text-primary ease duration-100 text-[0.9rem]"
-                onClick={() => onCancel()}
-              >
-                <span>
-                  <Icons.arrowLeft className="h-4 w-4" />
-                </span>
+            {/* <Link href="/login"> */}
+            <button
+              className="mb-0 flex gap-2 items-center opacity-70 hover:opacity-100 hover:text-primary ease duration-100 text-[0.9rem]"
+              onClick={() => onCancel()}
+            >
+              <span>
+                <Icons.arrowLeft className="h-4 w-4" />
+              </span>
 
-                <span>Go back</span>
-              </button>
-            </Link>
+              <span>Go back</span>
+            </button>
+            {/* </Link> */}
 
             {/**/}
             <div>

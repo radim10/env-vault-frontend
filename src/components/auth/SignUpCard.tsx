@@ -8,12 +8,18 @@ import { Checkbox } from '../ui/checkbox'
 import { useState } from 'react'
 import clsx from 'clsx'
 import GoogleIcon from './GoogleIcon'
+import { WorkspaceUserRole } from '@/types/users'
 
 interface SignUpCardProps {
+  invitation?: {
+    id: string
+    workspace: string
+    role: WorkspaceUserRole
+  }
   onEmailSelect: () => void
 }
 
-const SignUpCard: React.FC<SignUpCardProps> = ({ onEmailSelect }) => {
+const SignUpCard: React.FC<SignUpCardProps> = ({ invitation, onEmailSelect }) => {
   const [checked, setChecked] = useState(false)
   const [animateCheck, setAnimateCheck] = useState(false)
 
