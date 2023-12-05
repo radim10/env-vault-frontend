@@ -195,6 +195,7 @@ export type EmailSignUpData = {
   name: string
   email: string
   password: string
+  invitation?: string
 }
 
 export async function emailSignUp(data: EmailSignUpData) {
