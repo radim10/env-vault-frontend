@@ -48,8 +48,12 @@ const EmailLoginCard: React.FC<Props> = ({ invitation, onCancel }) => {
     mutate: login,
   } = useEmailLogin({
     onSuccess: async (data) => {
-      await saveSession(data)
-      router.replace(`/workspace`)
+      await saveSession(data.session)
+      if (data?.workspaceId) {
+        router.replace(`/workspace/${data.workspaceId}/projects`)
+      } else {
+        router.replace(`/workspace`)
+      }
     },
   })
 
@@ -65,7 +69,7 @@ const EmailLoginCard: React.FC<Props> = ({ invitation, onCancel }) => {
 
     if (!passsValid) return
 
-    login({ email, password: password.value })
+    login({ email, password: password.value, invitation: invitation?.id })
   }
 
   if (error?.code === 'email_not_confirmed') {
