@@ -1,6 +1,7 @@
 import ProjectAccess from '@/components/projectAccess/ProjectAccess'
 import EnvironmentList from '@/components/projects/EnvironmentList'
 import ProjectSettings from '@/components/projects/ProjectSettings'
+import { validateServerSession } from '@/utils/auth/session'
 import { Metadata, ResolvingMetadata } from 'next'
 import { redirect } from 'next/navigation'
 
@@ -17,11 +18,13 @@ export function generateMetadata({ params }: any, parent: ResolvingMetadata): Me
   }
 }
 //
-export default function ProjectPage({
+export default async function ProjectPage({
   params,
 }: {
   params: { workspace: string; projectName: string; projectTab: string }
 }) {
+  await validateServerSession('/login')
+
   if (
     params.projectTab !== 'environments' &&
     params.projectTab !== 'access' &&

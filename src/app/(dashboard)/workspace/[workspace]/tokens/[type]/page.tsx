@@ -2,6 +2,7 @@ import CliTokens from '@/components/tokens/CliTokens'
 import EnvTokens from '@/components/tokens/EnvTokens'
 import WorkspaceTokensRoot from '@/components/tokens/WorkspaceTokens'
 import { Metadata, ResolvingMetadata } from 'next'
+import { validateServerSession } from '@/utils/auth/session'
 import { redirect } from 'next/navigation'
 
 export function generateMetadata({ params }: any, parent: ResolvingMetadata): Metadata {
@@ -13,7 +14,13 @@ export function generateMetadata({ params }: any, parent: ResolvingMetadata): Me
   }
 }
 
-export default function TokensPage({ params }: { params: { workspace: string; type: string } }) {
+export default async function TokensPage({
+  params,
+}: {
+  params: { workspace: string; type: string }
+}) {
+  await validateServerSession('/login')
+
   if (
     params.type !== 'cli' &&
     params.type !== 'environments' &&

@@ -1,6 +1,7 @@
 import { EnvSettings } from '@/components/environments/Settings/EnvSettings'
 import Access from '@/components/environments/access/Access'
 import Changelog from '@/components/environments/changelog/Changelog'
+import { validateServerSession } from '@/utils/auth/session'
 import { Metadata, ResolvingMetadata } from 'next'
 import { redirect } from 'next/navigation'
 
@@ -17,11 +18,13 @@ export function generateMetadata(
   }
 }
 
-export default function EnvTabePage({
+export default async function EnvTabePage({
   params,
 }: {
   params: { workspace: string; projectName: string; env: string; tab: string }
 }) {
+  await validateServerSession('/login')
+
   if (
     params.tab !== 'tokens' &&
     params.tab !== 'changelog' &&
