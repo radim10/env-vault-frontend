@@ -1,3 +1,4 @@
+import SignUp from '@/components/auth/SignUp'
 import { redirectIfServerSession } from '@/utils/auth/session'
 
 const SignUpPage = async () => {
