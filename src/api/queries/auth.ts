@@ -9,7 +9,7 @@ import {
 } from '../requests/auth'
 
 export const useGetGoogleUrl = (
-  ivnitationId: string | null,
+  ivnitationId?: string,
   opt?: UseQueryOptions<GetGoogleUrlResData, GetGoogleUrlError>
 ) =>
   useQuery<GetGoogleUrlResData, GetGoogleUrlError>(
@@ -19,7 +19,7 @@ export const useGetGoogleUrl = (
   )
 
 export const useGetGithubUrl = (
-  ivnitationId: string | null,
+  ivnitationId?: string,
   opt?: UseQueryOptions<GetGithubUrlResData, GetGithubUrlError>
 ) =>
   useQuery<GetGithubUrlResData, GetGithubUrlError>(

@@ -158,7 +158,7 @@ export type GetGoogleUrlResData = {
   url: string
 }
 
-export async function getGoogleUrl(invitationId: string | null) {
+export async function getGoogleUrl(invitationId?: string) {
   return await sendRequest<GetGoogleUrlResData>({
     method: 'GET',
     path: 'google',
@@ -175,7 +175,7 @@ export async function getGoogleUrl(invitationId: string | null) {
 export type GetGithubUrlError = GetGoogleUrlError
 export type GetGithubUrlResData = GetGoogleUrlResData
 
-export async function getGithubUrl(invitationId: string | null) {
+export async function getGithubUrl(invitationId?: string) {
   return await sendRequest<GetGithubUrlResData>({
     method: 'GET',
     basePath: 'auth',

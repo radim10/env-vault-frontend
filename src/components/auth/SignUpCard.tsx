@@ -24,20 +24,26 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ invitation, onEmailSelect }) =>
   const [checked, setChecked] = useState(false)
   const [animateCheck, setAnimateCheck] = useState(false)
 
-  const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGoogleUrl(null, {
-    enabled: false,
+  const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGoogleUrl(
+    invitation?.id,
+    {
+      enabled: false,
 
-    onSuccess: ({ url }) => {
-      window.location.replace(url)
-    },
-  })
+      onSuccess: ({ url }) => {
+        window.location.replace(url)
+      },
+    }
+  )
 
-  const { refetch: getGithubUrl, isRefetching: getGithubUrlLoading } = useGetGithubUrl(null, {
-    enabled: false,
-    onSuccess: ({ url }) => {
-      window.location.replace(url)
-    },
-  })
+  const { refetch: getGithubUrl, isRefetching: getGithubUrlLoading } = useGetGithubUrl(
+    invitation?.id,
+    {
+      enabled: false,
+      onSuccess: ({ url }) => {
+        window.location.replace(url)
+      },
+    }
+  )
 
   const handleButtonClick = (type: 'github' | 'google' | 'email') => {
     if (!checked) {

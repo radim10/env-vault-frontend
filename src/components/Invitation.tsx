@@ -26,42 +26,6 @@ interface InvitationProps {
 
 export const Invitation: React.FC<InvitationProps> = ({ type, id, workspace, role }) => {
   const [emailSelected, setEmailSelected] = useState(false)
-  const [checked, setChecked] = useState(false)
-  const [animateCheck, setAnimateCheck] = useState(false)
-
-  const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGoogleUrl(id, {
-    enabled: false,
-    onSuccess: ({ url }) => {
-      window.location.replace(url)
-    },
-  })
-
-  const { refetch: getGithubUrl, isRefetching: getGithubUrlLoading } = useGetGithubUrl(id, {
-    enabled: false,
-    onSuccess: ({ url }) => {
-      window.location.replace(url)
-    },
-  })
-
-  const handleButtonClick = (type: 'github' | 'google' | 'email') => {
-    if (!checked) {
-      setAnimateCheck(true)
-      setTimeout(() => {
-        setAnimateCheck(false)
-      }, 400)
-
-      return
-    }
-
-    if (type === 'github') {
-      getGithubUrl()
-    } else if (type === 'google') {
-      getGoogleLink()
-    } else if (type === 'email') {
-      // TODO:
-      // onEmailSelect()
-    }
-  }
 
   return (
     <div>
