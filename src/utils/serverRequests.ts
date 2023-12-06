@@ -68,7 +68,7 @@ export const handleGithubAuth = async (args: {
   console.log(res.status)
   console.log(res)
   if (!res.ok) return undefined
-  let body = (await res.json()) as { session: UserSession; workspaceId?: string }
+  let body = (await res.json()) as { session: UserSession; workspaceId: string | null }
   return body
 }
 
@@ -98,6 +98,6 @@ export const handleGoogleAuth = async (args: {
 
   console.log(res.status)
   if (!res.ok) return undefined
-  let body = (await res.json()) as { session: UserSession; workspaceId?: string }
+  let body = (await res.json()) as { session: UserSession; workspaceId: string | null }
   return body
 }
