@@ -38,3 +38,11 @@ export const validateServerSession = async (
   if (!session) redirect(redirectPath)
   return session
 }
+
+export const redirectIfServerSession = async (
+  redirectPath: string = '/workspace'
+): Promise<undefined> => {
+  const session = await getSession()
+
+  if (session) redirect(redirectPath)
+}
