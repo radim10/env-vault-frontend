@@ -3,9 +3,8 @@ import OauthError from '@/components/OAuthError'
 import { getOsAndBrowser } from '@/utils/getOsBrowser'
 import { headers } from 'next/headers'
 import { redirectIfServerSession } from '@/utils/auth/session'
-import { getDefaultWorkspace, handleGithubAuth } from '@/utils/serverRequests'
+import { handleGithubAuth } from '@/utils/serverRequests'
 import { extractUUIDv4 } from '@/utils/uuid'
-import { saveSession } from '@/app/actions'
 
 export default async function Page({
   searchParams: { code, state },
@@ -33,15 +32,13 @@ export default async function Page({
     return <OauthError />
   }
 
-  const workspaceData = res?.workspaceId
-    ? { id: res.workspaceId }
-    : await getDefaultWorkspace(res?.session?.accessToken)
+  const workspaceId = res?.workspaceId
 
-  if (workspaceData === undefined) {
+  if (workspaceId === undefined) {
     return <OauthError />
   }
 
   const session = res?.session
 
-  return <CookieAuth data={session} workspaceId={workspaceData?.id} />
+  return <CookieAuth data={session} workspaceId={workspaceId} />
 }
