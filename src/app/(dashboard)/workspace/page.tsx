@@ -4,7 +4,9 @@ import { redirect } from 'next/navigation'
 
 // TODO: check session -> refresh
 const getDefaultWorkspace = async (accessToken: string) => {
-  const res = await fetch(`http://localhost:8080/api/v1/me/default-workspace`, {
+  const apiUrl = process.env.API_URL
+
+  const res = await fetch(`${apiUrl}/me/default-workspace`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
