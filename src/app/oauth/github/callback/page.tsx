@@ -3,6 +3,7 @@ import { CookieAuth } from '@/components/CookieAuth'
 import OauthError from '@/components/OAuthError'
 import { getOsAndBrowser } from '@/utils/getOsBrowser'
 import { headers } from 'next/headers'
+import { redirectIfServerSession } from '@/utils/auth/session'
 
 async function handleGithubAuth(args: { code: string; metadata?: any; invitation?: string }) {
   const { code, invitation, metadata } = args
@@ -52,6 +53,8 @@ export default async function Page({
 }: {
   searchParams: { code: string; state: string }
 }) {
+  await redirectIfServerSession()
+
   // metadata
   const ipHeader = headers().get('x-forwarded-for')
   const ip = ipHeader?.startsWith('::ffff:') ? ipHeader.slice(7) : ipHeader

@@ -2,6 +2,7 @@ import { CookieAuth } from '@/components/CookieAuth'
 import OauthError from '@/components/OAuthError'
 import { UserSession } from '@/types/session'
 import { WorkspaceUserRole } from '@/types/users'
+import { redirectIfServerSession } from '@/utils/auth/session'
 import { getOsAndBrowser } from '@/utils/getOsBrowser'
 import { headers } from 'next/headers'
 
@@ -75,6 +76,8 @@ export default async function Page({
 }: {
   searchParams: { code: string; state: string }
 }) {
+  await redirectIfServerSession()
+
   // metadata
   const ipHeader = headers().get('x-forwarded-for')
   const ip = ipHeader?.startsWith('::ffff:') ? ipHeader.slice(7) : ipHeader

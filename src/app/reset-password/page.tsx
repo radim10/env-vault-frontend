@@ -1,5 +1,6 @@
-import ResetPasswordCard from '@/components/auth/ResetPasswordCard'
 import clsx from 'clsx'
+import ResetPasswordCard from '@/components/auth/ResetPasswordCard'
+import { redirectIfServerSession } from '@/utils/auth/session'
 import { redirect } from 'next/navigation'
 
 // NOTE: remove???
@@ -27,6 +28,8 @@ import { redirect } from 'next/navigation'
 // }
 
 const ResetPasswordPage = async ({ searchParams }: { searchParams: { token?: string } }) => {
+  await redirectIfServerSession()
+
   // const tokenValid = await validateToken(token)
   const token = searchParams?.token
 

@@ -8,7 +8,7 @@ export default async function WelcomePage() {
   const session = await getSession()
 
   if (!session) {
-    redirect('/workspace')
+    redirect('/login')
   }
 
   // TODO: check if already has default workspace

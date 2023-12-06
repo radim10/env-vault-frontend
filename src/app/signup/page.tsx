@@ -1,12 +1,8 @@
-import SignUp from '@/components/auth/SignUp'
-import { getSession } from '@/utils/auth/session'
+import { redirectIfServerSession } from '@/utils/auth/session'
 
 const SignUpPage = async () => {
-  const session = await getSession()
+  await redirectIfServerSession()
 
-  if (session) {
-    redirect('/workspace')
-  }
   return <SignUp />
 }
 

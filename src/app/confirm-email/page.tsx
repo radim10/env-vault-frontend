@@ -1,4 +1,5 @@
 import ConfirmEmail from '@/components/auth/ConfirmEmail'
+import { getSession, redirectIfServerSession } from '@/utils/auth/session'
 import { redirect } from 'next/navigation'
 
 const handleEmailConfirmation = async (token: string) => {
@@ -40,6 +41,8 @@ interface Props {
 }
 
 const ConfirmEmailPage: React.FC<Props> = async ({ searchParams }) => {
+  await redirectIfServerSession()
+
   if (!searchParams?.token) {
     redirect('/login')
   }

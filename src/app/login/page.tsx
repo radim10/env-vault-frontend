@@ -1,13 +1,8 @@
 import Login from '@/components/auth/Login'
-import { getSession } from '@/utils/auth/session'
-import { redirect } from 'next/navigation'
+import { redirectIfServerSession } from '@/utils/auth/session'
 
 const LoginPage = async () => {
-  const session = await getSession()
-
-  if (session) {
-    redirect('/workspace')
-  }
+  await redirectIfServerSession()
 
   return <Login />
 }

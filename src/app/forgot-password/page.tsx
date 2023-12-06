@@ -2,8 +2,11 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import clsx from 'clsx'
 import ForgotPasswordCard from '@/components/auth/ForgotPasswordCard'
+import { redirectIfServerSession } from '@/utils/auth/session'
 
-const ForgotPasswordPage = (props: {}) => {
+const ForgotPasswordPage = async (props: {}) => {
+  await redirectIfServerSession()
+
   return (
     <div
       className={clsx(['flex justify-center w-full bg-red-400X h-screen items-center'], {

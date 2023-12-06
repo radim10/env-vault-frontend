@@ -1,6 +1,6 @@
 import { Invitation } from '@/components/Invitation'
 import { WorkspaceUserRole } from '@/types/users'
-import { getSession } from '@/utils/auth/session'
+import { redirectIfServerSession } from '@/utils/auth/session'
 import { redirect } from 'next/navigation'
 
 async function getInvitation(id: string) {
@@ -16,9 +16,9 @@ async function getInvitation(id: string) {
 }
 
 const InvitaionPage = async ({ params }: { params: { id: string; method: string } }) => {
+  await redirectIfServerSession()
+
   const method = params?.method
-  const session = await getSession()
-  if (session) redirect('/workspace')
 
   if (method !== 'login' && method !== 'signup') {
     redirect(`/invitation/${params.id}/login`)
