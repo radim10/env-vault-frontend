@@ -106,10 +106,13 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ invitation, onEmailSelect }) =>
                 size={'default'}
                 variant="outline"
                 type="button"
-                className="gap-3"
                 disabled={getGithubUrlLoading || getGoogleLinkLoading}
                 loading={getGithubUrlLoading}
                 onClick={() => handleButtonClick('github')}
+                className={clsx({
+                  'gap-3': !getGithubUrlLoading,
+                  'gap-1': getGithubUrlLoading,
+                })}
               >
                 {!getGithubUrlLoading && <Icons.github className="h-4 w-4" />}
                 <Icons.github className="h-4 w-4 opacity-70" />
@@ -123,7 +126,10 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ invitation, onEmailSelect }) =>
                 variant="outline"
                 size={'default'}
                 type="button"
-                className="gap-3"
+                className={clsx({
+                  'gap-3': !getGoogleLinkLoading,
+                  'gap-1': getGoogleLinkLoading,
+                })}
               >
                 {!getGoogleLinkLoading && <GoogleIcon />}
                 <span>Continue with Google</span>
