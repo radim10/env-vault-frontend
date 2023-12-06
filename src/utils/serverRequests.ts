@@ -1,4 +1,5 @@
 import { UserSession } from '@/types/session'
+import { WorkspaceUserRole } from '@/types/users'
 
 const getUrl = (url: string) => {
   const apiUrl = process.env.API_URL
