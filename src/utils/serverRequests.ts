@@ -8,7 +8,9 @@ const getUrl = (url: string) => {
 
 // TODO: check session expiration -> refresh
 export const getDefaultWorkspace = async (accessToken: string) => {
-  const res = await fetch(`http://localhost:8080/api/v1/me/default-workspace`, {
+  const url = getUrl('/me/default-workspace')
+
+  const res = await fetch(url, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -22,6 +24,20 @@ export const getDefaultWorkspace = async (accessToken: string) => {
   let body = (await res.json()) as { id: string | null }
 
   return body
+}
+
+export const getInvitation = async (id: string) => {
+  const url = getUrl(`/invitations/${id}`)
+
+  const res = await fetch(url, {
+    method: 'GET',
+    cache: 'no-store',
+  })
+
+  console.log(res.status)
+  if (!res.ok) return undefined
+  let body = await res.json()
+  return body as { workspace: string; role: WorkspaceUserRole }
 }
 
 export const handleGithubAuth = async (args: {

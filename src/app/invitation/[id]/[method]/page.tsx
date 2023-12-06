@@ -1,19 +1,7 @@
 import { Invitation } from '@/components/Invitation'
-import { WorkspaceUserRole } from '@/types/users'
 import { redirectIfServerSession } from '@/utils/auth/session'
+import { getInvitation } from '@/utils/serverRequests'
 import { redirect } from 'next/navigation'
-
-async function getInvitation(id: string) {
-  const res = await fetch(`http://localhost:8080/api/v1/invitations/${id}`, {
-    method: 'GET',
-    cache: 'no-store',
-  })
-
-  console.log(res.status)
-  if (!res.ok) return undefined
-  let body = await res.json()
-  return body as { workspace: string; role: WorkspaceUserRole }
-}
 
 const InvitaionPage = async ({ params }: { params: { id: string; method: string } }) => {
   await redirectIfServerSession()
