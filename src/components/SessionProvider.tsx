@@ -6,8 +6,8 @@ import useCurrentUserStore from '@/stores/user'
 import { UserSession } from '@/types/session'
 import { produce } from 'immer'
 import { useParams, useRouter } from 'next/navigation'
-import { createContext, useState } from 'react'
 import { useMount } from 'react-use'
+import PageLoader from './PageLoader'
 
 // interface Props {
 //   session: UserSession | null
@@ -21,8 +21,6 @@ interface Props {
   // }
   children: React.ReactNode
 }
-
-export const AuthContext = createContext<{ email: string; name: string } | null>(null)
 
 const AuthProvider: React.FC<Props> = ({ session, children }) => {
   const params = useParams()
@@ -82,9 +80,7 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
   if (isLoading) {
     return (
       <>
-        <div className="h-screen w-screen flex justify-center items-center">
-          <div className="w-8 h-8 rounded-full animate-spin border-4 border border-solid border-primary border-t-transparent"></div>
-        </div>
+        <PageLoader />
       </>
     )
   }
