@@ -114,8 +114,7 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ invitation, onEmailSelect }) =>
                   'gap-1': getGithubUrlLoading,
                 })}
               >
-                {!getGithubUrlLoading && <Icons.github className="h-4 w-4" />}
-                <Icons.github className="h-4 w-4 opacity-70" />
+                {!getGithubUrlLoading && <Icons.github className="h-4 w-4 opacity-70" />}
                 Continue with Github
               </Button>
 
