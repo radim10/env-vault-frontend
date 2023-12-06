@@ -56,6 +56,9 @@ const Header = () => {
                 <>
                   <DropdownMenuItem
                     onClick={() => {
+                      if (index === 0) {
+                        router.push(`personal-settings/general`)
+                      }
                       if (index === 1) {
                         logout({ id: true })
                       }
