@@ -24,7 +24,7 @@ export const CookieAuth: React.FC<Props> = ({ data, workspaceId }) => {
   })
 
   return (
-    <div className="h-screen w-screen flex justify-center items-center">
+    <div className="h-screen w-screen flex justify-center items-center overflow-hidden">
       <div className="w-8 h-8 rounded-full animate-spin border-4 border border-solid border-primary border-t-transparent"></div>
     </div>
   )
