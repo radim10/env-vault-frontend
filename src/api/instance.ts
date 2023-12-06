@@ -33,14 +33,17 @@ apiClient.interceptors.response.use(
   }
 )
 
-const refreshSessionRequest = async (currentSession: UserSession): Promise<string | undefined> => {
+const refreshSessionRequest = async (
+  baseUrl: string,
+  currentSession: UserSession
+): Promise<string | undefined> => {
   try {
     const { data } = await axios.post<{
       accessToken: string
       accessTokenExpiresAt: number
       refreshToken: string
       refreshTokenExpiresAt: number
-    }>('http://localhost:8080/api/v1/auth/refresh', {
+    }>(`${baseUrl}/auth/refresh`, {
       refreshToken: currentSession?.refreshToken ?? undefined,
     })
     if (data?.accessToken) {
@@ -96,7 +99,7 @@ export default async function sendRequest<ResponseType>(config: {
     dayjs.unix(session?.accessTokenExpiresAt).diff(dayjs(), 's') < 5
   ) {
     console.log('refreshing session')
-    const newAccessToken = await refreshSessionRequest(session)
+    const newAccessToken = await refreshSessionRequest(baseURL, session)
     if (newAccessToken) accessToken = newAccessToken
   }
 
