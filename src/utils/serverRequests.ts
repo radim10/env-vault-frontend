@@ -101,3 +101,37 @@ export const handleGoogleAuth = async (args: {
   let body = (await res.json()) as { session: UserSession; workspaceId: string | null }
   return body
 }
+
+export const handleEmailConfirmation = async (token: string) => {
+  const payload = {
+    token,
+  }
+
+  const url = getUrl('/auth/email/confirm')
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    })
+
+    const status = res.status
+    console.log(status)
+
+    if (status === 204) {
+      return { ok: true }
+    } else if (status === 400) {
+      let body = (await res.json()) as {
+        error: { code: 'invalid_token' | 'token_expired' | 'email_already_confirmed' }
+      }
+
+      return { ok: false, errorCode: body?.error?.code }
+    } else return { ok: false }
+  } catch (e) {
+    return { ok: false }
+  }
+}
