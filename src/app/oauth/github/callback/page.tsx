@@ -5,6 +5,8 @@ import { headers } from 'next/headers'
 import { redirectIfServerSession } from '@/utils/auth/session'
 import { getDefaultWorkspace, handleGithubAuth } from '@/utils/serverRequests'
 import { extractUUIDv4 } from '@/utils/uuid'
+import { saveSession } from '@/app/actions'
+import { redirect } from 'next/navigation'
 
 export default async function Page({
   searchParams: { code, state },
@@ -41,6 +43,14 @@ export default async function Page({
   }
 
   const session = res?.session
+  await saveSession(session)
 
-  return <CookieAuth data={session} workspaceId={workspaceData?.id} />
+  if (workspaceData?.id) {
+    redirect(`/workspace/${workspaceData.id}/projects`)
+  } else {
+    redirect(`/welcome`)
+  }
+
+  return <></>
+  // return <CookieAuth data={session} workspaceId={workspaceData?.id} />
 }
