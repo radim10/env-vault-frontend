@@ -19,7 +19,7 @@ interface Props {
 }
 
 const LoginCard: React.FC<Props> = ({ invitation, onEmailSelect }) => {
-  const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGoogleUrl(
+  const { refetch: getGoogleLink, isFetching: getGoogleLinkLoading } = useGetGoogleUrl(
     invitation?.id,
     {
       enabled: false,
@@ -29,7 +29,7 @@ const LoginCard: React.FC<Props> = ({ invitation, onEmailSelect }) => {
     }
   )
 
-  const { refetch: getGithubUrl, isRefetching: getGithubUrlLoading } = useGetGithubUrl(
+  const { refetch: getGithubUrl, isFetching: getGithubUrlLoading } = useGetGithubUrl(
     invitation?.id,
     {
       enabled: false,
@@ -69,7 +69,7 @@ const LoginCard: React.FC<Props> = ({ invitation, onEmailSelect }) => {
                 loading={getGithubUrlLoading}
                 onClick={() => getGithubUrl()}
               >
-                <Icons.github className="h-4 w-4" />
+                {!getGithubUrlLoading && <Icons.github className="h-4 w-4" />}
                 Continue with Github
               </Button>
 
@@ -82,7 +82,7 @@ const LoginCard: React.FC<Props> = ({ invitation, onEmailSelect }) => {
                 type="button"
                 className="gap-3"
               >
-                <GoogleIcon />
+                {!getGoogleLinkLoading && <GoogleIcon />}
                 Continue with Google
               </Button>
             </div>

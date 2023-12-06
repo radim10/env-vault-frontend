@@ -24,7 +24,7 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ invitation, onEmailSelect }) =>
   const [checked, setChecked] = useState(false)
   const [animateCheck, setAnimateCheck] = useState(false)
 
-  const { refetch: getGoogleLink, isRefetching: getGoogleLinkLoading } = useGetGoogleUrl(
+  const { refetch: getGoogleLink, isFetching: getGoogleLinkLoading } = useGetGoogleUrl(
     invitation?.id,
     {
       enabled: false,
@@ -35,7 +35,7 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ invitation, onEmailSelect }) =>
     }
   )
 
-  const { refetch: getGithubUrl, isRefetching: getGithubUrlLoading } = useGetGithubUrl(
+  const { refetch: getGithubUrl, isFetching: getGithubUrlLoading } = useGetGithubUrl(
     invitation?.id,
     {
       enabled: false,
@@ -111,6 +111,7 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ invitation, onEmailSelect }) =>
                 loading={getGithubUrlLoading}
                 onClick={() => handleButtonClick('github')}
               >
+                {!getGithubUrlLoading && <Icons.github className="h-4 w-4" />}
                 <Icons.github className="h-4 w-4 opacity-70" />
                 Continue with Github
               </Button>
@@ -124,7 +125,7 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ invitation, onEmailSelect }) =>
                 type="button"
                 className="gap-3"
               >
-                <GoogleIcon />
+                {!getGoogleLinkLoading && <GoogleIcon />}
                 <span>Continue with Google</span>
               </Button>
             </div>
