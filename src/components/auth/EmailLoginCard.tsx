@@ -49,11 +49,20 @@ const EmailLoginCard: React.FC<Props> = ({ invitation, onCancel }) => {
   } = useEmailLogin({
     onSuccess: async (data) => {
       await saveSession(data.session)
-      if (data?.workspaceId) {
-        router.replace(`/workspace/${data.workspaceId}/projects`)
+      const workspaceId = data?.workspaceId
+
+      if (!workspaceId) {
+        router.replace(`/welcome`)
       } else {
-        router.replace(`/workspace`)
+        router.replace(`/workspace/${data.workspaceId}/projects`)
       }
+
+      //
+      //   if (data?.workspaceId !== undefined) {
+      //     router.replace(`/workspace/${data.workspaceId}/projects`)
+      //   } else {
+      //     router.replace(`/workspace`)
+      //   }
     },
   })
 

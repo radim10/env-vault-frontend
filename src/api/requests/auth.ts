@@ -111,7 +111,7 @@ export type EmailLoginError =
   | APIError<EmailLoginErrorCode>
   | APIError<'email_not_confirmed', { remainingResends?: number } | undefined>
 
-export type EmailLoginResData = { session: UserSession; workspaceId?: string }
+export type EmailLoginResData = { session: UserSession; workspaceId: string | null }
 
 // export function isEmailNotConfirmedError(
 //   obj: any
