@@ -54,7 +54,7 @@ const EmailLoginCard: React.FC<Props> = ({ invitation, onCancel }) => {
       if (!workspaceId) {
         router.replace(`/welcome`)
       } else {
-        router.replace(`/workspace/${data.workspaceId}/projects`)
+        router.replace(`/workspace/${workspaceId}/projects`)
       }
 
       //
