@@ -42,7 +42,6 @@ export default async function Page({
   }
 
   const session = res?.session
-  await saveSession(session)
 
   return <CookieAuth data={session} workspaceId={workspaceData?.id} />
 }
