@@ -2,20 +2,15 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Separator } from './ui/separator'
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
-import UserRoleBadge from './users/UserRoleBadge'
 import { WorkspaceUserRole } from '@/types/users'
-import { Card, CardContent } from '@/components/ui/card'
-import { useGetGithubUrl, useGetGoogleUrl } from '@/api/queries/auth'
 import clsx from 'clsx'
-import { Checkbox } from './ui/checkbox'
 import EmailSignUp from './auth/EmailSignUp'
-import GoogleIcon from './auth/GoogleIcon'
 import SignUpCard from './auth/SignUpCard'
 import LoginCard from './auth/LoginCard'
 import EmailLoginCard from './auth/EmailLoginCard'
+import OauthRedirectLoader from './OauthRedirectLoader'
 
 interface InvitationProps {
   type: 'login' | 'signup'
@@ -26,6 +21,18 @@ interface InvitationProps {
 
 export const Invitation: React.FC<InvitationProps> = ({ type, id, workspace, role }) => {
   const [emailSelected, setEmailSelected] = useState(false)
+  const [redirecting, setRedirecting] = useState<'google' | 'github'>()
+
+  const handleRedirect = (args: { url: string; provider: 'google' | 'github' }) => {
+    const { url, provider } = args
+
+    window.location.replace(url)
+    setRedirecting(provider)
+  }
+
+  if (redirecting !== undefined) {
+    return <OauthRedirectLoader provider="github" />
+  }
 
   return (
     <div>
@@ -93,6 +100,7 @@ export const Invitation: React.FC<InvitationProps> = ({ type, id, workspace, rol
               )}
               {!emailSelected && (
                 <LoginCard
+                  onRedirect={handleRedirect}
                   invitation={{ id, workspace, role }}
                   onEmailSelect={() => setEmailSelected(true)}
                 />
@@ -109,6 +117,7 @@ export const Invitation: React.FC<InvitationProps> = ({ type, id, workspace, rol
                 <SignUpCard
                   invitation={{ id, workspace, role }}
                   onEmailSelect={() => setEmailSelected(true)}
+                  onRedirect={handleRedirect}
                 />
               )}
             </>
