@@ -5,6 +5,7 @@ import { headers } from 'next/headers'
 import { redirectIfServerSession } from '@/utils/auth/session'
 import { handleGithubAuth } from '@/utils/serverRequests'
 import { extractUUIDv4 } from '@/utils/uuid'
+import { UserSession } from '@/types/session'
 
 export default async function Page({
   searchParams: { code, state },
@@ -28,17 +29,13 @@ export default async function Page({
     metadata: { ip, os, browser },
   })
 
-  if (!res) {
-    return <OauthError />
+  if (res?.ok === false) {
+    return <OauthError errorCode={res?.errorCode} />
   }
 
-  const workspaceId = res?.workspaceId
-
-  if (workspaceId === undefined) {
-    return <OauthError />
-  }
-
-  const session = res?.session
+  const data = res?.data
+  const workspaceId = data?.workspaceId as string
+  const session = data?.session as UserSession
 
   return <CookieAuth data={session} workspaceId={workspaceId} />
 }

@@ -1,5 +1,6 @@
 import { CookieAuth } from '@/components/CookieAuth'
 import OauthError from '@/components/OAuthError'
+import { UserSession } from '@/types/session'
 import { redirectIfServerSession } from '@/utils/auth/session'
 import { getOsAndBrowser } from '@/utils/getOsBrowser'
 import { handleGoogleAuth } from '@/utils/serverRequests'
@@ -29,17 +30,15 @@ export default async function Page({
     metadata: { ip, os, browser },
   })
 
-  if (!res) {
-    return <OauthError />
+  console.log(res)
+
+  if (res?.ok === false) {
+    return <OauthError errorCode={res?.errorCode} />
   }
 
-  const workspaceId = res?.workspaceId
-
-  if (workspaceId === undefined) {
-    return <OauthError />
-  }
-
-  const session = res?.session
+  const data = res?.data
+  const workspaceId = data?.workspaceId as string
+  const session = data?.session as UserSession
 
   return <CookieAuth data={session} workspaceId={workspaceId} />
 }
