@@ -11,34 +11,44 @@ const getUrl = (url: string) => {
 export const getDefaultWorkspace = async (accessToken: string) => {
   const url = getUrl('/me/default-workspace')
 
-  const res = await fetch(url, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    cache: 'no-store',
-  })
+  try {
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      cache: 'no-store',
+    })
 
-  console.log(res.status)
-  if (!res.ok) return undefined
-  let body = (await res.json()) as { id: string | null }
+    console.log(res.status)
+    if (!res.ok) return undefined
+    let body = (await res.json()) as { id: string | null }
 
-  return body
+    return body
+  } catch (err) {
+    console.log(err)
+    return undefined
+  }
 }
 
 export const getInvitation = async (id: string) => {
   const url = getUrl(`/invitations/${id}`)
 
-  const res = await fetch(url, {
-    method: 'GET',
-    cache: 'no-store',
-  })
+  try {
+    const res = await fetch(url, {
+      method: 'GET',
+      cache: 'no-store',
+    })
 
-  console.log(res.status)
-  if (!res.ok) return undefined
-  let body = await res.json()
-  return body as { workspace: string; role: WorkspaceUserRole }
+    console.log(res.status)
+    if (!res.ok) return undefined
+    let body = await res.json()
+    return body as { workspace: string; role: WorkspaceUserRole }
+  } catch (err) {
+    console.log(err)
+    return undefined
+  }
 }
 
 export const handleGithubAuth = async (args: {
@@ -56,20 +66,25 @@ export const handleGithubAuth = async (args: {
 
   const url = getUrl('/auth/github')
 
-  const res = await fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(payload),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    cache: 'no-store',
-  })
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    })
 
-  console.log(res.status)
-  console.log(res)
-  if (!res.ok) return undefined
-  let body = (await res.json()) as { session: UserSession; workspaceId: string | null }
-  return body
+    console.log(res.status)
+    console.log(res)
+    if (!res.ok) return undefined
+    let body = (await res.json()) as { session: UserSession; workspaceId: string | null }
+    return body
+  } catch (err) {
+    console.log(err)
+    return undefined
+  }
 }
 
 export const handleGoogleAuth = async (args: {
@@ -87,19 +102,24 @@ export const handleGoogleAuth = async (args: {
 
   const url = getUrl('/auth/google')
 
-  const res = await fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(payload),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    cache: 'no-store',
-  })
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    })
 
-  console.log(res.status)
-  if (!res.ok) return undefined
-  let body = (await res.json()) as { session: UserSession; workspaceId: string | null }
-  return body
+    console.log(res.status)
+    if (!res.ok) return undefined
+    let body = (await res.json()) as { session: UserSession; workspaceId: string | null }
+    return body
+  } catch (err) {
+    console.log(err)
+    return undefined
+  }
 }
 
 export const handleEmailConfirmation = async (token: string) => {
