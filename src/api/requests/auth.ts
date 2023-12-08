@@ -21,18 +21,21 @@ type ResendEmailConfirmationErrorCode =
   | 'email_already_confirmed'
   | 'max_resend_count_reached'
 
+type LogoutErrorCode = 'invalid_refresh_token' | 'refresh_token_expired' | 'session_not_found'
+
 export type AuthError<
   T extends
     | AuthErrorCode
     | EmailLoginErrorCode
     | ResetPasswordErrorCode
     | EmailSignUpErrorCode
+    | LogoutErrorCode
     | void,
   D extends Record<string, any> | undefined = undefined
 > = APIError<T, D>
 
 // logout
-export type LogoutError = AuthError<any>
+export type LogoutError = AuthError<LogoutErrorCode>
 export type LogoutResData = undefined
 
 export const emailLoginErrorMsgFromCode = (code: string) => {
