@@ -187,7 +187,7 @@ const EmailLoginCard: React.FC<Props> = ({ invitation, onCancel }) => {
               </div>
             )}
             <Button
-              size={'sm'}
+              size={'default'}
               type="submit"
               loading={isLoading}
               disabled={!emailRegex.test(email) || password?.value?.length === 0}

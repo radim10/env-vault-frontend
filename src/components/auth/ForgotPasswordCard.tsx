@@ -54,7 +54,7 @@ const ForgotPasswordCard = ({}) => {
 
             <Button
               variant="default"
-              size={'sm'}
+              size={'default'}
               type="button"
               loading={isLoading}
               disabled={!emailRegex.test(email)}
