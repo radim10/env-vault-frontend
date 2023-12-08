@@ -10,21 +10,22 @@ import clsx from 'clsx'
 import InvitationHeader from './InvitationHeader'
 
 interface Props {
-  onEmailSelect: () => void
   invitation?: {
     id: string
     workspace: string
     role: WorkspaceUserRole
   }
+  onEmailSelect: () => void
+  onRedirect: (args: { url: string; provider: 'google' | 'github' }) => void
 }
 
-const LoginCard: React.FC<Props> = ({ invitation, onEmailSelect }) => {
+const LoginCard: React.FC<Props> = ({ invitation, onEmailSelect, onRedirect }) => {
   const { refetch: getGoogleLink, isFetching: getGoogleLinkLoading } = useGetGoogleUrl(
     invitation?.id,
     {
       enabled: false,
       onSuccess: ({ url }) => {
-        window.location.replace(url)
+        onRedirect({ url, provider: 'google' })
       },
     }
   )
@@ -34,7 +35,7 @@ const LoginCard: React.FC<Props> = ({ invitation, onEmailSelect }) => {
     {
       enabled: false,
       onSuccess: ({ url }) => {
-        window.location.replace(url)
+        onRedirect({ url, provider: 'github' })
       },
     }
   )

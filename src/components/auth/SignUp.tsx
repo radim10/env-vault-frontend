@@ -2,16 +2,27 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import LoginCard from '@/components/auth/LoginCard'
 import { useState } from 'react'
-import EmailLoginCard from '@/components/auth/EmailLoginCard'
 import clsx from 'clsx'
 import AuthFooter from '@/components/auth/Footer'
 import SignUpCard from './SignUpCard'
 import EmailSignUp from './EmailSignUp'
+import OauthRedirectLoader from '../OauthRedirectLoader'
 
 const SignUp = () => {
   const [emailSignUp, setEmailSignUp] = useState<boolean>(false)
+  const [redirecting, setRedirecting] = useState<'google' | 'github'>()
+
+  const handleRedirect = (args: { url: string; provider: 'google' | 'github' }) => {
+    const { url, provider } = args
+
+    window.location.replace(url)
+    setRedirecting(provider)
+  }
+
+  if (redirecting !== undefined) {
+    return <OauthRedirectLoader provider="github" />
+  }
 
   return (
     <div
@@ -42,7 +53,7 @@ const SignUp = () => {
             </div>
             {/* // FORM */}
             <div>
-              <SignUpCard onEmailSelect={() => setEmailSignUp(true)} />
+              <SignUpCard onEmailSelect={() => setEmailSignUp(true)} onRedirect={handleRedirect} />
             </div>
           </>
         )}

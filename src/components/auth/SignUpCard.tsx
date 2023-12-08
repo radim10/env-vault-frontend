@@ -17,10 +17,11 @@ interface SignUpCardProps {
     workspace: string
     role: WorkspaceUserRole
   }
+  onRedirect: (args: { url: string; provider: 'google' | 'github' }) => void
   onEmailSelect: () => void
 }
 
-const SignUpCard: React.FC<SignUpCardProps> = ({ invitation, onEmailSelect }) => {
+const SignUpCard: React.FC<SignUpCardProps> = ({ invitation, onEmailSelect, onRedirect }) => {
   const [checked, setChecked] = useState(false)
   const [animateCheck, setAnimateCheck] = useState(false)
 
@@ -30,7 +31,7 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ invitation, onEmailSelect }) =>
       enabled: false,
 
       onSuccess: ({ url }) => {
-        window.location.replace(url)
+        onRedirect({ url, provider: 'google' })
       },
     }
   )
@@ -40,7 +41,7 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ invitation, onEmailSelect }) =>
     {
       enabled: false,
       onSuccess: ({ url }) => {
-        window.location.replace(url)
+        onRedirect({ url, provider: 'github' })
       },
     }
   )

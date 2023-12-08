@@ -7,9 +7,22 @@ import { useState } from 'react'
 import EmailLoginCard from '@/components/auth/EmailLoginCard'
 import clsx from 'clsx'
 import AuthFooter from '@/components/auth/Footer'
+import OauthRedirectLoader from '../OauthRedirectLoader'
 
 const Login = () => {
   const [emailLogin, setEmailLogin] = useState<boolean>(false)
+  const [redirecting, setRedirecting] = useState<'google' | 'github'>()
+
+  const handleRedirect = (args: { url: string; provider: 'google' | 'github' }) => {
+    const { url, provider } = args
+
+    window.location.replace(url)
+    setRedirecting(provider)
+  }
+
+  if (redirecting !== undefined) {
+    return <OauthRedirectLoader provider={redirecting} />
+  }
 
   return (
     <div
@@ -37,7 +50,7 @@ const Login = () => {
             </div>
             {/* // FORM */}
             <div>
-              <LoginCard onEmailSelect={() => setEmailLogin(true)} />
+              <LoginCard onEmailSelect={() => setEmailLogin(true)} onRedirect={handleRedirect} />
             </div>
           </>
         )}
