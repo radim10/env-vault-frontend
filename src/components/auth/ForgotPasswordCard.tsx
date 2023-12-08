@@ -25,14 +25,16 @@ const ForgotPasswordCard = ({}) => {
               Enter your email and we will send you a link to reset your password
             </div>
 
-            <Input
-              type={'email'}
-              className="pr-10"
-              placeholder="Enter your email"
-              value={email}
-              disabled={isLoading}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+            {status !== 'success' && (
+              <Input
+                type={'email'}
+                className="pr-10"
+                placeholder="Enter your email"
+                value={email}
+                disabled={isLoading}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            )}
 
             {error && (
               <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mt-0">
@@ -43,7 +45,7 @@ const ForgotPasswordCard = ({}) => {
             )}
             {status === 'success' && (
               <>
-                <div className="text-green-600 text-[0.92rem] flex items-start gap-2 mt-0">
+                <div className="text-green-600 text-[0.92rem] flex items-start gap-2 mt-0 pb-2">
                   <div className="w-[5%] mt-1">
                     <Icons.checkCircle2 className="h-4 w-4" />
                   </div>
@@ -52,19 +54,21 @@ const ForgotPasswordCard = ({}) => {
               </>
             )}
 
-            <Button
-              variant="default"
-              size={'default'}
-              type="button"
-              loading={isLoading}
-              disabled={!emailRegex.test(email)}
-              onClick={() => {
-                if (!emailRegex.test(email)) return
-                mutate({ email })
-              }}
-            >
-              Reset password
-            </Button>
+            {status !== 'success' && (
+              <Button
+                variant="default"
+                size={'default'}
+                type="button"
+                loading={isLoading}
+                disabled={!emailRegex.test(email)}
+                onClick={() => {
+                  if (!emailRegex.test(email)) return
+                  mutate({ email })
+                }}
+              >
+                Reset password
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
