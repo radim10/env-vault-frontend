@@ -51,11 +51,22 @@ export const getInvitation = async (id: string) => {
   }
 }
 
+export type OauthErrorCode = 'invalid_code' | 'unknown' | 'user_banned'
+
+type GithubSignInResponse = {
+  ok: boolean
+  errorCode?: OauthErrorCode
+  data?: {
+    session: UserSession
+    workspaceId: string | null
+  }
+}
+
 export const handleGithubAuth = async (args: {
   code: string
   metadata?: any
   invitation?: string
-}) => {
+}): Promise<GithubSignInResponse> => {
   const { code, invitation, metadata } = args
 
   const payload = {
@@ -67,7 +78,7 @@ export const handleGithubAuth = async (args: {
   const url = getUrl('/auth/github')
 
   try {
-    const res = await fetch(url, {
+    const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(payload),
       headers: {
@@ -75,23 +86,42 @@ export const handleGithubAuth = async (args: {
       },
       cache: 'no-store',
     })
+    const { ok, status } = response
+    console.log(ok, status)
+    console.log(status)
 
-    console.log(res.status)
-    console.log(res)
-    if (!res.ok) return undefined
-    let body = (await res.json()) as { session: UserSession; workspaceId: string | null }
-    return body
+    if (!ok) {
+      if (status === 400) {
+        const errorBody = await response.json().catch(() => ({}))
+        console.log('Error Body:', errorBody)
+
+        if (errorBody?.error?.code) {
+          const errorCode = errorBody.error.code as OauthErrorCode
+          console.log('ErrorCode:', errorCode)
+          return { ok: false, errorCode }
+        }
+      }
+
+      console.error('Request failed:', response)
+      return { ok: false }
+    }
+
+    let body = (await response.json()) as { session: UserSession; workspaceId: string | null }
+
+    return { ok: true, data: body }
   } catch (err) {
     console.log(err)
-    return undefined
+    return { ok: false }
   }
 }
+
+type GoogleSignInResponse = GithubSignInResponse
 
 export const handleGoogleAuth = async (args: {
   code: string
   metadata?: any
   invitation?: string
-}) => {
+}): Promise<GoogleSignInResponse> => {
   const { code, invitation, metadata } = args
 
   const payload = {
@@ -103,7 +133,7 @@ export const handleGoogleAuth = async (args: {
   const url = getUrl('/auth/google')
 
   try {
-    const res = await fetch(url, {
+    const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(payload),
       headers: {
@@ -111,14 +141,32 @@ export const handleGoogleAuth = async (args: {
       },
       cache: 'no-store',
     })
+    const { ok, status } = response
+    console.log(ok, status)
+    console.log(status)
 
-    console.log(res.status)
-    if (!res.ok) return undefined
-    let body = (await res.json()) as { session: UserSession; workspaceId: string | null }
-    return body
+    if (!ok) {
+      if (status === 400) {
+        const errorBody = await response.json().catch(() => ({}))
+        console.log('Error Body:', errorBody)
+
+        if (errorBody?.error?.code) {
+          const errorCode = errorBody.error.code as OauthErrorCode
+          console.log('ErrorCode:', errorCode)
+          return { ok: false, errorCode }
+        }
+      }
+
+      console.error('Request failed:', response)
+      return { ok: false }
+    }
+
+    let data = (await response.json()) as { session: UserSession; workspaceId: string | null }
+
+    return { ok: true, data: data }
   } catch (err) {
-    console.log(err)
-    return undefined
+    console.log('Error: ', err)
+    return { ok: false }
   }
 }
 
