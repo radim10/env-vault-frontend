@@ -3,8 +3,6 @@ import { validateServerSession } from '@/utils/auth/session'
 import { getDefaultWorkspace } from '@/utils/serverRequests'
 import { redirect } from 'next/navigation'
 
-// TODO: handle redirect + delete cookies if revoked access token
-// TODO: check session expiration -> refresh
 const WorkspacePage = async () => {
   const session = (await validateServerSession('/login')) as UserSession
   const workspaceData = await getDefaultWorkspace(session?.accessToken)
