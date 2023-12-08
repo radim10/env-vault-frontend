@@ -4,6 +4,7 @@ import type { NextRequest } from 'next/server'
 import { UserSession } from './types/session'
 import dayjs from 'dayjs'
 import { createSession } from './utils/auth/session'
+import { getUrl } from './utils/serverRequests'
 
 // TODO: handle error
 export async function middleware(request: NextRequest) {
@@ -23,11 +24,12 @@ export async function middleware(request: NextRequest) {
     session?.accessTokenExpiresAt &&
     dayjs.unix(session?.accessTokenExpiresAt).diff(dayjs(), 's') < 5 &&
     session?.refreshToken &&
-    dayjs.unix(session?.accessTokenExpiresAt).diff(dayjs(), 's') < 5
+    dayjs.unix(session?.refreshTokenExpiresAt).diff(dayjs(), 's') > 5
   ) {
     console.log('refreshing session fron middleware')
+    const url = getUrl('/auth/refresh')
 
-    const res = await fetch('http://localhost:8080/api/v1/auth/refresh', {
+    const res = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
