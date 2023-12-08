@@ -34,7 +34,7 @@ apiClient.interceptors.response.use(
 )
 
 const refreshSessionRequest = async (
-  baseUrl: string,
+  apiUrl: string,
   currentSession: UserSession
 ): Promise<string | undefined> => {
   try {
@@ -43,7 +43,7 @@ const refreshSessionRequest = async (
       accessTokenExpiresAt: number
       refreshToken: string
       refreshTokenExpiresAt: number
-    }>(`${baseUrl}/auth/refresh`, {
+    }>(`${apiUrl}/auth/refresh`, {
       refreshToken: currentSession?.refreshToken ?? undefined,
     })
     if (data?.accessToken) {
@@ -85,7 +85,8 @@ export default async function sendRequest<ResponseType>(config: {
 }): Promise<ResponseType> {
   // const baseURL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/${config.basePath}`
   // const baseURL = `http://localhost:8080/api/v1/${config.basePath}`
-  const baseURL = `${process.env.API_URL}/${config.basePath}`
+  const apiUrl = process.env.API_URL
+  const baseURL = `${apiUrl}/${config.basePath}`
 
   const session = sessionStore.getState().data
   console.log(session)
@@ -99,7 +100,7 @@ export default async function sendRequest<ResponseType>(config: {
     dayjs.unix(session?.accessTokenExpiresAt).diff(dayjs(), 's') < 5
   ) {
     console.log('refreshing session')
-    const newAccessToken = await refreshSessionRequest(baseURL, session)
+    const newAccessToken = await refreshSessionRequest(apiUrl as string, session)
     if (newAccessToken) accessToken = newAccessToken
   }
 
