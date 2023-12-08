@@ -11,10 +11,11 @@ import clsx from 'clsx'
 import { Icons } from './icons'
 import { ThemeToggle } from './ui/theme-toggle'
 import { useRouter } from 'next/navigation'
-import { deleteSession } from '@/app/actions'
 import useCurrentUserStore from '@/stores/user'
 import { useLogout } from '@/api/mutations/auth'
-import WorkspaceSelect from './WorkspaceSelect'
+import useSessionStore from '@/stores/session'
+import { LogoutError } from '@/api/requests/auth'
+import { useToast } from './ui/use-toast'
 
 const dropdownItems = [
   { text: 'Account', icon: Icons.user },
@@ -22,19 +23,38 @@ const dropdownItems = [
 ]
 
 const Header = () => {
+  const { toast } = useToast()
   const router = useRouter()
   const user = useCurrentUserStore((user) => user?.data)
+  const session = useSessionStore()
 
   const { mutate: logout } = useLogout({
-    onSuccess: () => {
-      deleteSession()
+    onSuccess: async () => {
+      await fetch('/api/logout', { method: 'POST' })
+      // deleteSession()
       router.replace('/login', { scroll: false })
     },
-    onError: (err) => {
-      // TODO: error toast
+    onError: async (err) => {
+      // deleteSession()
       console.log(err)
+      const error = err as LogoutError
+      if (error.code) {
+        await fetch('/api/logout', { method: 'POST' })
+        router.replace('/login', { scroll: false })
+      } else {
+        toast({
+          title: 'Error',
+          description: 'Something went wrong.',
+          variant: 'destructive',
+        })
+      }
     },
   })
+
+  const handleLogout = () => {
+    session.setLoggingOut(true)
+    logout(null)
+  }
 
   return (
     <div className="flex flex-row justify-between items-center">
@@ -60,7 +80,7 @@ const Header = () => {
                         router.push(`personal-settings/general`)
                       }
                       if (index === 1) {
-                        logout({ id: true })
+                        handleLogout()
                       }
                     }}
                     className={clsx(['flex gap-3 items-center'], {
