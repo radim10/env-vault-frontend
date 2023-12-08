@@ -1,7 +1,7 @@
 'use client'
 
 import { useGetCurrentUser } from '@/api/queries/currentUser'
-import sessionStore from '@/stores/session'
+import useSessionStore from '@/stores/session'
 import useCurrentUserStore from '@/stores/user'
 import { UserSession } from '@/types/session'
 import { produce } from 'immer'
@@ -26,6 +26,7 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
   const params = useParams()
   const router = useRouter()
   const { set } = useCurrentUserStore()
+  const { set: setSession, loggingOut } = useSessionStore()
 
   // TODO: check if accessToken is expired and refresh
 
@@ -73,11 +74,11 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
   // }, [params?.workspace])
 
   useMount(() => {
-    sessionStore.setState({ data: session })
+    setSession(session)
   })
 
   // TODO: get current user from database and set state
-  if (isLoading) {
+  if (isLoading || loggingOut) {
     return (
       <>
         <PageLoader />
