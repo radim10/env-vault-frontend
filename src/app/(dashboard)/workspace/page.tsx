@@ -1,28 +1,10 @@
 import { UserSession } from '@/types/session'
 import { validateServerSession } from '@/utils/auth/session'
+import { getDefaultWorkspace } from '@/utils/serverRequests'
 import { redirect } from 'next/navigation'
 
-// TODO: check session -> refresh
-const getDefaultWorkspace = async (accessToken: string) => {
-  const apiUrl = process.env.API_URL
-
-  const res = await fetch(`${apiUrl}/me/default-workspace`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    cache: 'no-store',
-  })
-
-  console.log(res.status)
-  if (!res.ok) return undefined
-  let body = (await res.json()) as { id: string | null }
-
-  return body
-}
-
 // TODO: handle redirect + delete cookies if revoked access token
+// TODO: check session expiration -> refresh
 const WorkspacePage = async () => {
   const session = (await validateServerSession('/login')) as UserSession
   const workspaceData = await getDefaultWorkspace(session?.accessToken)
