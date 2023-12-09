@@ -372,7 +372,7 @@ const PasswordSection: React.FC<Props> = ({ currentUser, queryClient, authMethod
               loading={createAccountPasswordLoading || updateAccountPasswordLoading}
               className="ml-auto gap-2"
               variant="default"
-              size={'sm'}
+              // size={'sm'}
               disabled={
                 password?.value !== confirmPassword?.value ||
                 !upperCaseRegex.test(password.value) ||
