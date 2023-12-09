@@ -10,7 +10,7 @@ import {
 import clsx from 'clsx'
 import { Icons } from './icons'
 import { ThemeToggle } from './ui/theme-toggle'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import useCurrentUserStore from '@/stores/user'
 import { useLogout } from '@/api/mutations/auth'
 import useSessionStore from '@/stores/session'
@@ -25,6 +25,8 @@ const dropdownItems = [
 const Header = () => {
   const { toast } = useToast()
   const router = useRouter()
+  const params = useParams()
+
   const user = useCurrentUserStore((user) => user?.data)
   const session = useSessionStore()
 
@@ -77,7 +79,7 @@ const Header = () => {
                   <DropdownMenuItem
                     onClick={() => {
                       if (index === 0) {
-                        router.push(`personal-settings/general`)
+                        router.push(`/workspace/${params?.workspace}/personal-settings/general`)
                       }
                       if (index === 1) {
                         handleLogout()
