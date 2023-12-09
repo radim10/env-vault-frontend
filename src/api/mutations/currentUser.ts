@@ -4,7 +4,11 @@ import {
   UpdateDefaultWorkspaceData,
   UpdateDefaultWorkspaceError,
   UpdateDefaultWorkspaceResData,
+  UpdateUserProfileData,
+  UpdateUserProfileError,
+  UpdateUserProfileResData,
   updateDefaultWorkspace,
+  updateUserProfile,
 } from '../requests/currentUser'
 
 export const useUpdateDefaultWorkspace = (opt?: MutOpt<UpdateDefaultWorkspaceResData>) =>
@@ -13,3 +17,10 @@ export const useUpdateDefaultWorkspace = (opt?: MutOpt<UpdateDefaultWorkspaceRes
     UpdateDefaultWorkspaceError,
     UpdateDefaultWorkspaceData
   >(updateDefaultWorkspace, opt)
+
+// update profile
+export const useUpdateUserProfile = (opt?: MutOpt<UpdateUserProfileResData>) =>
+  useMutation<UpdateUserProfileResData, UpdateUserProfileError, UpdateUserProfileData>(
+    updateUserProfile,
+    opt
+  )

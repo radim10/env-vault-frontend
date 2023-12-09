@@ -75,3 +75,21 @@ export async function updateDefaultWorkspace(args: UpdateDefaultWorkspaceData) {
     },
   })
 }
+
+// update profile
+// NOTE: for now only name
+export type UpdateUserProfileError = CurrentUserError<'user_not_found'>
+export type UpdateUserProfileData = {
+  name: string
+}
+
+export type UpdateUserProfileResData = undefined
+
+export async function updateUserProfile(data: UpdateUserProfileData) {
+  return await sendRequest<UpdateUserProfileResData>({
+    method: 'PATCH',
+    basePath: 'me',
+    path: `profile`,
+    body: data,
+  })
+}
