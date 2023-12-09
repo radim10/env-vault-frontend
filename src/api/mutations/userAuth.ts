@@ -1,4 +1,7 @@
 import {
+  ChangeEmailData,
+  ChangeEmailError,
+  ChangeEmailResData,
   CreateAccountPasswordData,
   CreateAccountPasswordError,
   CreateAccountPasswordResData,
@@ -10,6 +13,7 @@ import {
   UpdateAccountPasswordData,
   UpdateAccountPasswordError,
   UpdateAccountPasswordResData,
+  changeEmail,
   createAccountPassword,
   removeAuthMethod,
   revokeUserSession,
@@ -55,3 +59,6 @@ export const useRemoveAccountAuthMethod = (opt?: MutOpt<RemoveAuthMethodResData>
     removeAuthMethod,
     opt
   )
+
+export const useChangeEmail = (opt?: MutOpt<ChangeEmailResData>) =>
+  useMutation<ChangeEmailResData, ChangeEmailError, ChangeEmailData>(changeEmail, opt)

@@ -18,7 +18,17 @@ type AuthMethodErrorCode =
   | 'password_confirmation_required'
   | 'invalid_password'
 
-export type UserAuthError<T extends UserAuthErrorCode | void> = APIError<T>
+type ChangeEmailErrorCode =
+  | 'user_not_found'
+  | 'email_not_confirmed'
+  | 'invalid_password'
+  | 'password_not_set'
+  | 'invalid_new_password_format'
+  | 'email_not_available'
+
+export type UserAuthError<
+  T extends UserAuthErrorCode | AuthMethodErrorCode | ChangeEmailErrorCode | void
+> = APIError<T>
 
 export function userAuthErrorMsgFromCode(code?: UserAuthErrorCode): string {
   let msg = 'Something went wrong'
@@ -56,6 +66,33 @@ export function userAuthErrorMsgFromCode(code?: UserAuthErrorCode): string {
 
     case 'invalid_password':
       msg = 'Invalid password'
+      break
+  }
+
+  return msg
+}
+
+export function changeEmailErrorMsgFromCode(code?: ChangeEmailErrorCode): string {
+  let msg = 'Something went wrong'
+
+  switch (code) {
+    case 'user_not_found':
+      msg = 'User not found in current workspace'
+      break
+    case 'email_not_confirmed':
+      msg = 'Email not confirmed'
+      break
+    case 'invalid_password':
+      msg = 'Invalid password'
+      break
+    case 'password_not_set':
+      msg = 'Password not set'
+      break
+    case 'invalid_new_password_format':
+      msg = 'Invalid new password format'
+      break
+    case 'email_not_available':
+      msg = 'Email not available'
       break
   }
 
@@ -156,5 +193,26 @@ export async function revokeUserSession(sessionId: string) {
     method: 'DELETE',
     basePath: `me`,
     path: `auth/sessions/${sessionId}`,
+  })
+}
+
+// change email
+
+// TODO :error codes
+export type ChangeEmailError = UserAuthError<
+  'user_not_found' | 'email_not_confirmed' | 'password_not_set' | 'invalid_password'
+>
+export type ChangeEmailResData = undefined
+export type ChangeEmailData = {
+  password: string
+  newEmail: string
+}
+
+export async function changeEmail(data: ChangeEmailData) {
+  return await sendRequest<ChangeEmailResData>({
+    method: 'PATCH',
+    basePath: `me`,
+    path: `auth/email`,
+    body: data,
   })
 }
