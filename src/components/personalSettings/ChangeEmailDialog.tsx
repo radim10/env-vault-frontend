@@ -59,7 +59,7 @@ const ChangeEmailDialog: React.FC<Props> = ({ opened, onSuccess, onClose }) => {
           <>
             <span>You can change your email only if you have password login method enabled.</span>
             <span className="text-red-600">
-              You won't be able to use currently conencted oauth methods
+              You won't be able to use currently connected oauth methods
             </span>
           </>
         }
