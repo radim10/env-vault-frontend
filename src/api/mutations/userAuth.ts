@@ -5,6 +5,10 @@ import {
   CreateAccountPasswordData,
   CreateAccountPasswordError,
   CreateAccountPasswordResData,
+  DeletePendingEmailError,
+  DeletePendingEmailResData,
+  GetPendingEmailError,
+  GetPendingEmailResData,
   RemoveAuthMethodData,
   RemoveAuthMethodError,
   RemoveAuthMethodResData,
@@ -15,6 +19,7 @@ import {
   UpdateAccountPasswordResData,
   changeEmail,
   createAccountPassword,
+  deletePendingEmail,
   removeAuthMethod,
   revokeUserSession,
   updateAccountPassword,
@@ -62,3 +67,6 @@ export const useRemoveAccountAuthMethod = (opt?: MutOpt<RemoveAuthMethodResData>
 
 export const useChangeEmail = (opt?: MutOpt<ChangeEmailResData>) =>
   useMutation<ChangeEmailResData, ChangeEmailError, ChangeEmailData>(changeEmail, opt)
+
+export const useDeletePendingEmail = (opt?: MutOpt<DeletePendingEmailResData>) =>
+  useMutation<DeletePendingEmailResData, DeletePendingEmailError, null>(deletePendingEmail, opt)

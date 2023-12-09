@@ -25,6 +25,9 @@ type ChangeEmailErrorCode =
   | 'password_not_set'
   | 'invalid_new_password_format'
   | 'email_not_available'
+  | 'current_email'
+  // for delete/get
+  | 'no_pending_email'
 
 export type UserAuthError<
   T extends UserAuthErrorCode | AuthMethodErrorCode | ChangeEmailErrorCode | void
@@ -90,6 +93,9 @@ export function changeEmailErrorMsgFromCode(code?: ChangeEmailErrorCode): string
       break
     case 'invalid_new_password_format':
       msg = 'Invalid new password format'
+      break
+    case 'current_email':
+      msg = 'This is your current email'
       break
     case 'email_not_available':
       msg = 'Email not available'
@@ -214,5 +220,31 @@ export async function changeEmail(data: ChangeEmailData) {
     basePath: `me`,
     path: `auth/email`,
     body: data,
+  })
+}
+
+//
+export type GetPendingEmailError = UserAuthError<'user_not_found'>
+export type GetPendingEmailResData = {
+  pendingEmail: string
+}
+
+export async function getPendingEmail() {
+  return await sendRequest<GetPendingEmailResData>({
+    method: 'GET',
+    basePath: 'me',
+    path: `auth/pending-email`,
+  })
+}
+
+// delete pendingEmail
+export type DeletePendingEmailError = UserAuthError<'user_not_found' | 'no_pending_email'>
+export type DeletePendingEmailResData = undefined
+
+export async function deletePendingEmail() {
+  return await sendRequest<DeletePendingEmailResData>({
+    method: 'DELETE',
+    basePath: 'me',
+    path: `auth/pending-email`,
   })
 }

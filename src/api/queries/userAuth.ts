@@ -2,9 +2,12 @@ import { UseQueryOptions, useQuery } from '@tanstack/react-query'
 import {
   GetAuthMethodsError,
   GetAuthMethodsResData,
+  GetPendingEmailError,
+  GetPendingEmailResData,
   ListUserSessionsData,
   ListUserSessionsError,
   getAuthMethods,
+  getPendingEmail,
   listUserSessions,
 } from '../requests/userAuth'
 
@@ -20,5 +23,16 @@ export const useGetAuthMethods = (
   useQuery<GetAuthMethodsResData, GetAuthMethodsError>(
     [userId, 'auth-methods'],
     getAuthMethods,
+    opt
+  )
+
+// get pending email
+export const useGetPendingEmail = (
+  userId: string,
+  opt?: UseQueryOptions<GetPendingEmailResData, GetPendingEmailError>
+) =>
+  useQuery<GetPendingEmailResData, GetPendingEmailError>(
+    [userId, 'pending-email'],
+    getPendingEmail,
     opt
   )
