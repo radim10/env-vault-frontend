@@ -68,10 +68,7 @@ const LoginCard: React.FC<Props> = ({ invitation, onEmailSelect, onRedirect }) =
                 disabled={getGithubUrlLoading || getGoogleLinkLoading}
                 loading={getGithubUrlLoading}
                 onClick={() => getGithubUrl()}
-                className={clsx({
-                  'gap-3': !getGithubUrlLoading,
-                  'gap-1': getGithubUrlLoading,
-                })}
+                className={'gap-3'}
               >
                 {!getGithubUrlLoading && <Icons.github className="h-4 w-4 opacity-70" />}
                 Continue with Github
@@ -84,10 +81,7 @@ const LoginCard: React.FC<Props> = ({ invitation, onEmailSelect, onRedirect }) =
                 variant="outline"
                 size={'default'}
                 type="button"
-                className={clsx({
-                  'gap-3': !getGoogleLinkLoading,
-                  'gap-1': getGoogleLinkLoading,
-                })}
+                className={'gap-3'}
               >
                 {!getGoogleLinkLoading && <GoogleIcon />}
                 Continue with Google
