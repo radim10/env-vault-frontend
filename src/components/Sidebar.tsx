@@ -120,7 +120,7 @@ const Sidebar = () => {
         <div
           className={clsx(
             [
-              'shadow-lg dark:shadow-gray-900 md:shadow-none w-screen md:w-auto fixed md:relative pt-6 md:pt-16 bg-background z-[1000] border-b-[1.2px] dark:border-gray-800 md:border-0 rounded-b-lg md:rounded-b-none',
+              'shadow-lg dark:shadow-gray-900 md:shadow-none w-screen md:w-auto fixed md:relative pt-6 md:pt-10 lg:pt-16 bg-background z-[1000] border-b-[1.2px] dark:border-gray-800 md:border-0 rounded-b-lg md:rounded-b-none',
             ],
             {
               hidden: !opened,
