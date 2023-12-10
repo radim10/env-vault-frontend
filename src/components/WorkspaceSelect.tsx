@@ -39,7 +39,7 @@ const WorkspaceSelect: React.FC<Props> = ({ currentWorkspace, allWorkspaces, onC
             </div>
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="text-md w-[218px]">
+        <DropdownMenuContent className="text-md md:w-[218px] z-[5000] w-[90vw]">
           <DropdownMenuItem
             className="cursor-pointer w-full flex items-center gap-2 font-medium"
             onClick={onCreate}
