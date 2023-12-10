@@ -12,6 +12,9 @@ import useCurrentUserStore from '@/stores/user'
 import CreateWorkspaceDialog from './CreateWorkspaceDialog'
 import { useToast } from './ui/use-toast'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
+import { useLogout } from '@/api/mutations/auth'
+import { LogoutError } from '@/api/requests/auth'
+import useSessionStore from '@/stores/session'
 
 const navItems = [
   { label: 'Projects', href: 'projects', icon: Icons.folder },
@@ -30,7 +33,9 @@ const helpNavItems = [
 const Sidebar = () => {
   const { toast } = useToast()
   const router = useRouter()
+  const session = useSessionStore()
   const currentUser = useCurrentUserStore((state) => state.data)
+
   const [opened, setOpened] = useState(false)
   const [scrollLocked, setSrcollLocked] = useToggle(false)
 
@@ -67,6 +72,34 @@ const Sidebar = () => {
     router.push(`/workspace/${data.id}/projects`)
   }
 
+  const { mutate: logout } = useLogout({
+    onSuccess: async () => {
+      await fetch('/api/logout', { method: 'POST' })
+      // deleteSession()
+      router.replace('/login', { scroll: false })
+    },
+    onError: async (err) => {
+      // deleteSession()
+      console.log(err)
+      const error = err as LogoutError
+      if (error.code) {
+        await fetch('/api/logout', { method: 'POST' })
+        router.replace('/login', { scroll: false })
+      } else {
+        toast({
+          title: 'Error',
+          description: 'Something went wrong.',
+          variant: 'destructive',
+        })
+      }
+    },
+  })
+
+  const handleLogout = () => {
+    session.setLoggingOut(true)
+    logout(null)
+  }
+
   return (
     <>
       {createWorkspaceDialog !== null && (
@@ -83,6 +116,7 @@ const Sidebar = () => {
             {opened ? <Icons.x /> : <Icons.menu />}
           </button>
         </div>
+        {opened && <div className="h-[1.2px] w-full bg-gray-200 dark:bg-gray-800"></div>}
         <div
           className={clsx(
             [
@@ -97,18 +131,36 @@ const Sidebar = () => {
         >
           <div className="-ml-1 pr-4">
             <div className="md:hidden ">
-              <div className="mb-6 pl-7 flex items-center gap-2">
-                <div>
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={currentUser?.avatarUrl ?? ''} />
-                    <AvatarFallback>{currentUser?.name?.charAt(0)?.toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                </div>
+              <div className="mb-6 pl-7 pr-3 flex justify-between items-center">
+                <Link
+                  href={`/workspace/${params?.workspace}/personal-settings/general`}
+                  onClick={() => {
+                    if (opened) setOpened(false)
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div>
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={currentUser?.avatarUrl ?? ''} />
+                        <AvatarFallback>
+                          {currentUser?.name?.charAt(0)?.toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
 
-                <div className="flex flex-col">
-                  <div className="text-[0.9rem] font-medium trucnate">{currentUser?.name}</div>
-                  <div className="text-sm truncate">{currentUser?.email}</div>
-                </div>
+                    <div className="flex flex-col">
+                      <div className="text-[0.9rem] font-medium trucnate max-w-[65vw]">
+                        {currentUser?.name}
+                      </div>
+                      <div className="text-sm truncate max-w-[65vw]">
+                        {currentUser?.email} dsjkhfjdjksh fjkdhsjkf hdsjklfh kjsdh
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+                <button className="text-red-600 opacity-80" onClick={handleLogout}>
+                  <Icons.logOut className="h-5 w-5" />
+                </button>
               </div>
             </div>
 
@@ -131,7 +183,7 @@ const Sidebar = () => {
               />
             </div>
           </div>
-          <div className="mt-5 py-5 pl-9 pr-6">
+          <div className="mt-2 md:mt-5 py-5 pl-9 pr-6">
             <div className="bg-red-40 flex flex-col gap-3">
               {navItems.map((item, index) => (
                 <>
