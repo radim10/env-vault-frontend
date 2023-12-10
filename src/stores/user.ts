@@ -18,6 +18,7 @@ export interface CurrentUserState {
 
 interface CurrentUserActions {
   set: (user: CurrentUser | null) => void
+  update: (data: Partial<CurrentUser>) => void
 }
 
 export const useCurrentUserStore = create(
@@ -25,8 +26,23 @@ export const useCurrentUserStore = create(
     immer<CurrentUserState & CurrentUserActions>((set, get) => ({
       // data: { role: WorkspaceUserRole.OWNER },
       // data: { role: WorkspaceUserRole.OWNER, email:  },
-      data: null,
-      set: (env) => set({ data: env }),
+      // data: null,
+      data: {
+        name: '',
+        email: '',
+        role: WorkspaceUserRole.OWNER,
+        id: 'ds',
+        avatarUrl: null,
+        workspaces: [{ name: 'ds', id: 'ds', selected: true }],
+      },
+      set: (data) => set({ data }),
+      update: (data) => {
+        set((state) => {
+          if (state.data) {
+            state.data = { ...state.data, ...data }
+          }
+        })
+      },
       isMemberRole: () => {
         return get()?.data?.role === 'MEMBER' ?? null
       },
