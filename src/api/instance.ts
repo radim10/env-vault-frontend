@@ -55,7 +55,7 @@ const refreshSessionRequest = async (
       // }
       //
       saveSession(data)
-      sessionStore.setState({ data: data })
+      sessionStore.setState({ data })
 
       return data?.accessToken
     }
