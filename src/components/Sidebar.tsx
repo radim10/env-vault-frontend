@@ -11,6 +11,7 @@ import { useLockBodyScroll, useToggle } from 'react-use'
 import useCurrentUserStore from '@/stores/user'
 import CreateWorkspaceDialog from './CreateWorkspaceDialog'
 import { useToast } from './ui/use-toast'
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 
 const navItems = [
   { label: 'Projects', href: 'projects', icon: Icons.folder },
@@ -76,8 +77,8 @@ const Sidebar = () => {
         />
       )}
       <div className="h-full md:border-r-[1.2px]  border-b-[1.2px] dark:border-gray-800 bg-background z-50">
-        <div className="md:pt-10 pt-4 pb-4 md:pb-0 md:px-9 px-6">
-          <div className="hidden md:block">LOGO</div>
+        <div className="md:pt-10 pt-4 pb-4 md:pb-0 md:px-9 px-6 flex justify-between items-center">
+          <div className="">LOGO</div>
           <button className="block md:hidden" onClick={toggle}>
             {opened ? <Icons.x /> : <Icons.menu />}
           </button>
@@ -95,13 +96,38 @@ const Sidebar = () => {
           )}
         >
           <div className="-ml-1 pr-4">
+            <div className="md:hidden ">
+              <div className="mb-6 pl-7 flex items-center gap-2">
+                <div>
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={currentUser?.avatarUrl ?? ''} />
+                    <AvatarFallback>{currentUser?.name?.charAt(0)?.toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                </div>
+
+                <div className="flex flex-col">
+                  <div className="text-[0.9rem] font-medium trucnate">{currentUser?.name}</div>
+                  <div className="text-sm truncate">{currentUser?.email}</div>
+                </div>
+              </div>
+            </div>
+
             <div className="pl-6 pr-1">
               <WorkspaceSelect
                 currentWorkspace={
                   currentUser?.workspaces?.find((val) => val?.selected === true) as any
                 }
                 allWorkspaces={currentUser?.workspaces as any}
-                onCreate={() => setCreateWorkspaceDialog({ opened: true })}
+                onCreate={() => {
+                  if (opened) {
+                    setOpened(false)
+                    setTimeout(() => {
+                      setCreateWorkspaceDialog({ opened: true })
+                    }, 100)
+                  } else {
+                    setCreateWorkspaceDialog({ opened: true })
+                  }
+                }}
               />
             </div>
           </div>
