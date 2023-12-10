@@ -85,25 +85,26 @@ export default async function sendRequest<ResponseType>(config: {
   params?: Record<string, string | number> | unknown
   accessToken?: string //ssr
   headers?: Record<string, string>
+  session?: UserSession
 }): Promise<ResponseType> {
   // const baseURL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/${config.basePath}`
   // const baseURL = `http://localhost:8080/api/v1/${config.basePath}`
   const apiUrl = process.env.API_URL
   const baseURL = `${apiUrl}/${config.basePath}`
 
-  const session = sessionStore.getState().data
-  console.log(session)
+  const currentSession = config?.session ?? sessionStore.getState().data
+  console.log(currentSession)
 
-  let accessToken = session?.accessToken
+  let accessToken = currentSession?.accessToken
 
   if (
-    session?.accessTokenExpiresAt &&
-    dayjs.unix(session?.accessTokenExpiresAt).diff(dayjs(), 's') < 5 &&
-    session?.refreshToken &&
-    dayjs.unix(session?.refreshTokenExpiresAt).diff(dayjs(), 's') > 5
+    currentSession?.accessTokenExpiresAt &&
+    dayjs.unix(currentSession?.accessTokenExpiresAt).diff(dayjs(), 's') < 5 &&
+    currentSession?.refreshToken &&
+    dayjs.unix(currentSession?.refreshTokenExpiresAt).diff(dayjs(), 's') > 5
   ) {
     console.log('refreshing session')
-    const newAccessToken = await refreshSessionRequest(apiUrl as string, session)
+    const newAccessToken = await refreshSessionRequest(apiUrl as string, currentSession)
     if (newAccessToken) accessToken = newAccessToken
   }
 

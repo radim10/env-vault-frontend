@@ -1,5 +1,6 @@
 import { CurrentUser } from '@/types/users'
 import sendRequest, { APIError } from '../instance'
+import { UserSession } from '@/types/session'
 
 type CurrentUserErrorCode = 'user_not_found'
 export type CurrentUserError<T extends CurrentUserErrorCode | void> = APIError<T>
@@ -23,6 +24,7 @@ export type GetCurrentUserData = CurrentUser & {
 export type GetCurrentUserArgs = {
   workspaceId: string
   workspaces?: boolean
+  session: UserSession
 }
 
 export async function getCurrentUser(args: GetCurrentUserArgs) {

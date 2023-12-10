@@ -37,6 +37,7 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
       // workspaceId: '4ef8a291-024e-4ed8-924b-1cc90d01315e',
       workspaceId: params?.workspace as string,
       workspaces: true,
+      session,
     },
 
     {
