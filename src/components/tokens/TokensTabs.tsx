@@ -11,7 +11,7 @@ interface Props {
 }
 
 const items = [
-  { label: 'Command line', href: 'cli' },
+  { label: 'Command line', mobileLabel: 'CLI', href: 'cli' },
   { label: 'Environments', href: 'environments' },
   { label: 'Workspace', href: 'workspace' },
 ]
@@ -22,7 +22,7 @@ const TokensTabs: React.FC<Props> = ({ workspaceId }) => {
 
   return (
     <div className="px-6 lg:px-10 dark:text-gray-400 flex items-center gap-2 md:gap-4 overflow-y-auto text-[1rem] border-b-[1px] pb-0 md:px-3">
-      {(isMemberRole() ? items.slice(0, 2) : items).map(({ label, href }) => (
+      {(isMemberRole() ? items.slice(0, 2) : items).map(({ label, mobileLabel, href }) => (
         <Link
           href={`/workspace/${workspaceId}/tokens/${href}`}
           className={clsx(
@@ -36,7 +36,13 @@ const TokensTabs: React.FC<Props> = ({ workspaceId }) => {
             }
           )}
         >
-          <div>{label}</div>
+          {!mobileLabel && <div>{label}</div>}
+          {mobileLabel && (
+            <div>
+              <span className="md:hidden">{mobileLabel}</span>
+              <span className="hidden md:block">{label}</span>
+            </div>
+          )}
         </Link>
       ))}
       {isMemberRole() && (
