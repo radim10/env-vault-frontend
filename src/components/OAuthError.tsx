@@ -9,7 +9,7 @@ interface Props {
 
 const OauthError: React.FC<Props> = ({ errorCode }) => {
   return (
-    <div className=" flex justify-center items-center h-[70vh] px-4">
+    <div className=" flex justify-center items-center h-[100vh] px-4">
       <div className="flex flex-col justify-center gap-6">
         <h1 className="text-center dark:text-gray-200 scroll-m-20 text-4xl font-semibold tracking-tight transition-colors first:mt-0">
           {errorCode && errorCode === 'user_banned' && 'Your account is banned'}
