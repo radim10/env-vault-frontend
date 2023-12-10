@@ -149,12 +149,10 @@ const Sidebar = () => {
                     </div>
 
                     <div className="flex flex-col">
-                      <div className="text-[0.9rem] font-medium trucnate max-w-[65vw]">
+                      <div className="text-[0.9rem] font-medium trucnate max-w-[60vw]">
                         {currentUser?.name}
                       </div>
-                      <div className="text-sm truncate max-w-[65vw]">
-                        {currentUser?.email} dsjkhfjdjksh fjkdhsjkf hdsjklfh kjsdh
-                      </div>
+                      <div className="text-sm truncate max-w-[60vw]">{currentUser?.email}</div>
                     </div>
                   </div>
                 </Link>
