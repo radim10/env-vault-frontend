@@ -231,9 +231,9 @@ const UserProfileSettings = () => {
 
                 {pendingEmailData?.pendingEmail && (
                   <div className="flex flex-col md:flex-row md:items-center xl:w-2/3">
-                    <div className="text-[0.92rem] flex  md:flex-row flex-col items-center gap-3 mt-0 md:ml-[18%]">
+                    <div className="text-[0.92rem] flex  md:flex-row flex-col md:items-center gap-3 mt-0 md:ml-[18%]">
                       <div className="flex gap-2 items-center">
-                        <Icons.mail className="h-4 w-4" />
+                        <Icons.mail className="h-4 w-4 hidden mb:block" />
                         <span className="text-muted-foreground">
                           Pending email confirmation: {pendingEmailData?.pendingEmail}
                         </span>
