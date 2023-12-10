@@ -273,37 +273,6 @@ const ProfileSection = () => {
                   </div>
                 </div>
               )}
-
-              {/* <div className="flex flex-col md:flex-row gap-2 items-center xl:w-2/3"> */}
-              {/*   <div className="gap-3 flex flex-row items-center justify-end w-full"> */}
-              {/*     <Button */}
-              {/*       onClick={() => handleToggleEdit(!editActive)} */}
-              {/*       variant="outline" */}
-              {/*       className="ml-auto gap-3" */}
-              {/*     > */}
-              {/*       {!editActive && <Icons.penSquare className="h-4 w-4 opacity-80" />} */}
-              {/*       {editActive ? 'Cancel' : 'Edit'} */}
-              {/*     </Button> */}
-              {/*     {editActive && ( */}
-              {/*       <Button */}
-              {/*         disabled={!newName || newName === currentUser?.name || isLoading} */}
-              {/*         onClick={() => */}
-              {/*           updateUserProfile({ */}
-              {/*             name: newName, */}
-              {/*           }) */}
-              {/*         } */}
-              {/*         variant="default" */}
-              {/*         className={clsx({ */}
-              {/*           'gap-3': true, */}
-              {/*         })} */}
-              {/*         loading={false} */}
-              {/*       > */}
-              {/*         {!isLoading && <Icons.save className="h-4 w-4" />} */}
-              {/*         Save */}
-              {/*       </Button> */}
-              {/*     )} */}
-              {/*   </div> */}
-              {/* </div> */}
             </div>
           </div>
         </PersonalSettingsLayout>
