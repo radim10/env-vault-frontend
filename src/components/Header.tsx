@@ -65,7 +65,7 @@ const Header = () => {
       <div className="flex items-center gap-2 md:gap-3">
         <ThemeToggle />
         {/* {session?.accessToken} */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <DropdownMenu>
             <DropdownMenuTrigger className="flex gap-2 items-center">
               <Avatar>
