@@ -28,7 +28,7 @@ export type GetCurrentUserArgs = {
 }
 
 export async function getCurrentUser(args: GetCurrentUserArgs) {
-  const { workspaceId, workspaces } = args
+  const { session, workspaceId, workspaces } = args
 
   return await sendRequest<GetCurrentUserData>({
     method: 'GET',
@@ -37,6 +37,7 @@ export async function getCurrentUser(args: GetCurrentUserArgs) {
     params: workspaces && {
       workspaces,
     },
+    session,
   })
 }
 

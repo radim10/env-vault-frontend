@@ -93,7 +93,7 @@ export default async function sendRequest<ResponseType>(config: {
   const baseURL = `${apiUrl}/${config.basePath}`
 
   const currentSession = config?.session ?? sessionStore.getState().data
-  console.log(currentSession)
+  console.log('currentSession', currentSession)
 
   let accessToken = currentSession?.accessToken
 
