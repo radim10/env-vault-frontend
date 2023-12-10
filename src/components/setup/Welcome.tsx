@@ -11,6 +11,11 @@ import Link from 'next/link'
 import { UserSession } from '@/types/session'
 import { useMount } from 'react-use'
 import useSessionStore from '@/stores/session'
+import { useLogout } from '@/api/mutations/auth'
+import { useRouter } from 'next/navigation'
+import { LogoutError } from '@/api/requests/auth'
+import { useToast } from '../ui/use-toast'
+import PageLoader from '../PageLoader'
 
 const nextItems = [
   {
@@ -44,14 +49,54 @@ interface Props {
 }
 
 const Welcome: React.FC<Props> = ({ session }) => {
+  const router = useRouter()
+  const { toast } = useToast()
   const setSession = useSessionStore((state) => state.set)
   const [workspaceName, setWorkspaceName] = useState('')
   const { data, isLoading, error, mutate: createWorkspace } = useCreateWorkspace()
 
   useMount(() => setSession(session))
 
+  const { mutate: logout, isLoading: loggingOut } = useLogout({
+    onSuccess: async () => {
+      await fetch('/api/logout', { method: 'POST' })
+      // deleteSession()
+      router.replace('/login', { scroll: false })
+    },
+    onError: async (err) => {
+      // deleteSession()
+      console.log(err)
+      const error = err as LogoutError
+      if (error.code) {
+        await fetch('/api/logout', { method: 'POST' })
+        router.replace('/login', { scroll: false })
+      } else {
+        toast({
+          title: 'Error',
+          description: 'Something went wrong.',
+          variant: 'destructive',
+        })
+      }
+    },
+  })
+
+  const handleLogout = () => {
+    logout(null)
+  }
+
+  if (loggingOut) {
+    return <PageLoader />
+  }
+
   return (
     <div>
+      <div className="absolute right-10 top-10">
+        <Button className="flex items-center gap-2 " variant="outline" onClick={handleLogout}>
+          <span>Logout</span>
+          <Icons.logOut className="w-4 h-4" />
+        </Button>
+      </div>
+
       <div className="flex justify-center mt-[10%]  w-full">
         <div className="flex flex-col items-center gap-6">
           <div className="flex flex-col gap-1 items-center">
