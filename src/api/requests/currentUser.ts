@@ -21,7 +21,6 @@ export type GetCurrentUserData = CurrentUser & {
 }
 
 export type GetCurrentUserArgs = {
-  accessToken: string
   workspaceId: string
   workspaces?: boolean
 }
@@ -35,9 +34,6 @@ export async function getCurrentUser(args: GetCurrentUserArgs) {
     path: `${workspaceId}/me`,
     params: workspaces && {
       workspaces,
-    },
-    headers: {
-      Authorization: `Bearer ${args.accessToken}`,
     },
   })
 }
