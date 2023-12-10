@@ -45,7 +45,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }), {
-          'gap-3': loading,
+          'gap-3 cursor-default': loading,
         })}
         ref={ref}
         {...props}
