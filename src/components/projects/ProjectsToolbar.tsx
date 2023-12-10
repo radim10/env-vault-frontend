@@ -47,7 +47,11 @@ const ProjectsToolbar: React.FC<Props> = ({
       <div className="flex items-center gap-4">
         <TypographyH2>Projects</TypographyH2>
         <div className="md:hidden block">
-          <CreateProject workspaceId={workspaceId} />
+          <Link href={`/workspace/${workspaceId}/create-project`}>
+            <Button size={'sm'}>
+              <Icons.plus />
+            </Button>
+          </Link>
         </div>
       </div>
       <div className="flex items-center w-full justify-end gap-3">
