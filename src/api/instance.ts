@@ -47,6 +47,8 @@ const refreshSessionRequest = async (
       refreshToken: currentSession?.refreshToken ?? undefined,
     })
     if (data?.accessToken) {
+      // alert(data?.refreshToken)
+      console.log(data)
       // const { accessToken: newAccessToken, accessTokenExpiresAt } = data
       // const newSessionData = {
       //   ...currentSession,
@@ -54,8 +56,9 @@ const refreshSessionRequest = async (
       //   accessTokenExpiresAt,
       // }
       //
-      saveSession(data)
+      await saveSession(data)
       sessionStore.setState({ data })
+      // alert(sessionStore.getState().data?.accessToken === data?.accessToken)
 
       return data?.accessToken
     }
@@ -97,7 +100,7 @@ export default async function sendRequest<ResponseType>(config: {
     session?.accessTokenExpiresAt &&
     dayjs.unix(session?.accessTokenExpiresAt).diff(dayjs(), 's') < 5 &&
     session?.refreshToken &&
-    dayjs.unix(session?.accessTokenExpiresAt).diff(dayjs(), 's') < 5
+    dayjs.unix(session?.refreshTokenExpiresAt).diff(dayjs(), 's') > 5
   ) {
     console.log('refreshing session')
     const newAccessToken = await refreshSessionRequest(apiUrl as string, session)
@@ -112,7 +115,7 @@ export default async function sendRequest<ResponseType>(config: {
       params: config.params ?? undefined,
       data: config?.body ?? undefined,
       headers: {
-        Authorization: `Bearer ${session?.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         ...config.headers,
       },
     })
