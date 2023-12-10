@@ -1,9 +1,9 @@
-import AuthSettings from '@/components/personalSettings/AuthSettings'
-import UserProfileSettings from '@/components/personalSettings/ProfileSettings'
-import PreferencesSettings from '@/components/personalSettings/PreferencesSettings'
-import { validateServerSession } from '@/utils/auth/session'
 import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
+import { validateServerSession } from '@/utils/auth/session'
+import AuthSettings from '@/components/personalSettings/AuthSettings'
+import GeneralSettings from '@/components/personalSettings/GeneralSettings'
+import PreferencesSettings from '@/components/personalSettings/PreferencesSettings'
 
 export const metadata: Metadata = {
   title: 'Create project',
@@ -19,7 +19,7 @@ const PersonalSettingsPage = async ({ params }: { params: { tab: string; workspa
 
   return (
     <>
-      {tab === 'general' && <UserProfileSettings />}
+      {tab === 'general' && <GeneralSettings />}
       {tab === 'authentication' && <AuthSettings />}
       {tab === 'preferences' && <PreferencesSettings />}
     </>

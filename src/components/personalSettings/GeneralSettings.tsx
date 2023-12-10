@@ -21,7 +21,7 @@ import { useDeletePendingEmail } from '@/api/mutations/userAuth'
 import { useQueryClient } from '@tanstack/react-query'
 import clsx from 'clsx'
 
-const UserProfileSettings = () => {
+const GeneralSettings = () => {
   const queryClient = useQueryClient()
   const { toast } = useToast()
   const { data: currentUser, update: updateCurrentUser } = useCurrentUserStore()
@@ -328,4 +328,4 @@ const UserProfileSettings = () => {
   )
 }
 
-export default UserProfileSettings
+export default GeneralSettings
