@@ -1,27 +1,14 @@
 'use client'
 
+import clsx from 'clsx'
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
+import { Icons } from '../icons'
+import { useImmer } from 'use-immer'
+import DialogComponent from '../Dialog'
+import { authRules } from '@/utils/auth/auth'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Icons } from '../icons'
-import { NewProject } from '@/types/projects'
-import { useQueryClient } from '@tanstack/react-query'
-import { useUpdateEffect } from 'react-use'
-import { useImmer } from 'use-immer'
-import clsx from 'clsx'
-import DialogComponent from '../Dialog'
 import { useChangeEmail } from '@/api/mutations/userAuth'
-import { authRegex } from '@/utils/auth/auth'
 import { changeEmailErrorMsgFromCode } from '@/api/requests/userAuth'
 
 interface Props {
@@ -70,7 +57,7 @@ const ChangeEmailDialog: React.FC<Props> = ({ opened, onSuccess, onClose }) => {
         onSubmit={() => changeEmail({ newEmail: email, password: password.value })}
         submit={{
           text: 'Confirm',
-          disabled: authRegex.email.test(email) === false || password.value.length < 10,
+          disabled: authRules.email(email) === false || !authRules.password.length(password.value),
         }}
       >
         <div className="flex flex-col gap-4 pb-0 pt-0 text-lg">

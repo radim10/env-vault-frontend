@@ -1,16 +1,16 @@
 'use client'
 
-import { Icons } from '@/components/icons'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { useImmer } from 'use-immer'
-import { Input } from '../ui/input'
-import { useResetPassword } from '@/api/mutations/auth'
 import clsx from 'clsx'
 import Link from 'next/link'
+import { Input } from '../ui/input'
+import { useImmer } from 'use-immer'
+import { Icons } from '@/components/icons'
 import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { useResetPassword } from '@/api/mutations/auth'
+import { Card, CardContent } from '@/components/ui/card'
+import { authRules, passwordRules } from '@/utils/auth/auth'
 import { emailLoginErrorMsgFromCode, resetPasswordErrorMsgFromCode } from '@/api/requests/auth'
-import { authRegex, passwordRules } from '@/utils/auth/auth'
 
 interface Props {
   token: string
@@ -41,7 +41,7 @@ const ResetPasswordCard: React.FC<Props> = ({ token }) => {
     mutate: login,
     status,
   } = useResetPassword({
-    onSuccess: async (data) => {
+    onSuccess: async (_) => {
       // router.replace(`/log`)
     },
   })
@@ -49,10 +49,10 @@ const ResetPasswordCard: React.FC<Props> = ({ token }) => {
   const handleResetPassword = () => {
     //  check if password is valid
     const passsValid =
-      authRegex.password.upperCase.test(password.value) &&
-      authRegex.password.lowerCase.test(password.value) &&
-      authRegex.password.number.test(password.value) &&
-      password.value.length >= 10
+      authRules.password.upperCase(password.value) &&
+      authRules.password.lowerCase(password.value) &&
+      authRules.password.number(password.value) &&
+      authRules.password.length(password.value)
 
     if (!passsValid) return
 
@@ -245,26 +245,26 @@ const ResetPasswordCard: React.FC<Props> = ({ token }) => {
               loading={isLoading}
               disabled={
                 password?.value !== confirmPassword?.value ||
-                !authRegex.password.upperCase.test(password.value) ||
-                !authRegex.password.lowerCase.test(password.value) ||
-                !authRegex.password.number.test(password.value) ||
-                !authRegex.password.upperCase.test(confirmPassword.value) ||
-                !authRegex.password.lowerCase.test(confirmPassword.value) ||
-                !authRegex.password.number.test(confirmPassword.value) ||
-                password.value.length < 10 ||
-                confirmPassword.value.length < 10
+                !authRules.password.upperCase(password.value) ||
+                !authRules.password.lowerCase(password.value) ||
+                !authRules.password.number(password.value) ||
+                !authRules.password.upperCase(confirmPassword.value) ||
+                !authRules.password.lowerCase(confirmPassword.value) ||
+                !authRules.password.number(confirmPassword.value) ||
+                !authRules.password.length(password.value) ||
+                !authRules.password.length(confirmPassword.value)
               }
               onClick={() => {
                 if (
                   password?.value !== confirmPassword?.value ||
-                  !authRegex.password.upperCase.test(password.value) ||
-                  !authRegex.password.lowerCase.test(password.value) ||
-                  !authRegex.password.number.test(password.value) ||
-                  !authRegex.password.upperCase.test(confirmPassword.value) ||
-                  !authRegex.password.lowerCase.test(confirmPassword.value) ||
-                  !authRegex.password.number.test(confirmPassword.value) ||
-                  password.value.length < 10 ||
-                  confirmPassword.value.length < 10
+                  !authRules.password.upperCase(password.value) ||
+                  !authRules.password.lowerCase(password.value) ||
+                  !authRules.password.number(password.value) ||
+                  !authRules.password.upperCase(confirmPassword.value) ||
+                  !authRules.password.lowerCase(confirmPassword.value) ||
+                  !authRules.password.number(confirmPassword.value) ||
+                  !authRules.password.length(password.value) ||
+                  !authRules.password.length(confirmPassword.value)
                 )
                   return
 

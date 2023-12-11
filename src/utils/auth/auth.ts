@@ -23,14 +23,12 @@ export const passwordRules = [
   },
 ]
 
-export const authRegex = {
-  email: emailRegex,
+export const authRules = {
+  email: (email: string) => emailRegex.test(email),
   password: {
-    upperCase: upperCaseRegex,
-    lowerCase: lowerCaseRegex,
-    number: numberRegex,
+    upperCase: (password: string) => upperCaseRegex.test(password),
+    lowerCase: (password: string) => lowerCaseRegex.test(password),
+    number: (password: string) => numberRegex.test(password),
+    length: (password: string) => password.length >= 10,
   },
-  // passwordUpperCase: upperCaseRegex,
-  // passwordLowerCase: lowerCaseRegex,
-  // passwordNumber: numberRegex,
 }

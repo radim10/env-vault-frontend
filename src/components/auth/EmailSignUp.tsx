@@ -10,7 +10,7 @@ import { useState } from 'react'
 import clsx from 'clsx'
 import { useImmer } from 'use-immer'
 import { useEmaiLSignUp } from '@/api/mutations/auth'
-import { authRegex, passwordRules } from '@/utils/auth/auth'
+import { authRules, passwordRules } from '@/utils/auth/auth'
 import { emailSignUpErrorMsgFromCode } from '@/api/requests/auth'
 
 interface Props {
@@ -114,9 +114,9 @@ const EmailSignUp: React.FC<Props> = ({ invitation, onCancel }) => {
                 <Button
                   size={'default'}
                   type="submit"
-                  disabled={!authRegex.email.test(email) || name?.trim()?.length === 0}
+                  disabled={!authRules.email(email) || name?.trim()?.length === 0}
                   onClick={() => {
-                    if (authRegex.email.test(email) && name?.trim()?.length > 0) {
+                    if (authRules.email(email) && name?.trim()?.length > 0) {
                       setStep(2)
                     }
                   }}
@@ -247,14 +247,14 @@ const EmailSignUp: React.FC<Props> = ({ invitation, onCancel }) => {
                   loading={isLoading}
                   disabled={
                     password?.value !== confirmPassword?.value ||
-                    !authRegex.password.upperCase.test(password.value) ||
-                    !authRegex.password.lowerCase.test(password.value) ||
-                    !authRegex.password.number.test(password.value) ||
-                    !authRegex.password.upperCase.test(confirmPassword.value) ||
-                    !authRegex.password.lowerCase.test(confirmPassword.value) ||
-                    !authRegex.password.number.test(confirmPassword.value) ||
-                    password.value.length < 10 ||
-                    confirmPassword.value.length < 10
+                    !authRules.password.upperCase(password.value) ||
+                    !authRules.password.lowerCase(password.value) ||
+                    !authRules.password.number(password.value) ||
+                    !authRules.password.upperCase(confirmPassword.value) ||
+                    !authRules.password.lowerCase(confirmPassword.value) ||
+                    !authRules.password.number(confirmPassword.value) ||
+                    !authRules.password.length(password.value) ||
+                    !authRules.password.length(confirmPassword.value)
                   }
                   onClick={() => {
                     handleSignUp({ name, email, password: password.value, invitation: invitation })
