@@ -17,6 +17,7 @@ interface Props {
   inProgress: boolean
   children?: React.ReactNode
   title?: string
+  hideFooter?: boolean
   icon?: LucideIcon
   description?: string
   descriptionComponent?: React.ReactNode
@@ -33,6 +34,7 @@ const DeleteDialog: React.FC<Props> = ({
   children,
   inProgress,
   description,
+  hideFooter,
   confirmText,
   disabledConfirm,
   descriptionComponent,
@@ -60,19 +62,21 @@ const DeleteDialog: React.FC<Props> = ({
             )}
             {children && <div className="">{children}</div>}
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={inProgress} onClick={onClose}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={onConfirm}
-              disabled={inProgress || disabledConfirm}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {inProgress && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {confirmText ? confirmText : 'Confirm'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
+          {!hideFooter && (
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={inProgress} onClick={onClose}>
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={onConfirm}
+                disabled={inProgress || disabledConfirm}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {inProgress && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {confirmText ? confirmText : 'Confirm'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          )}
         </AlertDialogContent>
       </AlertDialog>
     </>
