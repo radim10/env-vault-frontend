@@ -28,7 +28,7 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
   const params = useParams()
   const router = useRouter()
   const { set } = useCurrentUserStore()
-  const { set: setSession, loggingOut } = useSessionStore()
+  const { set: setSession, loggingOut, setLoggingOut } = useSessionStore()
 
   // TODO: check if accessToken is expired and refresh
 
@@ -76,6 +76,9 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
   // }, [params?.workspace])
 
   useMount(() => {
+    if (loggingOut) {
+      setLoggingOut(false)
+    }
     setSession(session)
   })
 
