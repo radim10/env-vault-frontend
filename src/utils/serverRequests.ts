@@ -27,6 +27,7 @@ export const getDefaultWorkspace = async (accessToken: string) => {
 
     return body
   } catch (err) {
+    throw Error('error')
     console.log(err)
     return undefined
   }
