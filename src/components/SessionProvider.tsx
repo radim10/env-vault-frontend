@@ -10,6 +10,7 @@ import { useMount } from 'react-use'
 import PageLoader from './PageLoader'
 import { Icons } from './icons'
 import { Button } from './ui/button'
+import { GetCurrentUserError } from '@/api/requests/currentUser'
 
 // interface Props {
 //   session: UserSession | null
@@ -45,6 +46,13 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
     {
       refetchOnMount: true,
       cacheTime: 5000,
+      onError: async (error: GetCurrentUserError) => {
+        if (error?.code === 'user_not_found') {
+          // NOTE: user deleted
+          await fetch('/api/logout', { method: 'POST' })
+          router.replace('/login', { scroll: false })
+        }
+      },
       onSuccess: (user) => {
         const selectedWorkspaceId = user?.defaultWorkspace ?? params?.workspace
         const selectedWorkspace = user?.workspaces?.findIndex(
@@ -82,6 +90,7 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
     setSession(session)
   })
 
+  // error?.code !==
   // TODO: get current user from database and set state
   if (isLoading || loggingOut) {
     return (
@@ -91,7 +100,7 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
     )
   }
 
-  if (error) {
+  if (error && error?.code !== 'user_not_found') {
     return <AuthProviderFallback onRefetch={refetch} />
   }
 
