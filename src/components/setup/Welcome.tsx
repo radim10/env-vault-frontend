@@ -127,7 +127,7 @@ const Welcome: React.FC<Props> = ({ session }) => {
                       </div>
 
                       <Link href={`/workspace/${data?.id}/projects`} className="mt-2">
-                        <Button className="w-full" size={'sm'}>
+                        <Button className="w-full" size={'default'}>
                           I'm ready
                         </Button>
                       </Link>
@@ -164,7 +164,7 @@ const Welcome: React.FC<Props> = ({ session }) => {
                     )}
                     <Button
                       className=""
-                      size={'sm'}
+                      size={'default'}
                       loading={isLoading}
                       disabled={workspaceName?.trim()?.length === 0}
                       onClick={() => createWorkspace({ name: workspaceName })}
