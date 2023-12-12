@@ -96,14 +96,14 @@ export async function updateUserProfile(data: UpdateUserProfileData) {
 // delete account
 // TODO: error
 export type DeleteAccountError = CurrentUserError<'user_not_found'>
-export type DeleteAccountData = undefined
+export type DeleteAccountData = { feedback: string } | undefined
 
 export type DeleteAccountResData = undefined
 
 export async function deleteAccount() {
   return await sendRequest<DeleteAccountResData>({
-    method: 'DELETE',
+    method: 'POST',
     basePath: 'me',
-    path: `account`,
+    path: `account/delete`,
   })
 }
