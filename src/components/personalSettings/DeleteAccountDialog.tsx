@@ -7,6 +7,7 @@ import DeleteDialog from '../DeleteDialog'
 import { useUpdateEffect } from 'react-use'
 import { useDeleteAccount } from '@/api/mutations/currentUser'
 import { currentUserErrorMsgFromCode } from '@/api/requests/currentUser'
+import clsx from 'clsx'
 
 interface Props {
   opened: boolean
@@ -16,6 +17,7 @@ interface Props {
 
 const DeleteAccountDialog: React.FC<Props> = ({ opened, onClose, onSuccess }) => {
   const [confirmText, setConfirmText] = useState('')
+  const [feedback, setFeedback] = useState('')
   const [step, setStep] = useState<0 | 1>(0)
 
   const {
@@ -64,7 +66,9 @@ const DeleteAccountDialog: React.FC<Props> = ({ opened, onClose, onSuccess }) =>
                 className="h-20"
                 loading={isLoading}
                 variant={'destructive'}
-                onClick={() => deleteAccount(undefined)}
+                onClick={() =>
+                  deleteAccount(feedback?.trim()?.length > 0 ? { feedback } : undefined)
+                }
               >
                 {isLoading ? 'Deleting...' : 'Delete account'}
               </Button>
@@ -83,7 +87,7 @@ const DeleteAccountDialog: React.FC<Props> = ({ opened, onClose, onSuccess }) =>
         )}
 
         {step === 0 && (
-          <div className="flex flex-col gap-2 p0-4 pb-4 mt-2">
+          <div className="flex flex-col gap-2 p0-4 pb-2 mt-2">
             <div className="flex flex-col gap-2">
               <div className="text-[0.92rem]">
                 Type <span className="font-bold text-red-600">Delete account</span> to confirm this
@@ -99,7 +103,27 @@ const DeleteAccountDialog: React.FC<Props> = ({ opened, onClose, onSuccess }) =>
 
             <div className="flex flex-col gap-2 mt-3">
               <div className="text-[0.92rem]">Tell us why you are deleting your account</div>
-              <Textarea placeholder={'Optional'} rows={1} />
+              <Textarea
+                rows={1}
+                value={feedback}
+                placeholder={'Optional'}
+                onChange={(e) => {
+                  const value = e.target.value
+                  setFeedback(value)
+
+                  if (value.length > 500) {
+                    setFeedback(value.slice(0, 500))
+                  }
+                }}
+              />
+              <div
+                className={clsx(['flex justify-end text-[0.8rem] text-foreground mr-0.5'], {
+                  'text-red-600': feedback?.length === 500,
+                  'opacity-50': feedback?.trim().length === 0,
+                })}
+              >
+                {feedback?.length} / 500
+              </div>
             </div>
           </div>
         )}
