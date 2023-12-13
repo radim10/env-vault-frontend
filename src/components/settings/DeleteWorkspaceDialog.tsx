@@ -4,6 +4,7 @@ import { Input } from '../ui/input'
 import DeleteDialog from '../DeleteDialog'
 import { useUpdateEffect } from 'react-use'
 import { useDeleteWorkspace } from '@/api/mutations/workspaces'
+import { workspacesErrorMsgFromCode } from '@/api/requests/workspaces'
 
 interface Props {
   workspaceId: string
@@ -40,7 +41,7 @@ const DeleteWorkspaceDialog: React.FC<Props> = ({
   return (
     <div>
       <DeleteDialog
-        icon={Icons.logOut}
+        icon={Icons.trash}
         opened={opened}
         onClose={onClose}
         inProgress={isLoading}
@@ -71,6 +72,13 @@ const DeleteWorkspaceDialog: React.FC<Props> = ({
               onChange={(e) => setConfirmText(e.target.value)}
             />
           </div>
+
+          {error && (
+            <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mt-0">
+              <Icons.xCircle className="h-4 w-4" />
+              {workspacesErrorMsgFromCode(error.code)}
+            </div>
+          )}
         </div>
       </DeleteDialog>
     </div>
