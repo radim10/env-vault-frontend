@@ -59,6 +59,19 @@ export async function leaveWorkspace(id: string) {
   return await response
 }
 
+// TODO: error
+export type DeleteWorkspaceError = WorkspacesError<undefined>
+export type DeleteWorkspaceResData = undefined
+
+export async function deleteWorkspace(id: string) {
+  const response = sendRequest<LeaveWorkspaceResData>({
+    method: 'DELETE',
+    basePath: 'workspaces',
+    path: id,
+  })
+  return await response
+}
+
 // get links
 export type GetWorkspaceInvitationLinksError = WorkspacesError<'workspace_not_found'>
 export type GetWorkspaceInvitationLinksData = WorkspaceInvitationLinks

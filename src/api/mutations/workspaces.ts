@@ -8,6 +8,7 @@ import {
   LeaveWorkspaceError,
   LeaveWorkspaceResData,
   createWorkspace,
+  deleteWorkspace,
   generateWorkspaceInvitationLink,
   leaveWorkspace,
 } from '../requests/workspaces'
@@ -42,5 +43,11 @@ type NewType = LeaveWorkspaceResData
 export const useLeaveWorkspace = (opt?: MutOpt<LeaveWorkspaceResData>) =>
   useMutation<NewType, LeaveWorkspaceError, { workspaceId: string }>(
     ({ workspaceId }) => leaveWorkspace(workspaceId),
+    opt
+  )
+
+export const useDeleteWorkspace = (opt?: MutOpt<LeaveWorkspaceResData>) =>
+  useMutation<NewType, LeaveWorkspaceError, { workspaceId: string }>(
+    ({ workspaceId }) => deleteWorkspace(workspaceId),
     opt
   )
