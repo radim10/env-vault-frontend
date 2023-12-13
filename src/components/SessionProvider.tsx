@@ -66,7 +66,7 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
             // TODO: ROLE
             const workspace = {
               ...user?.workspaces?.[selectedWorkspaceIndex],
-              role: WorkspaceUserRole.MEMBER,
+              role: WorkspaceUserRole.OWNER,
             }
             draft.selectedWorkspace = workspace
           }
