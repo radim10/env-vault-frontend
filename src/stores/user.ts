@@ -34,6 +34,7 @@ export const useCurrentUserStore = create(
         id: 'ds',
         avatarUrl: null,
         workspaces: [{ name: 'ds', id: 'ds', selected: true }],
+        selectedWorkspace: { name: 'ds', id: 'ds', role: WorkspaceUserRole.OWNER },
       },
       set: (data) => set({ data }),
       update: (data) => {
@@ -44,13 +45,13 @@ export const useCurrentUserStore = create(
         })
       },
       isMemberRole: () => {
-        return get()?.data?.role === 'MEMBER' ?? null
+        return get()?.data?.selectedWorkspace?.role === 'MEMBER' ?? null
       },
       isAdminRole: () => {
-        return get()?.data?.role === 'ADMIN' ?? null
+        return get()?.data?.selectedWorkspace?.role === 'ADMIN' ?? null
       },
       isOwnerRole: () => {
-        return get()?.data?.role === 'OWNER' ?? null
+        return get()?.data?.selectedWorkspace?.role === 'OWNER' ?? null
       },
     })),
     {
