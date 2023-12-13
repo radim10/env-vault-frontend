@@ -1,18 +1,25 @@
 import { Workspace, WorkspaceInvitationLinks } from '@/types/workspaces'
 import sendRequest, { APIError } from '../instance'
 
-type WorkspacesErrorCode = 'workspace_not_found' | 'missing_permission'
-export type WorkspacesError<T extends WorkspacesErrorCode | void> = APIError<T>
+type WorkspacesErrorCode = 'workspace_not_found' | 'missing_permission' | LeaveWorkspaceErrorCode
+type LeaveWorkspaceErrorCode = 'no_remaining_users'
 
-export function workspacesErrorMsgFromCode(code?: WorkspacesErrorCode): string | null {
-  let msg = null
+export type WorkspacesError<T extends WorkspacesErrorCode | LeaveWorkspaceErrorCode | void> =
+  APIError<T>
 
-  if (code === 'workspace_not_found') {
-    msg = 'Workspace has been deleted'
-  }
+export function workspacesErrorMsgFromCode(code?: WorkspacesErrorCode): string {
+  let msg = 'Something went wrong'
 
-  if (code === 'missing_permission') {
-    msg = "You don't have permission to perform this action"
+  switch (code) {
+    case 'workspace_not_found':
+      msg = 'Workspace not found'
+      break
+    case 'no_remaining_users':
+      msg = 'Last member of workspace cannot leave'
+      break
+    case 'missing_permission':
+      msg = "You don't have permission to perform this action"
+      break
   }
 
   return msg
@@ -47,7 +54,7 @@ export async function createWorkspace(name: string) {
 }
 
 // TODO: error
-export type LeaveWorkspaceError = WorkspacesError<undefined>
+export type LeaveWorkspaceError = WorkspacesError<'no_remaining_users'>
 export type LeaveWorkspaceResData = { newDefaultWorkspaceId: string | null }
 
 export async function leaveWorkspace(id: string) {
@@ -60,7 +67,7 @@ export async function leaveWorkspace(id: string) {
 }
 
 // TODO: error
-export type DeleteWorkspaceError = WorkspacesError<undefined>
+export type DeleteWorkspaceError = WorkspacesError<'workspace_not_found' | 'missing_permission'>
 export type DeleteWorkspaceResData = undefined
 
 export async function deleteWorkspace(id: string) {
