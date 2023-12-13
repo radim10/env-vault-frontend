@@ -55,6 +55,7 @@ const WorkspaceSettings: React.FC<Props> = ({ workspaceId }) => {
   const [deleteDialog, setDeleteDialog] = useState<boolean | null>(null)
 
   const currentUser = useCurrentUserStore((state) => state.data)
+  const { isOwnerRole } = useCurrentUserStore((state) => state)
 
   if (isLoading) {
     return <Skeleton className="mt-2 border-2 h-64 w-full" />
@@ -160,28 +161,41 @@ const WorkspaceSettings: React.FC<Props> = ({ workspaceId }) => {
           </div>
         </div>
         {/* //  */}
-        <MultiDangerZone
-          items={[
-            {
-              btn: {
-                text: 'Leave',
-                variant: 'secondary',
-                onClick: () => setLeaveDialog(true),
+        {isOwnerRole() && (
+          <MultiDangerZone
+            items={[
+              {
+                btn: {
+                  text: 'Leave',
+                  variant: 'outline',
+                  onClick: () => setLeaveDialog(true),
+                },
+                title: 'Leave worksapce',
+                description: 'You will no longer be able to access this workspace',
               },
-              title: 'Leave worksapce',
-              description: 'You will no longer be able to access this workspace',
-            },
 
-            {
-              btn: {
-                text: 'Delete',
-                onClick: () => setDeleteDialog(true),
+              {
+                btn: {
+                  text: 'Delete',
+                  onClick: () => setDeleteDialog(true),
+                },
+                title: 'Delete workspace',
+                description: 'Permanently delete this workspace, irreversible action',
               },
-              title: 'Delete workspace',
-              description: 'Permanently delete this workspace, irreversible action',
-            },
-          ]}
-        />
+            ]}
+          />
+        )}
+
+        {!isOwnerRole() && (
+          <DangerZone
+            title={'Leave worksapce'}
+            description={'You will no longer be able to access this workspace'}
+            btn={{
+              text: 'Leave',
+              onClick: () => setLeaveDialog(true),
+            }}
+          />
+        )}
       </div>
     </>
   )
