@@ -18,6 +18,7 @@ import MultiDangerZone from '../MultiDangerZone'
 import LeaveWorkspaceDialog from './LeaveWorkspaceDialog'
 import { useQueryClient } from '@tanstack/react-query'
 import useCurrentUserStore from '@/stores/user'
+import DeleteWorkspaceDialog from './DeleteWorkspaceDialog'
 
 dayjs.extend(relativeTime)
 
@@ -51,6 +52,8 @@ const WorkspaceSettings: React.FC<Props> = ({ workspaceId }) => {
 
   const { data, isLoading, error } = useGetWorkspace(workspaceId)
   const [leaveDialog, setLeaveDialog] = useState<boolean | null>(null)
+  const [deleteDialog, setDeleteDialog] = useState<boolean | null>(null)
+
   const currentUser = useCurrentUserStore((state) => state.data)
 
   if (isLoading) {
@@ -71,16 +74,25 @@ const WorkspaceSettings: React.FC<Props> = ({ workspaceId }) => {
   }
 
   const handleLeaveWorkspace = () => {
-    closeDialog()
+    closeLeaveDialog()
     queryClient.refetchQueries(['current-user'])
   }
 
-  const closeDialog = () => {
+  const closeLeaveDialog = () => {
     if (!leaveDialog) return
 
     setLeaveDialog(false)
     setTimeout(() => {
       setLeaveDialog(null)
+    }, 150)
+  }
+
+  const closeDeleteDialog = () => {
+    if (!deleteDialog) return
+
+    setDeleteDialog(false)
+    setTimeout(() => {
+      setDeleteDialog(null)
     }, 150)
   }
 
@@ -91,7 +103,17 @@ const WorkspaceSettings: React.FC<Props> = ({ workspaceId }) => {
           workspaceName={currentUser?.selectedWorkspace?.name ?? ''}
           opened={leaveDialog === true}
           workspaceId={workspaceId}
-          onClose={() => closeDialog()}
+          onClose={() => closeLeaveDialog()}
+          onSuccess={() => handleLeaveWorkspace()}
+        />
+      )}
+
+      {deleteDialog !== null && (
+        <DeleteWorkspaceDialog
+          workspaceName={currentUser?.selectedWorkspace?.name ?? ''}
+          opened={deleteDialog === true}
+          workspaceId={workspaceId}
+          onClose={() => closeDeleteDialog()}
           onSuccess={() => handleLeaveWorkspace()}
         />
       )}
@@ -153,7 +175,7 @@ const WorkspaceSettings: React.FC<Props> = ({ workspaceId }) => {
             {
               btn: {
                 text: 'Delete',
-                onClick: () => {},
+                onClick: () => setDeleteDialog(true),
               },
               title: 'Delete workspace',
               description: 'Permanently delete this workspace, irreversible action',
