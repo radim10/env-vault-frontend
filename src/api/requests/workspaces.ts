@@ -46,6 +46,19 @@ export async function createWorkspace(name: string) {
   return await response
 }
 
+// TODO: error
+export type LeaveWorkspaceError = WorkspacesError<undefined>
+export type LeaveWorkspaceResData = { newDefaultWorkspaceId: string | null }
+
+export async function leaveWorkspace(id: string) {
+  const response = sendRequest<LeaveWorkspaceResData>({
+    method: 'POST',
+    basePath: 'workspaces',
+    path: `${id}/leave`,
+  })
+  return await response
+}
+
 // get links
 export type GetWorkspaceInvitationLinksError = WorkspacesError<'workspace_not_found'>
 export type GetWorkspaceInvitationLinksData = WorkspaceInvitationLinks

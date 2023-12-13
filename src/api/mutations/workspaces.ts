@@ -5,8 +5,11 @@ import {
   CreateWorkspaceResData,
   GenerateWorkspaceInvitationLinkData,
   GenerateWorkspaceInvitationLinkError,
+  LeaveWorkspaceError,
+  LeaveWorkspaceResData,
   createWorkspace,
   generateWorkspaceInvitationLink,
+  leaveWorkspace,
 } from '../requests/workspaces'
 
 type CreateWorkspaceVariables = {
@@ -33,3 +36,11 @@ export const useGenerateWorkspaceInvitationLink = (
     GenerateWorkspaceInvitationLinkError,
     GenerateWorkspaceInvitationLinkVariables
   >(({ workspaceId, type }) => generateWorkspaceInvitationLink(workspaceId, type), opt)
+
+type NewType = LeaveWorkspaceResData
+
+export const useLeaveWorkspace = (opt?: MutOpt<LeaveWorkspaceResData>) =>
+  useMutation<NewType, LeaveWorkspaceError, { workspaceId: string }>(
+    ({ workspaceId }) => leaveWorkspace(workspaceId),
+    opt
+  )
