@@ -11,6 +11,7 @@ import PageLoader from './PageLoader'
 import { Icons } from './icons'
 import { Button } from './ui/button'
 import { GetCurrentUserError } from '@/api/requests/currentUser'
+import { WorkspaceUserRole } from '@/types/users'
 
 // interface Props {
 //   session: UserSession | null
@@ -34,7 +35,7 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
   // TODO: check if accessToken is expired and refresh
 
   // NOTE: or use server action but implment retry + error handling
-  const { isLoading, error, refetch } = useGetCurrentUser(
+  const { isLoading, isRefetching, error, refetch } = useGetCurrentUser(
     {
       // TODO: workspaceId???
       // workspaceId: '4ef8a291-024e-4ed8-924b-1cc90d01315e',
@@ -55,16 +56,29 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
       },
       onSuccess: (user) => {
         const selectedWorkspaceId = user?.defaultWorkspace ?? params?.workspace
-        const selectedWorkspace = user?.workspaces?.findIndex(
+        const selectedWorkspaceIndex = user?.workspaces?.findIndex(
           (workspace) => workspace.id === selectedWorkspaceId
         )
 
         const updatedUser = produce(user, (draft) => {
-          draft.workspaces[selectedWorkspace] = {
-            ...draft.workspaces[selectedWorkspace],
-            selected: true,
+          if (selectedWorkspaceIndex === -1) {
+          } else {
+            // TODO: ROLE
+            const workspace = {
+              ...user?.workspaces?.[selectedWorkspaceIndex],
+              role: WorkspaceUserRole.MEMBER,
+            }
+            draft.selectedWorkspace = workspace
           }
         })
+        console.log({ updatedUser })
+
+        // const updatedUser = produce(user, (draft) => {
+        //   draft.workspaces[selectedWorkspace] = {
+        //     ...draft.workspaces[selectedWorkspace],
+        //     selected: true,
+        //   }
+        // })
 
         set(updatedUser)
 
@@ -92,7 +106,7 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
 
   // error?.code !==
   // TODO: get current user from database and set state
-  if (isLoading || loggingOut) {
+  if (isLoading || loggingOut || isRefetching) {
     return (
       <>
         <PageLoader />
