@@ -18,7 +18,6 @@ interface Props {
   allWorkspaces: Array<{
     id: string
     name: string
-    selected?: boolean
   }>
   onCreate: () => void
 }
@@ -50,9 +49,9 @@ const WorkspaceSelect: React.FC<Props> = ({ currentWorkspace, allWorkspaces, onC
 
           <DropdownMenuSeparator />
           <div className="flex flex-col gap-1 max-h-40 overflow-y-scroll">
-            {allWorkspaces.map(({ id, name, selected }) => (
+            {allWorkspaces.map(({ id, name }) => (
               <DropdownMenuItem className="w-full cursor-pointer h-full p-0">
-                {selected ? (
+                {id === currentWorkspace?.id ? (
                   <div className="flex gap-2 justify-between items-center truncate h-full py-1 px-2 md:px-3.5">
                     <div className="text-primary w-[85%] ">
                       <div className="truncate">{name}</div>
