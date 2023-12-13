@@ -13,6 +13,11 @@ import NotFound from '../projects/NotFound'
 import TypographyH4 from '../typography/TypographyH4'
 import { useGetWorkspace } from '@/api/queries/workspaces'
 import DangerZone from '../DangerZone'
+import { useState } from 'react'
+import MultiDangerZone from '../MultiDangerZone'
+import LeaveWorkspaceDialog from './LeaveWorkspaceDialog'
+import { useQueryClient } from '@tanstack/react-query'
+import useCurrentUserStore from '@/stores/user'
 
 dayjs.extend(relativeTime)
 
@@ -42,7 +47,11 @@ const generalItems: Array<{
 
 // TODO: workspace actions based on user role
 const WorkspaceSettings: React.FC<Props> = ({ workspaceId }) => {
+  const queryClient = useQueryClient()
+
   const { data, isLoading, error } = useGetWorkspace(workspaceId)
+  const [leaveDialog, setLeaveDialog] = useState<boolean | null>(null)
+  const currentUser = useCurrentUserStore((state) => state.data)
 
   if (isLoading) {
     return <Skeleton className="mt-2 border-2 h-64 w-full" />
@@ -61,8 +70,32 @@ const WorkspaceSettings: React.FC<Props> = ({ workspaceId }) => {
     }
   }
 
+  const handleLeaveWorkspace = () => {
+    closeDialog()
+    queryClient.refetchQueries(['current-user'])
+  }
+
+  const closeDialog = () => {
+    if (!leaveDialog) return
+
+    setLeaveDialog(false)
+    setTimeout(() => {
+      setLeaveDialog(null)
+    }, 150)
+  }
+
   return (
     <>
+      {leaveDialog !== null && (
+        <LeaveWorkspaceDialog
+          workspaceName={currentUser?.selectedWorkspace?.name ?? ''}
+          opened={leaveDialog === true}
+          workspaceId={workspaceId}
+          onClose={() => closeDialog()}
+          onSuccess={() => handleLeaveWorkspace()}
+        />
+      )}
+
       <div className="flex flex-col gap-7">
         <div className="mt-2 gap-2 rounded-md border-2">
           <div className="px-0 py-3 md:px-0 lg:px-0 md:py-4">
@@ -105,12 +138,27 @@ const WorkspaceSettings: React.FC<Props> = ({ workspaceId }) => {
           </div>
         </div>
         {/* //  */}
-        <DangerZone
-          btn={{
-            onClick: () => {},
-          }}
-          title="Delete workspace"
-          description="Permanently delete this workspace, cannto be undone"
+        <MultiDangerZone
+          items={[
+            {
+              btn: {
+                text: 'Leave',
+                variant: 'secondary',
+                onClick: () => setLeaveDialog(true),
+              },
+              title: 'Leave worksapce',
+              description: 'You will no longer be able to access this workspace',
+            },
+
+            {
+              btn: {
+                text: 'Delete',
+                onClick: () => {},
+              },
+              title: 'Delete workspace',
+              description: 'Permanently delete this workspace, irreversible action',
+            },
+          ]}
         />
       </div>
     </>
