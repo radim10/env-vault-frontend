@@ -9,6 +9,7 @@ import { useDeleteAccount } from '@/api/mutations/currentUser'
 import { currentUserErrorMsgFromCode } from '@/api/requests/currentUser'
 import clsx from 'clsx'
 import { useLeaveWorkspace } from '@/api/mutations/workspaces'
+import { workspacesErrorMsgFromCode } from '@/api/requests/workspaces'
 
 interface Props {
   workspaceId: string
@@ -76,6 +77,13 @@ const LeaveWorkspaceDialog: React.FC<Props> = ({
               onChange={(e) => setConfirmText(e.target.value)}
             />
           </div>
+
+          {error && (
+            <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mt-0">
+              <Icons.xCircle className="h-4 w-4" />
+              {workspacesErrorMsgFromCode(error.code)}
+            </div>
+          )}
         </div>
       </DeleteDialog>
     </div>
