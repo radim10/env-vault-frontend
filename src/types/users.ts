@@ -25,7 +25,11 @@ export interface WorkspaceInvitation {
 }
 
 export type CurrentUser = User & {
-  role: WorkspaceUserRole
   // workspaces?: Array<{ id: string; name: string }>
   workspaces: Array<{ id: string; name: string; selected?: true }>
+  selectedWorkspace: {
+    id: string
+    name: string
+    role: WorkspaceUserRole
+  }
 }
