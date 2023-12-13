@@ -165,7 +165,11 @@ const Sidebar = () => {
             <div className="pl-6 pr-1">
               <WorkspaceSelect
                 currentWorkspace={
-                  currentUser?.workspaces?.find((val) => val?.selected === true) as any
+                  // currentUser?.workspaces?.find((val) => val?.selected === true) as any
+                  {
+                    id: currentUser?.selectedWorkspace?.id as string,
+                    name: currentUser?.selectedWorkspace?.name as string,
+                  }
                 }
                 allWorkspaces={currentUser?.workspaces as any}
                 onCreate={() => {
