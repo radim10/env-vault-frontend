@@ -34,7 +34,7 @@ export function secretsErrorMsgFromCode(
 
 // TODO: error
 export type GetSecretsError = SecretsError<'project_not_found' | 'environment_not_found'>
-export type GetSecretsData = Awaited<ReturnType<typeof getSecrets>>
+export type GetSecretsData = Array<Secret>
 
 export async function getSecrets(args: {
   workspaceId: string
@@ -43,7 +43,7 @@ export async function getSecrets(args: {
 }) {
   const { workspaceId, projectName, envName } = args
 
-  const response = sendRequest<Array<Secret>>({
+  const response = sendRequest<GetSecretsData>({
     method: 'GET',
     basePath: 'workspaces',
     path: `${workspaceId}/projects/${projectName}/environments/${envName}/secrets`,
