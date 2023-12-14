@@ -1,4 +1,4 @@
-import { CurrentUser } from '@/types/users'
+import { CurrentUser, WorkspaceUserRole } from '@/types/users'
 import sendRequest, { APIError } from '../instance'
 import { UserSession } from '@/types/session'
 
@@ -18,6 +18,7 @@ export function currentUserErrorMsgFromCode(code?: CurrentUserErrorCode): string
 export type GetCurrentUserError = CurrentUserError<'user_not_found'>
 export type GetCurrentUserData = CurrentUser & {
   defaultWorkspace?: string
+  workspaceRole: WorkspaceUserRole | null
   workspaces?: Array<{ id: string; name: string }>
 }
 
