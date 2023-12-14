@@ -19,6 +19,7 @@ import LeaveWorkspaceDialog from './LeaveWorkspaceDialog'
 import { useQueryClient } from '@tanstack/react-query'
 import useCurrentUserStore from '@/stores/user'
 import DeleteWorkspaceDialog from './DeleteWorkspaceDialog'
+import { useToast } from '../ui/use-toast'
 
 dayjs.extend(relativeTime)
 
@@ -48,6 +49,7 @@ const generalItems: Array<{
 
 // TODO: workspace actions based on user role
 const WorkspaceSettings: React.FC<Props> = ({ workspaceId }) => {
+  const { toast } = useToast()
   const queryClient = useQueryClient()
 
   const { data, isLoading, error } = useGetWorkspace(workspaceId)
@@ -77,6 +79,23 @@ const WorkspaceSettings: React.FC<Props> = ({ workspaceId }) => {
   const handleLeaveWorkspace = () => {
     closeLeaveDialog()
     queryClient.refetchQueries(['current-user'])
+
+    toast({
+      title: 'Workspace left',
+      description: 'You have successfully left the workspace',
+      variant: 'success',
+    })
+  }
+
+  const handleDeletedWorkspace = () => {
+    closeLeaveDialog()
+    queryClient.refetchQueries(['current-user'])
+
+    toast({
+      title: 'Workspace deleted',
+      description: 'You have successfully deleted the workspace',
+      variant: 'success',
+    })
   }
 
   const closeLeaveDialog = () => {
@@ -115,7 +134,7 @@ const WorkspaceSettings: React.FC<Props> = ({ workspaceId }) => {
           opened={deleteDialog === true}
           workspaceId={workspaceId}
           onClose={() => closeDeleteDialog()}
-          onSuccess={() => handleLeaveWorkspace()}
+          onSuccess={() => handleDeletedWorkspace()}
         />
       )}
 
