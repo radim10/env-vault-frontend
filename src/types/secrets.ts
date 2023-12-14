@@ -4,6 +4,11 @@ export interface Secret {
   description?: string
 }
 
+export interface SecretWithoutValue {
+  key: string
+  description?: string
+}
+
 export interface UpdatedSecret {
   // original key
   key?: string
