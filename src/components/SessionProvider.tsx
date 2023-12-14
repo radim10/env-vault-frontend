@@ -55,6 +55,16 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
         }
       },
       onSuccess: (user) => {
+        if (user?.defaultWorkspace !== undefined) {
+          if (user?.defaultWorkspace === null) {
+            router.replace(`/welcome`)
+            return
+          } else {
+            router.replace(`/workspace/${user.defaultWorkspace}/projects`)
+            return
+          }
+        }
+
         const selectedWorkspaceId = user?.defaultWorkspace ?? params?.workspace
         const selectedWorkspaceIndex = user?.workspaces?.findIndex(
           (workspace) => workspace.id === selectedWorkspaceId
@@ -63,12 +73,15 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
         const updatedUser = produce(user, (draft) => {
           if (selectedWorkspaceIndex === -1) {
           } else {
-            // TODO: ROLE
-            const workspace = {
-              ...user?.workspaces?.[selectedWorkspaceIndex],
-              role: WorkspaceUserRole.OWNER,
+            const role = user?.workspaceRole
+
+            if (role) {
+              const workspace = {
+                ...user?.workspaces?.[selectedWorkspaceIndex],
+                role,
+              }
+              draft.selectedWorkspace = workspace
             }
-            draft.selectedWorkspace = workspace
           }
         })
         console.log({ updatedUser })
@@ -81,14 +94,6 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
         // })
 
         set(updatedUser)
-
-        if (user?.defaultWorkspace !== undefined) {
-          if (user?.defaultWorkspace === null) {
-            router.replace(`/welcome`)
-          } else {
-            router.replace(`/workspace/${user.defaultWorkspace}/projects`)
-          }
-        }
       },
     }
   )
