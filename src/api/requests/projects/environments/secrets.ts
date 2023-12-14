@@ -1,5 +1,5 @@
 import sendRequest, { APIError } from '@/api/instance'
-import { Secret, UpdatedSecretsBody } from '@/types/secrets'
+import { Secret, SecretWithoutValue, UpdatedSecretsBody } from '@/types/secrets'
 
 type SecretsErrorCode =
   | 'project_not_found'
@@ -35,6 +35,7 @@ export function secretsErrorMsgFromCode(
 // TODO: error
 export type GetSecretsError = SecretsError<'project_not_found' | 'environment_not_found'>
 export type GetSecretsData = Array<Secret>
+// export type GetSecretsData = Array<SecretWithoutValue>
 
 export async function getSecrets(args: {
   workspaceId: string
