@@ -172,7 +172,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
         draft.pages[0] = updatedPageState
       })
 
-      if (newItem?.change?.action === 'secrets') {
+      if (newItem?.secrets?.length > 0) {
         queryClient.setQueryData(key, updatedData)
       }
 
@@ -295,7 +295,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
         const item = draft?.data?.find((val) => val?.id === changeId) as any
 
         if (item) {
-          item.change.data = secrets
+          item.secrets = secrets
         }
       })
 
@@ -424,7 +424,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
                 )}
               </div>
 
-              {val?.change?.action === 'secrets' && (
+              {val?.secrets?.length > 0 && (
                 <ChangelogSecretsItem
                   id={val?.id}
                   key={val?.id}
@@ -438,9 +438,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
                     queryClient?.getQueryData(['changelog-secrets', val?.id]) !== undefined
                   }
                   changes={
-                    queryClient?.getQueryData(['changelog-secrets', val?.id]) ??
-                    val?.change?.data ??
-                    []
+                    queryClient?.getQueryData(['changelog-secrets', val?.id]) ?? val?.secrets ?? []
                   }
                   createdAt={`${dayjs(val?.createdAt).format('HH:mm')} (${dayjs(
                     val?.createdAt
@@ -461,7 +459,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
                   }}
                 />
               )}
-              {val?.change?.action !== 'secrets' && (
+              {(val?.secrets?.length === 0 || !val?.secrets) && val?.change && (
                 <ChangelogItem
                   readOnly={selectedEnvironment.isAdminRole() !== true}
                   user={val?.user}
