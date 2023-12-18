@@ -20,6 +20,7 @@ import { useToast } from '@/components/ui/use-toast'
 import Error from '@/components/Error'
 import ChangelogItem from './ChangelogItem'
 import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
+import useCurrentUserStore from '@/stores/user'
 
 dayjs.extend(relativeTime)
 
@@ -37,6 +38,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const selectedEnvironment = useSelectedEnvironmentStore()
+  const { data: currentUser } = useCurrentUserStore()
 
   const [hasMore, setHasMore] = useState(true)
   const [rollbackDialog, setRollbackDialog] = useState<{ id: string; secrets: boolean } | null>(
@@ -76,7 +78,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
         workspaceId,
         projectName,
         envName,
-        searchParams?.get('only-secrets') === 'true' ? 'only-secrets' : null,
+        // searchParams?.get('only-secrets') === 'true' ? 'only-secrets' : null,
       ],
       async ({ pageParam }) => {
         const onlySecrets = searchParams.get('only-secrets') === 'true'
@@ -92,7 +94,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
                   offset,
                   // date: pageParam?.date ?? undefined,
                   // id: pageParam?.id ?? undefined,
-                  'only-secrets': onlySecrets ?? undefined,
+                  // 'only-secrets': onlySecrets ?? undefined,
                 }
               : undefined,
         })
@@ -148,7 +150,8 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
       workspaceId,
       projectName,
       envName,
-      searchParams?.get('only-secrets') === 'true' ? 'only-secrets' : null,
+      // searchParams?.get('only-secrets') === 'true' ? 'only-secrets' : null,
+      // true,
     ]
     const existingData = queryClient?.getQueryData<{
       pages: Array<{ data: Array<EnvChangelogItem> }>
@@ -165,7 +168,14 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
 
       const pageData = existingData?.pages?.[0]
       const updatedPageState = produce(pageData, (draft) => {
-        draft.data.unshift(newItem)
+        const userData = currentUser?.name
+          ? {
+              avatarUrl: currentUser?.avatarUrl ?? null,
+              name: currentUser?.name,
+            }
+          : undefined
+
+        draft.data.unshift({ ...newItem, user: userData })
       })
 
       const updatedData = produce(existingData, (draft) => {
@@ -176,24 +186,25 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
         queryClient.setQueryData(key, updatedData)
       }
 
-      if (newItem?.change) {
-        const change = newItem?.change
-
-        if (change?.action === 'renamed') {
-          // navigate + chache
-          handleRenameRollback({
-            newName: change?.new,
-            changelogKey: key,
-            updatedData,
-          })
-        } else if (change?.action === 'type') {
-          selectedEnvironment?.update({ type: change?.new })
-          // update state + cache
-        } else if (change?.action === 'lock') {
-          selectedEnvironment?.update({ locked: change?.locked })
-          // state + cache
-        }
-      }
+      // NOTE: with other than secrets
+      // if (newItem?.change) {
+      // const change = newItem?.change
+      //
+      // if (change?.action === 'renamed') {
+      //   // navigate + chache
+      //   handleRenameRollback({
+      //     newName: change?.new,
+      //     changelogKey: key,
+      //     updatedData,
+      //   })
+      // } else if (change?.action === 'type') {
+      //   selectedEnvironment?.update({ type: change?.new })
+      //   // update state + cache
+      // } else if (change?.action === 'lock') {
+      //   selectedEnvironment?.update({ locked: change?.locked })
+      //   // state + cache
+      // }
+      // }
     }
 
     closeDialog()
@@ -367,29 +378,29 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
         }}
       />
       <div className="">
-        <div className="flex w-fill justify-end items-center">
-          <Button
-            size={'sm'}
-            variant={searchParams.get('only-secrets') === 'true' ? 'secondary' : 'outline'}
-            className={clsx(['gap-2'], {
-              'text-primary': searchParams.get('only-secrets') === 'true',
-              'hover:text-primary hover:border-primary hover:bg-transparent':
-                searchParams.get('only-secrets') !== 'true',
-            })}
-            onClick={() => {
-              const onlySecrets = searchParams.get('only-secrets') === 'true'
-
-              if (onlySecrets) {
-                router.push(pathname)
-              } else {
-                router.push(pathname + '?' + createQueryString('only-secrets', 'true'))
-              }
-            }}
-          >
-            <Icons.squareAsterisk className="h-4 w-4" />
-            <span>Only secrets</span>
-          </Button>
-        </div>
+        {/* <div className="flex w-fill justify-end items-center"> */}
+        {/*   <Button */}
+        {/*     size={'sm'} */}
+        {/*     variant={searchParams.get('only-secrets') === 'true' ? 'secondary' : 'outline'} */}
+        {/*     className={clsx(['gap-2'], { */}
+        {/*       'text-primary': searchParams.get('only-secrets') === 'true', */}
+        {/*       'hover:text-primary hover:border-primary hover:bg-transparent': */}
+        {/*         searchParams.get('only-secrets') !== 'true', */}
+        {/*     })} */}
+        {/*     onClick={() => { */}
+        {/*       const onlySecrets = searchParams.get('only-secrets') === 'true' */}
+        {/**/}
+        {/*       if (onlySecrets) { */}
+        {/*         router.push(pathname) */}
+        {/*       } else { */}
+        {/*         router.push(pathname + '?' + createQueryString('only-secrets', 'true')) */}
+        {/*       } */}
+        {/*     }} */}
+        {/*   > */}
+        {/*     <Icons.squareAsterisk className="h-4 w-4" /> */}
+        {/*     <span>Only secrets</span> */}
+        {/*   </Button> */}
+        {/* </div> */}
         {/* //List */}
         <div className="flex flex-col gap-5 md:gap-4">
           {flattenedData?.map((val, index) => (
