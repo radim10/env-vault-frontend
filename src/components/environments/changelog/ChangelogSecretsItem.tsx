@@ -88,7 +88,7 @@ const ChangelogSecretsItem: React.FC<Props> = ({
             <div>
               {user ? <span>Modified secrets</span> : <span>Secrets have been modified</span>}
             </div>
-            <Icons.asterisk className="hidden md:block w-4 h-4 text-foreground opacity-80" />
+            {/* <Icons.asterisk className="hidden md:block w-4 h-4 text-foreground opacity-80" /> */}
           </div>
         }
         rollbackBtn={
