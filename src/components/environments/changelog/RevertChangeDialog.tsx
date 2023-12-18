@@ -90,8 +90,14 @@ const RevertChangeDialog: React.FC<Props> = ({
                 rollback({ workspaceId, projectName, envName, changeId })
               }}
             >
-              <Icons.undo className="h-4 w-4" />
-              <span>Revert</span>
+              {!isLoading ? (
+                <>
+                  <Icons.undo className="h-4 w-4" />
+                  <span>Revert</span>
+                </>
+              ) : (
+                <span>Reverting...</span>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
