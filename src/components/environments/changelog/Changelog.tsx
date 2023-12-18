@@ -290,7 +290,7 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
       workspaceId,
       projectName,
       envName,
-      searchParams?.get('only-secrets') === 'true' ? 'only-secrets' : null,
+      // searchParams?.get('only-secrets') === 'true' ? 'only-secrets' : null,
     ]
 
     const existingData = queryClient?.getQueryData<{
