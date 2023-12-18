@@ -132,7 +132,7 @@ const ChangelogSecretsItem: React.FC<Props> = ({
                     <input
                       readOnly
                       className="w-full h-full opacity-100 font-semibold outline-none bg-transparent"
-                      value={newKey ?? oldKey ?? key}
+                      value={newKey && !oldKey ? newKey : oldKey ?? key}
                     />
 
                     {newKey !== undefined && oldKey !== undefined && value !== undefined && (
