@@ -118,14 +118,11 @@ const ChangelogSecretsItem: React.FC<Props> = ({
                     className={clsx([
                       'w-full h-9 md:h-full  flex gap-3.5 pl-3.5  pr-1.5 items-center bg-cyan-50X',
                       {
-                        'md:w-[37%] xl:w-[35%] bglblack':
-                          (oldValue !== undefined || newValue !== undefined) &&
-                          newKey === undefined &&
-                          value === undefined,
+                        'md:w-[37%] xl:w-[35%] bglblack': !(
+                          newKey !== undefined && oldKey !== undefined
+                        ),
                         'w-full md:w-[50%] bg-sky-200X':
-                          newKey !== undefined ||
-                          (value !== undefined &&
-                            (newValue !== undefined || oldValue !== undefined)),
+                          newKey !== undefined && oldKey !== undefined,
                       },
                     ])}
                   >
@@ -185,7 +182,6 @@ const ChangelogSecretsItem: React.FC<Props> = ({
                         <div className="px-2.5 h-full flex justify-center items-center md:bg-red-600/5 md:dark:bg-red-600/10 md:border-red-600/40 md:dark:border-red-600/20 border-r-[1.5px] md:border-x-[1.5px] ">
                           <Icons.minus className="opacity-70 h-3.5 w-3.5 text-red-600" />
                         </div>
-
                         {hidden ? (
                           <span className="block opacity-85">•••••••••••</span>
                         ) : (
