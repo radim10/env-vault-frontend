@@ -14,8 +14,8 @@ interface Props {
 
 const items = [
   { label: 'Secrets', href: '' },
-  { label: 'Tokens', href: 'tokens' },
   { label: 'Changelog', href: 'changelog' },
+  { label: 'Tokens', href: 'tokens' },
   // { label: 'Users', href: 'users' },
   { label: 'Settings', href: 'settings' },
 ]
