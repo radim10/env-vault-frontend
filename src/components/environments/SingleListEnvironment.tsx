@@ -60,8 +60,9 @@ const SingleListEnvironment: React.FC<Props> = ({
             <div className="w-full md:w-[50%] bg-red-800X flex items-center gap-2 md:gap-4">
               {/* // */}
               <div
-                className={clsx(['h-3 w-3 rounded-full bg-primary'], {
-                  'bg-gray-400 dark:bg-gray-600': index === 0,
+                className={clsx(['h-3 w-3 rounded-full '], {
+                  'bg-gray-400 dark:bg-gray-600': secretsCount === 0,
+                  'bg-primary': secretsCount > 0,
                 })}
               />
               {/* {} */}
