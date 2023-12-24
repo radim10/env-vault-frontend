@@ -16,6 +16,8 @@ export interface SelectedEnvironment {
   createdBy?: Pick<User, 'name' | 'avatarUrl'>
   // inherited from project
   userRole: ProjectRole
+  //
+  secretsLoaded: boolean
 }
 
 export interface SelectedEnvironmentState {
@@ -26,7 +28,14 @@ export interface SelectedEnvironmentState {
 interface SelectedEnvironmentActions {
   reset: () => void
   set: (env: SelectedEnvironment) => void
-  update: (locked: Partial<{ name: string; locked: boolean; type: EnvironmentType }>) => void
+  update: (
+    locked: Partial<{
+      name: string
+      locked: boolean
+      type: EnvironmentType
+      secretsLoaded: boolean
+    }>
+  ) => void
   setChangelogFilter: (envChangelogFilter: 'secrets' | null) => void
   isAdminRole: () => boolean | null
   isEditorRole: () => boolean | null
@@ -45,7 +54,7 @@ export const useSelectedEnvironmentStore = create(
           state.changelogFilter = changelogFilter
         })
       },
-      update: ({ name, locked, type }) => {
+      update: ({ name, locked, type, secretsLoaded }) => {
         set((state) => {
           if (state.data) {
             if (locked !== undefined) {
@@ -56,6 +65,9 @@ export const useSelectedEnvironmentStore = create(
             }
             if (type !== undefined) {
               state.data.type = type
+            }
+            if (secretsLoaded !== undefined) {
+              state.data.secretsLoaded = secretsLoaded
             }
           }
         })
