@@ -1,11 +1,11 @@
 'use client'
 
-import { useGetSecrets } from '@/api/queries/projects/environments/secrets'
+import { useMount } from 'react-use'
+import { Button } from '../ui/button'
 import SecretsList from './SecretsList'
 import SecretsListSkeleton from './SecretsListSkeleton'
 import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
-import { Button } from '../ui/button'
-import { useQueryClient } from '@tanstack/react-query'
+import { useGetSecrets } from '@/api/queries/projects/environments/secrets'
 
 interface Props {
   workspaceId: string
@@ -14,8 +14,11 @@ interface Props {
 }
 
 const SecretsRoot: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
-  const queryClient = useQueryClient()
-  const { isViewerRole } = useSelectedEnvironmentStore()
+  const {
+    isViewerRole,
+    data: selectedEnvironment,
+    update: updateSelectedEnvironment,
+  } = useSelectedEnvironmentStore()
 
   const {
     data: secrets,
@@ -26,12 +29,26 @@ const SecretsRoot: React.FC<Props> = ({ workspaceId, projectName, envName }) => 
   } = useGetSecrets(
     { workspaceId, projectName, envName },
     {
-      enabled:
-        queryClient.getQueryData([workspaceId, projectName, envName, 'secrets']) === undefined
-          ? false
-          : true,
+      onSuccess: () => {
+        if (selectedEnvironment) {
+          updateSelectedEnvironment({ secretsLoaded: true })
+        }
+      },
+      enabled: false,
+      refetchOnMount: false,
+      // enabled: data?.loadedSecrets,
+      // queryClient.getQueryData([workspaceId, projectName, envName, 'secrets']) !== undefined,
+      //     queryClient.getQueryData([workspaceId, projectName, envName, 'secrets']) === undefined
+      //       ? false
+      //       : true,
     }
   )
+
+  useMount(() => {
+    if (selectedEnvironment?.secretsLoaded) {
+      refetch()
+    }
+  })
 
   if (secrets === undefined && !isFetching) {
     return (
