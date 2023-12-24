@@ -50,11 +50,13 @@ export default function EnvLayout({
         queryClient.getQueryData([params?.workspace, params?.projectName, params?.env]) !== null,
       onSuccess: (data) => {
         const projectRole = (selectedProject?.userRole ?? data?.userRole) as ProjectRole
+        const showSecrets = selectedEnvironment.data?.secretsLoaded === true
 
         selectedEnvironment.set({
           workspaceId: params?.workspace,
           projectName: params?.projectName,
           createdBy: data?.createdBy,
+          secretsLoaded: showSecrets ? true : false,
           //
           name: params?.env,
           type: data?.type,
