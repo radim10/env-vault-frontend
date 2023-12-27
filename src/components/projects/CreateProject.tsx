@@ -97,6 +97,13 @@ const CreateProject: React.FC<Props> = ({ workspaceId }) => {
         environmentCount: 0,
       }
 
+      const deletedProjectCache = queryClient.getQueryData(['project', workspaceId, name])
+
+      if (deletedProjectCache === null) {
+        // set query data to undefined not working?
+        queryClient.removeQueries(['project', workspaceId, name], { exact: true })
+      }
+
       queryClient.setQueryData<ListProject[]>(
         ['projects', workspaceId],
         (oldData: ListProject[] | undefined) => {
