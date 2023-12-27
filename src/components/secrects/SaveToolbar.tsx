@@ -414,10 +414,10 @@ const SaveSecretsToolbar: React.FC<Props> = ({ showBtn }) => {
                 (s.description && s.newDescription !== s.description && s.newDescription) ||
                 (s.newDescription?.length === 0 && s.description)
             ).length > 0 && (
-                <div className="text-[0.92rem] text-yellow-500 dark:text-yellow-600 font-medium">
-                  {getChangesText()}
-                </div>
-              )}
+              <div className="text-[0.92rem] text-yellow-500 dark:text-yellow-600 font-medium">
+                {getChangesText()}
+              </div>
+            )}
           </>
         )}
 
@@ -429,37 +429,39 @@ const SaveSecretsToolbar: React.FC<Props> = ({ showBtn }) => {
               (s.description && s.newDescription !== s.description && s.newDescription) ||
               (s.newDescription?.length === 0 && s.description)
           ).length > 0 && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Button variant={'outline'} size={'sm'} onClick={() => setDialog('undo')}>
-                      <Icons.undo className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Undo all changes</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button variant={'outline'} size={'sm'} onClick={() => setDialog('undo')}>
+                    <Icons.undo className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Undo all changes</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
           {/* {loaded && secrets?.length !== 0 && ( */}
-          <Button
-            className="gap-2"
-            size="sm"
-            disabled={
-              secrets?.length === 0 ||
-              !secrets?.filter(
-                (s) =>
-                  s.action !== null ||
-                  (!s.description && s.newDescription) ||
-                  (s.description && s.newDescription !== s.description && s.newDescription) ||
-                  (s.newDescription?.length === 0 && s.description)
-              )?.length
-            }
-            onClick={handleOpenDialog}
-          >
-            {/* <Icons.save className="w-4 h-4" /> */}
-            {/* <span className="md:hidden block">Save </span> */}
-            <span className="">Save changes</span>
-          </Button>
+          {selectedEnv?.secretsLoaded === true && (
+            <Button
+              className="gap-2"
+              size="sm"
+              disabled={
+                secrets?.length === 0 ||
+                !secrets?.filter(
+                  (s) =>
+                    s.action !== null ||
+                    (!s.description && s.newDescription) ||
+                    (s.description && s.newDescription !== s.description && s.newDescription) ||
+                    (s.newDescription?.length === 0 && s.description)
+                )?.length
+              }
+              onClick={handleOpenDialog}
+            >
+              {/* <Icons.save className="w-4 h-4" /> */}
+              {/* <span className="md:hidden block">Save </span> */}
+              <span className="">Save changes</span>
+            </Button>
+          )}
           {/* )} */}
 
           {/*   <EnvActionsDropdown */}
