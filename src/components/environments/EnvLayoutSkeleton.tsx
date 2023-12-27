@@ -18,7 +18,7 @@ const EnvLayoutSkeleton: React.FC<Props> = ({ isSecrets }) => {
           </div>
           {/* // FLEX END */}
           {isSecrets && (
-            <div>
+            <div className="opacity-0">
               <Skeleton className="w-[110px] h-[36px]" />
             </div>
           )}
@@ -42,7 +42,7 @@ const EnvLayoutSkeleton: React.FC<Props> = ({ isSecrets }) => {
         </div>
       </div>
 
-      <div className="block md:hidden mt-3">
+      <div className="block md:hidden mt-0">
         <div className="flex flex-col justify-between items-start mt-0 gap-2 px-6">
           <div className="flex gap-2 items-center">
             <Skeleton className="h-6 w-44 md:w-80 " />
@@ -55,14 +55,14 @@ const EnvLayoutSkeleton: React.FC<Props> = ({ isSecrets }) => {
           {/* </div> */}
           {/* // FLEX END */}
         </div>
-        {isSecrets && (
-          <div className="flex items-center justify-end w-full mt-1 pr-6">
-            <div>
-              <Skeleton className="w-[117px] h-[36px]" />
-            </div>
-          </div>
-        )}
-
+        {/* {isSecrets && ( */}
+        {/*   <div className="flex items-center justify-end w-full mt-1 pr-6 opacity-0"> */}
+        {/*     <div> */}
+        {/*       <Skeleton className="w-[117px] h-[36px]" /> */}
+        {/*     </div> */}
+        {/*   </div> */}
+        {/* )} */}
+        {/**/}
         {/* NOTE: Tabs */}
 
         <div
