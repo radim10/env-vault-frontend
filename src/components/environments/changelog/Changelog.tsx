@@ -363,6 +363,22 @@ const Changelog: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
     return <Error />
   }
 
+  if (!isLoading && flattenedData?.length === 0) {
+    return (
+      <div className="flex items-center justify-center mt-24">
+        <div className="flex flex-col items-center gap-2">
+          <div>
+            <Icons.inbox className="h-20 w-20 opacity-30" />
+          </div>
+          <div className="text-center">
+            <span className="text-lg font-bold opacity-85">No changes here...</span>
+            <div className="my-1 text-muted-foreground">Any secret changes will appear here</div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <>
       <RevertChangeDialog
