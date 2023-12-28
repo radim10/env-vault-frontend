@@ -299,6 +299,7 @@ const SecretsList: React.FC<Props> = ({ data, readOnly }) => {
                       onClick={() => addSecret()}
                       variant="default"
                       disabled={isSaving}
+                      size={'sm'}
                     >
                       <Icons.plus className="h-5 w-5" />
                       Add secret
@@ -307,6 +308,7 @@ const SecretsList: React.FC<Props> = ({ data, readOnly }) => {
                       className="gap-2"
                       onClick={() => setImportDialogOpened(true)}
                       variant="outline"
+                      size={'sm'}
                     >
                       <Icons.upload className="h-4 w-4" />
                     </Button>
