@@ -441,7 +441,7 @@ const SaveSecretsToolbar: React.FC<Props> = ({ showBtn }) => {
             </TooltipProvider>
           )}
           {/* {loaded && secrets?.length !== 0 && ( */}
-          {selectedEnv?.secretsLoaded === true && (
+          {selectedEnv?.secretsLoaded === true && secrets?.length !== 0 && (
             <Button
               className="gap-2"
               size="sm"
