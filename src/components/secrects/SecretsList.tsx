@@ -19,6 +19,7 @@ import { SecretAction, StateSecret, useEditedSecretsStore } from '@/stores/secre
 import { useToast } from '../ui/use-toast'
 import GenerateSecretDialog from './GenerateSecretDialog'
 import ImportSecretsDrawer from './ImportSecretsDrawer'
+import { getSecretsString } from '@/utils/secretsString'
 
 interface Props {
   data: Secret[]
@@ -257,26 +258,9 @@ const SecretsList: React.FC<Props> = ({ data, readOnly }) => {
     }
   }
 
-  const copyEnvSecrets = (type: 'env' | 'json') => {
-    if (type === 'env') {
-      const dotenvString = data
-        .map((obj) => {
-          if (obj.description) {
-            return `# ${obj.description}\n${obj.key}=${obj.value}`
-          } else {
-            return `${obj.key}=${obj.value}`
-          }
-        })
-        .join('\n')
-      navigator.clipboard.writeText(dotenvString)
-    } else {
-      const resultObject: { [key: string]: string } = data.reduce((acc: any, obj: any) => {
-        acc[obj.key] = obj.value
-        return acc
-      }, {})
-
-      navigator.clipboard.writeText(JSON.stringify(resultObject, null, 2))
-    }
+  const copyEnvSecrets = (type: 'dotenv' | 'json') => {
+    const secretsString = getSecretsString(data, type)
+    navigator.clipboard.writeText(secretsString)
 
     toast({
       title: 'Environment secrets copied to clipboard!',
