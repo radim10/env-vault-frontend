@@ -9,7 +9,7 @@ interface Props {
   secretsCount: number
   readonly?: boolean
   onImport: () => void
-  onCopySecrets: (type: 'env' | 'json') => void
+  onCopySecrets: (type: 'dotenv' | 'json') => void
 }
 
 const SecretsToolbar: React.FC<Props> = ({ secretsCount, readonly, onImport, onCopySecrets }) => {
