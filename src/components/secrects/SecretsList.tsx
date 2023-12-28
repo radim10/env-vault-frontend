@@ -308,7 +308,7 @@ const SecretsList: React.FC<Props> = ({ data, readOnly }) => {
               <span className="text-lg font-bold opacity-85">No secrets here...</span>
               {!readOnly ? (
                 <>
-                  <div className="my-1">Add secrets to this environment</div>
+                  <div className="my-1 text-muted-foreground">Add secrets to this environment</div>
                   <div className="mt-5 flex items-center gap-3 justify-center">
                     <Button
                       className="gap-2"
