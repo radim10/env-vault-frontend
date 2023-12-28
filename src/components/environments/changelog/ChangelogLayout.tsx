@@ -27,6 +27,10 @@ interface Props {
     loading?: boolean
     onClick: () => void
   }
+  // copyBtn?: {
+  //   loading?: boolean
+  //   onClick: (type: 'dotenv' | 'json') => void
+  // }
 }
 
 const ChangelogLayout: React.FC<Props> = ({
@@ -118,34 +122,57 @@ const ChangelogLayout: React.FC<Props> = ({
               )}
 
               {showBtn && (
-                <Tooltip>
-                  <TooltipTrigger disabled={false}>
-                    <Button
-                      size={'sm'}
-                      variant={'ghost'}
-                      loading={showBtn?.loading}
-                      className={clsx(['opacity-80 hover:opacity-100 flex gap-0 '], {
-                        'text-primary hover:text-primary opacity-100 cursor-default hover:bg-transparent':
-                          showBtn?.loading,
-                      })}
-                      onClick={() => {
-                        if (showBtn?.loading) return
-                        showBtn?.onClick()
-                      }}
-                    >
-                      {!showBtn?.loading && (
-                        <>
-                          {showBtn?.hidden ? (
-                            <Icons.eye className="h-4 w-4" />
-                          ) : (
-                            <Icons.eyeOff className="h-4 w-4" />
-                          )}
-                        </>
-                      )}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>{showBtn?.hidden ? 'Show values' : 'Hide values'}</TooltipContent>
-                </Tooltip>
+                <>
+                  <Tooltip>
+                    <TooltipTrigger disabled={false}>
+                      <Button
+                        size={'sm'}
+                        variant={'ghost'}
+                        loading={showBtn?.loading}
+                        className={clsx(['opacity-80 hover:opacity-100 flex gap-0 '], {
+                          'text-primary hover:text-primary opacity-100 cursor-default hover:bg-transparent':
+                            showBtn?.loading,
+                        })}
+                        onClick={() => {
+                          if (showBtn?.loading) return
+                          showBtn?.onClick()
+                        }}
+                      >
+                        {!showBtn?.loading && (
+                          <>
+                            {showBtn?.hidden ? (
+                              <Icons.eye className="h-4 w-4" />
+                            ) : (
+                              <Icons.eyeOff className="h-4 w-4" />
+                            )}
+                          </>
+                        )}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {showBtn?.hidden ? 'Show values' : 'Hide values'}
+                    </TooltipContent>
+                  </Tooltip>
+
+                  {/* <Tooltip> */}
+                  {/*   <TooltipTrigger disabled={false}> */}
+                  {/* <CopySecretsDropdown */}
+                  {/*   btn={{ */}
+                  {/*     size: 'sm', */}
+                  {/*     variant: 'ghost', */}
+                  {/*     className: 'opacity-80 hover:opacity-100 flex gap-0', */}
+                  {/*     loading: copyBtn?.loading, */}
+                  {/*   }} */}
+                  {/*   dropdownClassName="mr-10" */}
+                  {/*   onCopy={(type) => { */}
+                  {/*     if (copyBtn?.loading) return */}
+                  {/*     copyBtn?.onClick(type) */}
+                  {/*   }} */}
+                  {/* /> */}
+                  {/* {/* </TooltipTrigger> */}
+                  {/*   <TooltipContent>{'Copy'}</TooltipContent> */}
+                  {/* </Tooltip> */}
+                </>
               )}
             </TooltipProvider>
           </div>

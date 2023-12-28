@@ -49,6 +49,7 @@ const ChangelogSecretsItem: React.FC<Props> = ({
   onValuesLoaded,
 }) => {
   const [hidden, setHidden] = useState(true)
+  // const [loadingView, setLoadingView] = useState(false)
   // const toggleHide = () => setHidden(!hidden)
 
   const { refetch, isFetching } = useGetEnvChangelogItemSecrets(
@@ -69,13 +70,34 @@ const ChangelogSecretsItem: React.FC<Props> = ({
     }
   )
 
-  const toggleHide = () => {
+  const toggleHide = async () => {
     if (valuesLoaded) {
       setHidden(!hidden)
     } else {
       refetch()
+      // setLoadingView(true)
+      // const res = await refetch()
+      //
+      // if (res?.data) {
+      //   onValuesLoaded(res?.data)
+      //   setHidden(!hidden)
+      // }
     }
   }
+
+  // const handleCopy = async (type: 'dotenv' | 'json') => {
+  //   if (valuesLoaded) {
+  //     // setHidden(!hidden)
+  //   } else {
+  //     setLoadingView(false)
+  //     const res = await refetch()
+  //
+  //     if (res?.data) {
+  //       onValuesLoaded(res?.data)
+  //
+  //     }
+  //   }
+  // }
 
   return (
     <>
@@ -104,6 +126,10 @@ const ChangelogSecretsItem: React.FC<Props> = ({
           loading: isFetching,
           onClick: toggleHide,
         }}
+        //   copyBtn={{
+        //     loading: isFetching && loadingView !== true,
+        //     onClick: handleCopy,
+        //   }}
       >
         <div className="rounded-md border border-input flex flex-col gap-0">
           {changes?.map(({ key, oldKey, newValue, oldValue, newKey, value }, index) => (
