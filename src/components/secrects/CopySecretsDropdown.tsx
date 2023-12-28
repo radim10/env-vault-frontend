@@ -9,6 +9,7 @@ import {
 
 import { Icons } from '../icons'
 import { Button } from '../ui/button'
+import { cn } from '@/lib/utils'
 
 const dropdownActions = [
   { label: 'Copy secrets (.env)', icon: Icons.fileText },
@@ -16,25 +17,37 @@ const dropdownActions = [
 ]
 
 interface Props {
-  onCopy: (type: 'env' | 'json') => void
+  btn?: {
+    loading?: boolean
+    variant?: 'ghost' | 'default'
+    size?: 'sm' | 'default'
+    className?: string
+  }
+  dropdownClassName?: string
+  onCopy: (type: 'dotenv' | 'json') => void
 }
 
-const CopySecretsDropdown: React.FC<Props> = ({ onCopy }) => {
+const CopySecretsDropdown: React.FC<Props> = ({ onCopy, btn, dropdownClassName }) => {
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <Button variant={'outline'} size={'default'}>
-            <Icons.copy className="h-4 w-4" />
+          <Button
+            variant={btn?.variant ?? 'outline'}
+            size={btn?.size ?? 'default'}
+            className={cn(btn?.className)}
+            loading={btn?.loading}
+          >
+            {!btn?.loading && <Icons.copy className="h-4 w-4" />}
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="mr-0 w-[200px] mt-1">
+        <DropdownMenuContent className={cn(dropdownClassName, 'mr-0 w-[200px] mt-1')}>
           <>
             {dropdownActions.map((item, index) => (
               <DropdownMenuItem
                 onClick={() => {
                   if (index === 0) {
-                    onCopy('env')
+                    onCopy('dotenv')
                   } else {
                     onCopy('json')
                   }
