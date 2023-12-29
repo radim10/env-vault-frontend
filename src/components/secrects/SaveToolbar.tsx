@@ -13,6 +13,8 @@ import { ListEnvironment } from '@/types/projects'
 import { Secret } from '@/types/secrets'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 import UndoAllChangesDialog from './UndoAllChangesDialog'
+import useKeyboardJs from 'react-use/lib/useKeyboardJs'
+import { useUpdateEffect } from 'react-use'
 
 interface Props {
   showBtn: boolean
@@ -22,12 +24,53 @@ const SaveSecretsToolbar: React.FC<Props> = ({ showBtn }) => {
   const router = useRouter()
   const { toast } = useToast()
   const queryClient = useQueryClient()
+  const [savePressed] = useKeyboardJs('ctrl + enter')
+  const [undoPressed] = useKeyboardJs('ctrl + backspace')
 
   const { data: selectedEnv } = useSelectedEnvironmentStore()
 
-  const [dialog, setDialog] = useState<
-    'save' | 'undo' | 'rename' | 'delete' | 'lock' | 'changeType' | null
-  >(null)
+  const [dialog, setDialog] = useState<'save' | 'undo' | null>(null)
+
+  useUpdateEffect(() => {
+    if (savePressed) handleSaveShortcut()
+  }, [savePressed])
+
+  useUpdateEffect(() => {
+    if (undoPressed) handleUndoShortcut()
+  }, [undoPressed])
+
+  const handleSaveShortcut = () => {
+    if (
+      selectedEnv?.secretsLoaded === true &&
+      secrets?.length !== 0 &&
+      !(
+        secrets?.length === 0 ||
+        !secrets?.filter(
+          (s) =>
+            s.action !== null ||
+            (!s.description && s.newDescription) ||
+            (s.description && s.newDescription !== s.description && s.newDescription) ||
+            (s.newDescription?.length === 0 && s.description)
+        )?.length
+      )
+    ) {
+      handleOpenDialog()
+    }
+  }
+
+  const handleUndoShortcut = () => {
+    if (
+      secrets?.filter(
+        (s) =>
+          s.action !== null ||
+          (!s.description && s.newDescription) ||
+          (s.description && s.newDescription !== s.description && s.newDescription) ||
+          (s.newDescription?.length === 0 && s.description)
+      ).length > 0
+    ) {
+      setDialog('undo')
+    }
+  }
 
   const { loaded, secrets, undoAllChanges } = useEditedSecretsStore((state) => {
     return {
@@ -118,42 +161,6 @@ const SaveSecretsToolbar: React.FC<Props> = ({ showBtn }) => {
     }
 
     setDialog('save')
-  }
-
-  const copyEnv = (type: 'env' | 'json') => {
-    const secretsData = queryClient.getQueryData<Secret[]>([
-      selectedEnv?.workspaceId,
-      selectedEnv?.projectName,
-      selectedEnv?.name,
-      'secrets',
-    ])
-
-    if (!secretsData) return
-
-    if (type === 'env') {
-      const dotenvString = secretsData
-        .map((obj) => {
-          if (obj.description) {
-            return `# ${obj.description}\n${obj.key}=${obj.value}`
-          } else {
-            return `${obj.key}=${obj.value}`
-          }
-        })
-        .join('\n')
-      navigator.clipboard.writeText(dotenvString)
-    } else {
-      const resultObject: { [key: string]: string } = secretsData.reduce((acc: any, obj: any) => {
-        acc[obj.key] = obj.value
-        return acc
-      }, {})
-
-      navigator.clipboard.writeText(JSON.stringify(resultObject, null, 2))
-    }
-
-    toast({
-      title: 'Environment secrets copied to clipboard!',
-      variant: 'success',
-    })
   }
 
   const handleRenamedEnv = (newName: string) => {
