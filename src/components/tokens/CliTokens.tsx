@@ -51,7 +51,7 @@ const CliTokens: React.FC<Props> = ({ workspaceId }) => {
     })
   }
 
-  const handleNewToken = (newData: Omit<CliToken, 'tokenPreview'> & { fullToken: string }) => {
+  const handleNewToken = (newData: CliToken) => {
     // setDialogOpened(false)
 
     const data = getCacheData()
@@ -61,7 +61,7 @@ const CliTokens: React.FC<Props> = ({ workspaceId }) => {
         [workspaceId, 'cli-tokens'],
         (oldData: CliToken[] | any) => {
           if (oldData) {
-            return [{ ...newData, tokenPreview: newData?.fullToken?.slice(0, 10) }, ...oldData]
+            return [{ ...newData }, ...oldData]
           } else {
             return [newData]
           }
@@ -69,9 +69,9 @@ const CliTokens: React.FC<Props> = ({ workspaceId }) => {
       )
     }
     // full value
-    queryClient.setQueryData<FullToken>([workspaceId, 'cli-tokens', newData?.id], {
-      token: newData?.fullToken,
-    })
+    // queryClient.setQueryData<FullToken>([workspaceId, 'cli-tokens', newData?.id], {
+    //   token: newData?.fullToken,
+    // })
 
     // toast({
     //   title: 'New token created!',
