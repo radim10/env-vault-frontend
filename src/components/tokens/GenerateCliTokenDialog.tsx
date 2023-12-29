@@ -20,7 +20,7 @@ interface Props {
   workspaceId: string
 
   onClose: () => void
-  onSuccess: (data: Omit<CliToken, 'tokenPreview'> & { fullToken: string }) => void
+  onSuccess: (data: CliToken) => void
 }
 
 const CreateCliTokenDialog: React.FC<Props> = ({ workspaceId, opened, onClose, onSuccess }) => {
@@ -39,7 +39,7 @@ const CreateCliTokenDialog: React.FC<Props> = ({ workspaceId, opened, onClose, o
         id: data?.id,
         lastUsedAt: null,
         createdAt: new Date().toString(),
-        fullToken: data?.token,
+        last4: data?.token?.slice(-4),
         name,
       }),
   })
