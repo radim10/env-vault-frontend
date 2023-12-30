@@ -41,7 +41,7 @@ const EnvTokensTable: React.FC<Props> = ({ workspaceId, data }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(({ name, tokenPreview, grant, revoked, createdAt, expiresAt, ref }) => (
+          {data.map(({ name, last5, grant, revoked, createdAt, expiresAt, ref }) => (
             <TableRow>
               <>
                 <TableCell>
@@ -59,7 +59,8 @@ const EnvTokensTable: React.FC<Props> = ({ workspaceId, data }) => {
                 <TableCell>
                   <div className="min-w-[100px]">
                     <div className="w-36 lg:w-44 flex gap-1.5">
-                      <div className="truncate w-32">{tokenPreview}...</div>
+                      {/* <div className="truncate w-32">{tokenPreview}...</div> */}
+                      <div className="w-32">eve...{last5}</div>
                     </div>
                   </div>
                 </TableCell>

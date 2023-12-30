@@ -10,12 +10,10 @@ import { useGetEnvironmentTokens } from '@/api/queries/projects/environments/tok
 import { Skeleton } from '@/components/ui/skeleton'
 import { useQueryClient } from '@tanstack/react-query'
 import { EnvironmentToken } from '@/types/tokens/environment'
-import dayjs from 'dayjs'
 import { useToast } from '@/components/ui/use-toast'
 import RevokeTokenDialog from './RevokeTokenDialog'
 import Error from '@/components/Error'
 import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
-import { FullToken } from '@/types/tokens/token'
 
 interface Props {
   workspaceId: string
@@ -75,9 +73,7 @@ const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
     ])
   }
 
-  const handleNewToken = (
-    tokenData: Omit<EnvironmentToken, 'tokenPreview'> & { fullToken: string }
-  ) => {
+  const handleNewToken = (tokenData: EnvironmentToken) => {
     // setDialogOpened(false)
     const data = getCacheData()
 
@@ -86,7 +82,7 @@ const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
         [workspaceId, projectName, envName, 'tokens'],
         (oldData: EnvironmentToken[] | any) => {
           if (oldData) {
-            return [{ ...tokenData, tokenPreview: tokenData?.fullToken?.slice(0, 10) }, ...oldData]
+            return [tokenData, ...oldData]
           } else {
             return [tokenData]
           }
@@ -95,12 +91,12 @@ const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
     }
 
     // full value
-    queryClient.setQueryData<FullToken>(
-      [workspaceId, projectName, envName, 'tokens', tokenData?.id],
-      {
-        token: tokenData?.fullToken,
-      }
-    )
+    // queryClient.setQueryData<FullToken>(
+    //   [workspaceId, projectName, envName, 'tokens', tokenData?.id],
+    //   {
+    //     token: tokenData?.fullToken,
+    //   }
+    // )
 
     // toast({
     //   title: 'New token created!',

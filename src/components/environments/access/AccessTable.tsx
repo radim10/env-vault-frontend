@@ -103,7 +103,7 @@ const AccessTable: React.FC<Props> = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(({ id, name, tokenPreview, grant, revoked, createdAt, expiresAt }) => (
+          {data.map(({ id, name, last5, grant, revoked, createdAt, expiresAt }) => (
             <TableRow>
               <>
                 <TableCell>
@@ -121,28 +121,29 @@ const AccessTable: React.FC<Props> = ({
                   <div className="min-w-[100px]">
                     <div className="w-36 lg:w-44 flex gap-1.5">
                       {/* <div className="truncate w-32">{value.slice(0, 12)}...</div> */}
-                      <div className="w-28">{tokenPreview}...</div>
-                      {selectedTokenId === null ? (
-                        <button
-                          className="opacity-60 hover:opacity-100 hover:text-primary"
-                          // onClick={() => copyToken(tokenPreview)}
-                          onClick={() => handleGetFullTokenValue(id)}
-                        >
-                          <Icons.copy className="h-3.5 w-3.5 " />
-                        </button>
-                      ) : (
-                        <>
-                          {selectedTokenId === id && isLoading ? (
-                            <Icons.loader2 className="h-3.5 w-3.5 animate-spin text-primary mt-0.5" />
-                          ) : (
-                            <>
-                              <button disabled className="opacity-60 cursor-not-allowed">
-                                <Icons.copy className="h-3.5 w-3.5 " />
-                              </button>
-                            </>
-                          )}
-                        </>
-                      )}
+                      {/* <div className="w-28">{tokenPreview}...</div> */}
+                      <div className="w-28">eve...{last5}</div>
+                      {/* {selectedTokenId === null ? ( */}
+                      {/*   <button */}
+                      {/*     className="opacity-60 hover:opacity-100 hover:text-primary" */}
+                      {/*     // onClick={() => copyToken(tokenPreview)} */}
+                      {/*     onClick={() => handleGetFullTokenValue(id)} */}
+                      {/*   > */}
+                      {/*     <Icons.copy className="h-3.5 w-3.5 " /> */}
+                      {/*   </button> */}
+                      {/* ) : ( */}
+                      {/*   <> */}
+                      {/*     {selectedTokenId === id && isLoading ? ( */}
+                      {/*       <Icons.loader2 className="h-3.5 w-3.5 animate-spin text-primary mt-0.5" /> */}
+                      {/*     ) : ( */}
+                      {/*       <> */}
+                      {/*         <button disabled className="opacity-60 cursor-not-allowed"> */}
+                      {/*           <Icons.copy className="h-3.5 w-3.5 " /> */}
+                      {/*         </button> */}
+                      {/*       </> */}
+                      {/*     )} */}
+                      {/*   </> */}
+                      {/* )} */}
                     </div>
                   </div>
                 </TableCell>
