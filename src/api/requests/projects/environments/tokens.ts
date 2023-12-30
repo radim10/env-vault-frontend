@@ -9,23 +9,24 @@ export type EnvTokensError<T extends EnvTokensErrorCode | void> = APIError<T>
 
 export function envTokensErrorMsgFromCode(
   code?: EnvTokensErrorCode | 'workspace_not_found'
-): string | null {
-  let msg = null
+): string {
+  let msg = ''
 
-  if (code === 'token_not_found') {
-    msg = 'Token not found'
-  }
-
-  if (code === 'project_not_found') {
-    msg = 'Project not found'
-  }
-
-  if (code === 'environment_not_found') {
-    msg = 'Environment not found'
-  }
-
-  if (code === 'workspace_not_found') {
-    msg = 'Workspace has been deleted'
+  switch (code) {
+    case 'token_not_found':
+      msg = 'Token not found'
+      break
+    case 'project_not_found':
+      msg = 'Project not found'
+      break
+    case 'environment_not_found':
+      msg = 'Environment not found'
+      break
+    case 'workspace_not_found':
+      msg = 'Workspace has been deleted'
+      break
+    default:
+      msg = 'Something went wrong'
   }
 
   return msg
