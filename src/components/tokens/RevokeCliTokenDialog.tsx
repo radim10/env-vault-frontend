@@ -78,7 +78,7 @@ const RevokeCliTokenDialog: React.FC<Props> = ({
                 revokeToken({ workspaceId, tokenId })
               }}
             >
-              <span>Revoke</span>
+              <span>{isLoading ? 'Revoking...' : 'Revoke'}</span>
             </Button>
           </DialogFooter>
         </DialogContent>
