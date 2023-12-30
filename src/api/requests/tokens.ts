@@ -11,10 +11,8 @@ type TokensErrorCode =
   | 'missing_permission'
 export type TokensError<T extends TokensErrorCode | void> = APIError<T>
 
-export function tokensErrorMsgFromCode(
-  code?: TokensErrorCode | 'workspace_not_found'
-): string | null {
-  let msg = null
+export function tokensErrorMsgFromCode(code?: TokensErrorCode | 'workspace_not_found'): string {
+  let msg = ''
 
   if (code === 'workspace_not_found') {
     msg = 'Current workspace not found'
@@ -34,6 +32,10 @@ export function tokensErrorMsgFromCode(
 
   if (code === 'missing_permission') {
     msg = 'You do not have permission to perform this action'
+  }
+
+  if (msg === '') {
+    msg = 'Something went wrong'
   }
 
   return msg
