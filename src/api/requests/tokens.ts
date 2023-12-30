@@ -1,6 +1,6 @@
 import { EnvTokenGrant, ReadOnlyEnvToken } from '@/types/tokens/environment'
 import sendRequest, { APIError } from '../instance'
-import { WorkspaceToken } from '@/types/tokens/workspace'
+import { WorkspaceToken, WorkspaceTokenPermissions } from '@/types/tokens/workspace'
 import { FullToken } from '@/types/tokens/token'
 
 // NOTE: error
@@ -95,7 +95,7 @@ export interface CreateWorkspaceTokenArgs {
   workspaceId: string
   data: {
     name: string
-    grant: EnvTokenGrant
+    permissions: WorkspaceTokenPermissions
     expiration?: {
       hours?: number
       days?: number
