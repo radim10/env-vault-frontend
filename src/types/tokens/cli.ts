@@ -3,6 +3,6 @@ export interface CliToken {
   createdAt: string
   lastUsedAt: string | null
   // value: string
-  last4: string
+  last5: string
   name: string
 }

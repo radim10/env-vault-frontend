@@ -39,7 +39,7 @@ const CreateCliTokenDialog: React.FC<Props> = ({ workspaceId, opened, onClose, o
         id: data?.id,
         lastUsedAt: null,
         createdAt: new Date().toString(),
-        last4: data?.token?.slice(-4),
+        last5: data?.token?.slice(-5),
         name,
       }),
   })

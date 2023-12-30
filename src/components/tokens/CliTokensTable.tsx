@@ -86,7 +86,7 @@ const CliTokensTable: React.FC<Props> = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(({ id, name, last4, createdAt, lastUsedAt }) => (
+          {data.map(({ id, name, last5, createdAt, lastUsedAt }) => (
             <TableRow>
               <>
                 <TableCell>
@@ -99,7 +99,7 @@ const CliTokensTable: React.FC<Props> = ({
                     <div className="w-56 lg:w-56 2xl:w-64 flex gap-1.5">
                       {/* <div className="truncate w-28">cli...{last4}</div> */}
                       {/* <div className="w-28">ev.cli...{last4}</div> */}
-                      <div className="w-28">evc...{last4}</div>
+                      <div className="w-28">evc...{last5}</div>
                       {/*   {selectedTokenId === null ? ( */}
                       {/*     <button */}
                       {/*       className="opacity-60 hover:opacity-100 hover:text-primary" */}
