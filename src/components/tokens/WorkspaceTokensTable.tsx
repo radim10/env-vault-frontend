@@ -80,14 +80,14 @@ const WorkspceTokensTable: React.FC<Props> = ({ workspaceId, queryClient, data, 
           <TableRow className="">
             <TableHead className="w-[200px]">Name</TableHead>
             <TableHead className="w-[120px]">Token</TableHead>
-            <TableHead>Grant</TableHead>
+            <TableHead>Permissions</TableHead>
             <TableHead>Created</TableHead>
             <TableHead>Expires</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(({ id, name, tokenPreview, grant, revoked, createdAt, expiresAt }) => (
+          {data.map(({ id, name, last5, permissions, revoked, createdAt, expiresAt }) => (
             <TableRow>
               <>
                 <TableCell>
@@ -104,44 +104,100 @@ const WorkspceTokensTable: React.FC<Props> = ({ workspaceId, queryClient, data, 
                 <TableCell>
                   <div className="min-w-[100px]">
                     {/* <div className="w-36 lg:w-44 flex gap-1.5"> */}
-                    <div className="w-56 lg:w-56 2xl:w-56 flex gap-1.5">
+                    {/* <div className="w-56 lg:w-56 2xl:w-56 flex gap-1.5"> */}
+                    <div className="w-32 lg:w-32 2xl:w-44 flex gap-1.5">
                       {/* <div className="truncate w-32">{value.slice(0, 12)}...</div> */}
-                      <div className="w-28">{tokenPreview}...</div>
-                      {selectedTokenId === null ? (
-                        <button
-                          className="opacity-60 hover:opacity-100 hover:text-primary"
-                          // onClick={() => copyToken(tokenPreview)}
-                          onClick={() => handleGetFullTokenValue(id)}
-                        >
-                          <Icons.copy className="h-3.5 w-3.5 " />
-                        </button>
-                      ) : (
-                        <>
-                          {selectedTokenId === id && isLoading ? (
-                            <Icons.loader2 className="h-3.5 w-3.5 animate-spin text-primary mt-0.5" />
-                          ) : (
-                            <>
-                              <button disabled className="opacity-60 cursor-not-allowed">
-                                <Icons.copy className="h-3.5 w-3.5 " />
-                              </button>
-                            </>
-                          )}
-                        </>
-                      )}
+                      {/* <div className="w-28">{tokenPreview}...</div> */}
+                      <div className="w-28">eva...{last5}</div>
+                      {/*   {selectedTokenId === null ? ( */}
+                      {/*     <button */}
+                      {/*       className="opacity-60 hover:opacity-100 hover:text-primary" */}
+                      {/*       // onClick={() => copyToken(tokenPreview)} */}
+                      {/*       onClick={() => handleGetFullTokenValue(id)} */}
+                      {/*     > */}
+                      {/*       <Icons.copy className="h-3.5 w-3.5 " /> */}
+                      {/*     </button> */}
+                      {/*   ) : ( */}
+                      {/*     <> */}
+                      {/*       {selectedTokenId === id && isLoading ? ( */}
+                      {/*         <Icons.loader2 className="h-3.5 w-3.5 animate-spin text-primary mt-0.5" /> */}
+                      {/*       ) : ( */}
+                      {/*         <> */}
+                      {/*           <button disabled className="opacity-60 cursor-not-allowed"> */}
+                      {/*             <Icons.copy className="h-3.5 w-3.5 " /> */}
+                      {/*           </button> */}
+                      {/*         </> */}
+                      {/*       )} */}
+                      {/*     </> */}
+                      {/*   )} */}
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>
-                  {grant.toString() === 'READ' && 'Read'}
-                  {grant.toString() === 'WRITE' && 'Write'}
-                  {grant.toString() === 'READ_WRITE' && 'R/W'}
+                <TableCell className="min-w-[100px] max-w-[200px]">
+                  {permissions?.projects?.length === 3 &&
+                  permissions?.secrets?.length === 3 &&
+                  permissions?.environments?.length === 3 ? (
+                    <div>All permissions</div>
+                  ) : (
+                    <>
+                      {permissions.projects && permissions?.projects?.length > 0 && (
+                        <>
+                          {permissions.projects
+                            ?.map((val) => 'P' + val.charAt(0).toUpperCase())
+                            .join(', ')}
+                          {(permissions?.secrets || permissions?.environments) && ', '}
+                        </>
+                      )}
+
+                      {permissions.environments && permissions?.environments?.length > 0 && (
+                        <>
+                          {permissions.environments
+                            ?.map((val) => 'E' + val.charAt(0).toUpperCase())
+                            .join(', ')}
+                          {permissions?.secrets && ', '}
+                        </>
+                      )}
+
+                      {permissions.secrets && permissions?.secrets?.length > 0 && (
+                        <>
+                          {permissions.secrets
+                            ?.map((val) => 'S' + val.charAt(0).toUpperCase())
+                            .join(', ')}
+                        </>
+                      )}
+                    </>
+                  )}
+
+                  {/* {permissions.projects && permissions?.projects?.length > 0 && ( */}
+                  {/*   <> */}
+                  {/*     Projects:{' '} */}
+                  {/*     {permissions.projects.map((val) => val.charAt(0).toUpperCase()).join(', ')} */}
+                  {/*     {permissions?.secrets || permissions?.environments ? ', ' : ''} */}
+                  {/*   </> */}
+                  {/* )} */}
+                  {/**/}
+                  {/* {permissions.environments && permissions?.environments?.length > 0 && ( */}
+                  {/*   <> */}
+                  {/*     Environments:{' '} */}
+                  {/*     {permissions.environments */}
+                  {/*       .map((val) => val.charAt(0).toUpperCase()) */}
+                  {/*       .join(', ')} */}
+                  {/*     {permissions?.secrets && ', '} */}
+                  {/*   </> */}
+                  {/* )} */}
+                  {/**/}
+                  {/* {permissions.secrets && permissions?.secrets?.length > 0 && ( */}
+                  {/*   <>Projects: {permissions.secrets.join(', ').charAt(0).toUpperCase()}</> */}
+                  {/* )} */}
+
+                  {/* {grant.toString() === 'READ' && 'Read'} */}
+                  {/* {grant.toString() === 'WRITE' && 'Write'} */}
+                  {/* {grant.toString() === 'READ_WRITE' && 'R/W'} */}
                 </TableCell>
                 <TableCell className="min-w-[100px]">
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger>
-                        {dayjs(createdAt).format('YYYY-MM-DD HH:mm:ss')}
-                      </TooltipTrigger>
+                      <TooltipTrigger>{dayjs(createdAt).format('YYYY-MM-DD HH:mm')}</TooltipTrigger>
                       <TooltipContent>{dayjs(createdAt).fromNow()}</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -156,7 +212,7 @@ const WorkspceTokensTable: React.FC<Props> = ({ workspaceId, queryClient, data, 
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          {dayjs(expiresAt).format('YYYY-MM-DD HH:mm:ss')}
+                          {dayjs(expiresAt).format('YYYY-MM-DD HH:mm')}
                         </TooltipTrigger>
                         <TooltipContent>{dayjs(expiresAt).fromNow()}</TooltipContent>
                       </Tooltip>
