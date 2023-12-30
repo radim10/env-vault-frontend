@@ -7,19 +7,21 @@ export type CliTokensError<T extends CliTokensErrorCode | void> = APIError<T>
 
 export function cliTokensErrorMsgFromCode(
   code?: CliTokensErrorCode | 'workspace_not_found'
-): string | null {
-  let msg = null
+): string {
+  let msg = ''
 
-  if (code === 'token_not_found') {
-    msg = 'Token not found'
-  }
-
-  if (code === 'user_not_found') {
-    msg = 'Current user not found'
-  }
-
-  if (code === 'workspace_not_found') {
-    msg = 'Workspace has been deleted'
+  switch (code) {
+    case 'token_not_found':
+      msg = 'Token not found'
+      break
+    case 'user_not_found':
+      msg = 'Current user not found'
+      break
+    case 'workspace_not_found':
+      msg = 'Workspace has been deleted'
+      break
+    default:
+      msg = 'Something went wrong'
   }
 
   return msg
