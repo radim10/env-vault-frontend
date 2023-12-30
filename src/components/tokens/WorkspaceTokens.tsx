@@ -63,9 +63,7 @@ const WorkspaceTokens: React.FC<Props> = ({ workspaceId }) => {
     return queryClient.getQueryData<WorkspaceToken[]>([workspaceId, 'workspace-tokens'])
   }
 
-  const handleNewToken = (
-    tokenData: Omit<WorkspaceToken, 'tokenPreview'> & { fullToken: string }
-  ) => {
+  const handleNewToken = (tokenData: WorkspaceToken) => {
     // setDialogOpened(false)
     const data = getCacheData()
 
@@ -74,7 +72,7 @@ const WorkspaceTokens: React.FC<Props> = ({ workspaceId }) => {
         [workspaceId, 'workspace-tokens'],
         (oldData: WorkspaceToken[] | any) => {
           if (oldData) {
-            return [{ ...tokenData, tokenPreview: tokenData?.fullToken?.slice(0, 10) }, ...oldData]
+            return [tokenData, ...oldData]
           } else {
             return [tokenData]
           }
@@ -82,9 +80,9 @@ const WorkspaceTokens: React.FC<Props> = ({ workspaceId }) => {
       )
     }
 
-    queryClient.setQueryData<FullToken>([workspaceId, 'workspace-tokens', tokenData?.id], {
-      token: tokenData?.fullToken,
-    })
+    // queryClient.setQueryData<FullToken>([workspaceId, 'workspace-tokens', tokenData?.id], {
+    //   token: tokenData?.fullToken,
+    // })
 
     // toast({
     //   title: 'New token created!',
