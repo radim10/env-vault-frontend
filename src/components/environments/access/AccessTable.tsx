@@ -119,7 +119,7 @@ const AccessTable: React.FC<Props> = ({
                 </TableCell>
                 <TableCell>
                   <div className="min-w-[100px]">
-                    <div className="w-36 lg:w-44 flex gap-1.5">
+                    <div className="w-32 lg:w-32 2xl:w-44 flex gap-1.5">
                       {/* <div className="truncate w-32">{value.slice(0, 12)}...</div> */}
                       {/* <div className="w-28">{tokenPreview}...</div> */}
                       <div className="w-28">eve...{last5}</div>

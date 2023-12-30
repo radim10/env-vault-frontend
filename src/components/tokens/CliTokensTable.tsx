@@ -95,8 +95,9 @@ const CliTokensTable: React.FC<Props> = ({
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="min-w-[80px]">
-                    <div className="w-56 lg:w-56 2xl:w-64 flex gap-1.5">
+                  <div className="min-w-[100px]">
+                    <div className="w-32 lg:w-48 2xl:w-64 flex gap-1.5">
+                      {/* <div className="w-36 2xl:w-44 flex gap-1.5"> */}
                       {/* <div className="truncate w-28">cli...{last4}</div> */}
                       {/* <div className="w-28">ev.cli...{last4}</div> */}
                       <div className="w-28">evc...{last5}</div>
