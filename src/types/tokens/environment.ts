@@ -11,8 +11,7 @@ export interface EnvironmentToken {
   expiresAt: string | null
   grant: EnvTokenGrant
   createdAt: string
-  // value: string
-  tokenPreview: string
+  last5: string
 }
 
 // for tokens from home
