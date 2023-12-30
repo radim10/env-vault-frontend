@@ -1,14 +1,20 @@
-import { EnvTokenGrant } from './environment'
+export type WorkspaceTokenPermissions = {
+  projects?: Array<'read' | 'write' | 'delete'>
+  environments?: Array<'read' | 'write' | 'delete'>
+  secrets?: Array<'read' | 'write' | 'delete'>
+}
 
-export type WorkspaceTokenGrant = EnvTokenGrant
-
+// export type WorkspaceTokenGrant = {
+//   project?: Array<'READ' | 'WRITE'>
+//   environment?: Array<'READ' | 'WRITE'>
+// }
+//
 export interface WorkspaceToken {
   id: string
   name: string
   revoked: boolean
-  grant: WorkspaceTokenGrant
+  permissions: WorkspaceTokenPermissions
   expiresAt: string | null
   createdAt: string
-  // value: string
-  tokenPreview: string
+  last5: string
 }
