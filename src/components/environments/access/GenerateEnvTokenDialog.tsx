@@ -150,7 +150,6 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
             name,
             expiresAt: expirationDate ? expirationDate.toDate().toString() : null,
             last5: token?.slice(-5),
-            revoked: false,
             createdAt: dayjs().toDate().toString(),
             permissions: selectedPermissions,
           }

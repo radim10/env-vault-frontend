@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   Table,
   TableBody,
@@ -10,83 +9,70 @@ import {
 import { EnvironmentToken } from '@/types/tokens/environment'
 import dayjs from 'dayjs'
 import clsx from 'clsx'
-import { useToast } from '@/components/ui/use-toast'
 import { TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Tooltip } from '@radix-ui/react-tooltip'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { useGetEnvironmentToken } from '@/api/queries/projects/environments/tokens'
-import { useSelectedEnvironmentStore } from '@/stores/selectedEnv'
-import { QueryClient } from '@tanstack/react-query'
-import { FullToken } from '@/types/tokens/token'
-import { envTokensErrorMsgFromCode } from '@/api/requests/projects/environments/tokens'
 
 dayjs.extend(relativeTime)
 
 interface Props {
-  queryClient: QueryClient
   data: EnvironmentToken[]
-  disableRevokeWriteAccess?: boolean
   onRevoke?: (args: { id: string; name: string }) => void
 }
 
-const AccessTable: React.FC<Props> = ({
-  queryClient,
-  data,
-  disableRevokeWriteAccess,
-  onRevoke,
-}) => {
-  const { toast } = useToast()
-
-  // for diplaying full value
-  const { data: selectedEnvironment } = useSelectedEnvironmentStore()
-  const [selectedTokenId, setSelectedTokenId] = useState<string | null>(null)
-
-  const { isLoading } = useGetEnvironmentToken(
-    {
-      envName: selectedEnvironment?.name as string,
-      tokenId: selectedTokenId as string,
-      projectName: selectedEnvironment?.projectName as string,
-      workspaceId: selectedEnvironment?.workspaceId as string,
-    },
-    {
-      enabled: selectedTokenId !== null,
-      onSettled: () => setSelectedTokenId(null),
-      onSuccess: (data) => {
-        copyToken(data.token)
-      },
-      onError: (error) => {
-        const err = envTokensErrorMsgFromCode(error?.code) ?? 'Something went wrong'
-
-        toast({
-          title: err,
-          variant: 'destructive',
-        })
-      },
-    }
-  )
-
-  const copyToken = (token: string) => {
-    navigator.clipboard.writeText(token)
-    toast({
-      title: 'Token copied to clipboard!',
-      variant: 'success',
-    })
-  }
-
-  const handleGetFullTokenValue = (id: string) => {
-    const data = queryClient.getQueryData<FullToken>([
-      selectedEnvironment?.workspaceId as string,
-      selectedEnvironment?.projectName as string,
-      selectedEnvironment?.name as string,
-      'tokens',
-      id,
-    ])
-
-    if (data) {
-      copyToken(data?.token)
-    } else setSelectedTokenId(id)
-  }
-
+const AccessTable: React.FC<Props> = ({ data, onRevoke }) => {
+  // const { toast } = useToast()
+  //
+  // // for diplaying full value
+  // const { data: selectedEnvironment } = useSelectedEnvironmentStore()
+  // const [selectedTokenId, setSelectedTokenId] = useState<string | null>(null)
+  //
+  // const { isLoading } = useGetEnvironmentToken(
+  //   {
+  //     envName: selectedEnvironment?.name as string,
+  //     tokenId: selectedTokenId as string,
+  //     projectName: selectedEnvironment?.projectName as string,
+  //     workspaceId: selectedEnvironment?.workspaceId as string,
+  //   },
+  //   {
+  //     enabled: selectedTokenId !== null,
+  //     onSettled: () => setSelectedTokenId(null),
+  //     onSuccess: (data) => {
+  //       copyToken(data.token)
+  //     },
+  //     onError: (error) => {
+  //       const err = envTokensErrorMsgFromCode(error?.code) ?? 'Something went wrong'
+  //
+  //       toast({
+  //         title: err,
+  //         variant: 'destructive',
+  //       })
+  //     },
+  //   }
+  // )
+  //
+  // const copyToken = (token: string) => {
+  //   navigator.clipboard.writeText(token)
+  //   toast({
+  //     title: 'Token copied to clipboard!',
+  //     variant: 'success',
+  //   })
+  // }
+  //
+  // const handleGetFullTokenValue = (id: string) => {
+  //   const data = queryClient.getQueryData<FullToken>([
+  //     selectedEnvironment?.workspaceId as string,
+  //     selectedEnvironment?.projectName as string,
+  //     selectedEnvironment?.name as string,
+  //     'tokens',
+  //     id,
+  //   ])
+  //
+  //   if (data) {
+  //     copyToken(data?.token)
+  //   } else setSelectedTokenId(id)
+  // }
+  //
   return (
     <div>
       <Table>
@@ -102,15 +88,17 @@ const AccessTable: React.FC<Props> = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(({ id, name, last5, permissions, revoked, createdAt, expiresAt }) => (
+          {data.map(({ id, name, last5, permissions, createdAt, expiresAt }) => (
             <TableRow>
               <>
                 <TableCell>
                   <div className="flex gap-2.5 items-center py-1 min-w-[100px] xl:min-w-[140px] 2xl:min-w-[190px]">
                     <div
                       className={clsx(['h-2.5 w-2.5 rounded-full mt-[1.5px]'], {
-                        'bg-primary': !revoked,
-                        'bg-red-600 dark:bg-red-700': revoked || dayjs(expiresAt).isBefore(dayjs()),
+                        // 'bg-primary': !revoked,
+                        // 'bg-red-600 dark:bg-red-700': revoked || dayjs(expiresAt).isBefore(dayjs()),
+                        'bg-primary': !dayjs(expiresAt).isBefore(dayjs()),
+                        'bg-red-600 dark:bg-red-700': dayjs(expiresAt).isBefore(dayjs()),
                       })}
                     />
                     <span>{name}</span>
@@ -185,8 +173,7 @@ const AccessTable: React.FC<Props> = ({
                 </TableCell>
                 <TableCell
                   className={clsx(['min-w-[100px]'], {
-                    'text-red-600 dark:text-red-600':
-                      !revoked && dayjs(expiresAt).isBefore(dayjs()),
+                    'text-red-600 dark:text-red-600': dayjs(expiresAt).isBefore(dayjs()),
                   })}
                 >
                   {expiresAt ? (

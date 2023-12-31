@@ -198,12 +198,7 @@ const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
           </Button>
         </div>
         {/* <AccessTable data={tokens} onRevoke={!isMemberRole() ? setRevokeDialog : undefined} /> */}
-        <AccessTable
-          queryClient={queryClient}
-          data={tokens}
-          onRevoke={setRevokeDialog}
-          disableRevokeWriteAccess={!isAdminRole()}
-        />
+        <AccessTable data={tokens} onRevoke={setRevokeDialog} />
       </div>
     </>
   )
