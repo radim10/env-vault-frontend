@@ -1,6 +1,7 @@
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -63,6 +64,7 @@ const CliTokensTable: React.FC<Props> = ({ data, onRevoke }) => {
         {/* {data?.length === 5 && ( */}
         {/*   <TableCaption className="mt-4 mb-7">Showing 5 latest tokens</TableCaption> */}
         {/* )} */}
+        {data?.length === 0 && <TableCaption className="mt-10 mb-10">No tokens</TableCaption>}
         <TableHeader className="bg-gray-100/60 hover:bg-gray-100/60 dark:bg-gray-900/80 hover:dark:bg-gray-900/80 sticky">
           <TableRow className="">
             <TableHead className="w-[200px] 2xl:w-[250px]">Name</TableHead>

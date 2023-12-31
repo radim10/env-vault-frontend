@@ -1,6 +1,7 @@
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -64,6 +65,7 @@ const WorkspceTokensTable: React.FC<Props> = ({ data, onRevoke }) => {
   return (
     <div>
       <Table>
+        {data?.length === 0 && <TableCaption className="mt-10 mb-10">No tokens</TableCaption>}
         {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
         <TableHeader className="bg-gray-100/60 hover:bg-gray-100/60 dark:bg-gray-900/80 hover:dark:bg-gray-900/80 sticky">
           <TableRow className="">
