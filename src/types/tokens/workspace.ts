@@ -12,7 +12,7 @@ export type WorkspaceTokenPermissions = {
 export interface WorkspaceToken {
   id: string
   name: string
-  revoked: boolean
+  // revoked: boolean
   permissions: WorkspaceTokenPermissions
   expiresAt: string | null
   createdAt: string

@@ -10,7 +10,7 @@ export type EnvTokenPermission = 'read' | 'write' | 'delete'
 export interface EnvironmentToken {
   id: string
   name: string
-  revoked: boolean
+  // revoked: boolean
   expiresAt: string | null
   permissions: EnvTokenPermission[]
   createdAt: string
