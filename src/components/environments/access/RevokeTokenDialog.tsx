@@ -91,7 +91,7 @@ const RevokeTokenDialog: React.FC<Props> = ({
       >
         <div className="flex flex-col gap-4 p0-4 pb-4">
           <div className="flex flex-col gap-1 mt-3">
-            <div className="text-[0.92rem]">
+            <div className="text-[0.92rem] mb-1">
               Type <span className="font-bold text-red-600">{tokenName}</span> to confirm this
               action.
             </div>
