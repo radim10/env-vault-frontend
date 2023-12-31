@@ -9,7 +9,6 @@ import {
 } from '@/components/ui/table'
 import { EnvironmentToken } from '@/types/tokens/environment'
 import dayjs from 'dayjs'
-import { Icons } from '@/components/icons'
 import clsx from 'clsx'
 import { useToast } from '@/components/ui/use-toast'
 import { TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
@@ -96,14 +95,14 @@ const AccessTable: React.FC<Props> = ({
           <TableRow className="">
             <TableHead className="w-[200px]">Name</TableHead>
             <TableHead className="w-[120px]">Token</TableHead>
-            <TableHead>Grant</TableHead>
+            <TableHead>Permission</TableHead>
             <TableHead>Created</TableHead>
             <TableHead>Expires</TableHead>
             {onRevoke && <TableHead>Action</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(({ id, name, last5, grant, revoked, createdAt, expiresAt }) => (
+          {data.map(({ id, name, last5, permission, revoked, createdAt, expiresAt }) => (
             <TableRow>
               <>
                 <TableCell>
@@ -148,9 +147,9 @@ const AccessTable: React.FC<Props> = ({
                   </div>
                 </TableCell>
                 <TableCell>
-                  {grant.toString() === 'READ' && 'Read'}
-                  {grant.toString() === 'WRITE' && 'Write'}
-                  {grant.toString() === 'READ_WRITE' && 'R/W'}
+                  {permission.toString() === 'READ' && 'Read'}
+                  {permission.toString() === 'WRITE' && 'Write'}
+                  {permission.toString() === 'READ_WRITE' && 'R/W'}
                 </TableCell>
                 <TableCell className="min-w-[100px]">
                   <TooltipProvider>
@@ -185,13 +184,13 @@ const AccessTable: React.FC<Props> = ({
                   <TableCell>
                     {!revoked && !dayjs(expiresAt).isBefore(dayjs()) ? (
                       <button
-                        disabled={disableRevokeWriteAccess && grant?.toString() !== 'READ'}
+                        disabled={disableRevokeWriteAccess && permission?.toString() !== 'READ'}
                         onClick={() => onRevoke({ id, name })}
                         className={clsx(['text-red-600 dark:text-red-600  ease duration-150'], {
                           'cursor-not-allowed opacity-50':
-                            disableRevokeWriteAccess && grant?.toString() !== 'READ',
+                            disableRevokeWriteAccess && permission?.toString() !== 'READ',
                           'opacity-80 hover:opacity-100': !(
-                            disableRevokeWriteAccess && grant?.toString() !== 'READ'
+                            disableRevokeWriteAccess && permission?.toString() !== 'READ'
                           ),
                         })}
                       >

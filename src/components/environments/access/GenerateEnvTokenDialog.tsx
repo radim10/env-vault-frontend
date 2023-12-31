@@ -1,12 +1,4 @@
 import { useState } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,7 +7,7 @@ import { useDebounce, useUpdateEffect } from 'react-use'
 import dayjs, { Dayjs } from 'dayjs'
 import { useCreateEnvironmentToken } from '@/api/mutations/tokens/environment'
 import { Icons } from '@/components/icons'
-import { EnvTokenGrant, EnvironmentToken } from '@/types/tokens/environment'
+import { EnvTokenPermission, EnvironmentToken } from '@/types/tokens/environment'
 import { envTokensErrorMsgFromCode } from '@/api/requests/projects/environments/tokens'
 import clsx from 'clsx'
 import DialogComponent from '@/components/Dialog'
@@ -94,12 +86,12 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
         last5: token?.slice(-5),
         revoked: false,
         createdAt: dayjs().toDate().toString(),
-        grant:
+        permission:
           grant.Read && grant.Write
-            ? EnvTokenGrant.READ_WRITE
+            ? EnvTokenPermission.READ_WRITE
             : grant.Read
-            ? EnvTokenGrant.READ
-            : EnvTokenGrant.WRITE,
+            ? EnvTokenPermission.READ
+            : EnvTokenPermission.WRITE,
       })
     },
   })
@@ -127,12 +119,12 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
       envName,
       data: {
         name,
-        grant:
+        permission:
           grant.Read && grant.Write
-            ? EnvTokenGrant.READ_WRITE
+            ? EnvTokenPermission.READ_WRITE
             : grant.Read
-            ? EnvTokenGrant.READ
-            : EnvTokenGrant.WRITE,
+            ? EnvTokenPermission.READ
+            : EnvTokenPermission.WRITE,
         expiration: expiration ?? undefined,
       },
     })
