@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,14 +11,7 @@ import { EnvTokenPermission, EnvironmentToken } from '@/types/tokens/environment
 import { envTokensErrorMsgFromCode } from '@/api/requests/projects/environments/tokens'
 import clsx from 'clsx'
 import DialogComponent from '@/components/Dialog'
-
-enum Grant {
-  Read = 'Read',
-  Write = 'Write',
-  ReadWrite = 'Read/write',
-}
-
-const grantTypes: Grant[] = [Grant.Read, Grant.Write]
+import { Separator } from '@/components/ui/separator'
 
 interface Props {
   workspaceId: string
@@ -34,26 +27,53 @@ interface Props {
 export const GenerateEnvTokenDialog: React.FC<Props> = ({
   workspaceId,
   projectName,
-  readOnly,
   envName,
   opened,
+  readOnly,
   onClose,
   onSuccess,
 }) => {
   const [copied, setCopied] = useState(false)
   const [name, setName] = useState('')
-  const [grant, setGrant] = useImmer<{
-    Read: boolean
-    Write: boolean
-  }>({
-    Read: false,
-    Write: false,
-  })
-  const [expirationDate, setExpirationDate] = useState<Dayjs | null>(null)
   const [expiration, setExpiration] = useImmer<{
     hours?: number
     days?: number
   } | null>(null)
+  const [expirationDate, setExpirationDate] = useState<Dayjs | null>(null)
+  const [permissions, setPermissions] = useImmer([
+    {
+      name: 'Environment',
+      permissions: [
+        {
+          text: 'Read',
+          checked: false,
+        },
+      ],
+    },
+    {
+      name: 'Secrets',
+      permissions: [
+        {
+          text: 'Read',
+          checked: false,
+        },
+        {
+          text: 'Write',
+          checked: false,
+        },
+        {
+          text: 'Delete',
+          checked: false,
+        },
+      ],
+    },
+  ])
+
+  const isAtLeastOneChecked = useCallback(() => {
+    return permissions.some((resource) => {
+      return resource.permissions.some((permission) => permission.checked)
+    })
+  }, [permissions])
 
   useDebounce(
     () => {
@@ -78,22 +98,22 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
     error,
     reset,
   } = useCreateEnvironmentToken({
-    onSuccess: ({ id, token }) => {
-      onSuccess({
-        id,
-        name,
-        expiresAt: expirationDate ? expirationDate.toDate().toString() : null,
-        last5: token?.slice(-5),
-        revoked: false,
-        createdAt: dayjs().toDate().toString(),
-        permission:
-          grant.Read && grant.Write
-            ? EnvTokenPermission.READ_WRITE
-            : grant.Read
-            ? EnvTokenPermission.READ
-            : EnvTokenPermission.WRITE,
-      })
-    },
+    // onSuccess: ({ id, token }) => {
+    // onSuccess({
+    //   id,
+    //   name,
+    //   expiresAt: expirationDate ? expirationDate.toDate().toString() : null,
+    //   last5: token?.slice(-5),
+    //   revoked: false,
+    //   createdAt: dayjs().toDate().toString(),
+    //   permissions:
+    //     grant.Read && grant.Write
+    //       ? EnvTokenPermission.READ_WRITE
+    //       : grant.Read
+    //       ? EnvTokenPermission.READ
+    //       : EnvTokenPermission.WRITE,
+    // })
+    // },
   })
 
   useUpdateEffect(() => {
@@ -104,7 +124,15 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
     if (!opened) {
       setTimeout(() => reset(), 150)
       if (name?.length > 0) setName('')
-      if (grant?.Read || grant?.Write) setGrant({ Read: false, Write: false })
+
+      if (isAtLeastOneChecked()) {
+        setPermissions((draft) => {
+          draft[1].permissions.forEach((entity) => {
+            entity.checked = false
+          })
+        })
+      }
+
       if (expiration?.hours || expiration?.days) {
         setExpiration({ hours: undefined, days: undefined })
         setExpirationDate(null)
@@ -113,28 +141,47 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
   }, [opened])
 
   const handleCreateToken = () => {
-    createEnvironmentToken({
-      workspaceId,
-      projectName,
-      envName,
-      data: {
-        name,
-        permission:
-          grant.Read && grant.Write
-            ? EnvTokenPermission.READ_WRITE
-            : grant.Read
-            ? EnvTokenPermission.READ
-            : EnvTokenPermission.WRITE,
-        expiration: expiration ?? undefined,
-      },
+    let selectedPermissions: EnvTokenPermission[] = []
+
+    permissions[1].permissions.forEach((permission) => {
+      if (permission.checked) {
+        selectedPermissions.push(permission.text.toLowerCase() as EnvTokenPermission)
+      }
     })
+
+    createEnvironmentToken(
+      {
+        workspaceId,
+        projectName,
+        envName,
+        data: {
+          name,
+          permissions: selectedPermissions,
+          expiration: expiration ?? undefined,
+        },
+      },
+      {
+        onSuccess: ({ id, token }) => {
+          const tokenData: EnvironmentToken = {
+            id,
+            name,
+            expiresAt: expirationDate ? expirationDate.toDate().toString() : null,
+            last5: token?.slice(-5),
+            revoked: false,
+            createdAt: dayjs().toDate().toString(),
+            permissions: selectedPermissions,
+          }
+          onSuccess(tokenData)
+        },
+      }
+    )
   }
 
   return (
     <div>
       <div>
         <DialogComponent
-          title="Generate environment token"
+          title="Create environment token"
           opened={opened}
           onClose={onClose}
           loading={isLoading}
@@ -144,9 +191,8 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
             !newTokenData
               ? {
                   wFull: true,
-                  disabled:
-                    isLoading || name?.trim().length === 0 || (!grant?.Read && !grant?.Write),
-                  text: !isLoading ? 'Generate' : 'Generating...',
+                  disabled: isLoading || name?.trim().length === 0 || !isAtLeastOneChecked(),
+                  text: !isLoading ? 'Create' : 'Creating...',
                 }
               : undefined
           }
@@ -188,7 +234,7 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
           )}
 
           {!newTokenData && (
-            <div className="mt-2 mb-1 flex flex-col gap-4">
+            <div className="mt-0 mb-3 flex flex-col gap-4">
               <Input
                 className="w-full"
                 placeholder="Name"
@@ -273,47 +319,137 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
               )}
 
               {/* // */}
+
               <div className="px-0">
-                <span className="font-semibold">Grant</span>
+                <span className="font-semibold">Permissions</span>
 
-                <div className="mt-2 flex flex-col gap-2.5 px-2">
-                  {grantTypes.map((g, index) => (
-                    <div className="items-top flex space-x-3">
-                      <Checkbox
-                        id={g.toString()}
-                        disabled={isLoading || (readOnly && index === 1)}
-                        checked={grant[g.toString() as 'Read' | 'Write'] ?? false}
-                        onCheckedChange={(ch) => {
-                          setGrant((draft) => {
-                            let grant = g as 'Read' | 'Write'
+                <div className="mt-4 flex flex-col gap-4 md:gap-4 px-2">
+                  {permissions.map((g, arrIndex) => (
+                    <>
+                      <div className="flex flex-col gap-3 md:gap-5">
+                        <div className="flex flex-row gap-3 items-center">
+                          <div className="w-1/3">
+                            <div className="text-[0.9rem] font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                              {g.name}
+                            </div>
+                          </div>
 
-                            if (ch) {
-                              draft[grant] = true
-                            } else {
-                              draft[grant] = false
-                            }
-                          })
-                        }}
-                      />
-                      <div className="grid gap-1.5 leading-none">
-                        <label
-                          htmlFor={g.toString()}
-                          className={clsx(
-                            [
-                              'text-[0.9rem] font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
-                            ],
-                            {
-                              'opacity-50 cursor-not-allowed': readOnly && index === 1,
-                            }
+                          {arrIndex === 0 && (
+                            <div className="text-foreground text-[0.9rem]">
+                              Read-only by default
+                            </div>
                           )}
-                        >
-                          {g}
-                        </label>
+                          <div className="flex flex-row items-center gap-2.5 md:gap-5 ml-3">
+                            {arrIndex !== 0 &&
+                              g.permissions.map((grant, index) => (
+                                <div
+                                  className={clsx(['items-center flex space-x-2'], {
+                                    'cursor-pointer': !isLoading,
+                                  })}
+                                  onClick={() => {
+                                    if (isLoading) return
+                                    setPermissions((draft) => {
+                                      draft[arrIndex].permissions[index].checked =
+                                        !draft[arrIndex].permissions[index].checked
+                                    })
+                                  }}
+                                >
+                                  <Checkbox
+                                    id={`${g.name}-${index}`}
+                                    disabled={isLoading}
+                                    checked={grant.checked}
+                                    onCheckedChange={(ch) => {
+                                      console.log(ch)
+                                      console.log('grant checked', grant.checked)
+
+                                      setPermissions((draft) => {
+                                        draft[arrIndex].permissions[index].checked =
+                                          !draft[arrIndex].permissions[index].checked
+                                      })
+
+                                      // setPermissions((draft) => {
+                                      //   if (ch) {
+                                      //     draft[arrIndex].permissions[index].checked = true
+                                      //   } else {
+                                      //     draft[arrIndex].permissions[index].checked = false
+                                      //   }
+                                      // })
+                                    }}
+                                  />
+                                  <div
+                                    className={clsx(['grid gap-1.5 leading-none'], {
+                                      'cursor-pointer': !isLoading,
+                                    })}
+                                  >
+                                    <label
+                                      htmlFor={`${g.name}-${index}`}
+                                      className={clsx(
+                                        [
+                                          'text-[0.9rem] font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+                                        ],
+                                        {
+                                          'cursor-pointer': !isLoading,
+                                        }
+                                      )}
+                                    >
+                                      {grant.text}
+                                    </label>
+                                  </div>
+                                </div>
+                              ))}
+                          </div>
+                        </div>
+                        {/* // */}
                       </div>
-                    </div>
+                      {arrIndex !== permissions.length - 1 && (
+                        <Separator className="py-0 -my-0.5 " />
+                      )}
+                    </>
                   ))}
                 </div>
               </div>
+
+              {/* <div className="px-0"> */}
+              {/*   <span className="font-semibold">Grant</span> */}
+              {/**/}
+              {/*   <div className="mt-2 flex flex-col gap-2.5 px-2"> */}
+              {/*     {grantTypes.map((g, index) => ( */}
+              {/*       <div className="items-top flex space-x-3"> */}
+              {/*         <Checkbox */}
+              {/*           id={g.toString()} */}
+              {/*           disabled={isLoading || (readOnly && index === 1)} */}
+              {/*           checked={grant[g.toString() as 'Read' | 'Write'] ?? false} */}
+              {/*           onCheckedChange={(ch) => { */}
+              {/*             setGrant((draft) => { */}
+              {/*               let grant = g as 'Read' | 'Write' */}
+              {/**/}
+              {/*               if (ch) { */}
+              {/*                 draft[grant] = true */}
+              {/*               } else { */}
+              {/*                 draft[grant] = false */}
+              {/*               } */}
+              {/*             }) */}
+              {/*           }} */}
+              {/*         /> */}
+              {/*         <div className="grid gap-1.5 leading-none"> */}
+              {/*           <label */}
+              {/*             htmlFor={g.toString()} */}
+              {/*             className={clsx( */}
+              {/*               [ */}
+              {/*                 'text-[0.9rem] font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70', */}
+              {/*               ], */}
+              {/*               { */}
+              {/*                 'opacity-50 cursor-not-allowed': readOnly && index === 1, */}
+              {/*               } */}
+              {/*             )} */}
+              {/*           > */}
+              {/*             {g} */}
+              {/*           </label> */}
+              {/*         </div> */}
+              {/*       </div> */}
+              {/*     ))} */}
+              {/*   </div> */}
+              {/* </div> */}
             </div>
           )}
         </DialogComponent>
