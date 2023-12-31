@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { useCallback, useState } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
@@ -9,7 +10,6 @@ import { useCreateEnvironmentToken } from '@/api/mutations/tokens/environment'
 import { Icons } from '@/components/icons'
 import { EnvTokenPermission, EnvironmentToken } from '@/types/tokens/environment'
 import { envTokensErrorMsgFromCode } from '@/api/requests/projects/environments/tokens'
-import clsx from 'clsx'
 import DialogComponent from '@/components/Dialog'
 import { Separator } from '@/components/ui/separator'
 
@@ -97,24 +97,7 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
     isLoading,
     error,
     reset,
-  } = useCreateEnvironmentToken({
-    // onSuccess: ({ id, token }) => {
-    // onSuccess({
-    //   id,
-    //   name,
-    //   expiresAt: expirationDate ? expirationDate.toDate().toString() : null,
-    //   last5: token?.slice(-5),
-    //   revoked: false,
-    //   createdAt: dayjs().toDate().toString(),
-    //   permissions:
-    //     grant.Read && grant.Write
-    //       ? EnvTokenPermission.READ_WRITE
-    //       : grant.Read
-    //       ? EnvTokenPermission.READ
-    //       : EnvTokenPermission.WRITE,
-    // })
-    // },
-  })
+  } = useCreateEnvironmentToken()
 
   useUpdateEffect(() => {
     if (opened && copied) setCopied(false)
@@ -196,13 +179,10 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
                 }
               : undefined
           }
-          description={
-            !newTokenData
-              ? 'Environment tokens are used with SDKs to access only selected environments.'
-              : undefined
-          }
           descriptionComponent={
-            newTokenData && (
+            !newTokenData ? (
+              'Environment tokens are used with SDKs to access only selected environments.'
+            ) : (
               <div className="text-red-600 dark:text-red-700">
                 Please copy this token and store it safely, due to security reasons you will not be
                 able to see it again.
@@ -341,13 +321,16 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
                           )}
                           <div className="flex flex-row items-center gap-2.5 md:gap-5 ml-3">
                             {arrIndex !== 0 &&
-                              g.permissions.map((grant, index) => (
+                              g.permissions.map((permission, index) => (
                                 <div
                                   className={clsx(['items-center flex space-x-2'], {
-                                    'cursor-pointer': !isLoading,
+                                    'cursor-pointer':
+                                      !isLoading && !(permission.text !== 'Read' && readOnly),
                                   })}
                                   onClick={() => {
-                                    if (isLoading) return
+                                    if (isLoading || (permission.text !== 'Read' && readOnly))
+                                      return
+
                                     setPermissions((draft) => {
                                       draft[arrIndex].permissions[index].checked =
                                         !draft[arrIndex].permissions[index].checked
@@ -356,11 +339,11 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
                                 >
                                   <Checkbox
                                     id={`${g.name}-${index}`}
-                                    disabled={isLoading}
-                                    checked={grant.checked}
+                                    disabled={isLoading || (permission.text !== 'Read' && readOnly)}
+                                    checked={permission.checked}
                                     onCheckedChange={(ch) => {
                                       console.log(ch)
-                                      console.log('grant checked', grant.checked)
+                                      console.log('grant checked', permission.checked)
 
                                       setPermissions((draft) => {
                                         draft[arrIndex].permissions[index].checked =
@@ -378,7 +361,9 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
                                   />
                                   <div
                                     className={clsx(['grid gap-1.5 leading-none'], {
-                                      'cursor-pointer': !isLoading,
+                                      'cursor-pointer':
+                                        !isLoading && !(permission.text !== 'Read' && readOnly),
+                                      'cursor-not-allowed': permission.text !== 'Read' && readOnly,
                                     })}
                                   >
                                     <label
@@ -388,11 +373,15 @@ export const GenerateEnvTokenDialog: React.FC<Props> = ({
                                           'text-[0.9rem] font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
                                         ],
                                         {
-                                          'cursor-pointer': !isLoading,
+                                          'cursor-pointer':
+                                            !isLoading && !(permission.text !== 'Read' && readOnly),
+                                          'cursor-not-allowed':
+                                            permission.text !== 'Read' && readOnly,
+                                          'opacity-50': permission.text !== 'Read' && readOnly,
                                         }
                                       )}
                                     >
-                                      {grant.text}
+                                      {permission.text}
                                     </label>
                                   </div>
                                 </div>
