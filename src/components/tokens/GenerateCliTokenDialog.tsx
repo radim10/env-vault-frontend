@@ -56,7 +56,7 @@ const CreateCliTokenDialog: React.FC<Props> = ({ workspaceId, opened, onClose, o
   return (
     <div>
       <DialogComponent
-        title="Generate cli token"
+        title="Create cli token"
         opened={opened}
         onClose={handleClose}
         error={error ? cliTokensErrorMsgFromCode(error?.code) : undefined}
@@ -78,7 +78,7 @@ const CreateCliTokenDialog: React.FC<Props> = ({ workspaceId, opened, onClose, o
           !tokenData
             ? {
                 wFull: true,
-                text: !isLoading ? 'Generate' : 'Generating...',
+                text: !isLoading ? 'Create' : 'Creating...',
                 disabled: isLoading || name?.trim().length === 0 || tokenData !== undefined,
               }
             : undefined
