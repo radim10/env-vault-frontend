@@ -34,14 +34,14 @@ const EnvTokensTable: React.FC<Props> = ({ workspaceId, data }) => {
           <TableRow className="">
             <TableHead className="w-[200px]">Name</TableHead>
             <TableHead className="w-[120px]">Token</TableHead>
-            <TableHead>Grant</TableHead>
+            <TableHead>Permission</TableHead>
             <TableHead>Created</TableHead>
             <TableHead>Expiration</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(({ name, last5, grant, revoked, createdAt, expiresAt, ref }) => (
+          {data.map(({ name, last5, permission, revoked, createdAt, expiresAt, ref }) => (
             <TableRow>
               <>
                 <TableCell>
@@ -65,9 +65,9 @@ const EnvTokensTable: React.FC<Props> = ({ workspaceId, data }) => {
                   </div>
                 </TableCell>
                 <TableCell>
-                  {grant.toString() === 'READ' && 'Read'}
-                  {grant.toString() === 'WRITE' && 'Write'}
-                  {grant.toString() === 'READ_WRITE' && 'R/W'}
+                  {permission.toString() === 'READ' && 'Read'}
+                  {permission.toString() === 'WRITE' && 'Write'}
+                  {permission.toString() === 'READ_WRITE' && 'R/W'}
                 </TableCell>
                 <TableCell className="min-w-[100px]">
                   <TooltipProvider>
