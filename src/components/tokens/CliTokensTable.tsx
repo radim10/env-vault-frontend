@@ -128,9 +128,7 @@ const CliTokensTable: React.FC<Props> = ({
                 <TableCell className="min-w-[100px]">
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger>
-                        {dayjs(createdAt).format('YYYY-MM-DD HH:mm:ss')}
-                      </TooltipTrigger>
+                      <TooltipTrigger>{dayjs(createdAt).format('YYYY-MM-DD HH:mm')}</TooltipTrigger>
                       <TooltipContent>{dayjs(createdAt).fromNow()}</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -142,7 +140,7 @@ const CliTokensTable: React.FC<Props> = ({
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
-                            {dayjs(lastUsedAt).format('YYYY-MM-DD HH:mm:ss')}
+                            {dayjs(lastUsedAt).format('YYYY-MM-DD HH:mm')}
                           </TooltipTrigger>
                           <TooltipContent>{dayjs(lastUsedAt).fromNow()}</TooltipContent>
                         </Tooltip>
