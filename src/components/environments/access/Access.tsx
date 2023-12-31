@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import AccessTable from './AccessTable'
 import TypographyH4 from '@/components/typography/TypographyH4'
 import { Button } from '@/components/ui/button'
@@ -182,7 +182,7 @@ const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
             </>
           </div>
           {/* // */}
-          <div className="text-[0.95rem] text-muted-foreground mt-1 md:mt-0">
+          <div className="text-[0.95rem] text-muted-foreground mt-1 md:mt-1">
             Environment tokens are used with SDKs to access only selected environments and its
             secrets.
           </div>

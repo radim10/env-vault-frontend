@@ -1,7 +1,5 @@
 'use client'
 
-import React from 'react'
-import AccessTable from '../environments/access/AccessTable'
 import Error from '@/components/Error'
 import TypographyH4 from '../typography/TypographyH4'
 import { useGetEnvTokens } from '@/api/queries/projects/tokens'
@@ -29,7 +27,7 @@ const EnvTokens: React.FC<Props> = ({ workspaceId }) => {
   return (
     <div>
       <div className="mt-2 gap-2 rounded-md border-2">
-        <div className="px-3 py-3 md:px-5 md:py-4">
+        <div className="px-3 py-3 md:px-5 md:py-4 mt-1">
           <div className="flex items-center justify-between">
             <div className="gap-3 flex items-center">
               <TypographyH4>Environment tokens (for SDKs)</TypographyH4>
@@ -37,7 +35,7 @@ const EnvTokens: React.FC<Props> = ({ workspaceId }) => {
             </div>
           </div>
           {/* // */}
-          <div className="text-[0.95rem] text-muted-foreground mt-1 md:mt-0">
+          <div className="text-[0.95rem] text-muted-foreground mt-2 md:mt-2">
             Environment tokens are used with SDKs to access only selected environments and its
             secrets.
           </div>
