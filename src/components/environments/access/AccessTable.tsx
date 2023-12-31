@@ -95,14 +95,14 @@ const AccessTable: React.FC<Props> = ({
           <TableRow className="">
             <TableHead className="w-[200px]">Name</TableHead>
             <TableHead className="w-[120px]">Token</TableHead>
-            <TableHead>Permission</TableHead>
+            <TableHead>Permissions</TableHead>
             <TableHead>Created</TableHead>
-            <TableHead>Expires</TableHead>
+            <TableHead>Expiration</TableHead>
             {onRevoke && <TableHead>Action</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(({ id, name, last5, permission, revoked, createdAt, expiresAt }) => (
+          {data.map(({ id, name, last5, permissions, revoked, createdAt, expiresAt }) => (
             <TableRow>
               <>
                 <TableCell>
@@ -147,16 +147,38 @@ const AccessTable: React.FC<Props> = ({
                   </div>
                 </TableCell>
                 <TableCell>
-                  {permission.toString() === 'READ' && 'Read'}
-                  {permission.toString() === 'WRITE' && 'Write'}
-                  {permission.toString() === 'READ_WRITE' && 'R/W'}
+                  {/* {permission.toString() === 'READ' && 'Read'} */}
+                  {/* {permission.toString() === 'WRITE' && 'Write'} */}
+                  {/* {permission.toString() === 'READ_WRITE' && 'R/W'} */}
+
+                  {/* / Env read by default */}
+                  {/* <>{'ER, '}</> */}
+                  {permissions.includes('read') && (
+                    <>
+                      SR
+                      {/* Read */}
+                      {(permissions?.includes('write') || permissions?.includes('delete')) && ', '}
+                    </>
+                  )}
+
+                  {permissions.includes('write') && (
+                    <>
+                      {/* Write */}
+                      SW
+                      {permissions?.includes('delete') && ', '}
+                    </>
+                  )}
+                  {permissions.includes('delete') && (
+                    <>
+                      {/* Delete */}
+                      SD
+                    </>
+                  )}
                 </TableCell>
                 <TableCell className="min-w-[100px]">
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger>
-                        {dayjs(createdAt).format('YYYY-MM-DD HH:mm:ss')}
-                      </TooltipTrigger>
+                      <TooltipTrigger>{dayjs(createdAt).format('YYYY-MM-DD HH:mm')}</TooltipTrigger>
                       <TooltipContent>{dayjs(createdAt).fromNow()}</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -171,7 +193,7 @@ const AccessTable: React.FC<Props> = ({
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          {dayjs(expiresAt).format('YYYY-MM-DD HH:mm:ss')}
+                          {dayjs(expiresAt).format('YYYY-MM-DD HH:mm')}
                         </TooltipTrigger>
                         <TooltipContent>{dayjs(expiresAt).fromNow()}</TooltipContent>
                       </Tooltip>
@@ -182,23 +204,20 @@ const AccessTable: React.FC<Props> = ({
                 </TableCell>
                 {onRevoke && (
                   <TableCell>
-                    {!revoked && !dayjs(expiresAt).isBefore(dayjs()) ? (
-                      <button
-                        disabled={disableRevokeWriteAccess && permission?.toString() !== 'READ'}
-                        onClick={() => onRevoke({ id, name })}
-                        className={clsx(['text-red-600 dark:text-red-600  ease duration-150'], {
-                          'cursor-not-allowed opacity-50':
-                            disableRevokeWriteAccess && permission?.toString() !== 'READ',
-                          'opacity-80 hover:opacity-100': !(
-                            disableRevokeWriteAccess && permission?.toString() !== 'READ'
-                          ),
-                        })}
-                      >
-                        Revoke
-                      </button>
-                    ) : (
-                      <span className="opacity-70">-----</span>
-                    )}
+                    <button
+                      disabled={false}
+                      onClick={() => onRevoke({ id, name })}
+                      className={clsx([
+                        'opacity-80 hover:opacity-100 text-red-600 dark:text-red-600  ease duration-150',
+                      ])}
+                    >
+                      Revoke
+                    </button>
+                    {/*   {!revoked && !dayjs(expiresAt).isBefore(dayjs()) ? ( */}
+                    {/*     <></> */}
+                    {/*   ) : ( */}
+                    {/*     <span className="opacity-70">-----</span> */}
+                    {/*   )} */}
                   </TableCell>
                 )}
               </>
