@@ -211,7 +211,6 @@ export const CreateWorkspaceTokenDialog: React.FC<Props> = ({
           const newTokenData: WorkspaceToken = {
             id,
             name,
-            revoked: false,
             last5: token?.slice(-5),
             permissions: permissionsObj,
             createdAt: dayjs().toDate().toString(),

@@ -180,12 +180,7 @@ const WorkspaceTokens: React.FC<Props> = ({ workspaceId }) => {
             </Button>
           </div>
           {/* // TABLE */}
-          <WorkspaceTokensTable
-            queryClient={queryClient}
-            workspaceId={workspaceId}
-            data={data}
-            onRevoke={setRevokeDialog}
-          />
+          <WorkspaceTokensTable data={data} onRevoke={setRevokeDialog} />
         </div>
       </div>
     </>

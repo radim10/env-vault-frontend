@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   Table,
   TableBody,
@@ -8,69 +7,59 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import dayjs from 'dayjs'
-import { Icons } from '@/components/icons'
 import clsx from 'clsx'
-import { useToast } from '@/components/ui/use-toast'
 import { TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Tooltip } from '@radix-ui/react-tooltip'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { QueryClient } from '@tanstack/react-query'
-import { FullToken } from '@/types/tokens/token'
 import { WorkspaceToken } from '@/types/tokens/workspace'
-import { useGetWorkspaceToken } from '@/api/queries/projects/tokens'
-import { tokensErrorMsgFromCode } from '@/api/requests/tokens'
 
 dayjs.extend(relativeTime)
 
 interface Props {
-  queryClient: QueryClient
-  workspaceId: string
   data: WorkspaceToken[]
   onRevoke: (args: { id: string; name: string }) => void
 }
 
-const WorkspceTokensTable: React.FC<Props> = ({ workspaceId, queryClient, data, onRevoke }) => {
-  const { toast } = useToast()
-
-  const [selectedTokenId, setSelectedTokenId] = useState<string | null>(null)
-
-  const { isLoading } = useGetWorkspaceToken(
-    {
-      workspaceId,
-      tokenId: selectedTokenId as string,
-    },
-    {
-      enabled: selectedTokenId !== null,
-      onSettled: () => setSelectedTokenId(null),
-      onSuccess: (data) => {
-        copyToken(data.token)
-      },
-      onError: (error) => {
-        const err = tokensErrorMsgFromCode(error?.code) ?? 'Something went wrong'
-
-        toast({
-          title: err,
-          variant: 'destructive',
-        })
-      },
-    }
-  )
-
-  const copyToken = (token: string) => {
-    navigator.clipboard.writeText(token)
-    toast({
-      title: 'Token copied to clipboard!',
-      variant: 'success',
-    })
-  }
-
-  const handleGetFullTokenValue = (id: string) => {
-    const data = queryClient.getQueryData<FullToken>([workspaceId, 'workspace-tokens', id])
-
-    if (data) {
-      copyToken(data?.token)
-    } else setSelectedTokenId(id)
-  }
+const WorkspceTokensTable: React.FC<Props> = ({ data, onRevoke }) => {
+  // const [selectedTokenId, setSelectedTokenId] = useState<string | null>(null)
+  //
+  // const { isLoading } = useGetWorkspaceToken(
+  //   {
+  //     workspaceId,
+  //     tokenId: selectedTokenId as string,
+  //   },
+  //   {
+  //     enabled: selectedTokenId !== null,
+  //     onSettled: () => setSelectedTokenId(null),
+  //     onSuccess: (data) => {
+  //       copyToken(data.token)
+  //     },
+  //     onError: (error) => {
+  //       const err = tokensErrorMsgFromCode(error?.code) ?? 'Something went wrong'
+  //
+  //       toast({
+  //         title: err,
+  //         variant: 'destructive',
+  //       })
+  //     },
+  //   }
+  // )
+  //
+  // const copyToken = (token: string) => {
+  //   navigator.clipboard.writeText(token)
+  //   toast({
+  //     title: 'Token copied to clipboard!',
+  //     variant: 'success',
+  //   })
+  // }
+  //
+  // const handleGetFullTokenValue = (id: string) => {
+  //   const data = queryClient.getQueryData<FullToken>([workspaceId, 'workspace-tokens', id])
+  //
+  //   if (data) {
+  //     copyToken(data?.token)
+  //   } else setSelectedTokenId(id)
+  // }
 
   return (
     <div>
@@ -87,15 +76,15 @@ const WorkspceTokensTable: React.FC<Props> = ({ workspaceId, queryClient, data, 
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(({ id, name, last5, permissions, revoked, createdAt, expiresAt }) => (
+          {data.map(({ id, name, last5, permissions, createdAt, expiresAt }) => (
             <TableRow>
               <>
                 <TableCell>
                   <div className="flex gap-2.5 items-center py-1 min-w-[100px] xl:min-w-[150px] 2xl:min-w-[200px]">
                     <div
                       className={clsx(['h-2.5 w-2.5 rounded-full mt-[1.5px]'], {
-                        'bg-primary': !revoked,
-                        'bg-red-600 dark:bg-red-700': revoked || dayjs(expiresAt).isBefore(dayjs()),
+                        'bg-primary': !dayjs(expiresAt).isBefore(dayjs()),
+                        'bg-red-600 dark:bg-red-700': dayjs(expiresAt).isBefore(dayjs()),
                       })}
                     />
                     <span>{name}</span>
@@ -204,8 +193,7 @@ const WorkspceTokensTable: React.FC<Props> = ({ workspaceId, queryClient, data, 
                 </TableCell>
                 <TableCell
                   className={clsx(['min-w-[100px]'], {
-                    'text-red-600 dark:text-red-600':
-                      !revoked && dayjs(expiresAt).isBefore(dayjs()),
+                    'text-red-600 dark:text-red-600': dayjs(expiresAt).isBefore(dayjs()),
                   })}
                 >
                   {expiresAt ? (
@@ -223,19 +211,19 @@ const WorkspceTokensTable: React.FC<Props> = ({ workspaceId, queryClient, data, 
                 </TableCell>
                 {onRevoke && (
                   <TableCell>
-                    {!revoked && !dayjs(expiresAt).isBefore(dayjs()) ? (
-                      <button
-                        disabled={false}
-                        onClick={() => onRevoke({ id, name })}
-                        className={clsx([
-                          'opacity-80 hover:opacity-100 text-red-600 dark:text-red-600  ease duration-150',
-                        ])}
-                      >
-                        Revoke
-                      </button>
-                    ) : (
-                      <span className="opacity-70">-----</span>
-                    )}
+                    {/* {!revoked && !dayjs(expiresAt).isBefore(dayjs()) ? ( */}
+                    <button
+                      disabled={false}
+                      onClick={() => onRevoke({ id, name })}
+                      className={clsx([
+                        'opacity-80 hover:opacity-100 text-red-600 dark:text-red-600  ease duration-150',
+                      ])}
+                    >
+                      Revoke
+                    </button>
+                    {/*   ) : ( */}
+                    {/*     <span className="opacity-70">-----</span> */}
+                    {/*   )} */}
                   </TableCell>
                 )}
               </>

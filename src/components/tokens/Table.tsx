@@ -41,7 +41,7 @@ const EnvTokensTable: React.FC<Props> = ({ workspaceId, data }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(({ name, last5, permissions, revoked, createdAt, expiresAt, ref }) => (
+          {data.map(({ name, last5, permissions, createdAt, expiresAt, ref }) => (
             <TableRow>
               <>
                 <TableCell>
@@ -49,8 +49,8 @@ const EnvTokensTable: React.FC<Props> = ({ workspaceId, data }) => {
                   <div className="flex gap-2.5 items-center py-1 min-w-[100px] xl:min-w-[140px] 2xl:min-w-[190px]">
                     <div
                       className={clsx(['h-2.5 w-2.5 rounded-full mt-[1.5px]'], {
-                        'bg-primary': !revoked,
-                        'bg-red-600 dark:bg-red-700': revoked || dayjs(expiresAt).isBefore(dayjs()),
+                        'bg-primary': !dayjs(expiresAt).isBefore(dayjs()),
+                        'bg-red-600 dark:bg-red-700': dayjs(expiresAt).isBefore(dayjs()),
                       })}
                     />
                     <span>{name}</span>
@@ -103,8 +103,7 @@ const EnvTokensTable: React.FC<Props> = ({ workspaceId, data }) => {
                 </TableCell>
                 <TableCell
                   className={clsx(['min-w-[100px]'], {
-                    'text-red-600 dark:text-red-600':
-                      !revoked && dayjs(expiresAt).isBefore(dayjs()),
+                    'text-red-600 dark:text-red-600': dayjs(expiresAt).isBefore(dayjs()),
                   })}
                 >
                   {expiresAt ? (
