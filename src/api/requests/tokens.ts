@@ -1,4 +1,4 @@
-import { EnvTokenGrant, ReadOnlyEnvToken } from '@/types/tokens/environment'
+import { ReadOnlyEnvToken } from '@/types/tokens/environment'
 import sendRequest, { APIError } from '../instance'
 import { WorkspaceToken, WorkspaceTokenPermissions } from '@/types/tokens/workspace'
 import { FullToken } from '@/types/tokens/token'

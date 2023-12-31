@@ -1,6 +1,6 @@
 import sendRequest, { APIError } from '@/api/instance'
 import { RenameEnvironmentError } from './environments'
-import { EnvTokenGrant, EnvironmentToken } from '@/types/tokens/environment'
+import { EnvTokenPermission, EnvironmentToken } from '@/types/tokens/environment'
 import { FullToken } from '@/types/tokens/token'
 
 // NOTE: error
@@ -44,7 +44,7 @@ export interface CreateEnvironmentTokenArgs {
   envName: string
   data: {
     name: string
-    grant: EnvTokenGrant
+    permission: EnvTokenPermission
     expiration?: {
       hours?: number
       days?: number
