@@ -168,7 +168,10 @@ const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
       <div className="mt-2 gap-2 rounded-md border-2">
         <div className="px-3 py-3 md:px-5 md:py-4">
           <div className="flex items-center justify-between">
-            <TypographyH4>Environment tokens (for SDKs)</TypographyH4>
+            <div className="gap-3 flex items-center">
+              <TypographyH4>Environment tokens (for SDKs)</TypographyH4>
+              <Icons.squareAsterisk className="h-4 w-4 opacity-80" />
+            </div>
             <>
               <Button
                 variant={'outline'}

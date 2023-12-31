@@ -31,7 +31,7 @@ const EnvTokens: React.FC<Props> = ({ workspaceId }) => {
           <div className="flex items-center justify-between">
             <div className="gap-3 flex items-center">
               <TypographyH4>Environment tokens (for SDKs)</TypographyH4>
-              <Icons.layers className="h-4 w-4 opacity-80" />
+              <Icons.squareAsterisk className="h-4 w-4 opacity-80" />
             </div>
           </div>
           {/* // */}

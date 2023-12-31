@@ -147,7 +147,7 @@ const CliTokens: React.FC<Props> = ({ workspaceId }) => {
             </div>
             {/* // */}
             <div className="text-[0.95rem] text-muted-foreground mt-2">
-              Cli tokens are used with cli to access selected worksapace on the behalf of the user
+              Cli tokens are used with cli to access selected workspace on the behalf of the user
             </div>
 
             <Button
