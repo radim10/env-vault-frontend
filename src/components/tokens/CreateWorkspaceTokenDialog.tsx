@@ -1,12 +1,4 @@
-import { useState } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { useCallback, useState } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -19,6 +11,7 @@ import { useCreateWorkspaceToken } from '@/api/mutations/tokens/workspace'
 import { tokensErrorMsgFromCode } from '@/api/requests/tokens'
 import { Separator } from '../ui/separator'
 import DialogComponent from '../Dialog'
+import clsx from 'clsx'
 
 interface Props {
   workspaceId: string
@@ -146,19 +139,33 @@ export const CreateWorkspaceTokenDialog: React.FC<Props> = ({
     [expiration]
   )
 
+  const allPermissionsSelected = useCallback(() => {
+    if (
+      permissions?.[0]?.permissions?.filter((p) => p.checked).length === 3 &&
+      permissions?.[1]?.permissions?.filter((p) => p.checked).length === 3 &&
+      permissions?.[2]?.permissions?.filter((p) => p.checked).length === 3
+    ) {
+      return true
+    }
+    return false
+  }, [permissions])
+
+  const isAtLeastOneChecked = useCallback(() => {
+    return permissions.some((resource) => {
+      return resource.permissions.some((permission) => permission.checked)
+    })
+  }, [permissions])
+
   useUpdateEffect(() => {
     if (opened && copied) setCopied(false)
   }, [opened])
-
-  const isAtLeastOneChecked = permissions.some((resource) => {
-    return resource.permissions.some((permission) => permission.checked)
-  })
 
   useUpdateEffect(() => {
     if (!opened) {
       setTimeout(() => reset(), 150)
       if (name?.length > 0) setName('')
-      if (isAtLeastOneChecked) {
+
+      if (isAtLeastOneChecked()) {
         setPermissions((draft) => {
           draft.forEach((entity) => {
             entity.permissions.forEach((permission) => {
@@ -219,7 +226,7 @@ export const CreateWorkspaceTokenDialog: React.FC<Props> = ({
   return (
     <div>
       <DialogComponent
-        title="Generate workspace token"
+        title="Create workspace token"
         opened={opened}
         onClose={onClose}
         error={error ? tokensErrorMsgFromCode(error?.code) : undefined}
@@ -228,8 +235,8 @@ export const CreateWorkspaceTokenDialog: React.FC<Props> = ({
           !newTokenData
             ? {
                 wFull: true,
-                text: !isLoading ? 'Generate' : 'Generating...',
-                disabled: isLoading || name?.trim().length === 0 || !isAtLeastOneChecked,
+                text: !isLoading ? 'Create' : 'Creating...',
+                disabled: isLoading || name?.trim().length === 0 || !isAtLeastOneChecked(),
               }
             : undefined
         }
@@ -269,7 +276,7 @@ export const CreateWorkspaceTokenDialog: React.FC<Props> = ({
         )}
 
         {!newTokenData && (
-          <div className="mt-2 mb-3 flex flex-col gap-4">
+          <div className="mt-0 mb-3 flex flex-col gap-4">
             <Input
               className="w-full"
               placeholder="Name"
@@ -355,7 +362,29 @@ export const CreateWorkspaceTokenDialog: React.FC<Props> = ({
 
             {/* // */}
             <div className="px-0">
-              <span className="font-semibold">Permissions</span>
+              <div className="flex items-center justify-between">
+                <span className="font-semibold">Permissions</span>
+
+                <div className="h-full mr-1 ease duration-300">
+                  <button
+                    className={clsx(['text-sm text-muted-foreground'], {
+                      'hover:text-foreground': !isLoading,
+                    })}
+                    disabled={isLoading}
+                    onClick={() => {
+                      setPermissions((draft) => {
+                        draft.forEach((entity) => {
+                          entity.permissions.forEach((permission) => {
+                            permission.checked = allPermissionsSelected() ? false : true
+                          })
+                        })
+                      })
+                    }}
+                  >
+                    {!allPermissionsSelected() ? 'Select all' : 'Deselect all'}
+                  </button>
+                </div>
+              </div>
 
               <div className="mt-4 flex flex-col gap-4 md:gap-4 px-2">
                 {permissions.map((g, arrIndex) => (
@@ -370,7 +399,18 @@ export const CreateWorkspaceTokenDialog: React.FC<Props> = ({
 
                         <div className="flex flex-row gap-2.5 md:gap-5 ml-3">
                           {g.permissions.map((grant, index) => (
-                            <div className="cursor-pointer items-top flex space-x-2">
+                            <div
+                              className={clsx(['items-center flex space-x-2'], {
+                                'cursor-pointer': !isLoading,
+                              })}
+                              onClick={() => {
+                                if (isLoading) return
+                                setPermissions((draft) => {
+                                  draft[arrIndex].permissions[index].checked =
+                                    !draft[arrIndex].permissions[index].checked
+                                })
+                              }}
+                            >
                               <Checkbox
                                 id={`${g.name}-${index}`}
                                 disabled={isLoading}
@@ -393,10 +433,21 @@ export const CreateWorkspaceTokenDialog: React.FC<Props> = ({
                                   // })
                                 }}
                               />
-                              <div className="grid gap-1.5 leading-none cursor-pointer">
+                              <div
+                                className={clsx(['grid gap-1.5 leading-none'], {
+                                  'cursor-pointer': !isLoading,
+                                })}
+                              >
                                 <label
                                   htmlFor={`${g.name}-${index}`}
-                                  className="cursor-pointer text-[0.9rem] font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                  className={clsx(
+                                    [
+                                      'text-[0.9rem] font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+                                    ],
+                                    {
+                                      'cursor-pointer': !isLoading,
+                                    }
+                                  )}
                                 >
                                   {grant.text}
                                 </label>
