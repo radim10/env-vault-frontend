@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   Table,
   TableBody,
@@ -12,63 +11,51 @@ import { TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui
 import { Tooltip } from '@radix-ui/react-tooltip'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { CliToken } from '@/types/tokens/cli'
-import { QueryClient } from '@tanstack/react-query'
-import { Icons } from '../icons'
-import { useGetCliToken } from '@/api/queries/projects/tokens'
-import { useToast } from '../ui/use-toast'
-import { cliTokensErrorMsgFromCode } from '@/api/requests/tokens/cli'
-import { FullToken } from '@/types/tokens/token'
 
 dayjs.extend(relativeTime)
 
 interface Props {
-  queryClient: QueryClient
-  workspaceId: string
+  // queryClient: QueryClient
+  // workspaceId: string
+  // onCopyToken: (token: string) => void
   data: CliToken[]
-  onCopyToken: (token: string) => void
   onRevoke: (id: string) => void
 }
 
-const CliTokensTable: React.FC<Props> = ({
-  queryClient,
-  workspaceId,
-  data,
-  onCopyToken,
-  onRevoke,
-}) => {
-  const { toast } = useToast()
-  const [selectedTokenId, setSelectedTokenId] = useState<string | null>(null)
-
-  const { isLoading } = useGetCliToken(
-    {
-      workspaceId,
-      tokenId: selectedTokenId as string,
-    },
-    {
-      enabled: selectedTokenId !== null,
-      onSettled: () => setSelectedTokenId(null),
-      onSuccess: (data) => {
-        onCopyToken(data.token)
-      },
-      onError: (error) => {
-        const err = cliTokensErrorMsgFromCode(error?.code) ?? 'Something went wrong'
-
-        toast({
-          title: err,
-          variant: 'destructive',
-        })
-      },
-    }
-  )
-
-  const handleGetFullTokenValue = (id: string) => {
-    const data = queryClient.getQueryData<FullToken>([workspaceId, 'cli-tokens', id])
-    console.log(data)
-
-    if (data) {
-      onCopyToken(data?.token)
-    } else setSelectedTokenId(id)
-  }
+const CliTokensTable: React.FC<Props> = ({ data, onRevoke }) => {
+  // const { toast } = useToast()
+  // const [selectedTokenId, setSelectedTokenId] = useState<string | null>(null)
+  //
+  // const { isLoading } = useGetCliToken(
+  //   {
+  //     workspaceId,
+  //     tokenId: selectedTokenId as string,
+  //   },
+  //   {
+  //     enabled: selectedTokenId !== null,
+  //     onSettled: () => setSelectedTokenId(null),
+  //     onSuccess: (data) => {
+  //       onCopyToken(data.token)
+  //     },
+  //     onError: (error) => {
+  //       const err = cliTokensErrorMsgFromCode(error?.code) ?? 'Something went wrong'
+  //
+  //       toast({
+  //         title: err,
+  //         variant: 'destructive',
+  //       })
+  //     },
+  //   }
+  // )
+  //
+  // const handleGetFullTokenValue = (id: string) => {
+  //   const data = queryClient.getQueryData<FullToken>([workspaceId, 'cli-tokens', id])
+  //   console.log(data)
+  //
+  //   if (data) {
+  //     onCopyToken(data?.token)
+  //   } else setSelectedTokenId(id)
+  // }
 
   return (
     <div>
@@ -80,8 +67,8 @@ const CliTokensTable: React.FC<Props> = ({
           <TableRow className="">
             <TableHead className="w-[200px] 2xl:w-[250px]">Name</TableHead>
             <TableHead className="w-[100px]">Token</TableHead>
-            <TableHead className="w-">Created at</TableHead>
-            <TableHead className="w-">Last used at</TableHead>
+            <TableHead className="w-">Created</TableHead>
+            <TableHead className="w-">Last used</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>

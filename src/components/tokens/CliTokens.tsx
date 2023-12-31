@@ -161,13 +161,7 @@ const CliTokens: React.FC<Props> = ({ workspaceId }) => {
             </Button>
           </div>
           {/* // TABLE */}
-          <CliTokensTable
-            data={data}
-            queryClient={queryClient}
-            workspaceId={workspaceId}
-            onRevoke={(id) => setRevokeDialog({ id })}
-            onCopyToken={(token) => copyToken(token, true)}
-          />
+          <CliTokensTable data={data} onRevoke={(id) => setRevokeDialog({ id })} />
         </div>
       </div>
     </>
