@@ -1,4 +1,4 @@
-export enum EnvTokenGrant {
+export enum EnvTokenPermission {
   READ = 'READ',
   WRITE = 'WRITE',
   READ_WRITE = 'READ_WRITE',
@@ -9,7 +9,7 @@ export interface EnvironmentToken {
   name: string
   revoked: boolean
   expiresAt: string | null
-  grant: EnvTokenGrant
+  permission: EnvTokenPermission
   createdAt: string
   last5: string
 }
