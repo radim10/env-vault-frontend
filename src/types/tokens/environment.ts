@@ -1,15 +1,18 @@
-export enum EnvTokenPermission {
-  READ = 'READ',
-  WRITE = 'WRITE',
-  READ_WRITE = 'READ_WRITE',
-}
+// export enum EnvTokenPermission {
+//   READ = 'READ',
+//   WRITE = 'WRITE',
+//   READ_WRITE = 'READ_WRITE',
+// }
+
+// only for secrets, read env by default
+export type EnvTokenPermission = 'read' | 'write' | 'delete'
 
 export interface EnvironmentToken {
   id: string
   name: string
   revoked: boolean
   expiresAt: string | null
-  permission: EnvTokenPermission
+  permissions: EnvTokenPermission[]
   createdAt: string
   last5: string
 }
