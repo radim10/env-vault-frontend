@@ -44,7 +44,7 @@ export interface CreateEnvironmentTokenArgs {
   envName: string
   data: {
     name: string
-    permission: EnvTokenPermission
+    permissions: EnvTokenPermission[]
     expiration?: {
       hours?: number
       days?: number
