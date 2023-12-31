@@ -41,7 +41,7 @@ const EnvTokensTable: React.FC<Props> = ({ workspaceId, data }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(({ name, last5, permission, revoked, createdAt, expiresAt, ref }) => (
+          {data.map(({ name, last5, permissions, revoked, createdAt, expiresAt, ref }) => (
             <TableRow>
               <>
                 <TableCell>
@@ -65,16 +65,38 @@ const EnvTokensTable: React.FC<Props> = ({ workspaceId, data }) => {
                   </div>
                 </TableCell>
                 <TableCell>
-                  {permission.toString() === 'READ' && 'Read'}
-                  {permission.toString() === 'WRITE' && 'Write'}
-                  {permission.toString() === 'READ_WRITE' && 'R/W'}
+                  {/* {permission.toString() === 'READ' && 'Read'} */}
+                  {/* {permission.toString() === 'WRITE' && 'Write'} */}
+                  {/* {permission.toString() === 'READ_WRITE' && 'R/W'} */}
+
+                  {/* / Env read by default */}
+                  {/* <>{'ER, '}</> */}
+                  {permissions.includes('read') && (
+                    <>
+                      SR
+                      {/* Read */}
+                      {(permissions?.includes('write') || permissions?.includes('delete')) && ', '}
+                    </>
+                  )}
+
+                  {permissions.includes('write') && (
+                    <>
+                      {/* Write */}
+                      SW
+                      {permissions?.includes('delete') && ', '}
+                    </>
+                  )}
+                  {permissions.includes('delete') && (
+                    <>
+                      {/* Delete */}
+                      SD
+                    </>
+                  )}
                 </TableCell>
                 <TableCell className="min-w-[100px]">
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger>
-                        {dayjs(createdAt).format('YYYY-MM-DD HH:mm:ss')}
-                      </TooltipTrigger>
+                      <TooltipTrigger>{dayjs(createdAt).format('YYYY-MM-DD HH:mm')}</TooltipTrigger>
                       <TooltipContent>{dayjs(createdAt).fromNow()}</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -89,7 +111,7 @@ const EnvTokensTable: React.FC<Props> = ({ workspaceId, data }) => {
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          {dayjs(expiresAt).format('YYYY-MM-DD HH:mm:ss')}
+                          {dayjs(expiresAt).format('YYYY-MM-DD HH:mm')}
                         </TooltipTrigger>
                         <TooltipContent>{dayjs(expiresAt).fromNow()}</TooltipContent>
                       </Tooltip>
