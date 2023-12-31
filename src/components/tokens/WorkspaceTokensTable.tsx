@@ -97,7 +97,7 @@ const WorkspceTokensTable: React.FC<Props> = ({ data, onRevoke }) => {
                     <div className="w-32 lg:w-32 2xl:w-44 flex gap-1.5">
                       {/* <div className="truncate w-32">{value.slice(0, 12)}...</div> */}
                       {/* <div className="w-28">{tokenPreview}...</div> */}
-                      <div className="w-28">eva...{last5}</div>
+                      <div className="w-28">evw...{last5}</div>
                       {/*   {selectedTokenId === null ? ( */}
                       {/*     <button */}
                       {/*       className="opacity-60 hover:opacity-100 hover:text-primary" */}
