@@ -183,7 +183,7 @@ const Access: React.FC<Props> = ({ workspaceId, projectName, envName }) => {
           </div>
           {/* // */}
           <div className="text-[0.95rem] text-muted-foreground mt-1 md:mt-1">
-            Environment tokens are used with SDKs to access only selected environments and its
+            Environment tokens are used with SDKs to access only selected environment and its
             secrets.
           </div>
 
