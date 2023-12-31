@@ -82,7 +82,7 @@ const WorkspceTokensTable: React.FC<Props> = ({ workspaceId, queryClient, data, 
             <TableHead className="w-[120px]">Token</TableHead>
             <TableHead>Permissions</TableHead>
             <TableHead>Created</TableHead>
-            <TableHead>Expires</TableHead>
+            <TableHead>Expiration</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
