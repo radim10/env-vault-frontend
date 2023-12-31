@@ -207,7 +207,7 @@ const WorkspaceSettings: React.FC<Props> = ({ workspaceId }) => {
 
         {!isOwnerRole() && (
           <DangerZone
-            title={'Leave worksapce'}
+            title={'Leave workspace'}
             description={'You will no longer be able to access this workspace'}
             btn={{
               text: 'Leave',
