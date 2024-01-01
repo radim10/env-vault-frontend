@@ -71,13 +71,13 @@ const Header = () => {
         <div className="flex items-center gap-3">
           <DropdownMenu>
             <DropdownMenuTrigger className="flex gap-2 items-center">
-              <Avatar>
+              <Avatar className="w-10 h-10 border-[2.5px] dark:border-gray-800 border-gray-200">
                 <AvatarImage src={user?.avatarUrl ?? ''} />
                 <AvatarFallback>{user?.name?.charAt(0)?.toUpperCase()}</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent className="mt-2 mr-8 text-md">
+            <DropdownMenuContent className="mt-0 mr-10 text-md">
               <div className="flex flex-col px-2 pt-1">
                 <div className="text-[0.85rem] font-medium">{user?.name}</div>
                 <div className="text-[0.81rem] text-muted-foreground">{user?.email}</div>
@@ -93,10 +93,13 @@ const Header = () => {
                             handleLogout()
                           }
                         }}
-                        className={clsx(['flex gap-2 items-center text-[0.82rem] cursor-pointer'], {
-                          'hover:text-red-500 text-red-500 dark:text-red-500 dark:hover:text-red-500':
-                            index === 2,
-                        })}
+                        className={clsx(
+                          ['flex gap-2 items-center text-[0.825rem] cursor-pointer'],
+                          {
+                            'hover:text-red-500 text-red-500 dark:text-red-500 dark:hover:text-red-500':
+                              index === 2,
+                          }
+                        )}
                       >
                         <item.icon className=" h-3.5 w-3.5 opacity-70" />
                         <>{item.text}</>
@@ -107,7 +110,7 @@ const Header = () => {
                       <DropdownMenuItem className={clsx([''])}>
                         <Link
                           href={`/workspace/${params?.workspace}/personal-settings/general`}
-                          className="flex gap-2 items-center text-[0.82rem] cursor-pointer"
+                          className="flex gap-2 items-center text-[0.825rem] cursor-pointer"
                         >
                           <item.icon className=" h-3.5 w-3.5 opacity-70" />
                           <>{item.text}</>
