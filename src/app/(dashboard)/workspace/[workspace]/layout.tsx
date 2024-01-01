@@ -1,3 +1,4 @@
+import CommandPalette from '@/components/CommandPalette'
 import Header from '@/components/Header'
 import ScrollToTopButton from '@/components/ScrollToTopBtn'
 import AuthProvider from '@/components/SessionProvider'
@@ -32,6 +33,7 @@ export default async function DashboardLayout({
 
   return (
     <>
+      <CommandPalette />
       <AuthProvider
         // user={{ email: userEmail as string, name: name as string }}
         session={session as UserSession}
