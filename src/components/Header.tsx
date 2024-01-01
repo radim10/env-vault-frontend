@@ -17,21 +17,34 @@ import { useLogout } from '@/api/mutations/auth'
 import useSessionStore from '@/stores/session'
 import { LogoutError } from '@/api/requests/auth'
 import { useToast } from './ui/use-toast'
-import Link from 'next/link'
-
-const dropdownItems = [
-  { text: 'Support', icon: Icons.helpCircle },
-  { text: 'Personal settings', icon: Icons.user },
-  { text: 'Sign out', icon: Icons.logOut },
-]
 
 const Header = () => {
   const { toast } = useToast()
   const router = useRouter()
   const params = useParams()
-
   const user = useCurrentUserStore((user) => user?.data)
   const session = useSessionStore()
+
+  const handleLogout = () => {
+    session.setLoggingOut(true)
+    logout(null)
+  }
+
+  const dropdownItems = [
+    {
+      text: 'Support',
+      icon: Icons.helpCircle,
+      onClick: () => {},
+    },
+    {
+      text: 'Personal settings',
+      icon: Icons.user,
+      onClick: () => {
+        router.push(`/workspace/${params?.workspace}/personal-settings/general`)
+      },
+    },
+    { text: 'Sign out', icon: Icons.logOut, onClick: handleLogout },
+  ]
 
   const { mutate: logout } = useLogout({
     onSuccess: async () => {
@@ -55,11 +68,6 @@ const Header = () => {
       }
     },
   })
-
-  const handleLogout = () => {
-    session.setLoggingOut(true)
-    logout(null)
-  }
 
   return (
     <div className="flex flex-row justify-between items-center">
@@ -86,37 +94,16 @@ const Header = () => {
                 {dropdownItems?.map((item, index) => (
                   <>
                     {index === 2 && <DropdownMenuSeparator className="my-1" />}
-                    {index !== 1 && (
-                      <DropdownMenuItem
-                        onClick={() => {
-                          if (index === 2) {
-                            handleLogout()
-                          }
-                        }}
-                        className={clsx(
-                          ['flex gap-2 items-center text-[0.825rem] cursor-pointer'],
-                          {
-                            'hover:text-red-500 text-red-500 dark:text-red-500 dark:hover:text-red-500':
-                              index === 2,
-                          }
-                        )}
-                      >
-                        <item.icon className=" h-3.5 w-3.5 opacity-70" />
-                        <>{item.text}</>
-                      </DropdownMenuItem>
-                    )}
-
-                    {index === 1 && (
-                      <DropdownMenuItem className={clsx([''])}>
-                        <Link
-                          href={`/workspace/${params?.workspace}/personal-settings/general`}
-                          className="flex gap-2 items-center text-[0.825rem] cursor-pointer"
-                        >
-                          <item.icon className=" h-3.5 w-3.5 opacity-70" />
-                          <>{item.text}</>
-                        </Link>
-                      </DropdownMenuItem>
-                    )}
+                    <DropdownMenuItem
+                      onClick={() => item.onClick()}
+                      className={clsx(['flex gap-2 items-center text-[0.825rem] cursor-pointer'], {
+                        'hover:text-red-500 text-red-500 dark:text-red-500 dark:hover:text-red-500':
+                          index === 2,
+                      })}
+                    >
+                      <item.icon className=" h-4 w-4 opacity-70" />
+                      <>{item.text}</>
+                    </DropdownMenuItem>
                   </>
                 ))}
               </div>
