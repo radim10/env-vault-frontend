@@ -15,6 +15,7 @@ import {
   Layers,
   XCircle,
   Menu,
+  GanttChart,
   X,
   MoreHorizontal,
   MoreVertical,
@@ -104,6 +105,7 @@ import {
   Unlink,
   CircleSlash,
   MailOpen,
+  HelpCircle,
 } from 'lucide-react'
 
 export const Icons = {
@@ -213,4 +215,6 @@ export const Icons = {
   unlink: Unlink,
   circleSlash: CircleSlash,
   mailOpen: MailOpen,
+  ganntChart: GanttChart,
+  helpCircle: HelpCircle,
 }
