@@ -313,8 +313,14 @@ export const CreateWorkspaceTokenDialog: React.FC<Props> = ({
                     disabled={expiration === null || isLoading}
                     onChange={(e) => {
                       let n = Number(e.target.value)
+
                       if (n === 0 && expiration?.hours === 0) {
-                        setExpiration(null)
+                        // setExpiration(null)
+                        setExpiration((draft) => {
+                          if (draft) {
+                            draft.days = 1
+                          }
+                        })
                       } else {
                         setExpiration((draft) => {
                           if (draft) {
@@ -322,6 +328,17 @@ export const CreateWorkspaceTokenDialog: React.FC<Props> = ({
                           }
                         })
                       }
+
+                      // let n = Number(e.target.value)
+                      // if (n === 0 && expiration?.hours === 0) {
+                      //   setExpiration(null)
+                      // } else {
+                      //   setExpiration((draft) => {
+                      //     if (draft) {
+                      //       draft.days = n
+                      //     }
+                      //   })
+                      // }
                     }}
                   />
                 </div>
@@ -336,7 +353,8 @@ export const CreateWorkspaceTokenDialog: React.FC<Props> = ({
                     value={expiration?.hours}
                     disabled={expiration === null || isLoading}
                     onChange={(e) => {
-                      let n = Number(e.target.value)
+                      const value = e.target.value
+                      let n = Number(value)
                       if (n === 0 && expiration?.days === 0) {
                         setExpiration(null)
                       } else {
