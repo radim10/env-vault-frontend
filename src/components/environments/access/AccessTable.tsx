@@ -18,10 +18,12 @@ dayjs.extend(relativeTime)
 
 interface Props {
   data: EnvironmentToken[]
-  onRevoke?: (args: { id: string; name: string }) => void
+  // user is not admin -> only revoke read only
+  isViewerRole?: boolean
+  onRevoke: (args: { id: string; name: string }) => void
 }
 
-const AccessTable: React.FC<Props> = ({ data, onRevoke }) => {
+const AccessTable: React.FC<Props> = ({ data, isViewerRole, onRevoke }) => {
   // const { toast } = useToast()
   //
   // // for diplaying full value
@@ -86,7 +88,7 @@ const AccessTable: React.FC<Props> = ({ data, onRevoke }) => {
             <TableHead>Permissions</TableHead>
             <TableHead>Created</TableHead>
             <TableHead>Expiration</TableHead>
-            {onRevoke && <TableHead>Action</TableHead>}
+            <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -191,8 +193,20 @@ const AccessTable: React.FC<Props> = ({ data, onRevoke }) => {
                     <span className="opacity-70">-----</span>
                   )}
                 </TableCell>
-                {onRevoke && (
-                  <TableCell>
+                <TableCell>
+                  {isViewerRole &&
+                  (permissions.includes('write') || permissions.includes('delete')) ? (
+                    <>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <span className="opacity-50 cursor-not-allowed">Revoke</span>
+                          </TooltipTrigger>
+                          <TooltipContent>Missing permission</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </>
+                  ) : (
                     <button
                       disabled={false}
                       onClick={() => onRevoke({ id, name })}
@@ -202,13 +216,8 @@ const AccessTable: React.FC<Props> = ({ data, onRevoke }) => {
                     >
                       Revoke
                     </button>
-                    {/*   {!revoked && !dayjs(expiresAt).isBefore(dayjs()) ? ( */}
-                    {/*     <></> */}
-                    {/*   ) : ( */}
-                    {/*     <span className="opacity-70">-----</span> */}
-                    {/*   )} */}
-                  </TableCell>
-                )}
+                  )}
+                </TableCell>
               </>
             </TableRow>
           ))}
