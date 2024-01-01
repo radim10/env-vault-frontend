@@ -6,6 +6,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from './ui/dropdown-menu'
 import clsx from 'clsx'
 import { Icons } from './icons'
@@ -16,9 +17,11 @@ import { useLogout } from '@/api/mutations/auth'
 import useSessionStore from '@/stores/session'
 import { LogoutError } from '@/api/requests/auth'
 import { useToast } from './ui/use-toast'
+import Link from 'next/link'
 
 const dropdownItems = [
-  { text: 'Account', icon: Icons.user },
+  { text: 'Support', icon: Icons.helpCircle },
+  { text: 'Personal settings', icon: Icons.user },
   { text: 'Sign out', icon: Icons.logOut },
 ]
 
@@ -73,33 +76,53 @@ const Header = () => {
                 <AvatarFallback>{user?.name?.charAt(0)?.toUpperCase()}</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="mt-2.5 mr-8 text-md">
-              {dropdownItems?.map((item, index) => (
-                <>
-                  <DropdownMenuItem
-                    onClick={() => {
-                      if (index === 0) {
-                        router.push(`/workspace/${params?.workspace}/personal-settings/general`)
-                      }
-                      if (index === 1) {
-                        handleLogout()
-                      }
-                    }}
-                    className={clsx(['flex gap-3 items-center'], {
-                      'hover:text-red-500 text-red-500': index === 1,
-                    })}
-                  >
-                    <item.icon className=" h-4 w-4 opacity-70" />
-                    <>{item.text}</>
-                  </DropdownMenuItem>
-                </>
-              ))}
+
+            <DropdownMenuContent className="mt-2 mr-8 text-md">
+              <div className="flex flex-col px-2 pt-1">
+                <div className="text-[0.85rem] font-medium">{user?.name}</div>
+                <div className="text-[0.81rem] text-muted-foreground">{user?.email}</div>
+              </div>
+              <div className="mt-2">
+                {dropdownItems?.map((item, index) => (
+                  <>
+                    {index === 2 && <DropdownMenuSeparator className="my-1" />}
+                    {index !== 1 && (
+                      <DropdownMenuItem
+                        onClick={() => {
+                          if (index === 2) {
+                            handleLogout()
+                          }
+                        }}
+                        className={clsx(['flex gap-2 items-center text-[0.82rem] cursor-pointer'], {
+                          'hover:text-red-500 text-red-500 dark:text-red-500 dark:hover:text-red-500':
+                            index === 2,
+                        })}
+                      >
+                        <item.icon className=" h-3.5 w-3.5 opacity-70" />
+                        <>{item.text}</>
+                      </DropdownMenuItem>
+                    )}
+
+                    {index === 1 && (
+                      <DropdownMenuItem className={clsx([''])}>
+                        <Link
+                          href={`/workspace/${params?.workspace}/personal-settings/general`}
+                          className="flex gap-2 items-center text-[0.82rem] cursor-pointer"
+                        >
+                          <item.icon className=" h-3.5 w-3.5 opacity-70" />
+                          <>{item.text}</>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
+                  </>
+                ))}
+              </div>
             </DropdownMenuContent>
           </DropdownMenu>
-          <div className="flex flex-col">
-            <div className="text-[0.9rem] font-medium">{user?.name}</div>
-            <div className="text-sm">{user?.email}</div>
-          </div>
+          {/* <div className="flex flex-col"> */}
+          {/*   <div className="text-[0.9rem] font-medium">{user?.name}</div> */}
+          {/*   <div className="text-sm">{user?.email}</div> */}
+          {/* </div> */}
         </div>
       </div>
     </div>
