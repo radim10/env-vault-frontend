@@ -20,6 +20,12 @@ export async function middleware(request: NextRequest) {
 
   const response = NextResponse.next()
 
+  console.log(
+    session?.accessTokenExpiresAt &&
+      dayjs.unix(session?.accessTokenExpiresAt).diff(dayjs(), 's') < 5 &&
+      session?.refreshToken &&
+      dayjs.unix(session?.refreshTokenExpiresAt).diff(dayjs(), 's') > 5
+  )
   if (
     session?.accessTokenExpiresAt &&
     dayjs.unix(session?.accessTokenExpiresAt).diff(dayjs(), 's') < 5 &&
@@ -40,12 +46,15 @@ export async function middleware(request: NextRequest) {
     })
 
     const status = res.status
+    console.log({ status })
 
     if (status === 400 || status === 401) {
+      console.log('session expired, removing session cookie')
       response.cookies.delete('session')
       //
     } else {
       let body = (await res.json()) as UserSession
+      console.log(body)
       const newSession = await createSession(body)
 
       response.cookies.set('session', newSession, {
