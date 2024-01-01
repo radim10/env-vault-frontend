@@ -157,7 +157,7 @@ const CommandPalette = () => {
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (!user?.data === null) {
+      if (user?.data !== null) {
         if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
           e.preventDefault()
           setOpen((open) => !open)
