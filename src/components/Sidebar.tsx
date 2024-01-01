@@ -18,9 +18,10 @@ import useSessionStore from '@/stores/session'
 
 const navItems = [
   { label: 'Projects', href: 'projects', icon: Icons.folder },
-  { label: 'Activity', href: 'activity', icon: Icons.users },
-  { label: 'Users', href: 'users/workspace', icon: Icons.users },
+  { label: 'Activity', href: 'activity', icon: Icons.ganntChart },
   { label: 'Tokens', href: 'tokens/cli', icon: Icons.keyRound },
+  { label: 'Users', href: 'users/workspace', icon: Icons.users },
+  // { label: 'Account', href: 'personal-settings/general', icon: Icons.user },
   { label: 'Settings', href: 'settings/workspace', icon: Icons.settings },
 ]
 
