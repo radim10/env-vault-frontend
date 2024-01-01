@@ -157,13 +157,15 @@ const CommandPalette = () => {
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        setOpen((open) => !open)
-      }
+      if (!user?.data === null) {
+        if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+          e.preventDefault()
+          setOpen((open) => !open)
+        }
 
-      if (e.key === 'Escape') {
-        setOpen(false)
+        if (e.key === 'Escape') {
+          setOpen(false)
+        }
       }
     }
 
