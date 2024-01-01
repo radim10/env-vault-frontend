@@ -12,25 +12,22 @@ export async function middleware(request: NextRequest) {
   // Getting cookies from the request using the `RequestCookies` API
   let cookie = request.cookies.get('session')?.value
 
-  const session = cookie
-    ? await unsealData<UserSession>(cookie, {
+  const sessionString = cookie
+    ? await unsealData<string>(cookie, {
         password: '44b87b09-59c8-4d5a-9ac8-fbb39b14988d',
       })
     : null
 
+  const sessionData = JSON.parse(sessionString as any) as UserSession
   const response = NextResponse.next()
 
-  console.log(
-    session?.accessTokenExpiresAt &&
-      dayjs.unix(session?.accessTokenExpiresAt).diff(dayjs(), 's') < 5 &&
-      session?.refreshToken &&
-      dayjs.unix(session?.refreshTokenExpiresAt).diff(dayjs(), 's') > 5
-  )
+  const now = dayjs()
+
   if (
-    session?.accessTokenExpiresAt &&
-    dayjs.unix(session?.accessTokenExpiresAt).diff(dayjs(), 's') < 5 &&
-    session?.refreshToken &&
-    dayjs.unix(session?.refreshTokenExpiresAt).diff(dayjs(), 's') > 5
+    sessionData?.accessTokenExpiresAt &&
+    dayjs.unix(sessionData?.accessTokenExpiresAt).diff(now, 's') < 5 &&
+    sessionData?.refreshToken &&
+    dayjs.unix(sessionData?.refreshTokenExpiresAt).diff(now, 's') > 5
   ) {
     console.log('refreshing session fron middleware')
     const url = getUrl('/auth/refresh')
@@ -41,7 +38,7 @@ export async function middleware(request: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        refreshToken: session?.refreshToken,
+        refreshToken: sessionData?.refreshToken,
       }),
     })
 
