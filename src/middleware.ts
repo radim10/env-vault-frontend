@@ -19,6 +19,8 @@ export async function middleware(request: NextRequest) {
     : null
 
   const sessionData = JSON.parse(sessionString as any) as UserSession
+  console.log({ sessionData })
+
   const response = NextResponse.next()
 
   const now = dayjs()
