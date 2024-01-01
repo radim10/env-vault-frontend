@@ -153,7 +153,7 @@ const ProfileSection = () => {
                 <div className="md:w-[18%]">
                   <Label>Avatar</Label>
                 </div>
-                <Avatar className="w-12 h-12 border-[1.5px]">
+                <Avatar className="w-12 h-12 border-[2.5px] dark:border-gray-800 border-gray-200">
                   <AvatarImage src={currentUser?.avatarUrl ?? ''} />
                   <AvatarFallback>{currentUser?.name?.charAt(0)?.toUpperCase()}</AvatarFallback>
                 </Avatar>
