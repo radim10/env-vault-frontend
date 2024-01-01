@@ -106,6 +106,9 @@ import {
   CircleSlash,
   MailOpen,
   HelpCircle,
+  FolderPlus,
+  ScrollText,
+  Sliders,
 } from 'lucide-react'
 
 export const Icons = {
@@ -217,4 +220,7 @@ export const Icons = {
   mailOpen: MailOpen,
   ganntChart: GanttChart,
   helpCircle: HelpCircle,
+  folderPlus: FolderPlus,
+  scrollText: ScrollText,
+  sliders: Sliders,
 }
