@@ -1,5 +1,6 @@
 import PreferencesSettings from '@/components/settings/PreferencesSettings'
 import WorkspaceSettings from '@/components/settings/WorkspaceSettings'
+import SubscriptionSettings from '@/components/subscription/SubscriptionSettings'
 import { validateServerSession } from '@/utils/auth/session'
 import { Metadata, ResolvingMetadata } from 'next'
 
@@ -24,7 +25,7 @@ export default async function Settings({
   return (
     <>
       {tab === 'workspace' && <WorkspaceSettings workspaceId={workspace} />}
-      {tab === 'preferences' && <PreferencesSettings workspaceId={workspace} />}
+      {tab === 'subscription' && <SubscriptionSettings workspaceId={workspace} />}
     </>
   )
 }
