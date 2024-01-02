@@ -1,4 +1,3 @@
-import PreferencesSettings from '@/components/settings/PreferencesSettings'
 import WorkspaceSettings from '@/components/settings/WorkspaceSettings'
 import SubscriptionSettings from '@/components/subscription/SubscriptionSettings'
 import { validateServerSession } from '@/utils/auth/session'

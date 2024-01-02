@@ -1,5 +1,4 @@
 'use client'
-
 import { useGetCheckoutUrl } from '@/api/queries/subscription'
 import SubscriptionOverview from './SubscriptionOverview'
 import PaymentDetails from './PaymentDetails'
@@ -9,7 +8,7 @@ interface Props {
   workspaceId: string
 }
 
-const SubscriptionSettings: React.FC<Props> = ({ workspaceId }) => {
+export const SubscriptionSettings: React.FC<Props> = ({ workspaceId }) => {
   const { refetch } = useGetCheckoutUrl(
     {
       workspaceId,
@@ -24,7 +23,7 @@ const SubscriptionSettings: React.FC<Props> = ({ workspaceId }) => {
   )
 
   return (
-    <div className="flex flex-col gap-7">
+    <div>
       {/* <Button onClick={() => refetch()}>Get url</Button> */}
       <SubscriptionOverview />
       <PaymentDetails />
@@ -32,5 +31,3 @@ const SubscriptionSettings: React.FC<Props> = ({ workspaceId }) => {
     </div>
   )
 }
-
-export default SubscriptionSettings
