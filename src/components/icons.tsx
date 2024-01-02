@@ -1,4 +1,5 @@
 import {
+  BookTemplate,
   Users,
   User,
   Folder,
@@ -109,6 +110,9 @@ import {
   FolderPlus,
   ScrollText,
   Sliders,
+  CreditCard,
+  Receipt,
+  AlignLeft,
 } from 'lucide-react'
 
 export const Icons = {
@@ -223,4 +227,8 @@ export const Icons = {
   folderPlus: FolderPlus,
   scrollText: ScrollText,
   sliders: Sliders,
+  creditCard: CreditCard,
+  receipt: Receipt,
+  bookTemplate: BookTemplate,
+  alignLeft: AlignLeft,
 }
