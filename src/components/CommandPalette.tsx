@@ -185,18 +185,24 @@ const CommandPalette = () => {
             <>
               <CommandGroup key={item.group.heading} heading={item.group.heading}>
                 {item.group.items.map(({ name, icon: Icon, action }) => (
-                  <CommandItem
-                    key={name}
-                    onSelect={() => {
-                      action()
-                      setOpen(false)
-                    }}
-                    disabled={name === 'Workspace tokens' && user?.isMemberRole() ? true : false}
-                    className="px-4"
-                  >
-                    <Icon className="mr-3.5 h-1 w-1 bg-red-400X" />
-                    <span className="text-[0.9rem]">{name}</span>
-                  </CommandItem>
+                  <>
+                    {!(name === 'Workspace tokens' && user?.isMemberRole()) && (
+                      <CommandItem
+                        key={name}
+                        onSelect={() => {
+                          action()
+                          setOpen(false)
+                        }}
+                        disabled={
+                          name === 'Workspace tokens' && user?.isMemberRole() ? true : false
+                        }
+                        className="px-4"
+                      >
+                        <Icon className="mr-3.5 h-1 w-1 bg-red-400X" />
+                        <span className="text-[0.9rem]">{name}</span>
+                      </CommandItem>
+                    )}
+                  </>
                 ))}
               </CommandGroup>
               {index !== items.length - 1 && <CommandSeparator />}
