@@ -26,7 +26,7 @@ const SubscriptionSettings: React.FC<Props> = ({ workspaceId }) => {
   return (
     <div className="flex flex-col gap-7">
       {/* <Button onClick={() => refetch()}>Get url</Button> */}
-      <SubscriptionOverview />
+      <SubscriptionOverview workspaceId={workspaceId} />
       <PaymentDetails />
       <InvoiceList />
     </div>
