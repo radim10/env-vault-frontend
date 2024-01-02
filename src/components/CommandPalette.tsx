@@ -189,6 +189,7 @@ const CommandPalette = () => {
                     {!(name === 'Workspace tokens' && user?.isMemberRole()) && (
                       <CommandItem
                         key={name}
+                        value={name}
                         onSelect={() => {
                           action()
                           setOpen(false)
