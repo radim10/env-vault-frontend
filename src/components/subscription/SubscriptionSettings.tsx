@@ -2,6 +2,7 @@
 
 import { useGetCheckoutUrl } from '@/api/queries/subscription'
 import { Button } from '../ui/button'
+import SubscriptionOverview from './SubscriptionOverview'
 
 interface Props {
   workspaceId: string
@@ -23,7 +24,8 @@ const SubscriptionSettings: React.FC<Props> = ({ workspaceId }) => {
 
   return (
     <div>
-      <Button onClick={() => refetch()}>Get url</Button>
+      {/* <Button onClick={() => refetch()}>Get url</Button> */}
+      <SubscriptionOverview />
     </div>
   )
 }
