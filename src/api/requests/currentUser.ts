@@ -1,6 +1,7 @@
-import { CurrentUser, WorkspaceUserRole } from '@/types/users'
+import { CurrentUser, CurrentUserWithWorkspaces, WorkspaceUserRole } from '@/types/users'
 import sendRequest, { APIError } from '../instance'
 import { UserSession } from '@/types/session'
+import { SubscriptionPlan } from '@/types/subscription'
 
 type CurrentUserErrorCode = 'user_not_found'
 export type CurrentUserError<T extends CurrentUserErrorCode | void> = APIError<T>
@@ -16,11 +17,17 @@ export function currentUserErrorMsgFromCode(code?: CurrentUserErrorCode): string
 }
 
 export type GetCurrentUserError = CurrentUserError<'user_not_found'>
-export type GetCurrentUserData = CurrentUser & {
-  defaultWorkspace?: string
-  workspaceRole: WorkspaceUserRole | null
-  workspaces?: Array<{ id: string; name: string }>
-}
+// export type GetCurrentUserData = CurrentUser & {
+//   defaultWorkspace?: string
+//   workspace: {
+//     role: WorkspaceUserRole
+//     plan: SubscriptionPlan
+//   } | null
+//   // workspaceRole: WorkspaceUserRole | null
+//   workspaces?: Array<{ id: string; name: string }>
+// }
+
+export type GetCurrentUserData = CurrentUserWithWorkspaces
 
 export type GetCurrentUserArgs = {
   workspaceId: string
