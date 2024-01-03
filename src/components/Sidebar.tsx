@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { useLogout } from '@/api/mutations/auth'
 import { LogoutError } from '@/api/requests/auth'
 import useSessionStore from '@/stores/session'
+import { SubscriptionPlan } from '@/types/subscription'
 
 const navItems = [
   { label: 'Projects', href: 'projects', icon: Icons.folder },
@@ -170,6 +171,7 @@ const Sidebar = () => {
                   {
                     id: currentUser?.selectedWorkspace?.id as string,
                     name: currentUser?.selectedWorkspace?.name as string,
+                    plan: currentUser?.selectedWorkspace?.plan as SubscriptionPlan,
                   }
                 }
                 allWorkspaces={currentUser?.workspaces as any}
