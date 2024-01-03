@@ -1,3 +1,4 @@
+import { SubscriptionData } from '@/types/subscription'
 import sendRequest from '../instance'
 
 export type GetCheckoutUrlError = any
@@ -14,6 +15,18 @@ export async function getCheckoutUrl(args: GetCheckoutUrlArgs) {
     method: 'GET',
     basePath: 'workspaces',
     path: `${workspaceId}/subscription/checkout/${plan}`,
+  })
+  return await response
+}
+
+export type GetSubscriptionData = SubscriptionData
+export type GetSubscriptionError = any
+
+export async function getSubscription(workspaceId: string) {
+  const response = sendRequest<GetSubscriptionData>({
+    method: 'GET',
+    basePath: 'workspaces',
+    path: `${workspaceId}/subscription`,
   })
   return await response
 }

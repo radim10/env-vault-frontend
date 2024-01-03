@@ -3,7 +3,10 @@ import {
   GetCheckoutUrlArgs,
   GetCheckoutUrlData,
   GetCheckoutUrlError,
+  GetSubscriptionData,
+  GetSubscriptionError,
   getCheckoutUrl,
+  getSubscription,
 } from '../requests/subscription'
 
 export const useGetCheckoutUrl = (
@@ -16,4 +19,16 @@ export const useGetCheckoutUrl = (
       return getCheckoutUrl(args)
     },
     { cacheTime: 0, ...opt }
+  )
+
+export const useGetSubscription = (
+  workspaceId: string,
+  opt?: UseQueryOptions<GetSubscriptionData, GetSubscriptionError>
+) =>
+  useQuery<GetSubscriptionData, GetSubscriptionError>(
+    ['subscription', workspaceId],
+    () => {
+      return getSubscription(workspaceId)
+    },
+    opt
   )
