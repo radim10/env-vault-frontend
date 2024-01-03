@@ -11,7 +11,8 @@ import PageLoader from './PageLoader'
 import { Icons } from './icons'
 import { Button } from './ui/button'
 import { GetCurrentUserError } from '@/api/requests/currentUser'
-import { WorkspaceUserRole } from '@/types/users'
+import { CurrentUser, WorkspaceUserRole } from '@/types/users'
+import { SubscriptionPlan } from '@/types/subscription'
 
 // interface Props {
 //   session: UserSession | null
@@ -54,46 +55,68 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
           router.replace('/login', { scroll: false })
         }
       },
-      onSuccess: (user) => {
-        if (user?.defaultWorkspace !== undefined) {
-          if (user?.defaultWorkspace === null) {
+      onSuccess: (data) => {
+        if (data?.defaultWorkspace !== undefined) {
+          if (data?.defaultWorkspace === null) {
             router.replace(`/welcome`)
             return
           } else {
-            router.replace(`/workspace/${user.defaultWorkspace}/projects`)
+            router.replace(`/workspace/${data.defaultWorkspace}/projects`)
             return
           }
         }
 
-        const selectedWorkspaceId = user?.defaultWorkspace ?? params?.workspace
-        const selectedWorkspaceIndex = user?.workspaces?.findIndex(
+        const selectedWorkspaceId = data?.defaultWorkspace ?? params?.workspace
+        const selectedWorkspaceIndex = data?.workspaces?.findIndex(
           (workspace) => workspace.id === selectedWorkspaceId
         )
 
-        const updatedUser = produce(user, (draft) => {
-          if (selectedWorkspaceIndex === -1) {
-          } else {
-            const role = user?.workspaceRole
-
-            if (role) {
-              const workspace = {
-                ...user?.workspaces?.[selectedWorkspaceIndex],
-                role,
-              }
-              draft.selectedWorkspace = workspace
+        // const updatedUser = produce(user, (draft) => {
+        //   if (selectedWorkspaceIndex === -1 || selectedWorkspaceIndex === undefined) {
+        //   } else {
+        //     const role = user?.selectedWorkspace?.role
+        //     const plan = user?.selectedWorkspace?.plan as SubscriptionPlan
+        //
+        //     if (role) {
+        //       const workspace = {
+        //         ...user?.workspaces?.[selectedWorkspaceIndex],
+        //         role,
+        //         plan
+        //       }
+        //       draft.selectedWorkspace = workspace
+        //     }
+        //   }
+        // })
+        // console.log({ updatedUser })
+        //
+        const updatedWorkspaces = produce(data.workspaces, (draft) => {
+          if (draft) {
+            if (selectedWorkspaceIndex === -1 || selectedWorkspaceIndex === undefined) {
+            } else {
+              draft[selectedWorkspaceIndex].selected = true
             }
           }
         })
-        console.log({ updatedUser })
+        console.log({ updatedWorkspaces })
 
-        // const updatedUser = produce(user, (draft) => {
-        //   draft.workspaces[selectedWorkspace] = {
-        //     ...draft.workspaces[selectedWorkspace],
-        //     selected: true,
-        //   }
-        // })
+        const selectedWorkspace = {
+          id: params?.workspace as string,
+          name: data?.workspaces?.[selectedWorkspaceIndex as number].name as string,
+          role: data?.selectedWorkspace?.role as WorkspaceUserRole,
+          plan: data?.selectedWorkspace?.plan as SubscriptionPlan,
+        }
 
-        set(updatedUser)
+        const currentUser: CurrentUser = {
+          id: data?.user?.id,
+          name: data?.user?.name,
+          avatarUrl: data?.user?.avatarUrl,
+          email: data?.user?.email,
+          selectedWorkspace,
+          workspaces: updatedWorkspaces as any,
+        }
+
+        console.log({ currentUser })
+        set(currentUser)
       },
     }
   )
