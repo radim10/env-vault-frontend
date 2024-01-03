@@ -1,6 +1,6 @@
 'use client'
 
-import { useGetCheckoutUrl } from '@/api/queries/subscription'
+import { useGetCheckoutUrl, useGetSubscription } from '@/api/queries/subscription'
 import SubscriptionOverview from './SubscriptionOverview'
 import PaymentDetails from './PaymentDetails'
 import InvoiceList from './InvoiceList'
@@ -23,11 +23,25 @@ const SubscriptionSettings: React.FC<Props> = ({ workspaceId }) => {
     }
   )
 
+  const { data, isLoading, isError } = useGetSubscription(workspaceId)
+
+  if (isLoading) {
+    return <>Loading...</>
+  }
+
+  if (isError) {
+    return <>Error</>
+  }
+
   return (
     <div className="flex flex-col gap-7">
       {/* <Button onClick={() => refetch()}>Get url</Button> */}
-      <SubscriptionOverview workspaceId={workspaceId} />
-      <PaymentDetails />
+      <SubscriptionOverview
+        workspaceId={workspaceId}
+        data={data.subscription}
+        usersCount={data.usersCount}
+      />
+      {data.subscription?.payment && <PaymentDetails paymentData={data.subscription?.payment} />}
       <InvoiceList />
     </div>
   )
