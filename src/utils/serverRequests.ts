@@ -1,4 +1,5 @@
 import { UserSession } from '@/types/session'
+import { SubscriptionPlan } from '@/types/subscription'
 import { WorkspaceUserRole } from '@/types/users'
 
 export const getUrl = (url: string) => {
@@ -236,5 +237,34 @@ export const handleEmailChangeConfirmation = async (token: string) => {
     } else return { ok: false }
   } catch (e) {
     return { ok: false }
+  }
+}
+
+export const getSubscriptionSession = async (args: {
+  accessToken: string
+  //
+  workspaceId: string
+  sessionId: string
+}) => {
+  const { accessToken, workspaceId, sessionId } = args
+  const url = getUrl(`/workspaces/${workspaceId}/subscription/session/${sessionId}`)
+
+  try {
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      cache: 'no-store',
+    })
+
+    console.log(res.status)
+    if (!res.ok) return undefined
+    let body = (await res.json()) as { plan: SubscriptionPlan }
+
+    return body
+  } catch (err) {
+    return null
   }
 }
