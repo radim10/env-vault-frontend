@@ -1,3 +1,5 @@
+import { SubscriptionPlan } from './subscription'
+
 export interface User {
   // uuid
   id: string
@@ -31,5 +33,17 @@ export type CurrentUser = User & {
     id: string
     name: string
     role: WorkspaceUserRole
+    plan: SubscriptionPlan
+  }
+}
+
+export type CurrentUserWithWorkspaces = {
+  user: CurrentUser
+  // for redirect it selected not found
+  defaultWorkspace?: string
+  workspaces?: Array<{ id: string; name: string; selected?: true }>
+  selectedWorkspace?: {
+    role: WorkspaceUserRole
+    plan: SubscriptionPlan
   }
 }
