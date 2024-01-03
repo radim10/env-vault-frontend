@@ -1,4 +1,5 @@
 import { UserSession } from '@/types/session'
+import { SubscriptionPlan } from '@/types/subscription'
 import { CurrentUser, User, WorkspaceUserRole } from '@/types/users'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
@@ -34,7 +35,12 @@ export const useCurrentUserStore = create(
         id: 'ds',
         avatarUrl: null,
         workspaces: [{ name: 'ds', id: 'ds', selected: true }],
-        selectedWorkspace: { name: 'ds', id: 'ds', role: WorkspaceUserRole.OWNER },
+        selectedWorkspace: {
+          name: 'ds',
+          id: 'ds',
+          role: WorkspaceUserRole.OWNER,
+          plan: SubscriptionPlan.Free,
+        },
       },
       set: (data) => set({ data }),
       update: (data) => {
