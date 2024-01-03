@@ -9,11 +9,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
+import { SubscriptionPlan } from '@/types/subscription'
+import clsx from 'clsx'
+import { Badge } from './ui/badge'
 
 interface Props {
   currentWorkspace: {
     id: string
     name: string
+    plan: SubscriptionPlan
   }
   allWorkspaces: Array<{
     id: string
@@ -31,7 +35,19 @@ const WorkspaceSelect: React.FC<Props> = ({ currentWorkspace, allWorkspaces, onC
             <div className=" flex flex-col justify-start items-start w-full">
               {/* // TODO: fix truncate */}
               <div className="text-[0.95rem] ml-0 line-clamp-1 w-fit">{currentWorkspace.name}</div>
-              <div className="text-sm text-muted-foreground">Enterprise</div>
+              <div className={clsx(['text-sm text-muted-foreground'], {})}>
+                {currentWorkspace.plan === SubscriptionPlan.Free && (
+                  <div className="flex items-center gap-3">
+                    <div>Free</div>
+                    <div className="bg-yellow-500 text-white dark:bg-yellow-800 dark:text-yellow-200 text-[0.75rem] rounded-md px-1.5 h-5">
+                      Upgrade
+                    </div>
+                  </div>
+                )}
+
+                {currentWorkspace.plan === SubscriptionPlan.Startup && 'Startup'}
+                {currentWorkspace.plan === SubscriptionPlan.Business && 'Business'}
+              </div>
             </div>
             <div>
               <Icons.chevronDown className="h-5 w-5 opacity-60" />
