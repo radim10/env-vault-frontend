@@ -4,27 +4,38 @@ export enum SubscriptionPlan {
   Business = 'BUSINESS',
 }
 
-interface Subscription {
+export interface SubscriptionData {
   usersCount: number
-  billingCycleAnchor: Date
-  currentPlan: SubscriptionPlan
-  //
-  cancelAt?: Date
-  canceledPlan?: SubscriptionPlan
+  subscription: Subscription
 }
 
-// export interface SubscriptionDetails {
-//   usersCount: number
-//   billingCycleAnchor: Date
-//   cancelAt?: Date
-//   downgradeAt?: Date
-//   canceledAt?: Date
-//   canceledPlan?: WorkspaceSubscription
-//   cardExpired?: boolean
-//   //
-//   card?: Card
-//   taxId?: string
-//   customerName?: string
-//   //
-//   handoverSentAt?: Date
-// }
+export type Subscription = SubscriptionOverview & {
+  payment?: SubscriptionPayment
+}
+
+export interface SubscriptionOverview {
+  plan: SubscriptionPlan
+  billingCycleAnchor: string
+  handoverSentAt?: string | null
+
+  cancelAt?: string
+  downgradeAt?: string
+
+  canceledAt?: string
+  downgradedAt?: string
+}
+
+export interface SubscriptionPayment {
+  taxId: string | null
+  card: PaymentCard
+}
+
+export interface PaymentCard {
+  brand: string
+  last4: string
+  expired?: boolean
+  expiration: {
+    year: number
+    month: number
+  }
+}
