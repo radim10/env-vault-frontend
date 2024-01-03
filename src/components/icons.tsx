@@ -113,6 +113,7 @@ import {
   CreditCard,
   Receipt,
   AlignLeft,
+  PartyPopper,
 } from 'lucide-react'
 
 export const Icons = {
@@ -231,4 +232,5 @@ export const Icons = {
   receipt: Receipt,
   bookTemplate: BookTemplate,
   alignLeft: AlignLeft,
+  partyPopper: PartyPopper,
 }
