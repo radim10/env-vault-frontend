@@ -5,12 +5,15 @@ import SubscriptionLayout from './SubscriptionLayout'
 import { Progress } from '@/components/ui/progress'
 import SubscriptionPlanOverlay from './SubscriptionPlanOverlay'
 import { useLockBodyScroll } from 'react-use'
-import { SubscriptionPlan, SubscriptionOverview } from '@/types/subscription'
+import { SubscriptionPlan, SubscriptionOverview, SubscriptionData } from '@/types/subscription'
 import dayjs from 'dayjs'
 import clsx from 'clsx'
 import useCurrentUserStore from '@/stores/user'
 import RenewSubscriptionDialog from './RenewSubscriptionDialog'
 import { useToast } from '../ui/use-toast'
+import UndoDowngradeSubscriptionDialog from './UndoDowngradeDialog'
+import { useQueryClient } from '@tanstack/react-query'
+import { produce } from 'immer'
 
 interface Props {
   workspaceId: string
@@ -32,12 +35,16 @@ const SubscriptionOverview: React.FC<Props> = ({
     billingCycleAnchor,
   },
 }) => {
+  const queryClient = useQueryClient()
   const { toast } = useToast()
   const activeSubscriptionPlan = useCurrentUserStore(
     ({ data }) => data?.selectedWorkspace?.plan || SubscriptionPlan.Free
   )
-  const [overlayOpened, setOverlayOpened] = useState(true)
+  const [overlayOpened, setOverlayOpened] = useState(false)
   const [renewDialog, setRenewDialog] = useState<{
+    opend: boolean
+  } | null>(null)
+  const [undoDowngradeDialog, setUndoDowngradeDialog] = useState<{
     opend: boolean
   } | null>(null)
 
@@ -73,8 +80,75 @@ const SubscriptionOverview: React.FC<Props> = ({
 
   const handleRenewSuccess = () => {
     closeRenewDialog()
+    updateSubsciptionState({
+      canceled: false,
+    })
     toast({
+      variant: 'success',
       title: 'Subscription renewed',
+    })
+  }
+
+  const closeUndoDowngradeDialog = () => {
+    setUndoDowngradeDialog({ opend: false })
+
+    setTimeout(() => {
+      setUndoDowngradeDialog(null)
+    }, 150)
+  }
+
+  const handleUndoDowngradeSuccess = () => {
+    closeUndoDowngradeDialog()
+    toast({
+      variant: 'success',
+      title: 'Action successful',
+      description: 'Workspace subscription wont be downgraded',
+    })
+
+    updateSubsciptionState({
+      downgraded: false,
+    })
+  }
+
+  const updateSubsciptionState = (args: { canceled?: boolean; downgraded?: boolean }) => {
+    const data = queryClient.getQueryData<SubscriptionData>(['subscription', workspaceId])
+    console.log(data)
+
+    if (!data) return
+
+    const updatedData = produce(data, (draft) => {
+      draft.subscription.downgradeAt =
+        args.downgraded === true ? calculateNextBillingDate(billingCycleAnchor) : undefined
+      draft.subscription.cancelAt =
+        args.canceled === true ? calculateNextBillingDate(billingCycleAnchor) : undefined
+    })
+
+    console.log(updatedData)
+
+    queryClient.setQueryData(['subscription', workspaceId], updatedData)
+  }
+
+  const handleDowgradeSuccess = () => {
+    setOverlayOpened(false)
+    updateSubsciptionState({
+      downgraded: true,
+    })
+    toast({
+      variant: 'success',
+      title: 'Action successful',
+      description: 'Workspace subscription willd be downgraded',
+    })
+  }
+
+  const handleCancelSuccess = () => {
+    setOverlayOpened(false)
+    updateSubsciptionState({
+      canceled: true,
+    })
+    toast({
+      variant: 'success',
+      title: 'Action successful',
+      description: 'Workspace subscription willd be canceled',
     })
   }
 
@@ -89,14 +163,23 @@ const SubscriptionOverview: React.FC<Props> = ({
           onClose={closeRenewDialog}
         />
       )}
+      {undoDowngradeDialog !== null && downgradeAt && (
+        <UndoDowngradeSubscriptionDialog
+          opened={undoDowngradeDialog.opend}
+          workspaceId={workspaceId}
+          cancelAt={downgradeAt}
+          onClose={closeUndoDowngradeDialog}
+          onSuccess={handleUndoDowngradeSuccess}
+        />
+      )}
       {overlayOpened && (
         <SubscriptionPlanOverlay
           workspaceId={workspaceId}
           currentPlan={activeSubscriptionPlan}
           onClose={() => setOverlayOpened(false)}
-          onCancel={() => {}}
-          onDowngrade={() => {}}
-          onUpgrade={() => {}}
+          onCanceled={() => handleCancelSuccess()}
+          onDowngraded={() => handleDowgradeSuccess()}
+          onUpgraded={() => {}}
         />
       )}
       <SubscriptionLayout title="Overview" icon={Icons.alignLeft}>
@@ -237,7 +320,7 @@ const SubscriptionOverview: React.FC<Props> = ({
                 <>
                   <button
                     className="text-[0.92rem] hover:text-primary ease duration-100"
-                    onClick={() => setRenewDialog({ opend: true })}
+                    onClick={() => setUndoDowngradeDialog({ opend: true })}
                   >
                     Undo downgrade
                   </button>
@@ -245,14 +328,14 @@ const SubscriptionOverview: React.FC<Props> = ({
                 </>
               )}
 
-              {!cancelAt && (
-                <button
-                  className="text-[0.92rem] hover:text-primary ease duration-100"
-                  onClick={() => setOverlayOpened(true)}
-                >
-                  Change plan
-                </button>
-              )}
+              {/* {!cancelAt && ( */}
+              <button
+                className="text-[0.92rem] hover:text-primary ease duration-100"
+                onClick={() => setOverlayOpened(true)}
+              >
+                Change plan
+              </button>
+              {/* )} */}
             </div>
           </div>
           <div className="px-0 mt-3.5">
@@ -299,10 +382,7 @@ const calculateNextBillingDate = (cycleAnchor: string): string => {
   const currentDate = dayjs()
   const anchorDate = dayjs(cycleAnchor)
   const billingDateThisMonth = anchorDate.month(currentDate.month()).year(currentDate.year())
-  console.log(
-    '🚀 ~ file: SubscriptionSettings.svelte:131 ~ calulateNextBillingDate ~ billingDateThisMonth',
-    billingDateThisMonth.format('YYYY-MM-DD')
-  )
+  console.log(billingDateThisMonth.format('YYYY-MM-DD'))
   console.log(billingDateThisMonth)
   const date = currentDate.isBefore(billingDateThisMonth)
     ? billingDateThisMonth.format()
