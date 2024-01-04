@@ -3,9 +3,12 @@ import {
   GetCheckoutUrlArgs,
   GetCheckoutUrlData,
   GetCheckoutUrlError,
+  GetPreviewUpgradeSubscriptionData,
+  GetPreviewUpgradeSubscriptionError,
   GetSubscriptionData,
   GetSubscriptionError,
   getCheckoutUrl,
+  getPreviewUpgradeSubscription,
   getSubscription,
 } from '../requests/subscription'
 
@@ -29,6 +32,18 @@ export const useGetSubscription = (
     ['subscription', workspaceId],
     () => {
       return getSubscription(workspaceId)
+    },
+    opt
+  )
+
+export const useGetPreviewSubscriptionUpgrade = (
+  workspaceId: string,
+  opt?: UseQueryOptions<GetPreviewUpgradeSubscriptionData, GetPreviewUpgradeSubscriptionError>
+) =>
+  useQuery<GetPreviewUpgradeSubscriptionData, GetPreviewUpgradeSubscriptionError>(
+    ['subscription', workspaceId, 'upgrade'],
+    () => {
+      return getPreviewUpgradeSubscription(workspaceId)
     },
     opt
   )
