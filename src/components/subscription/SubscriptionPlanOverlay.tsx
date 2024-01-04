@@ -161,10 +161,10 @@ const SubscriptionPlanOverlay: React.FC<Props> = ({
               }
             }}
           />
-          <div className=" relative">
+          <div className=" relative animate-in slide-in-from-right duration-300">
             {dialogOpened === null && upgradeDialog === null && (
               <div className="fly-this">
-                <div className="flex gap-2 flex-wrap justify-center m-auto md:justify-start lg:w-full w-[16rem] animate-in slide-in-from-right duration-300">
+                <div className="flex gap-2 flex-wrap justify-center m-auto md:justify-start lg:w-full w-[16rem] ">
                   {items.map((item) => (
                     <SubscriptionPlanCard
                       plan={item.plan}
