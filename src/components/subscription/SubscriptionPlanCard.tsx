@@ -10,7 +10,6 @@ interface Props {
   }
   plan: SubscriptionPlan
   isCurrent?: boolean
-  current?: SubscriptionPlan
   isNextPeriodActive?: boolean
   disabled?: boolean
   loading?: boolean
@@ -21,7 +20,6 @@ const SubscriptionPlanCard: React.FC<Props> = ({
   plan,
   features,
   isCurrent,
-  current,
   isNextPeriodActive,
   disabled,
   loading,
@@ -89,9 +87,9 @@ const SubscriptionPlanCard: React.FC<Props> = ({
 
           <div className="mt-4 px-5">
             {isCurrent || isNextPeriodActive ? (
-              <button className="btn btn-sm w-full btn-primary btn-disabled" disabled>
+              <Button size={'sm'} className="w-full" variant={'outline'} disabled={true}>
                 {isNextPeriodActive ? 'After current period' : 'Current plan'}
-              </button>
+              </Button>
             ) : (
               <Button
                 size={'sm'}
