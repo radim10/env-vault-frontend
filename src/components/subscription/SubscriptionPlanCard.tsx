@@ -49,7 +49,7 @@ const SubscriptionPlanCard: React.FC<Props> = ({
               {plan === SubscriptionPlan.Startup && 'Startup'}
               {plan === SubscriptionPlan.Business && 'Business'}
             </div>
-            <div className="text-[0.83rem] text-gray-600 dark:text-gray-400 -mt-1">
+            <div className="text-[0.87rem] text-gray-600 dark:text-gray-400 -mt-1">
               {plan === SubscriptionPlan.Free && 'Up to 5 users'}
               {plan === SubscriptionPlan.Startup && 'Up to 50 users'}
               {plan === SubscriptionPlan.Business && 'More than 50 users'}
