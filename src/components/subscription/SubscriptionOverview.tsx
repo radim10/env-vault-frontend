@@ -9,8 +9,6 @@ import { SubscriptionPlan, SubscriptionOverview } from '@/types/subscription'
 import dayjs from 'dayjs'
 import clsx from 'clsx'
 import useCurrentUserStore from '@/stores/user'
-import CancelSubscriptionDialog from './CancelSubscriptionDialog'
-import UpgradeSubscriptionDialog from './UpgradeSubscriptionDialog'
 
 interface Props {
   workspaceId: string
@@ -35,14 +33,8 @@ const SubscriptionOverview: React.FC<Props> = ({
   const activeSubscriptionPlan = useCurrentUserStore(
     ({ data }) => data?.selectedWorkspace?.plan || SubscriptionPlan.Free
   )
-  const [openOverlay, setOpenOverlay] = useState(true)
-  const [dialogOpened, setDialogOpened] = useState<'cancel' | 'downgrade' | null>(null)
-  const [upgradeDialog, setUpgradeDialog] = useState<{
-    amount: number
-    opened: boolean
-  } | null>()
-
-  useLockBodyScroll(openOverlay)
+  const [overlayOpened, setOverlayOpened] = useState(true)
+  useLockBodyScroll(overlayOpened)
 
   const progress = useCallback(() => {
     if (plan === SubscriptionPlan.Free) {
@@ -66,30 +58,13 @@ const SubscriptionOverview: React.FC<Props> = ({
 
   return (
     <>
-      {dialogOpened === 'cancel' && (
-        <CancelSubscriptionDialog
-          workspaceId={workspaceId}
-          onSuccess={() => setDialogOpened(null)}
-          onClose={() => setDialogOpened(null)}
-          opened={dialogOpened === 'cancel'}
-        />
-      )}
-      {upgradeDialog !== null && (
-        <UpgradeSubscriptionDialog
-          workspaceId={workspaceId}
-          amountDue={upgradeDialog?.amount ?? 0}
-          opened={upgradeDialog?.opened == true}
-          onSuccess={() => setDialogOpened(null)}
-          onClose={() => setDialogOpened(null)}
-        />
-      )}
-      {openOverlay && dialogOpened === null && (
+      {overlayOpened && (
         <SubscriptionPlanOverlay
           workspaceId={workspaceId}
           currentPlan={activeSubscriptionPlan}
-          onClose={() => setOpenOverlay(false)}
-          onCancel={() => setDialogOpened('cancel')}
-          onDowngrade={() => setDialogOpened('downgrade')}
+          onClose={() => setOverlayOpened(false)}
+          onCancel={() => {}}
+          onDowngrade={() => {}}
           onUpgrade={() => {}}
         />
       )}
@@ -217,7 +192,7 @@ const SubscriptionOverview: React.FC<Props> = ({
             <div className="pr-2">
               <button
                 className="text-[0.92rem] hover:text-primary ease duration-100"
-                onClick={() => setOpenOverlay(true)}
+                onClick={() => setOverlayOpened(true)}
               >
                 Change plan
               </button>
