@@ -84,3 +84,17 @@ export async function downgradeSubscription(args: DowngradeSubscriptionArgs) {
   })
   return await response
 }
+
+// NOTE: renew before cancel date
+export type RenewSubscriptionResData = undefined
+export type RenewSubscriptionError = any
+export type RenewSubscriptionArgs = { workspaceId: string }
+
+export async function renewSubscription(args: RenewSubscriptionArgs) {
+  const response = sendRequest<DowngradeSubscriptionResDate>({
+    method: 'POST',
+    basePath: 'workspaces',
+    path: `${args.workspaceId}/subscription/renew`,
+  })
+  return await response
+}
