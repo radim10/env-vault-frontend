@@ -87,7 +87,7 @@ const SubscriptionPlanCard: React.FC<Props> = ({
 
           <div className="mt-4 px-5">
             {isCurrent || isNextPeriodActive ? (
-              <Button size={'sm'} className="w-full" variant={'outline'} disabled={true}>
+              <Button size={'sm'} className="w-full" variant={'secondary'} disabled={true}>
                 {isNextPeriodActive ? 'After current period' : 'Current plan'}
               </Button>
             ) : (
@@ -96,7 +96,7 @@ const SubscriptionPlanCard: React.FC<Props> = ({
                 className="w-full"
                 variant={'outline'}
                 onClick={onSelect}
-                disabled={disabled}
+                disabled={disabled && !loading}
                 loading={loading}
               >
                 Select
