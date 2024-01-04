@@ -39,18 +39,19 @@ interface Props {
   workspaceId: string
   currentPlan: SubscriptionPlan
   onClose: () => void
-  onCancel: () => void
-  onDowngrade: () => void
-  onUpgrade: (proratedAmount: number) => void
+  //
+  onCanceled: () => void
+  onDowngraded: () => void
+  onUpgraded: () => void
 }
 
 const SubscriptionPlanOverlay: React.FC<Props> = ({
   workspaceId,
   currentPlan,
   onClose,
-  onCancel,
-  onDowngrade,
-  onUpgrade,
+  onCanceled,
+  onDowngraded,
+  onUpgraded,
 }) => {
   const [loading, setLoading] = useState<'startup' | 'business' | false>(false)
   const [dialogOpened, setDialogOpened] = useState<'cancel' | 'downgrade' | null>(null)
@@ -196,7 +197,7 @@ const SubscriptionPlanOverlay: React.FC<Props> = ({
             {dialogOpened === 'cancel' && (
               <CancelSubscriptionDialog
                 workspaceId={workspaceId}
-                onSuccess={() => setDialogOpened(null)}
+                onSuccess={() => onCanceled()}
                 onClose={() => setDialogOpened(null)}
               />
             )}
@@ -204,7 +205,7 @@ const SubscriptionPlanOverlay: React.FC<Props> = ({
             {dialogOpened === 'downgrade' && (
               <DowngradeSubscriptionDialog
                 workspaceId={workspaceId}
-                onSuccess={() => setDialogOpened(null)}
+                onSuccess={() => onDowngraded()}
                 onClose={() => setDialogOpened(null)}
               />
             )}
@@ -215,7 +216,7 @@ const SubscriptionPlanOverlay: React.FC<Props> = ({
                 onClose={() => {
                   setUpgradeDialog(null)
                 }}
-                onSuccess={() => {}}
+                onSuccess={() => onUpgraded()}
               />
             )}
           </div>
