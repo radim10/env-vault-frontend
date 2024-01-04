@@ -6,6 +6,7 @@ import { getPreviewUpgradeSubscription } from '@/api/requests/subscription'
 import { Button } from '../ui/button'
 import UpgradeSubscriptionDialog from './UpgradeSubscriptionDialog'
 import CancelSubscriptionDialog from './CancelSubscriptionDialog'
+import DowngradeSubscriptionDialog from './DowngradeSubscriptionDialog'
 
 const feturesFree = {
   included: ['Unlimited meetings', 'Unlimited tasks', 'Unlimited notes'],
@@ -194,6 +195,14 @@ const SubscriptionPlanOverlay: React.FC<Props> = ({
             )}
             {dialogOpened === 'cancel' && (
               <CancelSubscriptionDialog
+                workspaceId={workspaceId}
+                onSuccess={() => setDialogOpened(null)}
+                onClose={() => setDialogOpened(null)}
+              />
+            )}
+
+            {dialogOpened === 'downgrade' && (
+              <DowngradeSubscriptionDialog
                 workspaceId={workspaceId}
                 onSuccess={() => setDialogOpened(null)}
                 onClose={() => setDialogOpened(null)}
