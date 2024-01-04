@@ -49,6 +49,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         })}
         ref={ref}
         {...props}
+        onClick={(e) => {
+          if (props.onClick) {
+            if (!loading) {
+              props.onClick(e as any)
+            }
+          }
+        }}
       >
         {loading && (
           <Loader2
