@@ -14,6 +14,9 @@ import {
   RenewSubscriptionResData,
   RenewSubscriptionError,
   renewSubscription,
+  UndoDowngradeSubscriptionResDate,
+  UndoDowngradeSubscriptionError,
+  undoDowngradeSubscription,
 } from '../requests/subscription'
 
 type UseCancelSubscriptionVariables = CancelSubscriptionArgs
@@ -42,6 +45,16 @@ export const useDowngradeSubscription = (opt?: MutOpt<DowngradeSubscriptionResDa
     DowngradeSubscriptionError,
     UseDowngradeSubscriptionVariables
   >(downgradeSubscription, opt)
+
+// NOTE: undo downgrade
+type UseUndoDowngradeSubscriptionVariables = UseCancelSubscriptionVariables
+
+export const useUndoDowngradeSubscription = (opt?: MutOpt<UndoDowngradeSubscriptionResDate>) =>
+  useMutation<
+    UndoDowngradeSubscriptionResDate,
+    UndoDowngradeSubscriptionError,
+    UseUndoDowngradeSubscriptionVariables
+  >(undoDowngradeSubscription, opt)
 
 // NOTE: renew
 type UseRenewSubscriptionVariables = UseCancelSubscriptionVariables

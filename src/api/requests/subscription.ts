@@ -85,6 +85,20 @@ export async function downgradeSubscription(args: DowngradeSubscriptionArgs) {
   return await response
 }
 
+// NOTE: Undo downgrade
+export type UndoDowngradeSubscriptionResDate = undefined
+export type UndoDowngradeSubscriptionError = any
+export type UndoDowngradeSubscriptionArgs = DowngradeSubscriptionArgs
+
+export async function undoDowngradeSubscription(args: UndoDowngradeSubscriptionArgs) {
+  const response = sendRequest<DowngradeSubscriptionResDate>({
+    method: 'DELETE',
+    basePath: 'workspaces',
+    path: `${args.workspaceId}/subscription/downgrade`,
+  })
+  return await response
+}
+
 // NOTE: renew before cancel date
 export type RenewSubscriptionResData = undefined
 export type RenewSubscriptionError = any
