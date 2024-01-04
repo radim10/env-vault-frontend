@@ -9,6 +9,8 @@ import { SubscriptionPlan, SubscriptionOverview } from '@/types/subscription'
 import dayjs from 'dayjs'
 import clsx from 'clsx'
 import useCurrentUserStore from '@/stores/user'
+import RenewSubscriptionDialog from './RenewSubscriptionDialog'
+import { useToast } from '../ui/use-toast'
 
 interface Props {
   workspaceId: string
@@ -30,10 +32,15 @@ const SubscriptionOverview: React.FC<Props> = ({
     billingCycleAnchor,
   },
 }) => {
+  const { toast } = useToast()
   const activeSubscriptionPlan = useCurrentUserStore(
     ({ data }) => data?.selectedWorkspace?.plan || SubscriptionPlan.Free
   )
   const [overlayOpened, setOverlayOpened] = useState(true)
+  const [renewDialog, setRenewDialog] = useState<{
+    opend: boolean
+  } | null>(null)
+
   useLockBodyScroll(overlayOpened)
 
   const progress = useCallback(() => {
@@ -56,8 +63,32 @@ const SubscriptionOverview: React.FC<Props> = ({
     return 0
   }, [usersCount, plan])
 
+  const closeRenewDialog = () => {
+    setRenewDialog({ opend: false })
+
+    setTimeout(() => {
+      setRenewDialog(null)
+    }, 150)
+  }
+
+  const handleRenewSuccess = () => {
+    closeRenewDialog()
+    toast({
+      title: 'Subscription renewed',
+    })
+  }
+
   return (
     <>
+      {renewDialog !== null && cancelAt && (
+        <RenewSubscriptionDialog
+          opened={renewDialog.opend}
+          workspaceId={workspaceId}
+          cancelAt={cancelAt}
+          onSuccess={handleRenewSuccess}
+          onClose={closeRenewDialog}
+        />
+      )}
       {overlayOpened && (
         <SubscriptionPlanOverlay
           workspaceId={workspaceId}
@@ -189,13 +220,39 @@ const SubscriptionOverview: React.FC<Props> = ({
         <div className="mt-7">
           <div className="flex flex-row justify-between items-center">
             <div className="font-semibold text-[1.1rem]">Plan usage</div>
-            <div className="pr-2">
-              <button
-                className="text-[0.92rem] hover:text-primary ease duration-100"
-                onClick={() => setOverlayOpened(true)}
-              >
-                Change plan
-              </button>
+            <div className="pr-2 flex flex-row items-center gap-3 md:gap-3">
+              {cancelAt && (
+                <>
+                  <button
+                    className="text-[0.92rem] hover:text-primary ease duration-100"
+                    onClick={() => setRenewDialog({ opend: true })}
+                  >
+                    Renew
+                  </button>
+                  <div className="h-5 w-[1px] bg-muted-foreground opacity-30"></div>
+                </>
+              )}
+
+              {downgradeAt && (
+                <>
+                  <button
+                    className="text-[0.92rem] hover:text-primary ease duration-100"
+                    onClick={() => setRenewDialog({ opend: true })}
+                  >
+                    Undo downgrade
+                  </button>
+                  <div className="h-5 w-[1px] bg-muted-foreground opacity-30"></div>
+                </>
+              )}
+
+              {!cancelAt && (
+                <button
+                  className="text-[0.92rem] hover:text-primary ease duration-100"
+                  onClick={() => setOverlayOpened(true)}
+                >
+                  Change plan
+                </button>
+              )}
             </div>
           </div>
           <div className="px-0 mt-3.5">
