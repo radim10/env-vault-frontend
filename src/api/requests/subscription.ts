@@ -70,3 +70,17 @@ export async function upgradeSubscription(args: UpgradeSubscriptionArgs) {
   })
   return await response
 }
+
+// NOTE: downgrade
+export type DowngradeSubscriptionResDate = undefined
+export type DowngradeSubscriptionError = any
+export type DowngradeSubscriptionArgs = { workspaceId: string }
+
+export async function downgradeSubscription(args: DowngradeSubscriptionArgs) {
+  const response = sendRequest<DowngradeSubscriptionResDate>({
+    method: 'POST',
+    basePath: 'workspaces',
+    path: `${args.workspaceId}/subscription/downgrade`,
+  })
+  return await response
+}

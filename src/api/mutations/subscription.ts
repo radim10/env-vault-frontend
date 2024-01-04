@@ -8,6 +8,9 @@ import {
   cancelSubscription,
   UpgradeSubscriptionError,
   upgradeSubscription,
+  DowngradeSubscriptionResDate,
+  DowngradeSubscriptionError,
+  downgradeSubscription,
 } from '../requests/subscription'
 
 type UseCancelSubscriptionVariables = CancelSubscriptionArgs
@@ -26,3 +29,13 @@ export const useUpgradeSubscription = (opt?: MutOpt<UpgradeSubscriptionResData>)
     UpgradeSubscriptionError,
     UseUpgradeSubscriptionVariables
   >(upgradeSubscription, opt)
+
+// NOTE: downgrade
+type UseDowngradeSubscriptionVariables = UseCancelSubscriptionVariables
+
+export const useDowngradeSubscription = (opt?: MutOpt<DowngradeSubscriptionResDate>) =>
+  useMutation<
+    DowngradeSubscriptionResDate,
+    DowngradeSubscriptionError,
+    UseDowngradeSubscriptionVariables
+  >(downgradeSubscription, opt)
