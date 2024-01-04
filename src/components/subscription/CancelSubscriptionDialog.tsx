@@ -1,4 +1,3 @@
-import DeleteDialog from '../DeleteDialog'
 import { useCancelSubscription } from '@/api/mutations/subscription'
 import { Button } from '../ui/button'
 
@@ -25,12 +24,14 @@ const CancelSubscriptionDialog: React.FC<Props> = ({ workspaceId, onClose, onSuc
           </div>
         </div>
         <div className="mt-2 flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
-          <Button variant="outline" onClick={() => onClose()}>
+          <Button variant="outline" onClick={() => onClose()} disabled={isLoading}>
             Cancel
           </Button>
           <Button
+            loading={isLoading}
             variant="outline"
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            onClick={() => cancelSubscription({ workspaceId })}
           >
             Confirm
           </Button>
