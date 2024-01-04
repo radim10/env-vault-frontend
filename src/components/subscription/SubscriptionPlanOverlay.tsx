@@ -3,6 +3,9 @@ import React, { useState } from 'react'
 import SubscriptionPlanCard from './SubscriptionPlanCard'
 import { useGetCheckoutUrl, useGetPreviewSubscriptionUpgrade } from '@/api/queries/subscription'
 import { getPreviewUpgradeSubscription } from '@/api/requests/subscription'
+import { Button } from '../ui/button'
+import UpgradeSubscriptionDialog from './UpgradeSubscriptionDialog'
+import CancelSubscriptionDialog from './CancelSubscriptionDialog'
 
 const feturesFree = {
   included: ['Unlimited meetings', 'Unlimited tasks', 'Unlimited notes'],
@@ -49,12 +52,24 @@ const SubscriptionPlanOverlay: React.FC<Props> = ({
   onUpgrade,
 }) => {
   const [loading, setLoading] = useState<'startup' | 'business' | false>(false)
+  const [dialogOpened, setDialogOpened] = useState<'cancel' | 'downgrade' | null>(null)
+  const [upgradeDialog, setUpgradeDialog] = useState<{
+    amount: number
+    opened: boolean
+  } | null>(null)
 
-  const { isLoading, refetch: getPreviewUpdgrade } = useGetPreviewSubscriptionUpgrade(workspaceId, {
+  const {
+    refetch: getPreviewUpdgrade,
+    isRefetching: isRefetchingPreviewUpgrade,
+    isFetching,
+  } = useGetPreviewSubscriptionUpgrade(workspaceId, {
     enabled: false,
     cacheTime: 10,
     onSuccess: ({ invoice }) => {
-      onUpgrade(invoice?.amount)
+      setUpgradeDialog({
+        amount: invoice.amount,
+        opened: true,
+      })
     },
   })
 
@@ -117,16 +132,15 @@ const SubscriptionPlanOverlay: React.FC<Props> = ({
       }
     } else if (currentPlan === SubscriptionPlan.Startup) {
       if (plan === SubscriptionPlan.Business) {
-        getPreviewUpgradeSubscription(workspaceId)
-        // onUpgrade()
+        getPreviewUpdgrade()
       } else {
-        onCancel()
+        setDialogOpened('cancel')
       }
     } else {
       if (plan === SubscriptionPlan.Free) {
-        onCancel()
+        setDialogOpened('cancel')
       } else {
-        onDowngrade()
+        setDialogOpened('downgrade')
       }
     }
   }
@@ -136,36 +150,65 @@ const SubscriptionPlanOverlay: React.FC<Props> = ({
       <div className="fixed wrapper inset-0 z-[20000] overflow-y-scroll ">
         <div className=" items-center justify-center  min-h-screen pt-4 lg:px-4 pb-20 text-center flex sm:p-0 ">
           <div
-            className="fixed inset-0 bg-background/80 backdrop-blur-sm transition-opacity nimate-in fade-in duration-150"
+            className="fixed inset-0 bg-background/80 backdrop-blur-sm transition-opacity animate-in fade-in duration-150"
             aria-hidden="true"
-            onClick={() => onClose()}
+            onClick={() => {
+              if (dialogOpened === null && upgradeDialog === null) {
+                onClose()
+              } else {
+                // setDialogOpened(null)
+              }
+            }}
           />
           <div className=" relative">
-            <div className="fly-this">
-              <div className="flex gap-2 flex-wrap justify-center m-auto md:justify-start lg:w-full w-[16rem] animate-in slide-in-from-right duration-300">
-                {items.map((item) => (
-                  <SubscriptionPlanCard
-                    plan={item.plan}
-                    features={item.features}
-                    isCurrent={item.plan === currentPlan}
-                    isNextPeriodActive={false}
-                    disabled={
-                      (item.plan === SubscriptionPlan.Free && loading !== false) ||
-                      (item.plan === SubscriptionPlan.Startup && loading == 'business') ||
-                      (item.plan === SubscriptionPlan.Business && loading == 'startup')
-                    }
-                    loading={
-                      (item.plan === SubscriptionPlan.Startup && loading === 'startup') ||
-                      (item.plan === SubscriptionPlan.Business && loading === 'business')
-                    }
-                    key={item.plan}
-                    onSelect={() => {
-                      handleSelected(item.plan)
-                    }}
-                  />
-                ))}
+            {dialogOpened === null && upgradeDialog === null && (
+              <div className="fly-this">
+                <div className="flex gap-2 flex-wrap justify-center m-auto md:justify-start lg:w-full w-[16rem] animate-in slide-in-from-right duration-300">
+                  {items.map((item) => (
+                    <SubscriptionPlanCard
+                      plan={item.plan}
+                      features={item.features}
+                      isCurrent={item.plan === currentPlan}
+                      isNextPeriodActive={false}
+                      disabled={
+                        (item.plan === SubscriptionPlan.Free && loading !== false) ||
+                        (item.plan === SubscriptionPlan.Startup && loading == 'business') ||
+                        (item.plan === SubscriptionPlan.Business && loading == 'startup') ||
+                        ((isRefetchingPreviewUpgrade || isFetching) &&
+                          item.plan !== SubscriptionPlan.Startup)
+                      }
+                      loading={
+                        (item.plan === SubscriptionPlan.Startup && loading === 'startup') ||
+                        (item.plan === SubscriptionPlan.Business && loading === 'business') ||
+                        ((isRefetchingPreviewUpgrade || isFetching) &&
+                          item.plan === SubscriptionPlan.Business)
+                      }
+                      key={item.plan}
+                      onSelect={() => {
+                        handleSelected(item.plan)
+                      }}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+            {dialogOpened === 'cancel' && (
+              <CancelSubscriptionDialog
+                workspaceId={workspaceId}
+                onSuccess={() => setDialogOpened(null)}
+                onClose={() => setDialogOpened(null)}
+              />
+            )}
+            {upgradeDialog?.opened && (
+              <UpgradeSubscriptionDialog
+                workspaceId={workspaceId}
+                amountDue={upgradeDialog.amount}
+                onClose={() => {
+                  setUpgradeDialog(null)
+                }}
+                onSuccess={() => {}}
+              />
+            )}
           </div>
         </div>
       </div>
