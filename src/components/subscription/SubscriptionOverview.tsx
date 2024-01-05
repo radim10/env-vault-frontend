@@ -254,7 +254,7 @@ const SubscriptionOverview: React.FC<Props> = ({
                 <span className="inline md:hidden">{': '}</span>
               </div>
               <div className="text-[0.96rem]">
-                {!cancelAt && (
+                {!cancelAt && !downgradeAt && (
                   <>
                     {plan === SubscriptionPlan.Free && (
                       <span className="text-muted-foreground">N/A</span>
@@ -263,6 +263,7 @@ const SubscriptionOverview: React.FC<Props> = ({
                     {plan === SubscriptionPlan.Business && `$${usersCount * 16}`}
                   </>
                 )}
+                {downgradeAt && `$${usersCount * 10}`}
                 {cancelAt && (
                   <>
                     <span className="text-muted-foreground">N/A</span>
