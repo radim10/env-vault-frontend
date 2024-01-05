@@ -8,7 +8,10 @@ interface Props {
   paymentData: SubscriptionPayment
 }
 
-const PaymentDetails: React.FC<Props> = ({ workspaceId, paymentData: { taxId, card } }) => {
+const PaymentDetails: React.FC<Props> = ({
+  workspaceId,
+  paymentData: { customerName, taxId, card },
+}) => {
   const { refetch: getUpdatePaymentUrl, isFetching } = useGetUpdatePaymentUrl(
     {
       workspaceId,
@@ -39,7 +42,7 @@ const PaymentDetails: React.FC<Props> = ({ workspaceId, paymentData: { taxId, ca
               Name
               <span className="inline md:hidden">{': '}</span>
             </div>
-            <div className="text-[0.96rem]">Radim Hofer</div>
+            <div className="text-[0.96rem]">{customerName}</div>
           </div>
 
           <div className="flex flex-row md:flex-col gap-0.5">

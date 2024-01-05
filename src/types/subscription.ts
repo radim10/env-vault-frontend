@@ -27,6 +27,7 @@ export interface SubscriptionOverview {
 
 export interface SubscriptionPayment {
   taxId: string | null
+  customerName: string
   card: PaymentCard
 }
 
