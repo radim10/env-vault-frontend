@@ -172,3 +172,19 @@ export async function updateCustomerName(args: UpdateCustomerNameArgs) {
   })
   return await response
 }
+
+//NOTE: delete tax id
+export type DeleteTaxIdResData = undefined
+export type DeleteTaxIdError = any
+export type DeleteTaxIdArgs = {
+  workspaceId: string
+}
+
+export async function deleteTaxId(args: DeleteTaxIdArgs) {
+  const response = sendRequest<DowngradeSubscriptionResDate>({
+    method: 'DELETE',
+    basePath: 'workspaces',
+    path: `${args.workspaceId}/subscription/tax-id`,
+  })
+  return await response
+}

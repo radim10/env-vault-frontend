@@ -25,6 +25,10 @@ import {
   UpdateCustomerNameResData,
   updateCustomerName,
   UpdateCustomerNameError,
+  DeleteTaxIdArgs,
+  DeleteTaxIdResData,
+  deleteTaxId,
+  DeleteTaxIdError,
 } from '../requests/subscription'
 
 type UseCancelSubscriptionVariables = CancelSubscriptionArgs
@@ -87,3 +91,8 @@ export const useUpdateCustomerName = (opt?: MutOpt<UpdateCustomerNameResData>) =
     updateCustomerName,
     opt
   )
+
+// delete tax id
+
+export const useDeleteTaxId = (opt?: MutOpt<DeleteTaxIdResData>) =>
+  useMutation<DeleteTaxIdResData, DeleteTaxIdError, DeleteTaxIdArgs>(deleteTaxId, opt)

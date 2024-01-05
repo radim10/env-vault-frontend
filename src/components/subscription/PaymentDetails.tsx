@@ -70,7 +70,7 @@ const PaymentDetails: React.FC<Props> = ({
     queryClient.setQueryData(['subscription', workspaceId], updatedData)
   }
 
-  const handleUpdatedTaxId = (taxId: string) => {
+  const handleUpdatedTaxId = (taxId: string | null) => {
     updateSubsciptionState({ taxId })
     handleCloseTaxDrawer()
 
@@ -102,6 +102,7 @@ const PaymentDetails: React.FC<Props> = ({
     <>
       {updateTaxIdDrawerOpened && (
         <UpdateTaxIdDrawer
+          currentTaxId={taxId}
           workspaceId={workspaceId}
           opened={updateTaxIdDrawerOpened.opened}
           onClose={handleCloseTaxDrawer}

@@ -11,22 +11,47 @@ import {
 import { Label } from '../ui/label'
 import taxIds from '@/utils/taxIds'
 import { Input } from '../ui/input'
-import { useUpdateTaxId } from '@/api/mutations/subscription'
+import { useDeleteTaxId, useUpdateTaxId } from '@/api/mutations/subscription'
+import { Button } from '../ui/button'
+import { useDebounce } from 'react-use'
+import { Icons } from '../icons'
 
 interface Props {
   workspaceId: string
   opened: boolean
+  currentTaxId: string | null
   onClose: () => void
-  onUpdated: (taxId: string) => void
+  onUpdated: (taxId: string | null) => void
 }
 
-const UpdateTaxIdDrawer: React.FC<Props> = ({ workspaceId, opened, onClose, onUpdated }) => {
+const UpdateTaxIdDrawer: React.FC<Props> = ({
+  workspaceId,
+  opened,
+  currentTaxId,
+  onClose,
+  onUpdated,
+}) => {
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const [country, setCountry] = useState('Australia')
   const [value, setValue] = useState('')
 
   const { mutate: updateTaxId, isLoading } = useUpdateTaxId({
     onSuccess: () => onUpdated(value),
   })
+
+  const { mutate: deleteteTaxId, isLoading: isDeleting } = useDeleteTaxId({
+    onSuccess: () => onUpdated(null),
+  })
+
+  useDebounce(
+    () => {
+      if (confirmDelete) {
+        setConfirmDelete(false)
+      }
+    },
+    3000,
+    [confirmDelete]
+  )
 
   return (
     <>
@@ -56,7 +81,7 @@ const UpdateTaxIdDrawer: React.FC<Props> = ({ workspaceId, opened, onClose, onUp
               <Label>Select country</Label>
             </div>
             <Select
-              disabled={isLoading}
+              disabled={isLoading || isDeleting}
               value={country}
               onValueChange={(value) => {
                 setCountry(value)
@@ -82,12 +107,31 @@ const UpdateTaxIdDrawer: React.FC<Props> = ({ workspaceId, opened, onClose, onUp
               <Label>New tax id</Label>
             </div>
             <Input
-              disabled={isLoading}
+              disabled={isLoading || isDeleting}
               value={value}
               onChange={(e) => setValue(e.target.value)}
               placeholder="Type here..."
             />
           </div>
+          {currentTaxId && (
+            <Button
+              className="mt-3"
+              size="sm"
+              variant={'destructive'}
+              disabled={isLoading}
+              loading={isDeleting}
+              onClick={() => {
+                if (!confirmDelete) {
+                  setConfirmDelete(true)
+                } else {
+                  deleteteTaxId({ workspaceId })
+                }
+              }}
+            >
+              {confirmDelete && !isDeleting && <Icons.alertCircle className="w-4 h-4 mr-2" />}
+              {!isDeleting ? (confirmDelete ? 'Confirm delete' : 'Delete tax id') : 'Deleting...'}
+            </Button>
+          )}
         </div>
       </Drawer>
     </>
