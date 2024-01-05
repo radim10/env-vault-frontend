@@ -17,6 +17,10 @@ import {
   UndoDowngradeSubscriptionResDate,
   UndoDowngradeSubscriptionError,
   undoDowngradeSubscription,
+  UpdateTaxIdArgs,
+  UpdateTaxIdResData,
+  updateTaxId,
+  UpdateTaxIdError,
 } from '../requests/subscription'
 
 type UseCancelSubscriptionVariables = CancelSubscriptionArgs
@@ -64,3 +68,9 @@ export const useRenewSubscription = (opt?: MutOpt<RenewSubscriptionResData>) =>
     renewSubscription,
     opt
   )
+
+// NOTE: update tax id
+type UseUpdateTaxIdVariables = UpdateTaxIdArgs
+
+export const useUpdateTaxId = (opt?: MutOpt<UpdateTaxIdResData>) =>
+  useMutation<UpdateTaxIdResData, UpdateTaxIdError, UseUpdateTaxIdVariables>(updateTaxId, opt)

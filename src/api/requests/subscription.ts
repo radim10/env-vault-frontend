@@ -131,3 +131,24 @@ export async function renewSubscription(args: RenewSubscriptionArgs) {
   })
   return await response
 }
+
+// update tax id
+export type UpdateTaxIdResData = undefined
+export type UpdateTaxIdError = any
+export type UpdateTaxIdArgs = {
+  workspaceId: string
+  data: {
+    country: string
+    taxId: string
+  }
+}
+
+export async function updateTaxId(args: UpdateTaxIdArgs) {
+  const response = sendRequest<DowngradeSubscriptionResDate>({
+    method: 'PATCH',
+    basePath: 'workspaces',
+    path: `${args.workspaceId}/subscription/tax-id`,
+    body: args.data,
+  })
+  return await response
+}
