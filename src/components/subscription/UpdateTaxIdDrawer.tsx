@@ -21,7 +21,7 @@ interface Props {
 }
 
 const UpdateTaxIdDrawer: React.FC<Props> = ({ workspaceId, opened, onClose, onUpdated }) => {
-  const [country, setCountry] = useState('')
+  const [country, setCountry] = useState('Australia')
   const [value, setValue] = useState('')
 
   const { mutate: updateTaxId, isLoading } = useUpdateTaxId({
