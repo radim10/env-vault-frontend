@@ -4,12 +4,14 @@ import { useGetCheckoutUrl, useGetSubscription } from '@/api/queries/subscriptio
 import SubscriptionOverview from './SubscriptionOverview'
 import PaymentDetails from './PaymentDetails'
 import InvoiceList from './InvoiceList'
+import useCurrentUserStore from '@/stores/user'
 
 interface Props {
   workspaceId: string
 }
 
 const SubscriptionSettings: React.FC<Props> = ({ workspaceId }) => {
+  const { isOwnerRole } = useCurrentUserStore()
   const { refetch } = useGetCheckoutUrl(
     {
       workspaceId,
@@ -41,10 +43,10 @@ const SubscriptionSettings: React.FC<Props> = ({ workspaceId }) => {
         data={data.subscription}
         usersCount={data.usersCount}
       />
-      {data.subscription?.payment && (
+      {data.subscription?.payment && isOwnerRole() === true && (
         <PaymentDetails workspaceId={workspaceId} paymentData={data.subscription?.payment} />
       )}
-      <InvoiceList />
+      {isOwnerRole() === true && <InvoiceList workspaceId={workspaceId} />}
     </div>
   )
 }
