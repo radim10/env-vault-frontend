@@ -152,3 +152,23 @@ export async function updateTaxId(args: UpdateTaxIdArgs) {
   })
   return await response
 }
+
+// NOTE: update customer name
+export type UpdateCustomerNameResData = undefined
+export type UpdateCustomerNameError = any
+export type UpdateCustomerNameArgs = {
+  workspaceId: string
+  data: {
+    name: string
+  }
+}
+
+export async function updateCustomerName(args: UpdateCustomerNameArgs) {
+  const response = sendRequest<DowngradeSubscriptionResDate>({
+    method: 'PATCH',
+    basePath: 'workspaces',
+    path: `${args.workspaceId}/subscription/customer-name`,
+    body: args.data,
+  })
+  return await response
+}

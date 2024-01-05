@@ -21,6 +21,10 @@ import {
   UpdateTaxIdResData,
   updateTaxId,
   UpdateTaxIdError,
+  UpdateCustomerNameArgs,
+  UpdateCustomerNameResData,
+  updateCustomerName,
+  UpdateCustomerNameError,
 } from '../requests/subscription'
 
 type UseCancelSubscriptionVariables = CancelSubscriptionArgs
@@ -74,3 +78,12 @@ type UseUpdateTaxIdVariables = UpdateTaxIdArgs
 
 export const useUpdateTaxId = (opt?: MutOpt<UpdateTaxIdResData>) =>
   useMutation<UpdateTaxIdResData, UpdateTaxIdError, UseUpdateTaxIdVariables>(updateTaxId, opt)
+
+// NOTE: update customer name
+type UseUpdateCustomerNameVariables = UpdateCustomerNameArgs
+
+export const useUpdateCustomerName = (opt?: MutOpt<UpdateCustomerNameResData>) =>
+  useMutation<UpdateCustomerNameResData, UpdateCustomerNameError, UseUpdateCustomerNameVariables>(
+    updateCustomerName,
+    opt
+  )
