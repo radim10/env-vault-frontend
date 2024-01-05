@@ -41,7 +41,9 @@ const SubscriptionSettings: React.FC<Props> = ({ workspaceId }) => {
         data={data.subscription}
         usersCount={data.usersCount}
       />
-      {data.subscription?.payment && <PaymentDetails paymentData={data.subscription?.payment} />}
+      {data.subscription?.payment && (
+        <PaymentDetails workspaceId={workspaceId} paymentData={data.subscription?.payment} />
+      )}
       <InvoiceList />
     </div>
   )
