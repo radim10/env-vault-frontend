@@ -22,6 +22,25 @@ export async function getCheckoutUrl(args: GetCheckoutUrlArgs) {
 export type GetSubscriptionData = SubscriptionData
 export type GetSubscriptionError = any
 
+//
+export type GetUpdatePaymentUrlData = { url: string }
+export type GetUpdatePaymentUrlError = any
+export type GetUpdatePaymentUrlArgs = {
+  workspaceId: string
+}
+
+export async function getUpdatePaymentUrl(args: GetUpdatePaymentUrlArgs) {
+  const { workspaceId } = args
+
+  const response = sendRequest<GetUpdatePaymentUrlData>({
+    method: 'GET',
+    basePath: 'workspaces',
+    path: `${workspaceId}/subscription/payment/url`,
+  })
+  return await response
+}
+
+//
 export async function getSubscription(workspaceId: string) {
   const response = sendRequest<GetSubscriptionData>({
     method: 'GET',

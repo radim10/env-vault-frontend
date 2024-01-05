@@ -7,9 +7,13 @@ import {
   GetPreviewUpgradeSubscriptionError,
   GetSubscriptionData,
   GetSubscriptionError,
+  GetUpdatePaymentUrlArgs,
+  GetUpdatePaymentUrlData,
+  GetUpdatePaymentUrlError,
   getCheckoutUrl,
   getPreviewUpgradeSubscription,
   getSubscription,
+  getUpdatePaymentUrl,
 } from '../requests/subscription'
 
 export const useGetCheckoutUrl = (
@@ -20,6 +24,19 @@ export const useGetCheckoutUrl = (
     ['subscription', 'checkout'],
     () => {
       return getCheckoutUrl(args)
+    },
+    { cacheTime: 0, ...opt }
+  )
+
+//
+export const useGetUpdatePaymentUrl = (
+  args: GetUpdatePaymentUrlArgs,
+  opt?: UseQueryOptions<GetUpdatePaymentUrlData, GetUpdatePaymentUrlError>
+) =>
+  useQuery<GetUpdatePaymentUrlData, GetUpdatePaymentUrlError>(
+    ['subscription', 'payment-url'],
+    () => {
+      return getUpdatePaymentUrl(args)
     },
     { cacheTime: 0, ...opt }
   )
