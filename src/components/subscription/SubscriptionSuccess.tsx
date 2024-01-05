@@ -22,7 +22,7 @@ const SubscriptionSuccess: React.FC<Props> = ({ plan, workspaceId }) => {
           <div className="pb-2 pt-9">
             <div className="flex flex-col gap-3 justify-center items-center ">
               <div>
-                <Icons.partyPopper className="w-12 h-12 text-yellow-300 dark:text-yellow-500" />
+                <Icons.partyPopper className="w-12 h-12 text-yellow-500" />
               </div>
               <div className="flex flex-col gap-8 items-center mt-3">
                 <div className="flex flex-col items-center gap-2.5">
@@ -31,8 +31,8 @@ const SubscriptionSuccess: React.FC<Props> = ({ plan, workspaceId }) => {
                     Subscription plan{' '}
                     <span
                       className={clsx({
-                        'text-blue-300 dark:text-blue-600': plan === SubscriptionPlan.Startup,
-                        'text-green-300 dark:text-green-600': plan === SubscriptionPlan.Business,
+                        'text-blue-600 dark:text-blue-600': plan === SubscriptionPlan.Startup,
+                        'text-green-600 dark:text-green-600': plan === SubscriptionPlan.Business,
                       })}
                     >
                       {plan === SubscriptionPlan.Startup && 'Startup'}
