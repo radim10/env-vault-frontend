@@ -1,4 +1,4 @@
-import { LucideIcon } from 'lucide-react'
+import { Loader2, LucideIcon } from 'lucide-react'
 import TypographyH4 from '../typography/TypographyH4'
 import { Separator } from '../ui/separator'
 
@@ -11,6 +11,7 @@ interface Props {
     disabled?: boolean
     text: string
     Icon?: LucideIcon
+    loading?: boolean
     onClick: () => void
   }
 }
@@ -33,8 +34,13 @@ const SubscriptionLayout: React.FC<Props> = ({
             </div>
 
             {button && (
-              <button className="flex items-center gap-2.5 text-[0.96rem] hover:text-primary ease duration-100">
-                {button.Icon && <button.Icon className="h-4 w-4 opacity-80" />}
+              <button
+                className="flex items-center gap-2.5 text-[0.96rem] hover:text-primary ease duration-100"
+                onClick={button.onClick}
+                disabled={button.disabled || button.loading}
+              >
+                {button.Icon && !button.loading && <button.Icon className="h-4 w-4 opacity-80" />}
+                {button.loading && <Loader2 className={'h-4 w-4 animate-spin'} />}
                 {button.text}
               </button>
             )}
