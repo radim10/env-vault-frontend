@@ -1,17 +1,36 @@
 import { SubscriptionPayment } from '@/types/subscription'
 import { Icons } from '../icons'
 import SubscriptionLayout from './SubscriptionLayout'
+import { useGetUpdatePaymentUrl } from '@/api/queries/subscription'
 
 interface Props {
+  workspaceId: string
   paymentData: SubscriptionPayment
 }
 
-const PaymentDetails: React.FC<Props> = ({ paymentData: { taxId, card } }) => {
+const PaymentDetails: React.FC<Props> = ({ workspaceId, paymentData: { taxId, card } }) => {
+  const { refetch: getUpdatePaymentUrl, isFetching } = useGetUpdatePaymentUrl(
+    {
+      workspaceId,
+    },
+    {
+      enabled: false,
+      onSuccess: ({ url }) => {
+        window.location.href = url
+      },
+    }
+  )
+
   return (
     <SubscriptionLayout
       title="Payment details"
       icon={Icons.creditCard}
-      button={{ text: 'Edit', Icon: Icons.penSquare, onClick: () => {} }}
+      button={{
+        text: 'Edit',
+        Icon: Icons.penSquare,
+        loading: isFetching,
+        onClick: () => getUpdatePaymentUrl(),
+      }}
     >
       <div className="mt-0">
         <div className="flex flex-col md:flex-row gap-2 md:gap-16 xl:gap-20">
