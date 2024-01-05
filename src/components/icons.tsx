@@ -1,4 +1,5 @@
 import {
+  Download,
   BookTemplate,
   Users,
   User,
@@ -233,4 +234,5 @@ export const Icons = {
   bookTemplate: BookTemplate,
   alignLeft: AlignLeft,
   partyPopper: PartyPopper,
+  download: Download,
 }
