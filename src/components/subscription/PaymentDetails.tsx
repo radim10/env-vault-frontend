@@ -7,6 +7,7 @@ import UpdateTaxIdDrawer from './UpdateTaxIdDrawer'
 import { useQueryClient } from '@tanstack/react-query'
 import { produce } from 'immer'
 import { useToast } from '../ui/use-toast'
+import UpdateCustomerNameDialog from './UpdateCustomerNameDialog'
 
 interface Props {
   workspaceId: string
@@ -20,6 +21,10 @@ const PaymentDetails: React.FC<Props> = ({
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const [updateTaxIdDrawerOpened, setUpdateTaxIdDrawerOpened] = useState<{
+    opened: boolean
+  } | null>(null)
+
+  const [updateNameDialog, setUpdateNameDialog] = useState<{
     opened: boolean
   } | null>(null)
 
@@ -43,15 +48,20 @@ const PaymentDetails: React.FC<Props> = ({
     }, 150)
   }
 
-  const updateSubsciptionTaxIdState = (taxId: string) => {
-    const data = queryClient.getQueryData<SubscriptionData>(['subscription', workspaceId])
-    console.log(data)
+  const updateSubsciptionState = (args: { taxId?: string | null; customerName?: string }) => {
+    const { taxId, customerName } = args
 
+    const data = queryClient.getQueryData<SubscriptionData>(['subscription', workspaceId])
     if (!data) return
 
     const updatedData = produce(data, (draft) => {
       if (draft.subscription.payment) {
-        draft.subscription.payment.taxId = taxId
+        if (taxId !== undefined) {
+          draft.subscription.payment.taxId = taxId
+        }
+        if (customerName !== undefined) {
+          draft.subscription.payment.customerName = customerName
+        }
       }
     })
 
@@ -61,12 +71,30 @@ const PaymentDetails: React.FC<Props> = ({
   }
 
   const handleUpdatedTaxId = (taxId: string) => {
-    updateSubsciptionTaxIdState(taxId)
+    updateSubsciptionState({ taxId })
     handleCloseTaxDrawer()
 
     toast({
       variant: 'success',
       title: 'Tax id updated',
+    })
+  }
+
+  const handleCloseDialog = () => {
+    setUpdateNameDialog({ opened: false })
+
+    setTimeout(() => {
+      setUpdateNameDialog(null)
+    }, 150)
+  }
+
+  const handleUpdatedCustomerName = (customerName: string) => {
+    updateSubsciptionState({ customerName })
+    handleCloseDialog()
+
+    toast({
+      variant: 'success',
+      title: 'Customer name updated',
     })
   }
 
@@ -78,6 +106,15 @@ const PaymentDetails: React.FC<Props> = ({
           opened={updateTaxIdDrawerOpened.opened}
           onClose={handleCloseTaxDrawer}
           onUpdated={handleUpdatedTaxId}
+        />
+      )}
+      {updateNameDialog && (
+        <UpdateCustomerNameDialog
+          currentName={customerName}
+          workspaceId={workspaceId}
+          opened={updateNameDialog.opened}
+          onClose={handleCloseDialog}
+          onSuccess={handleUpdatedCustomerName}
         />
       )}
       <SubscriptionLayout
@@ -97,7 +134,15 @@ const PaymentDetails: React.FC<Props> = ({
                 Name
                 <span className="inline md:hidden">{': '}</span>
               </div>
-              <div className="text-[0.96rem]">{customerName}</div>
+              <div className="flex flex-row gap-2.5 items-center">
+                <div className="text-[0.96rem]">{customerName}</div>
+                <button
+                  className="hover:text-primary opacity-70 hover:opacity-100 transition ease duration-200"
+                  onClick={() => setUpdateNameDialog({ opened: true })}
+                >
+                  <Icons.pencil className="h-4 w-4" />
+                </button>
+              </div>
             </div>
 
             <div className="flex flex-row md:flex-col gap-0.5">
