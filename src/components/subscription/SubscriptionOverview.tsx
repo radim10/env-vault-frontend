@@ -40,6 +40,13 @@ const SubscriptionOverview: React.FC<Props> = ({
   const activeSubscriptionPlan = useCurrentUserStore(
     ({ data }) => data?.selectedWorkspace?.plan || SubscriptionPlan.Free
   )
+  const { selectedWorkspace, update: updateCurrentUser } = useCurrentUserStore(
+    ({ update, data }) => ({
+      update,
+      selectedWorkspace: data?.selectedWorkspace,
+    })
+  )
+
   const [overlayOpened, setOverlayOpened] = useState(false)
   const [renewDialog, setRenewDialog] = useState<{
     opend: boolean
@@ -152,6 +159,33 @@ const SubscriptionOverview: React.FC<Props> = ({
     })
   }
 
+  const handleUpgrade = () => {
+    setOverlayOpened(false)
+
+    const data = queryClient.getQueryData<SubscriptionData>(['subscription', workspaceId])
+
+    if (data) {
+      const updatedData = produce(data, (draft) => {
+        draft.subscription.plan = SubscriptionPlan.Business
+      })
+
+      queryClient.setQueryData(['subscription', workspaceId], updatedData)
+    }
+
+    if (selectedWorkspace) {
+      const updatedSelectedWorkspace = produce(selectedWorkspace, (draft) => {
+        draft.plan = SubscriptionPlan.Business
+      })
+
+      updateCurrentUser({ selectedWorkspace: updatedSelectedWorkspace })
+    }
+
+    toast({
+      variant: 'success',
+      title: 'Subscription upgraded',
+    })
+  }
+
   return (
     <>
       {renewDialog !== null && cancelAt && (
@@ -179,7 +213,7 @@ const SubscriptionOverview: React.FC<Props> = ({
           onClose={() => setOverlayOpened(false)}
           onCanceled={() => handleCancelSuccess()}
           onDowngraded={() => handleDowgradeSuccess()}
-          onUpgraded={() => {}}
+          onUpgraded={() => handleUpgrade()}
         />
       )}
       <SubscriptionLayout title="Overview" icon={Icons.alignLeft}>
@@ -192,8 +226,8 @@ const SubscriptionOverview: React.FC<Props> = ({
               </div>
               <div
                 className={clsx([' text-[0.96rem]'], {
-                  'text-blue-500': plan === SubscriptionPlan.Startup,
-                  'text-green-500': plan === SubscriptionPlan.Business,
+                  'text-blue-600': plan === SubscriptionPlan.Startup,
+                  'text-green-600': plan === SubscriptionPlan.Business,
                 })}
               >
                 {plan === SubscriptionPlan.Free && 'Free'}
