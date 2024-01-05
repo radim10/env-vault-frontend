@@ -9,7 +9,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Button } from '../ui/button'
-import { useRenewSubscription, useUndoDowngradeSubscription } from '@/api/mutations/subscription'
+import { useUndoDowngradeSubscription } from '@/api/mutations/subscription'
 import dayjs from 'dayjs'
 
 interface Props {
@@ -61,7 +61,6 @@ const UndoDowngradeSubscriptionDialog: React.FC<Props> = ({
             <AlertDialogAction asChild>
               <Button
                 variant="default"
-                className="px-6"
                 loading={isLoading}
                 onClick={() => undoDowngrade({ workspaceId })}
               >
