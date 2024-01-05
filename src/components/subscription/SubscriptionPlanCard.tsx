@@ -35,8 +35,8 @@ const SubscriptionPlanCard: React.FC<Props> = ({
           {
             'hover:scale-[1.03] hover:shadow-2xl': !isCurrent && !disabled && !isNextPeriodActive,
             'border-gray-300 dark:border-gray-700': plan === SubscriptionPlan.Free,
-            'border-blue-300 dark:border-blue-800': plan === SubscriptionPlan.Startup,
-            'border-green-300 dark:border-green-800': plan === SubscriptionPlan.Business,
+            'border-blue-500 dark:border-blue-800': plan === SubscriptionPlan.Startup,
+            'border-green-500 dark:border-green-800': plan === SubscriptionPlan.Business,
           }
         )}
       >
