@@ -226,7 +226,7 @@ const SubscriptionOverview: React.FC<Props> = ({
               </div>
               <div
                 className={clsx([' text-[0.96rem]'], {
-                  'text-blue-600': plan === SubscriptionPlan.Startup,
+                  'text-blue-600 dark:text-blue-500': plan === SubscriptionPlan.Startup,
                   'text-green-600': plan === SubscriptionPlan.Business,
                 })}
               >
