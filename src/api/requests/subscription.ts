@@ -188,3 +188,34 @@ export async function deleteTaxId(args: DeleteTaxIdArgs) {
   })
   return await response
 }
+
+// NOTE: list invoices
+export type ListInvoicesResData = {
+  cursor?: string
+  data: Array<{
+    createdAt: Date
+    number: string | null
+    amount: number
+    url?: string | null
+  }>
+}
+
+export type ListInvoicesError = any
+export type ListInvoicesArgs = {
+  workspaceId: string
+  cursor?: string
+}
+
+export async function listInvoices(args: ListInvoicesArgs) {
+  const response = sendRequest<ListInvoicesResData>({
+    method: 'GET',
+    basePath: 'workspaces',
+    path: `${args.workspaceId}/subscription/invoices`,
+    params: args?.cursor
+      ? {
+          cursor: args.cursor,
+        }
+      : undefined,
+  })
+  return await response
+}
