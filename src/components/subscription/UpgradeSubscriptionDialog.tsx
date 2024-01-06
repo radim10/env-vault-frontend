@@ -1,18 +1,7 @@
-import DeleteDialog from '../DeleteDialog'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { useUpgradeSubscription } from '@/api/mutations/subscription'
-import { Button } from '../ui/button'
-import { subscriptionErrorMsgFromCode } from '@/api/requests/subscription'
 import { Icons } from '../icons'
+import { Button } from '../ui/button'
+import { useUpgradeSubscription } from '@/api/mutations/subscription'
+import { subscriptionErrorMsgFromCode } from '@/api/requests/subscription'
 
 interface Props {
   workspaceId: string
