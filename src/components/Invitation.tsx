@@ -11,15 +11,18 @@ import SignUpCard from './auth/SignUpCard'
 import LoginCard from './auth/LoginCard'
 import EmailLoginCard from './auth/EmailLoginCard'
 import OauthRedirectLoader from './OauthRedirectLoader'
+import { Card, CardContent } from './ui/card'
+import InvitationHeader from './auth/InvitationHeader'
 
 interface InvitationProps {
   type: 'login' | 'signup'
   id: string
   workspace: string
   role: WorkspaceUserRole
+  canJoin: boolean
 }
 
-export const Invitation: React.FC<InvitationProps> = ({ type, id, workspace, role }) => {
+export const Invitation: React.FC<InvitationProps> = ({ type, id, workspace, role, canJoin }) => {
   const [emailSelected, setEmailSelected] = useState(false)
   const [redirecting, setRedirecting] = useState<'google' | 'github'>()
 
@@ -92,8 +95,28 @@ export const Invitation: React.FC<InvitationProps> = ({ type, id, workspace, rol
               </div>
             )}
           </div>
+
+          {!canJoin && (
+            <div className="">
+              <Card className="sm:w-[420px] w-[90vw]">
+                <CardContent className="pt-5">
+                  <div
+                    className={clsx(['flex flex-col'], {
+                      'gap-3': true,
+                    })}
+                  >
+                    <InvitationHeader workspace={workspace} role={role} />
+                  </div>
+                  <div className="mt-2">
+                    You cannot join the workspace, because it reached it's maxium number of active
+                    users.
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
           {/* // FORM */}
-          {type === 'login' && (
+          {type === 'login' && canJoin && (
             <>
               {emailSelected && (
                 <EmailLoginCard invitation={{ id }} onCancel={() => setEmailSelected(false)} />
@@ -108,7 +131,7 @@ export const Invitation: React.FC<InvitationProps> = ({ type, id, workspace, rol
             </>
           )}
 
-          {type === 'signup' && (
+          {type === 'signup' && canJoin && (
             <>
               {emailSelected && (
                 <EmailSignUp invitation={id} onCancel={() => setEmailSelected(false)} />

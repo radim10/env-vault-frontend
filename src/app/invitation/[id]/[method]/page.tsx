@@ -25,6 +25,7 @@ const InvitaionPage = async ({ params }: { params: { id: string; method: string 
       workspace={invitation?.workspace}
       role={invitation?.role}
       type={method}
+      canJoin={invitation?.canJoin}
     />
   )
 }
