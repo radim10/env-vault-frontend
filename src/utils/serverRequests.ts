@@ -46,7 +46,7 @@ export const getInvitation = async (id: string) => {
     console.log(res.status)
     if (!res.ok) return undefined
     let body = await res.json()
-    return body as { workspace: string; role: WorkspaceUserRole }
+    return body as { workspace: string; role: WorkspaceUserRole; canJoin: boolean }
   } catch (err) {
     console.log(err)
     return undefined
