@@ -40,3 +40,10 @@ export interface PaymentCard {
     month: number
   }
 }
+
+export interface Invoice {
+  createdAt: Date
+  number: string | null
+  amount: number
+  url?: string | null
+}
