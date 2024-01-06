@@ -11,6 +11,8 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useUpgradeSubscription } from '@/api/mutations/subscription'
 import { Button } from '../ui/button'
+import { subscriptionErrorMsgFromCode } from '@/api/requests/subscription'
+import { Icons } from '../icons'
 
 interface Props {
   workspaceId: string
@@ -25,7 +27,11 @@ const UpgradeSubscriptionDialog: React.FC<Props> = ({
   onClose,
   onSuccess,
 }) => {
-  const { mutate: upgradeSubscription, isLoading: isUpgrading } = useUpgradeSubscription({
+  const {
+    mutate: upgradeSubscription,
+    isLoading: isUpgrading,
+    error,
+  } = useUpgradeSubscription({
     onSuccess: () => onSuccess(),
   })
 
@@ -41,6 +47,14 @@ const UpgradeSubscriptionDialog: React.FC<Props> = ({
             this month.
           </div>
         </div>
+
+        {error && (
+          <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mt-0">
+            <Icons.xCircle className="h-4 w-4" />
+            {subscriptionErrorMsgFromCode(error.code)}
+          </div>
+        )}
+
         <div className="mt-2 flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
           <Button variant="outline" onClick={() => onClose()} disabled={isUpgrading}>
             Cancel

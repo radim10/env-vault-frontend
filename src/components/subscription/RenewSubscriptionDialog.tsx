@@ -11,6 +11,8 @@ import {
 import { Button } from '../ui/button'
 import { useRenewSubscription } from '@/api/mutations/subscription'
 import dayjs from 'dayjs'
+import { Icons } from '../icons'
+import { subscriptionErrorMsgFromCode } from '@/api/requests/subscription'
 
 interface Props {
   workspaceId: string
@@ -27,7 +29,11 @@ const RenewSubscriptionDialog: React.FC<Props> = ({
   onClose,
   onSuccess,
 }) => {
-  const { mutate: renewSubscription, isLoading } = useRenewSubscription({
+  const {
+    mutate: renewSubscription,
+    isLoading,
+    error,
+  } = useRenewSubscription({
     onSuccess,
   })
 
@@ -45,12 +51,12 @@ const RenewSubscriptionDialog: React.FC<Props> = ({
               {`Do you want to renew it (so it will not be canceled)?`}
             </AlertDialogDescription>
 
-            {/*   {error && ( */}
-            {/*     <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mt-0"> */}
-            {/*       <Icons.xCircle className="h-4 w-4" /> */}
-            {/*       {secretsErrorMsgFromCode(error?.code) ?? 'Something went wrong'} */}
-            {/*     </div> */}
-            {/*   )} */}
+            {error && (
+              <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mt-0">
+                <Icons.xCircle className="h-4 w-4" />
+                {subscriptionErrorMsgFromCode(error.code)}
+              </div>
+            )}
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel asChild>

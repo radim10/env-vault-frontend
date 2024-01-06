@@ -1,5 +1,7 @@
 import { useCancelSubscription } from '@/api/mutations/subscription'
 import { Button } from '../ui/button'
+import { Icons } from '../icons'
+import { subscriptionErrorMsgFromCode } from '@/api/requests/subscription'
 
 interface Props {
   workspaceId: string
@@ -8,7 +10,11 @@ interface Props {
 }
 
 const CancelSubscriptionDialog: React.FC<Props> = ({ workspaceId, onClose, onSuccess }) => {
-  const { mutate: cancelSubscription, isLoading } = useCancelSubscription({
+  const {
+    mutate: cancelSubscription,
+    isLoading,
+    error,
+  } = useCancelSubscription({
     onSuccess: () => onSuccess(),
   })
 
@@ -23,6 +29,13 @@ const CancelSubscriptionDialog: React.FC<Props> = ({ workspaceId, onClose, onSuc
             billing cycle ends.
           </div>
         </div>
+
+        {error && (
+          <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mt-0">
+            <Icons.xCircle className="h-4 w-4" />
+            {subscriptionErrorMsgFromCode(error.code)}
+          </div>
+        )}
         <div className="mt-2 flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
           <Button variant="outline" onClick={() => onClose()} disabled={isLoading}>
             Cancel
