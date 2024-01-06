@@ -40,6 +40,7 @@ const SubscriptionOverview: React.FC<Props> = ({
   const activeSubscriptionPlan = useCurrentUserStore(
     ({ data }) => data?.selectedWorkspace?.plan || SubscriptionPlan.Free
   )
+  const userIsOwner = useCurrentUserStore((store) => store?.isOwnerRole)
   const { selectedWorkspace, update: updateCurrentUser } = useCurrentUserStore(
     ({ update, data }) => ({
       update,
@@ -338,40 +339,42 @@ const SubscriptionOverview: React.FC<Props> = ({
         <div className="mt-7">
           <div className="flex flex-row justify-between items-center">
             <div className="font-semibold text-[1.1rem]">Plan usage</div>
-            <div className="pr-2 flex flex-row items-center gap-3 md:gap-3">
-              {cancelAt && (
-                <>
-                  <button
-                    className="text-[0.92rem] hover:text-primary ease duration-100"
-                    onClick={() => setRenewDialog({ opend: true })}
-                  >
-                    Renew
-                  </button>
-                  <div className="h-5 w-[1px] bg-muted-foreground opacity-30"></div>
-                </>
-              )}
+            {userIsOwner() && (
+              <div className="pr-2 flex flex-row items-center gap-3 md:gap-3">
+                {cancelAt && (
+                  <>
+                    <button
+                      className="text-[0.92rem] hover:text-primary ease duration-100"
+                      onClick={() => setRenewDialog({ opend: true })}
+                    >
+                      Renew
+                    </button>
+                    <div className="h-5 w-[1px] bg-muted-foreground opacity-30"></div>
+                  </>
+                )}
 
-              {downgradeAt && (
-                <>
-                  <button
-                    className="text-[0.92rem] hover:text-primary ease duration-100"
-                    onClick={() => setUndoDowngradeDialog({ opend: true })}
-                  >
-                    Undo downgrade
-                  </button>
-                  <div className="h-5 w-[1px] bg-muted-foreground opacity-30"></div>
-                </>
-              )}
+                {downgradeAt && (
+                  <>
+                    <button
+                      className="text-[0.92rem] hover:text-primary ease duration-100"
+                      onClick={() => setUndoDowngradeDialog({ opend: true })}
+                    >
+                      Undo downgrade
+                    </button>
+                    <div className="h-5 w-[1px] bg-muted-foreground opacity-30"></div>
+                  </>
+                )}
 
-              {/* {!cancelAt && ( */}
-              <button
-                className="text-[0.92rem] hover:text-primary ease duration-100"
-                onClick={() => setOverlayOpened(true)}
-              >
-                Change plan
-              </button>
-              {/* )} */}
-            </div>
+                {/* {!cancelAt && ( */}
+                <button
+                  className="text-[0.92rem] hover:text-primary ease duration-100"
+                  onClick={() => setOverlayOpened(true)}
+                >
+                  Change plan
+                </button>
+                {/* )} */}
+              </div>
+            )}
           </div>
           <div className="px-0 mt-3.5">
             <div className="w-full border-2 rounded-md md:px-6 px-3 py-4">
