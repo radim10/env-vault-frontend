@@ -15,6 +15,7 @@ import { useDeleteTaxId, useUpdateTaxId } from '@/api/mutations/subscription'
 import { Button } from '../ui/button'
 import { useDebounce } from 'react-use'
 import { Icons } from '../icons'
+import { subscriptionErrorMsgFromCode } from '@/api/requests/subscription'
 
 interface Props {
   workspaceId: string
@@ -35,11 +36,19 @@ const UpdateTaxIdDrawer: React.FC<Props> = ({
   const [country, setCountry] = useState('Australia')
   const [value, setValue] = useState('')
 
-  const { mutate: updateTaxId, isLoading } = useUpdateTaxId({
+  const {
+    mutate: updateTaxId,
+    isLoading,
+    error: updateError,
+  } = useUpdateTaxId({
     onSuccess: () => onUpdated(value),
   })
 
-  const { mutate: deleteteTaxId, isLoading: isDeleting } = useDeleteTaxId({
+  const {
+    mutate: deleteteTaxId,
+    isLoading: isDeleting,
+    error: deleteError,
+  } = useDeleteTaxId({
     onSuccess: () => onUpdated(null),
   })
 
@@ -113,10 +122,18 @@ const UpdateTaxIdDrawer: React.FC<Props> = ({
               placeholder="Type here..."
             />
           </div>
+
+          {(updateError || deleteError) && (
+            <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mb-0">
+              <Icons.xCircle className="h-4 w-4" />
+              {subscriptionErrorMsgFromCode(updateError?.code ?? updateError?.code)}
+            </div>
+          )}
+
           {currentTaxId && (
             <Button
               className="mt-3"
-              size="sm"
+              size="default"
               variant={'destructive'}
               disabled={isLoading}
               loading={isDeleting}
