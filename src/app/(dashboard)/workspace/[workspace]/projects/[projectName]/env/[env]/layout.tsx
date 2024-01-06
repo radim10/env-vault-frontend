@@ -68,14 +68,6 @@ export default function EnvLayout({
     }
   )
 
-  if (isLoading || !selectedEnvironment?.data) {
-    return (
-      <>
-        <EnvLayoutSkeleton isSecrets={paramsData?.tab === undefined} />
-      </>
-    )
-  }
-
   if (error) {
     if (error?.code === 'project_not_found') {
       return (
@@ -105,6 +97,14 @@ export default function EnvLayout({
         />
       )
     }
+  }
+
+  if (isLoading || !selectedEnvironment?.data) {
+    return (
+      <>
+        <EnvLayoutSkeleton isSecrets={paramsData?.tab === undefined} />
+      </>
+    )
   }
 
   return (
