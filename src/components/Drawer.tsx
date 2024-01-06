@@ -74,7 +74,10 @@ const Drawer: React.FC<Props> = ({
             {submit && (
               <Button
                 size={'sm'}
-                className="w-fit px-6"
+                className={clsx(['w-fit'], {
+                  'px-6': !isLoading,
+                  'pr-6 pl-3': isLoading,
+                })}
                 disabled={submit?.disabled}
                 loading={submit?.loading}
                 onClick={submit?.onSubmit}
