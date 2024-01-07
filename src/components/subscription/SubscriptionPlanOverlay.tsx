@@ -2,38 +2,83 @@ import { SubscriptionPlan } from '@/types/subscription'
 import React, { useState } from 'react'
 import SubscriptionPlanCard from './SubscriptionPlanCard'
 import { useGetCheckoutUrl, useGetPreviewSubscriptionUpgrade } from '@/api/queries/subscription'
-import { getPreviewUpgradeSubscription } from '@/api/requests/subscription'
-import { Button } from '../ui/button'
 import UpgradeSubscriptionDialog from './UpgradeSubscriptionDialog'
 import CancelSubscriptionDialog from './CancelSubscriptionDialog'
 import DowngradeSubscriptionDialog from './DowngradeSubscriptionDialog'
 
 const feturesFree = {
-  included: ['Unlimited meetings', 'Unlimited tasks', 'Unlimited notes'],
-  locked: [
-    'Meeting proposals',
-    'Meeting templates',
-    'Workskpace teams',
-    'Priority support',
-    'Multiple admins',
+  included: [
+    'Up to 3 projects',
+    'Up to 3 environments',
+    'End-to-end encryption',
+    'Integrations',
+    'Secrets changelog',
+    'Environment tokens',
+    'Workspace tokens',
+    'Cli tokens',
   ],
 }
 
 const featuresStartup = {
   included: [
-    'Unlimited meetings',
-    'Unlimited tasks',
-    'Unlimited notes',
-    'Meeting proposals',
-    'Meeting templates',
-    'Workskpace teams',
-    'Multiple admins',
+    'No project limit',
+    'No environment limit',
+    'Trusted IPs',
+    'Webhooks',
+    'Multiple teams',
+    'Analytics',
+    'Secrets rotation',
   ],
   locked: ['Priority support'],
 }
+
 const featuresEnterprise = {
   included: [...featuresStartup?.included, 'Priority support'],
 }
+
+// const feturesFree = {
+//   included: [
+//     'Up to 3 projects',
+//     'Up to 3 environments',
+//     'End-to-end encryption',
+//     'Integrations',
+//     'Secrets changelog',
+//     'Environment tokens',
+//     'Workspace tokens',
+//     'Cli tokens',
+//   ],
+//   locked: [
+//     'Trusted IPs',
+//     'Webhooks',
+//     'Multiple teams',
+//     'Analytics',
+//     'Secrets rotation',
+//     'Priority support',
+//   ],
+// }
+//
+// const featuresStartup = {
+//   included: [
+//     'No project limit',
+//     'No environment limit',
+//     'End-to-end encryption',
+//     'Integrations',
+//     'Secrets changelog',
+//     'Environment tokens',
+//     'Workspace tokens',
+//     'Cli tokens',
+//     'Trusted IPs',
+//     'Webhooks',
+//     'Multiple teams',
+//     'Analytics',
+//     'Secrets rotation',
+//   ],
+//   locked: ['Priority support'],
+// }
+//
+// const featuresEnterprise = {
+//   included: [...featuresStartup?.included, 'Priority support'],
+// }
 
 interface Props {
   workspaceId: string

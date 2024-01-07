@@ -30,7 +30,7 @@ const SubscriptionPlanCard: React.FC<Props> = ({
       <div
         className={clsx(
           [
-            'bg-background dark:bg-background border-2 w-[17rem]  rounded-xl shadow-md  ease duration-300',
+            'bg-background dark:bg-background border-2 w-[17rem]X w-[20rem]  rounded-xl shadow-md  ease duration-300',
           ],
           {
             'hover:scale-[1.03] hover:shadow-2xl': !isCurrent && !disabled && !isNextPeriodActive,
@@ -56,6 +56,16 @@ const SubscriptionPlanCard: React.FC<Props> = ({
             </div>
           </div>
 
+          <div className="pl-4 text-[1rem] flex flex-row items-center gap-2 justify-start mb-3">
+            {plan === SubscriptionPlan.Free && <span>Everything to get started</span>}
+            {plan === SubscriptionPlan.Startup && (
+              <span>
+                Everything incldued in <b>Free</b> plus...
+              </span>
+            )}
+            {plan === SubscriptionPlan.Business && <span>All features available...</span>}
+          </div>
+
           <div className="pl-4 flex flex-col gap-1 mt-2">
             {features.included.map((feature) => (
               <div className="feature flex gap-2.5 items-center ">
@@ -71,7 +81,7 @@ const SubscriptionPlanCard: React.FC<Props> = ({
             ))}
           </div>
 
-          <div className="px-4 mt-3 flex justify-start">
+          <div className="px-4 mt-6 justify-start">
             <div className="flex gap-2 items-center pl-1">
               <span className="font-bold text-[2.2rem] dark:text-gray-200">
                 {plan === SubscriptionPlan.Free && '$0'}
