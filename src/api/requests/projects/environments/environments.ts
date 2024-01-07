@@ -10,11 +10,12 @@ type EnvErrorCode =
   | 'environment_already_exists'
   | 'environment_locked'
   | 'missing_permission'
+  | 'environment_limit_reached'
 
 export type EnvError<T extends EnvErrorCode | void> = APIError<T>
 
-export function envErrorMsgFromCode(code?: EnvErrorCode | 'workspace_not_found'): string | null {
-  let msg = null
+export function envErrorMsgFromCode(code?: EnvErrorCode | 'workspace_not_found'): string {
+  let msg = 'Something went wrong'
 
   if (code === 'project_not_found') {
     msg = 'Project not found'
@@ -35,6 +36,10 @@ export function envErrorMsgFromCode(code?: EnvErrorCode | 'workspace_not_found')
 
   if (code === 'missing_permission') {
     msg = "You don't have permission to perform this action"
+  }
+
+  if (code === 'environment_limit_reached') {
+    msg = 'Project environment limit reached'
   }
 
   return msg

@@ -8,6 +8,7 @@ type ProjectsErrorCode =
   | 'missing_permission'
   | 'duplicate_environment_names'
   | 'project_limit_reached'
+  | 'project_environment_limit_reached'
 
 export type ProjectsError<T extends ProjectsErrorCode | void> = APIError<T | 'workspace_not_found'>
 
@@ -34,6 +35,10 @@ export function projectErrorMsgFromCode(code?: ProjectsErrorCode | 'workspace_no
 
   if (code === 'project_limit_reached') {
     msg = 'Workspace project limit reached'
+  }
+
+  if (code === 'project_environment_limit_reached') {
+    msg = `Project's environments limit reached`
   }
 
   return msg
