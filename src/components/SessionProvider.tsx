@@ -30,7 +30,7 @@ interface Props {
 const AuthProvider: React.FC<Props> = ({ session, children }) => {
   const params = useParams()
   const router = useRouter()
-  const { set } = useCurrentUserStore()
+  const { data: currentUser, set } = useCurrentUserStore()
   const { set: setSession, loggingOut, setLoggingOut } = useSessionStore()
 
   // TODO: check if accessToken is expired and refresh
@@ -134,7 +134,7 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
 
   // error?.code !==
   // TODO: get current user from database and set state
-  if (isLoading || loggingOut || isRefetching) {
+  if (isLoading || loggingOut || isRefetching || currentUser === null) {
     return (
       <>
         <PageLoader />
