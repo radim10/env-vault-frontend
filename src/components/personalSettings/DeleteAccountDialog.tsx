@@ -80,7 +80,7 @@ const DeleteAccountDialog: React.FC<Props> = ({ opened, onClose, onSuccess }) =>
             {error && (
               <div className="text-red-600 text-[0.92rem] flex items-center gap-2 mt-0">
                 <Icons.xCircle className="h-4 w-4" />
-                {currentUserErrorMsgFromCode(error.code) ?? 'Something went wrong'}
+                {currentUserErrorMsgFromCode(error.code)}
               </div>
             )}
           </div>

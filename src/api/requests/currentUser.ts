@@ -1,16 +1,19 @@
-import { CurrentUser, CurrentUserWithWorkspaces, WorkspaceUserRole } from '@/types/users'
+import { CurrentUserWithWorkspaces } from '@/types/users'
 import sendRequest, { APIError } from '../instance'
 import { UserSession } from '@/types/session'
-import { SubscriptionPlan } from '@/types/subscription'
 
-type CurrentUserErrorCode = 'user_not_found'
+type CurrentUserErrorCode = 'user_not_found' | 'user_is_workspaces_owner'
 export type CurrentUserError<T extends CurrentUserErrorCode | void> = APIError<T>
 
-export function currentUserErrorMsgFromCode(code?: CurrentUserErrorCode): string | null {
-  let msg = null
+export function currentUserErrorMsgFromCode(code?: CurrentUserErrorCode): string {
+  let msg = 'Something went wrong'
 
   if (code === 'user_not_found') {
     msg = 'User not found in current workspace'
+  }
+
+  if (code === 'user_is_workspaces_owner') {
+    msg = 'User is workspaces owner'
   }
 
   return msg
@@ -103,7 +106,7 @@ export async function updateUserProfile(data: UpdateUserProfileData) {
 
 // delete account
 // TODO: error
-export type DeleteAccountError = CurrentUserError<'user_not_found'>
+export type DeleteAccountError = CurrentUserError<'user_not_found' | 'user_is_workspaces_owner'>
 export type DeleteAccountData = { feedback: string } | undefined
 
 export type DeleteAccountResData = undefined
