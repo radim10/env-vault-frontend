@@ -422,7 +422,7 @@ const CreateProject: React.FC<Props> = ({ workspaceId }) => {
       {createProjectError && (
         <div className="dark:text-red-500 text-red-600 text-[0.92rem] flex items-center gap-2 mt-5">
           <Icons.xCircle className="h-4 w-4" />
-          {projectErrorMsgFromCode(createProjectError?.code) ?? 'Something went wrong'}
+          {projectErrorMsgFromCode(createProjectError?.code)}
         </div>
       )}
 

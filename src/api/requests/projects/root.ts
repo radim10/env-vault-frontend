@@ -7,12 +7,12 @@ type ProjectsErrorCode =
   | 'project_already_exists'
   | 'missing_permission'
   | 'duplicate_environment_names'
+  | 'project_limit_reached'
+
 export type ProjectsError<T extends ProjectsErrorCode | void> = APIError<T | 'workspace_not_found'>
 
-export function projectErrorMsgFromCode(
-  code?: ProjectsErrorCode | 'workspace_not_found'
-): string | null {
-  let msg = null
+export function projectErrorMsgFromCode(code?: ProjectsErrorCode | 'workspace_not_found'): string {
+  let msg = 'Something went wrong'
 
   if (code === 'project_not_found') {
     msg = 'Project not found'
@@ -30,6 +30,10 @@ export function projectErrorMsgFromCode(
 
   if (code === 'missing_permission') {
     msg = "You don't have permission to perform this action"
+  }
+
+  if (code === 'project_limit_reached') {
+    msg = 'Workspace project limit reached'
   }
 
   return msg
