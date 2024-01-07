@@ -66,9 +66,10 @@ const DeleteAccountDialog: React.FC<Props> = ({ opened, onClose, onSuccess }) =>
                 className="h-20"
                 loading={isLoading}
                 variant={'destructive'}
-                onClick={() =>
-                  deleteAccount(feedback?.trim()?.length > 0 ? { feedback } : undefined)
-                }
+                onClick={() => {
+                  const feedbackValue = feedback?.trim()?.length > 0 ? feedback : null
+                  deleteAccount({ feedback: feedbackValue })
+                }}
               >
                 {isLoading ? 'Deleting...' : 'Delete account'}
               </Button>
