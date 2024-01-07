@@ -69,46 +69,53 @@ const InvoiceList: React.FC<Props> = ({ workspaceId }) => {
       )}
       {!error && (
         <>
-          <div className="flex flex-col gap-3">
-            {flattenedData.map((item, index) => (
-              <>
-                <div className="hidden md:flex flex-row gap-3 items-center justify-between">
-                  <div className="gap-3 grid grid-cols-3 items-center w-full text-[0.93rem]">
-                    <div>#{item?.number}</div>
-                    <div>{dayjs(item?.createdAt).format('YYYY-MM-DD')}</div>
-                    <div>${item?.amount}</div>
+          {flattenedData?.length === 0 && (
+            <div className="flex justify-center items-center my-5">
+              <div className="text-[0.92rem]">No invoices</div>
+            </div>
+          )}
+          {flattenedData?.length !== 0 && (
+            <div className="flex flex-col gap-3">
+              {flattenedData.map((item, index) => (
+                <>
+                  <div className="hidden md:flex flex-row gap-3 items-center justify-between">
+                    <div className="gap-3 grid grid-cols-3 items-center w-full text-[0.93rem]">
+                      <div>#{item?.number}</div>
+                      <div>{dayjs(item?.createdAt).format('YYYY-MM-DD')}</div>
+                      <div>${item?.amount}</div>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        window.open(item.url as string, '_blank')
+                      }}
+                    >
+                      <Icons.download className="h-4 w-4" />
+                    </Button>
                   </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      window.open(item.url as string, '_blank')
-                    }}
-                  >
-                    <Icons.download className="h-4 w-4" />
-                  </Button>
-                </div>
 
-                <div className="md:hidden flex flex-row gap-3 items-center justify-between text-[0.93rem]">
-                  <div className="flex flex-col gap-2">
-                    <div>#{item?.number}</div>
-                    <div>{dayjs(item?.createdAt).format('YYYY-MM-DD')}</div>
-                    <div>${item?.amount}</div>
+                  <div className="md:hidden flex flex-row gap-3 items-center justify-between text-[0.93rem]">
+                    <div className="flex flex-col gap-2">
+                      <div>#{item?.number}</div>
+                      <div>{dayjs(item?.createdAt).format('YYYY-MM-DD')}</div>
+                      <div>${item?.amount}</div>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        window.open(item.url as string, '_blank')
+                      }}
+                    >
+                      <Icons.download className="h-4 w-4" />
+                    </Button>
                   </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      window.open(item.url as string, '_blank')
-                    }}
-                  >
-                    <Icons.download className="h-4 w-4" />
-                  </Button>
-                </div>
-                {index !== flattenedData.length - 1 && <Separator />}
-              </>
-            ))}
-          </div>
+                  {index !== flattenedData.length - 1 && <Separator />}
+                </>
+              ))}
+            </div>
+          )}
 
           {isFetchingNextPage && (
             <div className="w-full flex flex-col gap-3 mt-3">
