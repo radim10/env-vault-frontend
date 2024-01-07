@@ -2,7 +2,7 @@ import { Workspace, WorkspaceInvitationLinks } from '@/types/workspaces'
 import sendRequest, { APIError } from '../instance'
 
 type WorkspacesErrorCode = 'workspace_not_found' | 'missing_permission' | LeaveWorkspaceErrorCode
-type LeaveWorkspaceErrorCode = 'no_remaining_users'
+type LeaveWorkspaceErrorCode = 'no_remaining_users' | 'workspace_owner_cannot_leave'
 
 export type WorkspacesError<T extends WorkspacesErrorCode | LeaveWorkspaceErrorCode | void> =
   APIError<T>
@@ -19,6 +19,9 @@ export function workspacesErrorMsgFromCode(code?: WorkspacesErrorCode): string {
       break
     case 'missing_permission':
       msg = "You don't have permission to perform this action"
+      break
+    case 'workspace_owner_cannot_leave':
+      msg = 'Workspace owners cannot leave workspaces'
       break
   }
 
