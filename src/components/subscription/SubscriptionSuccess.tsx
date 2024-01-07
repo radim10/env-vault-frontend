@@ -31,7 +31,7 @@ const SubscriptionSuccess: React.FC<Props> = ({ plan, workspaceId }) => {
                     Subscription plan{' '}
                     <span
                       className={clsx({
-                        'text-blue-600 dark:text-blue-600': plan === SubscriptionPlan.Startup,
+                        'text-blue-600 dark:text-blue-500': plan === SubscriptionPlan.Startup,
                         'text-green-600 dark:text-green-600': plan === SubscriptionPlan.Business,
                       })}
                     >
