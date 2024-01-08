@@ -1,4 +1,4 @@
-import { SubscriptionPlan } from '@/types/subscription'
+import { SubscriptionPlan, subscriptionPlanToString } from '@/types/subscription'
 import clsx from 'clsx'
 import { Icons } from '../icons'
 import { Button } from '../ui/button'
@@ -34,9 +34,9 @@ const SubscriptionPlanCard: React.FC<Props> = ({
           ],
           {
             'hover:scale-[1.03] hover:shadow-2xl': !isCurrent && !disabled && !isNextPeriodActive,
-            'border-gray-300 dark:border-gray-700': plan === SubscriptionPlan.Free,
-            'border-blue-500 dark:border-blue-800': plan === SubscriptionPlan.Startup,
-            'border-green-500 dark:border-green-800': plan === SubscriptionPlan.Business,
+            'border-gray-300 dark:border-gray-700': plan === SubscriptionPlan.FREE,
+            'border-blue-500 dark:border-blue-800': plan === SubscriptionPlan.STARTUP,
+            'border-green-500 dark:border-green-800': plan === SubscriptionPlan.BUSINESS,
           }
         )}
       >
@@ -45,25 +45,23 @@ const SubscriptionPlanCard: React.FC<Props> = ({
             {/* <div>Icon</div> */}
 
             <div className="font-bold text-[1.23rem] dark:text-gray-200">
-              {plan === SubscriptionPlan.Free && 'Free'}
-              {plan === SubscriptionPlan.Startup && 'Startup'}
-              {plan === SubscriptionPlan.Business && 'Business'}
+              {subscriptionPlanToString(plan)}
             </div>
             <div className="text-[0.87rem] text-gray-600 dark:text-gray-400 -mt-1">
-              {plan === SubscriptionPlan.Free && 'Up to 5 users'}
-              {plan === SubscriptionPlan.Startup && 'Up to 50 users'}
-              {plan === SubscriptionPlan.Business && 'More than 50 users'}
+              {plan === SubscriptionPlan.FREE && 'Up to 5 users'}
+              {plan === SubscriptionPlan.STARTUP && 'Up to 50 users'}
+              {plan === SubscriptionPlan.BUSINESS && 'More than 50 users'}
             </div>
           </div>
 
           <div className="pl-4 text-[1rem] flex flex-row items-center gap-2 justify-start mb-3">
-            {plan === SubscriptionPlan.Free && <span>Everything to get started</span>}
-            {plan === SubscriptionPlan.Startup && (
+            {plan === SubscriptionPlan.FREE && <span>Everything to get started</span>}
+            {plan === SubscriptionPlan.STARTUP && (
               <span>
                 Everything incldued in <b>Free</b> plus...
               </span>
             )}
-            {plan === SubscriptionPlan.Business && <span>All features available...</span>}
+            {plan === SubscriptionPlan.BUSINESS && <span>All features available...</span>}
           </div>
 
           <div className="pl-4 flex flex-col gap-1 mt-2">
@@ -84,9 +82,9 @@ const SubscriptionPlanCard: React.FC<Props> = ({
           <div className="px-4 mt-6 justify-start">
             <div className="flex gap-2 items-center pl-1">
               <span className="font-bold text-[2.2rem] dark:text-gray-200">
-                {plan === SubscriptionPlan.Free && '$0'}
-                {plan === SubscriptionPlan.Startup && '$10'}
-                {plan === SubscriptionPlan.Business && '$16'}
+                {plan === SubscriptionPlan.FREE && '$0'}
+                {plan === SubscriptionPlan.STARTUP && '$10'}
+                {plan === SubscriptionPlan.BUSINESS && '$16'}
               </span>
               <div className="flex flex-col items-start text-[0.8rem] text-foreground-muted">
                 <span>per user</span>

@@ -5,7 +5,12 @@ import SubscriptionLayout from './SubscriptionLayout'
 import { Progress } from '@/components/ui/progress'
 import SubscriptionPlanOverlay from './SubscriptionPlanOverlay'
 import { useLockBodyScroll } from 'react-use'
-import { SubscriptionPlan, SubscriptionOverview, SubscriptionData } from '@/types/subscription'
+import {
+  SubscriptionPlan,
+  SubscriptionOverview,
+  SubscriptionData,
+  subscriptionPlanToString,
+} from '@/types/subscription'
 import dayjs from 'dayjs'
 import clsx from 'clsx'
 import useCurrentUserStore from '@/stores/user'
@@ -38,7 +43,7 @@ const SubscriptionOverview: React.FC<Props> = ({
   const queryClient = useQueryClient()
   const { toast } = useToast()
   const activeSubscriptionPlan = useCurrentUserStore(
-    ({ data }) => data?.selectedWorkspace?.plan || SubscriptionPlan.Free
+    ({ data }) => data?.selectedWorkspace?.plan || SubscriptionPlan.FREE
   )
   const userIsOwner = useCurrentUserStore((store) => store?.isOwnerRole)
   const { selectedWorkspace, update: updateCurrentUser } = useCurrentUserStore(
@@ -59,19 +64,19 @@ const SubscriptionOverview: React.FC<Props> = ({
   useLockBodyScroll(overlayOpened)
 
   const progress = useCallback(() => {
-    if (plan === SubscriptionPlan.Free) {
+    if (plan === SubscriptionPlan.FREE) {
       if (usersCount === 5) {
         return 0
       } else {
         return (usersCount / 5) * 100
       }
-    } else if (plan === SubscriptionPlan.Startup) {
+    } else if (plan === SubscriptionPlan.STARTUP) {
       if (usersCount === 50) {
         return 0
       } else {
         return (usersCount / 50) * 100
       }
-    } else if (plan === SubscriptionPlan.Business) {
+    } else if (plan === SubscriptionPlan.BUSINESS) {
       return 0
     }
 
@@ -167,7 +172,7 @@ const SubscriptionOverview: React.FC<Props> = ({
 
     if (data) {
       const updatedData = produce(data, (draft) => {
-        draft.subscription.plan = SubscriptionPlan.Business
+        draft.subscription.plan = SubscriptionPlan.BUSINESS
       })
 
       queryClient.setQueryData(['subscription', workspaceId], updatedData)
@@ -175,7 +180,7 @@ const SubscriptionOverview: React.FC<Props> = ({
 
     if (selectedWorkspace) {
       const updatedSelectedWorkspace = produce(selectedWorkspace, (draft) => {
-        draft.plan = SubscriptionPlan.Business
+        draft.plan = SubscriptionPlan.BUSINESS
       })
 
       updateCurrentUser({ selectedWorkspace: updatedSelectedWorkspace })
@@ -227,13 +232,11 @@ const SubscriptionOverview: React.FC<Props> = ({
               </div>
               <div
                 className={clsx([' text-[0.96rem]'], {
-                  'text-blue-600 dark:text-blue-500': plan === SubscriptionPlan.Startup,
-                  'text-green-600': plan === SubscriptionPlan.Business,
+                  'text-blue-600 dark:text-blue-500': plan === SubscriptionPlan.STARTUP,
+                  'text-green-600': plan === SubscriptionPlan.BUSINESS,
                 })}
               >
-                {plan === SubscriptionPlan.Free && 'Free'}
-                {plan === SubscriptionPlan.Startup && 'Startup'}
-                {plan === SubscriptionPlan.Business && 'Business'}
+                {subscriptionPlanToString(plan)}
               </div>
             </div>
           </div>
@@ -243,9 +246,9 @@ const SubscriptionOverview: React.FC<Props> = ({
               <span className="inline md:hidden">{': '}</span>
             </div>
             <div className="text-[0.96rem]">
-              {plan === SubscriptionPlan.Free && '$0 user/mo'}
-              {plan === SubscriptionPlan.Startup && '$10 user/mo'}
-              {plan === SubscriptionPlan.Business && '$16 user/mo'}
+              {plan === SubscriptionPlan.FREE && '$0 user/mo'}
+              {plan === SubscriptionPlan.STARTUP && '$10 user/mo'}
+              {plan === SubscriptionPlan.BUSINESS && '$16 user/mo'}
             </div>
           </div>
           <>
@@ -257,11 +260,11 @@ const SubscriptionOverview: React.FC<Props> = ({
               <div className="text-[0.96rem]">
                 {!cancelAt && !downgradeAt && (
                   <>
-                    {plan === SubscriptionPlan.Free && (
+                    {plan === SubscriptionPlan.FREE && (
                       <span className="text-muted-foreground">N/A</span>
                     )}
-                    {plan === SubscriptionPlan.Startup && `$${usersCount * 10}`}
-                    {plan === SubscriptionPlan.Business && `$${usersCount * 16}`}
+                    {plan === SubscriptionPlan.STARTUP && `$${usersCount * 10}`}
+                    {plan === SubscriptionPlan.BUSINESS && `$${usersCount * 16}`}
                   </>
                 )}
                 {downgradeAt && `$${usersCount * 10}`}
@@ -387,9 +390,9 @@ const SubscriptionOverview: React.FC<Props> = ({
                 </div>
                 <div className="text-[0.98rem]">
                   {usersCount} /{' '}
-                  {plan === SubscriptionPlan.Free
+                  {plan === SubscriptionPlan.FREE
                     ? '5'
-                    : plan === SubscriptionPlan.Startup
+                    : plan === SubscriptionPlan.STARTUP
                     ? '50'
                     : '50+'}
                 </div>
@@ -401,9 +404,9 @@ const SubscriptionOverview: React.FC<Props> = ({
                   value={progress()}
                   className={clsx(['w-full h-3'], {
                     'bg-red-600 dark:bg-red-700':
-                      (usersCount === 5 && plan === SubscriptionPlan.Free) ||
-                      (usersCount === 50 && plan === SubscriptionPlan.Startup),
-                    'bg-green-600 dark:bg-green-700': plan === SubscriptionPlan.Business,
+                      (usersCount === 5 && plan === SubscriptionPlan.FREE) ||
+                      (usersCount === 50 && plan === SubscriptionPlan.STARTUP),
+                    'bg-green-600 dark:bg-green-700': plan === SubscriptionPlan.BUSINESS,
                   })}
                 />
               </div>

@@ -1,7 +1,23 @@
+// export enum SubscriptionPlan {
+//   Free = 'FREE',
+//   Startup = 'STARTUP',
+//   Business = 'BUSINESS',
+// }
+
 export enum SubscriptionPlan {
-  Free = 'FREE',
-  Startup = 'STARTUP',
-  Business = 'BUSINESS',
+  FREE = 'FREE',
+  STARTUP = 'STARTUP',
+  BUSINESS = 'BUSINESS',
+}
+
+export function subscriptionPlanToString(plan: SubscriptionPlan) {
+  if (plan === 'FREE') {
+    return 'Free'
+  } else if (plan === 'STARTUP') {
+    return 'Startup'
+  } else if (plan === 'BUSINESS') {
+    return 'Business'
+  }
 }
 
 export interface SubscriptionData {

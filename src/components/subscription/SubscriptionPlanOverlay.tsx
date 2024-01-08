@@ -122,15 +122,15 @@ const SubscriptionPlanOverlay: React.FC<Props> = ({
 
   const items = [
     {
-      plan: SubscriptionPlan.Free,
+      plan: SubscriptionPlan.FREE,
       features: feturesFree,
     },
     {
-      plan: SubscriptionPlan.Startup,
+      plan: SubscriptionPlan.STARTUP,
       features: featuresStartup,
     },
     {
-      plan: SubscriptionPlan.Business,
+      plan: SubscriptionPlan.BUSINESS,
       features: featuresEnterprise,
     },
   ]
@@ -168,23 +168,23 @@ const SubscriptionPlanOverlay: React.FC<Props> = ({
   )
 
   const handleSelected = (plan: SubscriptionPlan) => {
-    if (currentPlan === SubscriptionPlan.Free) {
-      if (plan === SubscriptionPlan.Startup) {
+    if (currentPlan === SubscriptionPlan.FREE) {
+      if (plan === SubscriptionPlan.STARTUP) {
         setLoading('startup')
         refetchStartupUrl()
       }
-      if (plan === SubscriptionPlan.Business) {
+      if (plan === SubscriptionPlan.BUSINESS) {
         setLoading('business')
         refetchBusinessUrl()
       }
-    } else if (currentPlan === SubscriptionPlan.Startup) {
-      if (plan === SubscriptionPlan.Business) {
+    } else if (currentPlan === SubscriptionPlan.STARTUP) {
+      if (plan === SubscriptionPlan.BUSINESS) {
         getPreviewUpdgrade()
       } else {
         setDialogOpened('cancel')
       }
     } else {
-      if (plan === SubscriptionPlan.Free) {
+      if (plan === SubscriptionPlan.FREE) {
         setDialogOpened('cancel')
       } else {
         setDialogOpened('downgrade')
@@ -218,17 +218,17 @@ const SubscriptionPlanOverlay: React.FC<Props> = ({
                       isCurrent={item.plan === currentPlan}
                       isNextPeriodActive={false}
                       disabled={
-                        (item.plan === SubscriptionPlan.Free && loading !== false) ||
-                        (item.plan === SubscriptionPlan.Startup && loading == 'business') ||
-                        (item.plan === SubscriptionPlan.Business && loading == 'startup') ||
+                        (item.plan === SubscriptionPlan.FREE && loading !== false) ||
+                        (item.plan === SubscriptionPlan.STARTUP && loading == 'business') ||
+                        (item.plan === SubscriptionPlan.BUSINESS && loading == 'startup') ||
                         ((isRefetchingPreviewUpgrade || isFetching) &&
-                          item.plan !== SubscriptionPlan.Startup)
+                          item.plan !== SubscriptionPlan.STARTUP)
                       }
                       loading={
-                        (item.plan === SubscriptionPlan.Startup && loading === 'startup') ||
-                        (item.plan === SubscriptionPlan.Business && loading === 'business') ||
+                        (item.plan === SubscriptionPlan.STARTUP && loading === 'startup') ||
+                        (item.plan === SubscriptionPlan.BUSINESS && loading === 'business') ||
                         ((isRefetchingPreviewUpgrade || isFetching) &&
-                          item.plan === SubscriptionPlan.Business)
+                          item.plan === SubscriptionPlan.BUSINESS)
                       }
                       key={item.plan}
                       onSelect={() => {

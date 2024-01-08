@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import { useRouter } from 'next/navigation'
 import { Icons } from '@/components/icons'
 import TypographyH2 from '../typography/TypographyH2'
-import { SubscriptionPlan } from '@/types/subscription'
+import { SubscriptionPlan, subscriptionPlanToString } from '@/types/subscription'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '../ui/button'
 
@@ -31,12 +31,11 @@ const SubscriptionSuccess: React.FC<Props> = ({ plan, workspaceId }) => {
                     Subscription plan{' '}
                     <span
                       className={clsx({
-                        'text-blue-600 dark:text-blue-500': plan === SubscriptionPlan.Startup,
-                        'text-green-600 dark:text-green-600': plan === SubscriptionPlan.Business,
+                        'text-blue-600 dark:text-blue-500': plan === SubscriptionPlan.STARTUP,
+                        'text-green-600 dark:text-green-600': plan === SubscriptionPlan.BUSINESS,
                       })}
                     >
-                      {plan === SubscriptionPlan.Startup && 'Startup'}
-                      {plan === SubscriptionPlan.Business && 'Business'}
+                      {subscriptionPlanToString(plan)}
                     </span>{' '}
                     has been activated. Lets get securely running more awesome apps.
                   </div>

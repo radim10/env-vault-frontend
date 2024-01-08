@@ -36,7 +36,7 @@ const WorkspaceSelect: React.FC<Props> = ({ currentWorkspace, allWorkspaces, onC
               {/* // TODO: fix truncate */}
               <div className="text-[0.95rem] ml-0 line-clamp-1 w-fit">{currentWorkspace.name}</div>
               <div className={clsx(['text-sm text-muted-foreground'], {})}>
-                {currentWorkspace.plan === SubscriptionPlan.Free && (
+                {currentWorkspace.plan === SubscriptionPlan.FREE && (
                   <div className="flex items-center gap-3">
                     <div>Free</div>
                     <div className="bg-yellow-500 text-white dark:bg-yellow-800 dark:text-yellow-200 text-[0.75rem] rounded-md px-1.5 h-5">
@@ -45,8 +45,8 @@ const WorkspaceSelect: React.FC<Props> = ({ currentWorkspace, allWorkspaces, onC
                   </div>
                 )}
 
-                {currentWorkspace.plan === SubscriptionPlan.Startup && 'Startup'}
-                {currentWorkspace.plan === SubscriptionPlan.Business && 'Business'}
+                {currentWorkspace.plan === SubscriptionPlan.STARTUP && 'Startup'}
+                {currentWorkspace.plan === SubscriptionPlan.BUSINESS && 'Business'}
               </div>
             </div>
             <div>
