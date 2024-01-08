@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { produce } from 'immer'
 import TeamsTable from './table/TeamsTable'
 import { useQueryClient } from '@tanstack/react-query'
 import CreateTeamDrawer from './CreateTeamDrawer'
@@ -9,14 +8,27 @@ import { ListTeam } from '@/types/teams'
 import { useToast } from '../ui/use-toast'
 import useTeamsTableColumns from './table/Columns'
 import useCurrentUserStore from '@/stores/user'
+import FeatureLock from '../FeatureLock'
 
 interface Props {
   workspaceId: string
 }
 
+const WorkspaceTeamsRoot: React.FC<Props> = (props) => {
+  const { isFreeWorkspacePlan, isMemberRole } = useCurrentUserStore()
+
+  const view = {
+    hide: <FeatureLock workspaceId={props.workspaceId} showLink={!isMemberRole()} />,
+    enable: <WorkspaceTeams {...props} />,
+  }[isFreeWorkspacePlan() === true ? 'hide' : 'enable']
+
+  return view
+}
+
 const WorkspaceTeams: React.FC<Props> = ({ workspaceId }) => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
+
   const { isMemberRole } = useCurrentUserStore()
   const [createdDrawerOpened, setCreatedDrawerOpened] = useState(false)
   const [newTeam, setNewTeam] = useState<ListTeam | undefined>()
@@ -69,4 +81,4 @@ const WorkspaceTeams: React.FC<Props> = ({ workspaceId }) => {
   )
 }
 
-export default WorkspaceTeams
+export default WorkspaceTeamsRoot
