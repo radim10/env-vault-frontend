@@ -1,4 +1,4 @@
-import React from 'react'
+import { useMemo } from 'react'
 import clsx from 'clsx'
 import { useWindowScroll } from 'react-use'
 import CreateEnvironmentDialog from './CreateEnvironmentDialog'
@@ -79,6 +79,12 @@ const EnvironmentListToolbar: React.FC<Props> = ({
   const { sort, setSort, groupBy, setGroupBy, unGroup } = useEnvironmentListStore()
   const { isFreeWorkspacePlan, isStartupWorkspacePlan } = useCurrentUserStore()
 
+  const envLimitReached = useMemo(() => {
+    if (isFreeWorkspacePlan() && environmentsCount >= 3) return true
+    if (isStartupWorkspacePlan() && environmentsCount >= 10) return true
+    return false
+  }, [isFreeWorkspacePlan(), isStartupWorkspacePlan()])
+
   return (
     <div
       className={clsx(
@@ -95,8 +101,7 @@ const EnvironmentListToolbar: React.FC<Props> = ({
           <span>Total environments: {environmentsCount}</span>
         </div>
         <div>
-          {((isFreeWorkspacePlan() && environmentsCount >= 3) ||
-            (isStartupWorkspacePlan() && environmentsCount >= 10)) && (
+          {envLimitReached && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -175,6 +180,7 @@ const EnvironmentListToolbar: React.FC<Props> = ({
 
         {onCreated && (
           <CreateEnvironmentDialog
+            disabled={envLimitReached}
             workspaceId={workspaceId}
             projectName={projectName}
             onSuccess={onCreated}
