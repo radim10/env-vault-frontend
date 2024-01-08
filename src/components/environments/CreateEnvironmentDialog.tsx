@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
+import clsx from 'clsx'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -23,7 +24,6 @@ import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { useCreateEnvironment } from '@/api/mutations/environments'
 import { EnvironmentType } from '@/types/environments'
-import clsx from 'clsx'
 import EnvTypeBadge from './EnvTypeBadge'
 import { envErrorMsgFromCode } from '@/api/requests/projects/environments/environments'
 import { useUpdateEffect } from 'react-use'
@@ -31,6 +31,7 @@ import { useUpdateEffect } from 'react-use'
 interface Props {
   workspaceId: string
   projectName: string
+  disabled?: boolean
   btnText?: string
   fullBtn?: boolean
   onSuccess: (args: { name: string; type: EnvironmentType }) => void
@@ -46,6 +47,7 @@ const envTypes: EnvironmentType[] = [
 const CreateEnvironmentDialog: React.FC<Props> = ({
   workspaceId,
   projectName,
+  disabled,
   btnText,
   fullBtn,
   onSuccess,
@@ -91,11 +93,12 @@ const CreateEnvironmentDialog: React.FC<Props> = ({
           } else resetState()
         }}
       >
-        <DialogTrigger asChild onClick={() => setOpened(true)}>
+        <DialogTrigger disabled={disabled} asChild onClick={() => setOpened(true)}>
           <Button
             className={clsx(['gap-1.5'], {
               'w-full': fullBtn,
             })}
+            disabled={disabled}
             variant="default"
             size={'sm'}
           >
