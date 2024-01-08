@@ -115,6 +115,7 @@ import {
   Receipt,
   AlignLeft,
   PartyPopper,
+  Info,
 } from 'lucide-react'
 
 export const Icons = {
@@ -235,4 +236,5 @@ export const Icons = {
   alignLeft: AlignLeft,
   partyPopper: PartyPopper,
   download: Download,
+  info: Info,
 }
