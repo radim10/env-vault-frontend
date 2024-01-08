@@ -9,6 +9,8 @@ type TeamsErrorCode =
   | 'team_already_exists'
   | 'team_not_found'
   | 'not_team_member'
+  | 'feature_not_available'
+
 export type TeamsError<T extends TeamsErrorCode | void> = APIError<T>
 
 export function teamsErrorMsgFromCode(code?: TeamsErrorCode): string | null {
@@ -38,11 +40,15 @@ export function teamsErrorMsgFromCode(code?: TeamsErrorCode): string | null {
     msg = 'You are not a member of this team'
   }
 
+  if (code === 'feature_not_available') {
+    msg = 'Feature is not available'
+  }
+
   return msg
 }
 
 // NOTE: requests
-export type GetTeamsError = TeamsError<undefined>
+export type GetTeamsError = TeamsError<'feature_not_available'>
 export type GetTeamsData = ListTeam[]
 
 export type GetTeamsArgs = {
@@ -81,7 +87,9 @@ export async function getTeams(args: GetTeamsArgs) {
 }
 
 // get single
-export type GetTeamError = TeamsError<'workspace_not_found' | 'team_not_found'>
+export type GetTeamError = TeamsError<
+  'feature_not_available' | 'workspace_not_found' | 'team_not_found'
+>
 export type GetTeamData = Team
 
 export type GetTeamArgs = {
@@ -99,7 +107,9 @@ export async function getTeam(args: GetTeamArgs) {
 }
 
 // create new
-export type CreateTeamError = TeamsError<'workspace_not_found' | 'team_already_exists'>
+export type CreateTeamError = TeamsError<
+  'feature_not_available' | 'workspace_not_found' | 'team_already_exists'
+>
 export type CreateTeamResData = {
   id: string
 }
