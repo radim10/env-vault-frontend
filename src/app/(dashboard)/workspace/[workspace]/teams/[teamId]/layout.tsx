@@ -11,6 +11,7 @@ import Link from 'next/link'
 import { useWindowScroll } from 'react-use'
 import { useSelectedTeamStore } from '@/stores/selectedTeam'
 import { useQueryClient } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
 
 export default function TeamLayout({
   children,
@@ -19,6 +20,7 @@ export default function TeamLayout({
   children: React.ReactNode
   params: { workspace: string; teamId: string; tabs: string }
 }) {
+  const router = useRouter()
   const queryClient = useQueryClient()
   const selectedTeam = useSelectedTeamStore()
   const { y } = useWindowScroll()
@@ -36,6 +38,11 @@ export default function TeamLayout({
           ...data,
           workspaceId: params.workspace,
         })
+      },
+      onError: (error) => {
+        if (error?.code === 'feature_not_available') {
+          router.replace(`/workspace/${params.workspace}/users/workspace`)
+        }
       },
     }
   )
