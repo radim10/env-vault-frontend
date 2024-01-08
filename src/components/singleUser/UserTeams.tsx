@@ -6,6 +6,8 @@ import { userTeamsColumns } from './table/UserTeamsColumns'
 import { Icons } from '../icons'
 import { usersErrorMsgFromCode } from '@/api/requests/users'
 import TableError from '../TableError'
+import useCurrentUserStore from '@/stores/user'
+import FeatureLock from '../FeatureLock'
 
 interface Props {
   workspaceId: string
@@ -13,15 +15,26 @@ interface Props {
 }
 
 const UserTeams: React.FC<Props> = ({ workspaceId, userId }) => {
+  const { isMemberRole, isFreeWorkspacePlan } = useCurrentUserStore()
+
   const {
     data: teams,
     isLoading,
     error,
     refetch,
-  } = useGetUserTeams({
-    workspaceId,
-    userId,
-  })
+  } = useGetUserTeams(
+    {
+      workspaceId,
+      userId,
+    },
+    {
+      enabled: !isFreeWorkspacePlan(),
+    }
+  )
+
+  if (isFreeWorkspacePlan()) {
+    return <FeatureLock workspaceId={workspaceId} showLink={!isMemberRole()} />
+  }
 
   if (error) {
     return (

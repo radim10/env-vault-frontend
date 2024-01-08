@@ -1,11 +1,9 @@
 'use client'
 
-import { useQueryClient } from '@tanstack/react-query'
-import { Button } from '../ui/button'
 import AccessTeams from './teams/AccessTeams'
-import AddTeamAccessDrawer from './teams/AddTeamAccessDrawer'
 import AccessUsers from './users/AccessUsers'
-import { Separator } from '../ui/separator'
+import useCurrentUserStore from '@/stores/user'
+import FeatureLock from '../FeatureLock'
 
 interface Props {
   workspaceId: string
@@ -13,7 +11,7 @@ interface Props {
 }
 
 const ProjectAccess: React.FC<Props> = ({ projectName, workspaceId }) => {
-  const queryClient = useQueryClient()
+  const { isFreeWorkspacePlan } = useCurrentUserStore()
 
   return (
     <div className="mt-4 flex flex-col gap-6 md:gap-8 px-6 lg:px-10">
@@ -35,9 +33,21 @@ const ProjectAccess: React.FC<Props> = ({ projectName, workspaceId }) => {
 
       {/* <Separator /> */}
 
-      <div className="">
-        <AccessTeams workspaceId={workspaceId} projectName={projectName} />
-      </div>
+      {!isFreeWorkspacePlan() && (
+        <div className="">
+          <AccessTeams workspaceId={workspaceId} projectName={projectName} />
+        </div>
+      )}
+
+      {isFreeWorkspacePlan() && (
+        <div className="">
+          <FeatureLock
+            showLink={false}
+            workspaceId={workspaceId}
+            text="Team access is available only for paid plans"
+          />
+        </div>
+      )}
     </div>
   )
 }

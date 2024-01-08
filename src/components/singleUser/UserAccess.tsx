@@ -1,10 +1,11 @@
 'use client'
 
-import { useGetUserAccessProjects } from '@/api/queries/users'
 import UserAccessTable from './access/table/UserAccessTable'
 import { userAccessProjectColumns } from './access/table/AccessTableColumns'
 import UserAccessTeamTable from './access/teamsTable/UserAccessTeamTable'
 import { userAccessTeamProjectColumns } from './access/teamsTable/TeamAccessTableColumns'
+import useCurrentUserStore from '@/stores/user'
+import FeatureLock from '../FeatureLock'
 
 interface Props {
   workspaceId: string
@@ -12,6 +13,7 @@ interface Props {
 }
 
 const UserAccess: React.FC<Props> = ({ workspaceId, userId }) => {
+  const { isMemberRole, isFreeWorkspacePlan } = useCurrentUserStore()
   // const { data } = useGetUserAccessProjects({
   //   workspaceId,
   //   userId,
@@ -25,11 +27,15 @@ const UserAccess: React.FC<Props> = ({ workspaceId, userId }) => {
         columns={userAccessProjectColumns}
       />
 
-      <UserAccessTeamTable
-        userId={userId}
-        workspaceId={workspaceId}
-        columns={userAccessTeamProjectColumns}
-      />
+      {isFreeWorkspacePlan() ? (
+        <FeatureLock workspaceId={workspaceId} showLink={!isMemberRole()} />
+      ) : (
+        <UserAccessTeamTable
+          userId={userId}
+          workspaceId={workspaceId}
+          columns={userAccessTeamProjectColumns}
+        />
+      )}
     </div>
   )
 }
