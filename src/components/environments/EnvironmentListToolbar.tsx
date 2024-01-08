@@ -14,6 +14,8 @@ import {
 import { Icons } from '../icons'
 import { LucideIcon } from 'lucide-react'
 import { useEnvironmentListStore } from '@/stores/environments'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import useCurrentUserStore from '@/stores/user'
 
 const sortOptions: Array<{ value: EnvSortOption; label: string; icon: LucideIcon }> = [
   {
@@ -75,6 +77,7 @@ const EnvironmentListToolbar: React.FC<Props> = ({
 }) => {
   const { y } = useWindowScroll()
   const { sort, setSort, groupBy, setGroupBy, unGroup } = useEnvironmentListStore()
+  const { isFreeWorkspacePlan, isStartupWorkspacePlan } = useCurrentUserStore()
 
   return (
     <div
@@ -87,12 +90,30 @@ const EnvironmentListToolbar: React.FC<Props> = ({
         }
       )}
     >
-      <div className="pl-1 dark:text-gray-400 text-gray-700 font-bold">
-        <span>Total environments: {environmentsCount}</span>
+      <div className="flex gap-2 items-center">
+        <div className="pl-1 dark:text-gray-400 text-gray-700 font-bold">
+          <span>Total environments: {environmentsCount}</span>
+        </div>
+        <div>
+          {((isFreeWorkspacePlan() && environmentsCount >= 3) ||
+            (isStartupWorkspacePlan() && environmentsCount >= 10)) && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Icons.info className="h-5 w-5 text-destructive" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Environment limit reached</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
       </div>
 
       <div className="flex flex-col md:flex-row items-center justify-end md:justify-start gap-3.5 md:gap-2">
         <div className="flex items-center gap-2 w-full">
+          {/* // */}
           <div className="w-1/2">
             <Select
               value={groupBy ?? 'No groups'}
