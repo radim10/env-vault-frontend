@@ -15,6 +15,10 @@ export interface CurrentUserState {
   isMemberRole: () => boolean | null
   isAdminRole: () => boolean | null
   isOwnerRole: () => boolean | null
+  //
+  isFreeWorkspacePlan: () => boolean
+  isStartupWorkspacePlan: () => boolean
+  isBusinessWorkspacePlan: () => boolean
 }
 
 interface CurrentUserActions {
@@ -27,21 +31,21 @@ export const useCurrentUserStore = create(
     immer<CurrentUserState & CurrentUserActions>((set, get) => ({
       // data: { role: WorkspaceUserRole.OWNER },
       // data: { role: WorkspaceUserRole.OWNER, email:  },
-      // data: null,
-      data: {
-        name: '',
-        email: '',
-        role: WorkspaceUserRole.OWNER,
-        id: 'ds',
-        avatarUrl: null,
-        workspaces: [{ name: 'ds', id: 'ds', selected: true }],
-        selectedWorkspace: {
-          name: 'ds',
-          id: 'ds',
-          role: WorkspaceUserRole.OWNER,
-          plan: SubscriptionPlan.Free,
-        },
-      },
+      data: null,
+      // data: {
+      //   name: '',
+      //   email: '',
+      //   role: WorkspaceUserRole.OWNER,
+      //   id: 'ds',
+      //   avatarUrl: null,
+      //   workspaces: [{ name: 'ds', id: 'ds', selected: true }],
+      //   selectedWorkspace: {
+      //     name: 'ds',
+      //     id: 'ds',
+      //     role: WorkspaceUserRole.OWNER,
+      //     plan: SubscriptionPlan.Free,
+      //   },
+      // },
       set: (data) => set({ data }),
       update: (data) => {
         set((state) => {
@@ -59,7 +63,21 @@ export const useCurrentUserStore = create(
       isOwnerRole: () => {
         return get()?.data?.selectedWorkspace?.role === 'OWNER' ?? null
       },
+
+      // workspace plan
+      isFreeWorkspacePlan: () => {
+        return get()?.data?.selectedWorkspace?.plan === SubscriptionPlan.FREE ?? false
+      },
+
+      isStartupWorkspacePlan: () => {
+        return get()?.data?.selectedWorkspace?.plan === SubscriptionPlan.STARTUP ?? false
+      },
+
+      isBusinessWorkspacePlan: () => {
+        return get()?.data?.selectedWorkspace?.plan === SubscriptionPlan.BUSINESS ?? false
+      },
     })),
+
     {
       store: 'currentUser',
     }
