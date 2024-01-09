@@ -1,9 +1,18 @@
 import { SubscriptionPlan } from '@/types/subscription'
-import DialogComponent from './Dialog'
 import { useState } from 'react'
 import { Icons } from './icons'
 import { useRouter } from 'next/navigation'
 import clsx from 'clsx'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { Button } from './ui/button'
 
 interface Props {
   workspaceId: string
@@ -49,48 +58,59 @@ const UsersExceededModal: React.FC<Props & { opened: boolean; onClose: () => voi
 
   return (
     <div>
-      <DialogComponent
-        titleComponent={
-          <div className="flex gap-2 md:gap-2.5 items-center">
-            <div>Action required</div>
-            <Icons.alertCircle className="h-5 w-5 text-red-600" />
-          </div>
-        }
-        className="md:w-[550px]"
-        opened={opened}
-        onClose={onClose}
-        submit={
-          !canManageUsers
-            ? {
-                wFull: true,
-                text: 'Remove users',
-                variant: 'default',
-              }
-            : undefined
-        }
-        onSubmit={() => router.push(`/workspace/${workspaceId}/users/workspace`)}
-      >
-        <div
-          className={clsx(['text-[0.93rem]'], {
-            'mb-2': canManageUsers,
-          })}
-        >
-          <span>
-            This workspace has limit of{' '}
-            <b>{subscriptionPlan === SubscriptionPlan.FREE ? '5' : '50'}</b> users. Currently, there
-            are <b>{subscriptionPlan === SubscriptionPlan.FREE ? count + 5 : count + 50}</b> users
-            in this workspace.
-          </span>
-          {canManageUsers ? (
+      <AlertDialog open={opened}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              <div className="flex gap-2 md:gap-2.5 items-center">
+                <div>Action required</div>
+                <Icons.alertCircle className="h-5 w-5 text-red-600" />
+              </div>
+            </AlertDialogTitle>
+          </AlertDialogHeader>
+
+          <div
+            className={clsx(['text-[0.93rem]'], {
+              'mb-0': canManageUsers,
+            })}
+          >
             <span>
-              Please remove
-              {count === 1 ? ' 1 user' : ` ${count} users`} or upgrade your workspace plan.
+              This workspace has limit of{' '}
+              <b>{subscriptionPlan === SubscriptionPlan.FREE ? '5' : '50'}</b> users. Currently,
+              there are <b>{subscriptionPlan === SubscriptionPlan.FREE ? count + 5 : count + 50}</b>{' '}
+              users in this workspace.{' '}
             </span>
-          ) : (
-            <span>Ask one of the workspace owner or any of the admins to take action.</span>
-          )}
-        </div>
-      </DialogComponent>
+            {canManageUsers ? (
+              <span>
+                Please remove
+                {count === 1 ? ' 1 user' : ` ${count} users`} or upgrade your workspace plan.
+              </span>
+            ) : (
+              <span>Ask one of the workspace owner or any of the admins to take action.</span>
+            )}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel asChild>
+              <Button variant="outline" onClick={onClose} className="md:px-5">
+                Close
+              </Button>
+            </AlertDialogCancel>
+            {canManageUsers && (
+              <AlertDialogAction asChild>
+                <Button
+                  variant="default"
+                  onClick={() => {
+                    router.push(`/workspace/${workspaceId}/users/workspace`)
+                    onClose()
+                  }}
+                >
+                  Show users
+                </Button>
+              </AlertDialogAction>
+            )}
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
