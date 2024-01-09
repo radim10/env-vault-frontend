@@ -13,6 +13,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Button } from './ui/button'
+import userExceedDialogStore from '@/stores/userExceed'
+import { useMount } from 'react-use'
 
 interface Props {
   workspaceId: string
@@ -27,13 +29,18 @@ const userRouteRegex =
 
 const UsersExceededRoot: React.FC<Props> = (props) => {
   const params = useParams()
-  const [opened, setOpened] = useState(true)
+  // const [opened, setOpened] = useState(true)
+  const { opened, close, open } = userExceedDialogStore()
 
-  const close = () => {
+  const handleClose = () => {
     console.log(params)
-    setOpened(false)
+    close()
     createTimeout()
   }
+
+  useMount(() => {
+    open()
+  })
 
   const createTimeout = () => {
     setTimeout(() => {
@@ -43,14 +50,15 @@ const UsersExceededRoot: React.FC<Props> = (props) => {
         !window.location.href?.endsWith('/users/invitations') &&
         !userRouteRegex.test(window.location.href)
 
-      if (showDialog) {
+      if (showDialog && !opened) {
         const openDiv = document.querySelector('div[data-state="open"]')
         const anotherDialogOpened = openDiv ? openDiv.hasAttribute('data-state') : false
 
         if (anotherDialogOpened) {
           createTimeout()
         } else {
-          setOpened(true)
+          // setOpened(true)
+          open()
         }
       } else {
         createTimeout()
@@ -60,7 +68,7 @@ const UsersExceededRoot: React.FC<Props> = (props) => {
     // }, 5000)
   }
 
-  return <UsersExceededModal {...props} opened={opened} onClose={close} />
+  return <UsersExceededModal {...props} opened={opened} onClose={handleClose} />
 }
 
 const UsersExceededModal: React.FC<Props & { opened: boolean; onClose: () => void }> = ({
