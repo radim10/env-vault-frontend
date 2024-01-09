@@ -105,6 +105,7 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
           name: data?.workspaces?.[selectedWorkspaceIndex as number].name as string,
           role: data?.selectedWorkspace?.role as WorkspaceUserRole,
           plan: data?.selectedWorkspace?.plan as SubscriptionPlan,
+          exceedingUserCount: data?.selectedWorkspace?.exceedingUserCount ?? undefined,
         }
 
         const currentUser: CurrentUser = {
