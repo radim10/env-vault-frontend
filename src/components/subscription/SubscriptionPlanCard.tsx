@@ -30,7 +30,7 @@ const SubscriptionPlanCard: React.FC<Props> = ({
       <div
         className={clsx(
           [
-            'bg-background dark:bg-background border-2 w-[17rem]X w-[20rem]  rounded-xl shadow-md  ease duration-300',
+            'bg-background dark:bg-background border-2 w-[17rem]X w-[19rem]  rounded-xl shadow-md  ease duration-300',
           ],
           {
             'hover:scale-[1.03] hover:shadow-2xl': !isCurrent && !disabled && !isNextPeriodActive,
@@ -54,8 +54,9 @@ const SubscriptionPlanCard: React.FC<Props> = ({
             </div>
           </div>
 
-          <div className="pl-4 text-[1rem] flex flex-row items-center gap-2 justify-start mb-3">
-            {plan === SubscriptionPlan.FREE && <span>Everything to get started</span>}
+          <div className="pl-4 text-[0.92rem] flex flex-row items-center gap-2 justify-start mb-3">
+            {/* {plan === SubscriptionPlan.FREE && <span>Everything to get started</span>} */}
+            {plan === SubscriptionPlan.FREE && <span>No credit card required</span>}
             {plan === SubscriptionPlan.STARTUP && (
               <span>
                 Everything incldued in <b>Free</b> plus...
@@ -68,13 +69,13 @@ const SubscriptionPlanCard: React.FC<Props> = ({
             {features.included.map((feature) => (
               <div className="feature flex gap-2.5 items-center ">
                 <Icons.checkCircle2 className="h-[1.2rem] w-[1.2rem] text-primary" />
-                <span className="text-[0.95Rem] dark:text-gray-300">{feature}</span>
+                <span className="text-[0.93rem] dark:text-gray-300">{feature}</span>
               </div>
             ))}
             {features.locked?.map((feature) => (
               <div className="feature flex gap-2.5 items-center ">
                 <Icons.xCircle className="h-[1.2rem] w-[1.2rem] dark:text-gray-400" />
-                <span className="text-[0.95rem] text-gray-500 dark:text-gray-400">{feature}</span>
+                <span className="text-[0.93rem] text-gray-500 dark:text-gray-400">{feature}</span>
               </div>
             ))}
           </div>
