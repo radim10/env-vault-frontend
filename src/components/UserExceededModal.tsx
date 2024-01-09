@@ -1,7 +1,7 @@
-import { SubscriptionPlan } from '@/types/subscription'
 import { useState } from 'react'
+import { SubscriptionPlan } from '@/types/subscription'
 import { Icons } from './icons'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import clsx from 'clsx'
 import {
   AlertDialog,
@@ -22,26 +22,42 @@ interface Props {
   count: number
 }
 
+const userRouteRegex =
+  /\/user\/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\//i
+
 const UsersExceededRoot: React.FC<Props> = (props) => {
+  const params = useParams()
   const [opened, setOpened] = useState(true)
 
   const close = () => {
+    console.log(params)
     setOpened(false)
     createTimeout()
   }
 
   const createTimeout = () => {
     setTimeout(() => {
-      const openDiv = document.querySelector('div[data-state="open"]')
-      const anotherDialogOpened = openDiv ? openDiv.hasAttribute('data-state') : false
+      const showDialog =
+        !window.location.href?.endsWith('/settings/subscription') &&
+        !window.location.href?.endsWith('/users/workspace') &&
+        !window.location.href?.endsWith('/users/invitations') &&
+        !userRouteRegex.test(window.location.href)
 
-      if (anotherDialogOpened) {
-        createTimeout()
+      if (showDialog) {
+        const openDiv = document.querySelector('div[data-state="open"]')
+        const anotherDialogOpened = openDiv ? openDiv.hasAttribute('data-state') : false
+
+        if (anotherDialogOpened) {
+          createTimeout()
+        } else {
+          setOpened(true)
+        }
       } else {
-        setOpened(true)
+        createTimeout()
       }
       // 2 mins
     }, 120000)
+    // }, 5000)
   }
 
   return <UsersExceededModal {...props} opened={opened} onClose={close} />
