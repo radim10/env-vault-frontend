@@ -403,15 +403,15 @@ const SubscriptionOverview: React.FC<Props> = ({
                 <Progress
                   value={progress()}
                   className={clsx(['w-full h-3'], {
-                    'bg-red-600 dark:bg-red-700':
+                    'bg-red-600/90 dark:bg-red-700/70':
                       (plan === SubscriptionPlan.FREE && usersCount > 5) ||
                       (plan === SubscriptionPlan.STARTUP && usersCount > 50),
 
-                    'bg-orange-600 dark:bg-orange-700':
+                    'bg-orange-600/90 dark:bg-orange-700/80':
                       (plan === SubscriptionPlan.FREE && usersCount === 5) ||
                       (plan === SubscriptionPlan.STARTUP && usersCount === 50),
 
-                    'bg-green-600 dark:bg-green-700': plan === SubscriptionPlan.BUSINESS,
+                    'bg-green-600/90 dark:bg-green-700/80': plan === SubscriptionPlan.BUSINESS,
                   })}
                 />
               </div>
