@@ -32,6 +32,7 @@ export type CurrentUser = User & {
   selectedWorkspace: {
     id: string
     name: string
+    exceedingUserCount?: number
     role: WorkspaceUserRole
     plan: SubscriptionPlan
   }
