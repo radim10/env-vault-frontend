@@ -40,7 +40,8 @@ const UsersExceededRoot: React.FC<Props> = (props) => {
       } else {
         setOpened(true)
       }
-    }, 5000)
+      // 2 mins
+    }, 120000)
   }
 
   return <UsersExceededModal {...props} opened={opened} onClose={close} />
