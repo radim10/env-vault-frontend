@@ -34,6 +34,7 @@ interface Props {
   disabled?: boolean
   btnText?: string
   fullBtn?: boolean
+  limitReached?: boolean
   onSuccess: (args: { name: string; type: EnvironmentType }) => void
 }
 
@@ -47,6 +48,7 @@ const envTypes: EnvironmentType[] = [
 const CreateEnvironmentDialog: React.FC<Props> = ({
   workspaceId,
   projectName,
+  limitReached,
   disabled,
   btnText,
   fullBtn,
@@ -93,17 +95,22 @@ const CreateEnvironmentDialog: React.FC<Props> = ({
           } else resetState()
         }}
       >
-        <DialogTrigger disabled={disabled} asChild onClick={() => setOpened(true)}>
+        <DialogTrigger disabled={disabled || limitReached} asChild onClick={() => setOpened(true)}>
           <Button
             className={clsx(['gap-1.5'], {
               'w-full': fullBtn,
             })}
-            disabled={disabled}
+            disabled={disabled || limitReached}
             variant="default"
             size={'sm'}
           >
-            <Icons.plus className="h-4 w-4" />
-            <span>{btnText ?? 'Add new'}</span>
+            {!limitReached && (
+              <>
+                <Icons.plus className="h-4 w-4" />
+                <span>{btnText ?? 'Add new'}</span>
+              </>
+            )}
+            {limitReached && <span>Limit reached</span>}
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">

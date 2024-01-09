@@ -14,7 +14,6 @@ import {
 import { Icons } from '../icons'
 import { LucideIcon } from 'lucide-react'
 import { useEnvironmentListStore } from '@/stores/environments'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import useCurrentUserStore from '@/stores/user'
 
 const sortOptions: Array<{ value: EnvSortOption; label: string; icon: LucideIcon }> = [
@@ -101,18 +100,18 @@ const EnvironmentListToolbar: React.FC<Props> = ({
           <span>Total environments: {environmentsCount}</span>
         </div>
         <div>
-          {envLimitReached && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Icons.info className="h-5 w-5 text-destructive" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Environment limit reached</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
+          {/*   {envLimitReached && ( */}
+          {/*     <TooltipProvider> */}
+          {/*       <Tooltip> */}
+          {/*         <TooltipTrigger asChild> */}
+          {/*           <Icons.info className="h-5 w-5 text-destructive" /> */}
+          {/*         </TooltipTrigger> */}
+          {/*         <TooltipContent> */}
+          {/*           <p>Environment limit reached</p> */}
+          {/*         </TooltipContent> */}
+          {/*       </Tooltip> */}
+          {/*     </TooltipProvider> */}
+          {/*   )} */}
         </div>
       </div>
 
@@ -180,7 +179,7 @@ const EnvironmentListToolbar: React.FC<Props> = ({
 
         {onCreated && (
           <CreateEnvironmentDialog
-            disabled={envLimitReached}
+            limitReached={envLimitReached}
             workspaceId={workspaceId}
             projectName={projectName}
             onSuccess={onCreated}
