@@ -111,7 +111,6 @@ const WorkspaceUsers: React.FC<Props> = ({ workspaceId }) => {
         columns={useUsersTableColumns()}
         queryClient={queryClient}
         workspaceId={workspaceId}
-        subscriptionPlan={data?.selectedWorkspace?.plan ?? SubscriptionPlan.FREE}
         onInviteUser={isMemberRole() ? undefined : () => setInviteUserDialog(true)}
       />
       {/**/}
