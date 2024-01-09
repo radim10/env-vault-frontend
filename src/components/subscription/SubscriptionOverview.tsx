@@ -404,7 +404,13 @@ const SubscriptionOverview: React.FC<Props> = ({
                   value={progress()}
                   className={clsx(['w-full h-3'], {
                     'bg-red-600 dark:bg-red-700':
-                      progress() === 0 && plan !== SubscriptionPlan.BUSINESS,
+                      (plan === SubscriptionPlan.FREE && usersCount > 5) ||
+                      (plan === SubscriptionPlan.STARTUP && usersCount > 50),
+
+                    'bg-orange-600 dark:bg-orange-700':
+                      (plan === SubscriptionPlan.FREE && usersCount === 5) ||
+                      (plan === SubscriptionPlan.STARTUP && usersCount === 50),
+
                     'bg-green-600 dark:bg-green-700': plan === SubscriptionPlan.BUSINESS,
                   })}
                 />
