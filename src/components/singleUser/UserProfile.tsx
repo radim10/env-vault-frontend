@@ -14,6 +14,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { GetWorkspaceUserData } from '@/api/requests/users'
 import { useRouter } from 'next/navigation'
 import { useToast } from '../ui/use-toast'
+import useCurrentUserStore from '@/stores/user'
 
 dayjs.extend(relativeTime)
 
@@ -27,6 +28,7 @@ const UserProfile: React.FC<Props> = ({ workspaceId, userId }) => {
   const { toast } = useToast()
   const router = useRouter()
 
+  const { data: currentUser, updateExceedingUsers } = useCurrentUserStore()
   const { data, reset: resetSelectedUser } = useSelectedUserStore()
   const [deleteDialogOpened, setDeleteDialogOpened] = useState(false)
 
@@ -39,6 +41,12 @@ const UserProfile: React.FC<Props> = ({ workspaceId, userId }) => {
 
     if (data) {
       queryClient.setQueryData(key, null)
+    }
+
+    const exceedingUserCount = currentUser?.selectedWorkspace?.exceedingUserCount
+    //
+    if (exceedingUserCount) {
+      updateExceedingUsers(exceedingUserCount === 1 ? null : exceedingUserCount - 1)
     }
 
     resetSelectedUser()

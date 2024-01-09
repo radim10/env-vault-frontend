@@ -34,26 +34,25 @@ import TableFooter from '@/components/tables/TableFooter'
 import { useRouter } from 'next/navigation'
 import TableError from '@/components/TableError'
 import { usersErrorMsgFromCode } from '@/api/requests/users'
-import { SubscriptionPlan } from '@/types/subscription'
+import useCurrentUserStore from '@/stores/user'
 
 interface DataTableProps {
   workspaceId: string
   columns: ColumnDef<WorkspaceUser>[]
   queryClient: QueryClient
-  subscriptionPlan: SubscriptionPlan
   onInviteUser?: () => void
 }
 
-function UsersDataTable({
-  columns,
-  workspaceId,
-  queryClient,
-  subscriptionPlan,
-  onInviteUser,
-}: DataTableProps) {
+function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: DataTableProps) {
   const router = useRouter()
   const { toast } = useToast()
   const { workspacePageSize, setWorkspacePageSize } = useUserTablesPaginationStore()
+  const {
+    data: currentUser,
+    isFreeWorkspacePlan,
+    isStartupWorkspacePlan,
+    updateExceedingUsers,
+  } = useCurrentUserStore()
 
   // const [pagesLoaded, setPagesLoaded] = useState<number[]>([])
   const [totalCount, setTotalCount] = useState<number>(0)
@@ -121,6 +120,23 @@ function UsersDataTable({
           }
         } else {
           setTotalSearchCount(data?.totalCount)
+        }
+
+        const exceedingUserCount = currentUser?.selectedWorkspace?.exceedingUserCount
+        //
+        if (exceedingUserCount) {
+          let newExceedingCount = 0
+
+          if (isFreeWorkspacePlan()) {
+            newExceedingCount = data?.totalCount - 5
+          }
+          if (isStartupWorkspacePlan()) {
+            newExceedingCount = data?.totalCount - 50
+          }
+
+          if (newExceedingCount >= 0 && newExceedingCount !== exceedingUserCount) {
+            updateExceedingUsers(newExceedingCount === 0 ? null : newExceedingCount)
+          }
         }
       },
     }
@@ -214,6 +230,12 @@ function UsersDataTable({
             draftPagination.pageIndex = draftPagination.pageIndex - 1
           })
         )
+
+      const exceedingUserCount = currentUser?.selectedWorkspace?.exceedingUserCount
+      //
+      if (exceedingUserCount) {
+        updateExceedingUsers(exceedingUserCount === 1 ? null : exceedingUserCount - 1)
+      }
     }
 
     queryClient.invalidateQueries(['workspace', workspaceId, 'users'], { exact: false })
@@ -355,8 +377,8 @@ function UsersDataTable({
 
       <TableToolbar
         userLimitReached={
-          (subscriptionPlan === SubscriptionPlan.FREE && totalCount >= 5) ||
-          (subscriptionPlan === SubscriptionPlan.BUSINESS && totalCount >= 50)
+          (isFreeWorkspacePlan() && totalCount >= 5) ||
+          (isStartupWorkspacePlan() && totalCount >= 50)
         }
         count={
           !totalCount || searchLoading
