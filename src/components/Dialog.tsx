@@ -14,7 +14,8 @@ import { LucideIcon } from 'lucide-react'
 
 interface Props {
   opened: boolean
-  title: string
+  title?: string
+  titleComponent?: React.ReactNode
   description?: string
   descriptionComponent?: React.ReactNode
   children?: React.ReactNode
@@ -38,6 +39,7 @@ interface Props {
 const DialogComponent: React.FC<Props> = ({
   opened,
   title,
+  titleComponent,
   children,
   descriptionComponent,
   loading,
@@ -57,7 +59,7 @@ const DialogComponent: React.FC<Props> = ({
     >
       <DialogContent className={cn('sm:max-w-[425px]', className)}>
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle>{title ?? titleComponent}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
           {descriptionComponent && <DialogDescription>{descriptionComponent}</DialogDescription>}
         </DialogHeader>
