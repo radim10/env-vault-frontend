@@ -14,6 +14,7 @@ import { GetCurrentUserError } from '@/api/requests/currentUser'
 import { CurrentUser, WorkspaceUserRole } from '@/types/users'
 import { SubscriptionPlan } from '@/types/subscription'
 import UsersExceededRoot from './UserExceededModal'
+import CreditCardExpiredRoot from './CreditCardExpiredDialog'
 
 // interface Props {
 //   session: UserSession | null
@@ -106,6 +107,7 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
           role: data?.selectedWorkspace?.role as WorkspaceUserRole,
           plan: data?.selectedWorkspace?.plan as SubscriptionPlan,
           exceedingUserCount: data?.selectedWorkspace?.exceedingUserCount ?? undefined,
+          creditCardExpired: data?.selectedWorkspace?.creditCardExpired ?? undefined,
         }
 
         const currentUser: CurrentUser = {
@@ -148,15 +150,23 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
     return <AuthProviderFallback onRefetch={refetch} />
   }
 
-  if (data?.selectedWorkspace?.exceedingUserCount !== undefined) {
+  if (
+    data?.selectedWorkspace?.creditCardExpired === true ||
+    data?.selectedWorkspace?.exceedingUserCount
+  ) {
     return (
       <>
-        <UsersExceededRoot
-          workspaceId={params?.workspace as string}
-          subscriptionPlan={data?.selectedWorkspace?.plan as SubscriptionPlan}
-          canManageUsers={data?.selectedWorkspace?.role !== WorkspaceUserRole.MEMBER}
-          count={data?.selectedWorkspace?.exceedingUserCount}
-        />
+        {data?.selectedWorkspace?.exceedingUserCount && (
+          <UsersExceededRoot
+            workspaceId={params?.workspace as string}
+            subscriptionPlan={data?.selectedWorkspace?.plan as SubscriptionPlan}
+            canManageUsers={data?.selectedWorkspace?.role !== WorkspaceUserRole.MEMBER}
+            count={data?.selectedWorkspace?.exceedingUserCount}
+          />
+        )}
+        {data?.selectedWorkspace?.creditCardExpired && (
+          <CreditCardExpiredRoot workspaceId={params?.workspace as string} />
+        )}
         {children}
       </>
     )
