@@ -18,6 +18,7 @@ import useSessionStore from '@/stores/session'
 import { SubscriptionPlan } from '@/types/subscription'
 import ActionRequiredBadge from './ActionRequiredBadge'
 import userExceedDialogStore from '@/stores/userExceed'
+import useCreditCardExpiredStore from '@/stores/cardExpired'
 
 const navItems = [
   { label: 'Projects', href: 'projects', icon: Icons.folder },
@@ -39,7 +40,8 @@ const Sidebar = () => {
   const router = useRouter()
   const session = useSessionStore()
   const currentUser = useCurrentUserStore((state) => state.data)
-  const { opened: exceededOpened, open: openExceedDialog } = userExceedDialogStore()
+  const { open: openExceedDialog } = userExceedDialogStore()
+  const { open: openCreditCardExpiredDialog } = useCreditCardExpiredStore()
 
   const [opened, setOpened] = useState(false)
   const [scrollLocked, setSrcollLocked] = useToggle(false)
@@ -194,18 +196,39 @@ const Sidebar = () => {
 
               {currentUser?.selectedWorkspace?.exceedingUserCount && (
                 <ActionRequiredBadge
+                  type="users"
                   onClick={() => {
                     if (opened) setOpened(false)
                     openExceedDialog()
                   }}
                 />
               )}
+
+              {currentUser?.selectedWorkspace?.creditCardExpired && (
+                <div
+                  className={clsx({
+                    '-mt-1': currentUser?.selectedWorkspace?.exceedingUserCount,
+                  })}
+                >
+                  <ActionRequiredBadge
+                    type="card"
+                    onClick={() => {
+                      if (opened) setOpened(false)
+                      openCreditCardExpiredDialog()
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
           <div
             className={clsx(['py-5 pl-9 pr-6'], {
-              'mt-2 md:mt-5': !currentUser?.selectedWorkspace?.exceedingUserCount,
-              'mt-1 md:mt-1': currentUser?.selectedWorkspace?.exceedingUserCount,
+              'mt-2 md:mt-5':
+                !currentUser?.selectedWorkspace?.exceedingUserCount &&
+                !currentUser?.selectedWorkspace?.creditCardExpired,
+              'mt-1 md:mt-1':
+                currentUser?.selectedWorkspace?.exceedingUserCount &&
+                !currentUser?.selectedWorkspace?.creditCardExpired,
             })}
           >
             <div className="bg-red-40 flex flex-col gap-3">
