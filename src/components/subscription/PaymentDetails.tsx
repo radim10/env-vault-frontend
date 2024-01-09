@@ -8,6 +8,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { produce } from 'immer'
 import { useToast } from '../ui/use-toast'
 import UpdateCustomerNameDialog from './UpdateCustomerNameDialog'
+import clsx from 'clsx'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 
 interface Props {
   workspaceId: string
@@ -182,8 +184,24 @@ const PaymentDetails: React.FC<Props> = ({
                 Expiry date
                 <span className="inline md:hidden">{': '}</span>
               </div>
-              <div className="text-[0.96rem]">
-                {card.expiration?.month}/{card.expiration?.year}
+              <div
+                className={clsx(['text-[0.96rem] flex flex-row gap-2 items-center'], {
+                  'text-red-600 dark:text-red-700': card.expired,
+                })}
+              >
+                <div>
+                  {card.expiration?.month}/{card.expiration?.year}
+                </div>
+                {card?.expired && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Icons.alertCircle className="h-4 w-4 md:-mt-[1px]" />
+                      </TooltipTrigger>
+                      <TooltipContent>Card expired</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               </div>
             </div>
           </div>
