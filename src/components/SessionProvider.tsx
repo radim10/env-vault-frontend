@@ -13,6 +13,7 @@ import { Button } from './ui/button'
 import { GetCurrentUserError } from '@/api/requests/currentUser'
 import { CurrentUser, WorkspaceUserRole } from '@/types/users'
 import { SubscriptionPlan } from '@/types/subscription'
+import UsersExceededRoot from './UserExceededModal'
 
 // interface Props {
 //   session: UserSession | null
@@ -36,7 +37,7 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
   // TODO: check if accessToken is expired and refresh
 
   // NOTE: or use server action but implment retry + error handling
-  const { isLoading, isRefetching, error, refetch } = useGetCurrentUser(
+  const { data, isLoading, isRefetching, error, refetch } = useGetCurrentUser(
     {
       // TODO: workspaceId???
       // workspaceId: '4ef8a291-024e-4ed8-924b-1cc90d01315e',
@@ -56,7 +57,7 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
         }
       },
       onSuccess: (data) => {
-        if (data?.defaultWorkspace !== undefined) {
+        if (data?.defaultWorkspace !== undefined && !data?.user) {
           if (data?.defaultWorkspace === null) {
             router.replace(`/welcome`)
             return
@@ -144,6 +145,20 @@ const AuthProvider: React.FC<Props> = ({ session, children }) => {
 
   if (error && error?.code !== 'user_not_found') {
     return <AuthProviderFallback onRefetch={refetch} />
+  }
+
+  if (data?.selectedWorkspace?.exceedingUserCount !== undefined) {
+    return (
+      <>
+        <UsersExceededRoot
+          workspaceId={params?.workspace as string}
+          subscriptionPlan={data?.selectedWorkspace?.plan as SubscriptionPlan}
+          canManageUsers={data?.selectedWorkspace?.role !== WorkspaceUserRole.MEMBER}
+          count={data?.selectedWorkspace?.exceedingUserCount}
+        />
+        {children}
+      </>
+    )
   }
 
   return <>{children}</>
