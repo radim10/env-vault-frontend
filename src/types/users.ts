@@ -32,9 +32,10 @@ export type CurrentUser = User & {
   selectedWorkspace: {
     id: string
     name: string
-    exceedingUserCount?: number
     role: WorkspaceUserRole
     plan: SubscriptionPlan
+    exceedingUserCount?: number
+    creditCardExpired?: boolean
   }
 }
 
@@ -44,8 +45,9 @@ export type CurrentUserWithWorkspaces = {
   defaultWorkspace?: string
   workspaces?: Array<{ id: string; name: string; selected?: true }>
   selectedWorkspace?: {
-    exceedingUserCount?: number
     role: WorkspaceUserRole
     plan: SubscriptionPlan
+    creditCardExpired?: boolean
+    exceedingUserCount?: number
   }
 }
