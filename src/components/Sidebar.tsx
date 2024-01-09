@@ -7,7 +7,7 @@ import { Icons } from './icons'
 import { Separator } from './ui/separator'
 import WorkspaceSelect from './WorkspaceSelect'
 import { usePathname, useParams, useRouter } from 'next/navigation'
-import { useLockBodyScroll, useToggle } from 'react-use'
+import { useLockBodyScroll, useToggle, useUpdateEffect } from 'react-use'
 import useCurrentUserStore from '@/stores/user'
 import CreateWorkspaceDialog from './CreateWorkspaceDialog'
 import { useToast } from './ui/use-toast'
@@ -16,6 +16,8 @@ import { useLogout } from '@/api/mutations/auth'
 import { LogoutError } from '@/api/requests/auth'
 import useSessionStore from '@/stores/session'
 import { SubscriptionPlan } from '@/types/subscription'
+import ActionRequiredBadge from './ActionRequiredBadge'
+import userExceedDialogStore from '@/stores/userExceed'
 
 const navItems = [
   { label: 'Projects', href: 'projects', icon: Icons.folder },
@@ -37,6 +39,7 @@ const Sidebar = () => {
   const router = useRouter()
   const session = useSessionStore()
   const currentUser = useCurrentUserStore((state) => state.data)
+  const { opened: exceededOpened, open: openExceedDialog } = userExceedDialogStore()
 
   const [opened, setOpened] = useState(false)
   const [scrollLocked, setSrcollLocked] = useToggle(false)
@@ -47,6 +50,8 @@ const Sidebar = () => {
 
   const pathname = usePathname()
   const params = useParams()
+
+  useUpdateEffect(() => {}, [opened])
 
   const toggle = () => {
     setSrcollLocked(!opened)
@@ -186,9 +191,23 @@ const Sidebar = () => {
                   }
                 }}
               />
+
+              {currentUser?.selectedWorkspace?.exceedingUserCount && (
+                <ActionRequiredBadge
+                  onClick={() => {
+                    if (opened) setOpened(false)
+                    openExceedDialog()
+                  }}
+                />
+              )}
             </div>
           </div>
-          <div className="mt-2 md:mt-5 py-5 pl-9 pr-6">
+          <div
+            className={clsx(['py-5 pl-9 pr-6'], {
+              'mt-2 md:mt-5': !currentUser?.selectedWorkspace?.exceedingUserCount,
+              'mt-1 md:mt-1': currentUser?.selectedWorkspace?.exceedingUserCount,
+            })}
+          >
             <div className="bg-red-40 flex flex-col gap-3">
               {navItems.map((item, index) => (
                 <>
