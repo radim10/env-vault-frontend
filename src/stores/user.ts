@@ -24,6 +24,7 @@ export interface CurrentUserState {
 interface CurrentUserActions {
   set: (user: CurrentUser | null) => void
   update: (data: Partial<CurrentUser>) => void
+  updateExceedingUsers: (count: number | null) => void
 }
 
 export const useCurrentUserStore = create(
@@ -51,6 +52,13 @@ export const useCurrentUserStore = create(
         set((state) => {
           if (state.data) {
             state.data = { ...state.data, ...data }
+          }
+        })
+      },
+      updateExceedingUsers: (count) => {
+        set((state) => {
+          if (state?.data && state?.data?.selectedWorkspace) {
+            state.data.selectedWorkspace.exceedingUserCount = count ?? undefined
           }
         })
       },
