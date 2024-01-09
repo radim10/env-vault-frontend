@@ -9,6 +9,7 @@ interface Props {
   entity: 'users' | 'teams' | 'invitations' | 'user-access'
   count: number | null
   isSearchCount?: boolean
+  userLimitReached?: boolean
   submitText?: string
   hideSubmit?: boolean
   loading: boolean
@@ -29,6 +30,7 @@ const TableToolbar: React.FC<Props> = ({
   loading,
   disabledSearch,
   searchPlaceholder,
+  userLimitReached,
   onSearch,
   onInviteUser,
 }) => {
@@ -99,7 +101,13 @@ const TableToolbar: React.FC<Props> = ({
             />
           </div>
 
-          {!hideSubmit && (
+          {!hideSubmit && userLimitReached && (
+            <Button disabled size={'sm'} className="flex gap-1.5">
+              Limit reached
+            </Button>
+          )}
+
+          {!hideSubmit && !userLimitReached && (
             <Button size={'sm'} onClick={onInviteUser} className="flex gap-1.5">
               {entity !== 'teams' && (
                 <>

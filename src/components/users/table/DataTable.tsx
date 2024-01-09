@@ -34,15 +34,23 @@ import TableFooter from '@/components/tables/TableFooter'
 import { useRouter } from 'next/navigation'
 import TableError from '@/components/TableError'
 import { usersErrorMsgFromCode } from '@/api/requests/users'
+import { SubscriptionPlan } from '@/types/subscription'
 
 interface DataTableProps {
   workspaceId: string
   columns: ColumnDef<WorkspaceUser>[]
   queryClient: QueryClient
+  subscriptionPlan: SubscriptionPlan
   onInviteUser?: () => void
 }
 
-function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: DataTableProps) {
+function UsersDataTable({
+  columns,
+  workspaceId,
+  queryClient,
+  subscriptionPlan,
+  onInviteUser,
+}: DataTableProps) {
   const router = useRouter()
   const { toast } = useToast()
   const { workspacePageSize, setWorkspacePageSize } = useUserTablesPaginationStore()
@@ -346,6 +354,10 @@ function UsersDataTable({ columns, workspaceId, queryClient, onInviteUser }: Dat
       )}
 
       <TableToolbar
+        userLimitReached={
+          (subscriptionPlan === SubscriptionPlan.FREE && totalCount >= 5) ||
+          (subscriptionPlan === SubscriptionPlan.BUSINESS && totalCount >= 50)
+        }
         count={
           !totalCount || searchLoading
             ? null
