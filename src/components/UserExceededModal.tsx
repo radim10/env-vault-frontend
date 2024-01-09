@@ -15,6 +15,7 @@ import {
 import { Button } from './ui/button'
 import userExceedDialogStore from '@/stores/userExceed'
 import { useMount } from 'react-use'
+import useCurrentUserStore from '@/stores/user'
 
 interface Props {
   workspaceId: string
@@ -29,17 +30,23 @@ const userRouteRegex =
 
 const UsersExceededRoot: React.FC<Props> = (props) => {
   const params = useParams()
+  const { data } = useCurrentUserStore()
   // const [opened, setOpened] = useState(true)
   const { opened, close, open } = userExceedDialogStore()
 
   const handleClose = () => {
     console.log(params)
     close()
-    createTimeout()
+
+    if (!data?.selectedWorkspace?.creditCardExpired) {
+      createTimeout()
+    }
   }
 
   useMount(() => {
-    open()
+    if (!data?.selectedWorkspace?.creditCardExpired) {
+      open()
+    }
   })
 
   const createTimeout = () => {
@@ -95,7 +102,7 @@ const UsersExceededModal: React.FC<Props & { opened: boolean; onClose: () => voi
           </AlertDialogHeader>
 
           <div
-            className={clsx(['text-[0.93rem]'], {
+            className={clsx(['text-[0.94rem]'], {
               'mb-0': canManageUsers,
             })}
           >
