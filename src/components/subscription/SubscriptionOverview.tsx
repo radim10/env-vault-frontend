@@ -65,18 +65,18 @@ const SubscriptionOverview: React.FC<Props> = ({
 
   const progress = useCallback(() => {
     if (plan === SubscriptionPlan.FREE) {
-      if (usersCount === 5) {
+      if (usersCount >= 5) {
         return 0
       } else {
         return (usersCount / 5) * 100
       }
     } else if (plan === SubscriptionPlan.STARTUP) {
-      if (usersCount === 50) {
+      if (usersCount >= 50) {
         return 0
       } else {
         return (usersCount / 50) * 100
       }
-    } else if (plan === SubscriptionPlan.BUSINESS) {
+    } else if (plan >= SubscriptionPlan.BUSINESS) {
       return 0
     }
 
@@ -404,8 +404,7 @@ const SubscriptionOverview: React.FC<Props> = ({
                   value={progress()}
                   className={clsx(['w-full h-3'], {
                     'bg-red-600 dark:bg-red-700':
-                      (usersCount === 5 && plan === SubscriptionPlan.FREE) ||
-                      (usersCount === 50 && plan === SubscriptionPlan.STARTUP),
+                      progress() === 0 && plan !== SubscriptionPlan.BUSINESS,
                     'bg-green-600 dark:bg-green-700': plan === SubscriptionPlan.BUSINESS,
                   })}
                 />
